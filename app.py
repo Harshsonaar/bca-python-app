@@ -25,7 +25,7 @@ if "current_note_page" not in st.session_state:
 if "dynamic_pages_list" not in st.session_state:
     st.session_state.dynamic_pages_list = []
 
-# ================= ULTRA-PREMIUM APPLE FROSTED GLASS & STRICT A4 REGISTER CSS =================
+# ================= ULTRA-ADDICTIVE APPLE GLASS & REAL REGISTER CSS =================
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Patrick+Hand&family=Shantell+Sans:wght@500;600;700&display=swap');
@@ -37,9 +37,9 @@ st.markdown("""
         font-family: 'JetBrains Mono', monospace !important;
     }
 
-    /* Ambient Apple Dark Background */
+    /* Ambient Apple Dark Aura Background */
     .stApp {
-        background: radial-gradient(circle at 50% 0%, rgba(30, 41, 69, 0.75) 0%, rgba(10, 13, 20, 0.98) 75%);
+        background: radial-gradient(circle at 50% -20%, rgba(59, 130, 246, 0.18) 0%, rgba(139, 92, 246, 0.08) 35%, rgba(10, 13, 20, 0.98) 75%);
         color: #F1F5F9;
     }
 
@@ -123,10 +123,10 @@ st.markdown("""
 
     /* Hero Banner */
     .hero-banner {
-        background: rgba(255, 255, 255, 0.04);
+        background: rgba(255, 255, 255, 0.035);
         border: 1px solid rgba(255, 255, 255, 0.12);
         padding: 18px 24px;
-        border-radius: 18px;
+        border-radius: 20px;
         backdrop-filter: blur(24px);
         -webkit-backdrop-filter: blur(24px);
         box-shadow: 0 20px 40px rgba(0, 0, 0, 0.45);
@@ -158,13 +158,14 @@ st.markdown("""
         margin-top: 24px;
     }
 
-    /* ================= REGISTER PAGE CONTAINER (ZERO CUTOFF & AUTO FIT) ================= */
+    /* ================= REGISTER PAGE CONTAINER (ZERO CUTOFF & NO SCROLL) ================= */
     .register-flip-container {
         display: flex;
         justify-content: center;
         align-items: center;
         margin-top: 10px;
         margin-bottom: 14px;
+        position: relative;
     }
     
     .register-outer-card {
@@ -175,15 +176,17 @@ st.markdown("""
             linear-gradient(#e2e8f0 1px, transparent 1px) !important;
         background-size: 100% 100%, 100% 26px !important;
         border-radius: 8px !important;
-        padding: 20px 22px 30px 52px !important;
+        padding: 22px 22px 30px 52px !important;
         border: 1px solid #cbd5e1 !important;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6) !important;
+        box-shadow: 0 12px 36px rgba(0, 0, 0, 0.65), inset 0 0 15px rgba(0,0,0,0.02) !important;
         width: 100% !important;
         max-width: 530px !important;
         min-height: 480px !important;
         height: auto !important;
         box-sizing: border-box !important;
         position: relative !important;
+        user-select: none !important;
+        transition: transform 0.25s ease-out;
     }
 
     /* Spiral Holes */
@@ -222,6 +225,37 @@ st.markdown("""
         letter-spacing: 0.5px;
     }
 
+    /* Sleek Small Arrow Buttons Styling */
+    div.arrow-btn-wrapper > div > button {
+        background: rgba(255, 255, 255, 0.08) !important;
+        border: 1px solid rgba(255, 255, 255, 0.18) !important;
+        color: #38BDF8 !important;
+        font-size: 22px !important;
+        font-weight: 800 !important;
+        padding: 8px 12px !important;
+        border-radius: 50% !important;
+        width: 48px !important;
+        height: 48px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        backdrop-filter: blur(16px) !important;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.4) !important;
+        margin: auto !important;
+        transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    }
+    div.arrow-btn-wrapper > div > button:hover {
+        background: rgba(56, 189, 248, 0.25) !important;
+        border-color: #38BDF8 !important;
+        color: #FFFFFF !important;
+        transform: scale(1.1) !important;
+    }
+    div.arrow-btn-wrapper > div > button:disabled {
+        opacity: 0.2 !important;
+        cursor: not-allowed !important;
+        border-color: rgba(255, 255, 255, 0.05) !important;
+    }
+
     /* AI Response Glass Box */
     .ai-box {
         background: rgba(20, 24, 38, 0.88);
@@ -243,16 +277,16 @@ st.markdown("""
         color: #FFFFFF !important;
         border: 1px solid rgba(255, 255, 255, 0.2) !important;
         border-radius: 12px !important;
-        padding: 7px 18px !important;
+        padding: 8px 20px !important;
         font-weight: 600 !important;
-        font-size: 13px !important;
+        font-size: 13.5px !important;
         letter-spacing: 0.3px !important;
         transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
-        box-shadow: 0 6px 18px rgba(59, 130, 246, 0.25) !important;
+        box-shadow: 0 8px 20px rgba(59, 130, 246, 0.25) !important;
     }
     .stButton>button:hover {
         transform: translateY(-2px) scale(1.01);
-        box-shadow: 0 10px 24px rgba(147, 51, 234, 0.4) !important;
+        box-shadow: 0 12px 28px rgba(147, 51, 234, 0.4) !important;
         border-color: rgba(255, 255, 255, 0.4) !important;
     }
 
@@ -401,7 +435,7 @@ def get_ai_response(prompt, image_input=None, forced_language=None, current_subj
     {lang_instruction}
 
     TEACHING RULES (STRICT CLEANLINESS):
-    1. Write in natural, clean student notebook register style.
+    1. Write in clean, natural student notebook register style.
     2. NEVER output raw markdown hashes like '###' or raw unformatted LaTeX with broken dollar signs. Write simple readable formulas (e.g. lim (x -> a) [f'(x) / g'(x)]).
     3. DO NOT write meta lines like '**Subject:** ...' or '**Author:** ...' or '**Instructor:** ...'. Jump directly to the core study points.
     4. Keep content concise to fit a single A4 sheet without clipping words.
@@ -666,13 +700,13 @@ for i in range(3):
                 ai_output = get_ai_response(prompt, current_subject=active_subj)
                 st.markdown(f'<div class="ai-box">{ai_output}</div>', unsafe_allow_html=True)
 
-    # ================= 2. CRISP GLITCH-FREE REGISTER NOTES =================
+    # ================= 2. CRISP GLITCH-FREE REGISTER NOTES (SWIPE + COMPACT ARROWS) =================
     def render_handwritten_notes():
         active_subj = st.session_state.selected_subject
         st.markdown(f"""
         <div class="hero-banner">
-            <div class="hero-title">📝 Authentic A4 Register Sheets (Zero Glitch)</div>
-            <div class="hero-sub">Subject Context: {active_subj} • Clean natural student ink notes on exact A4 sheets with zero cutoff.</div>
+            <div class="hero-title">📝 Authentic A4 Register Sheets (Interactive Flip)</div>
+            <div class="hero-sub">Subject Context: {active_subj} • Touch screen par left/right swipe karein ya side ke arrows dabakar page paltein.</div>
         </div>
         """, unsafe_allow_html=True)
 
@@ -764,51 +798,89 @@ for i in range(3):
                 st.session_state.dynamic_pages_list = clean_pages
                 st.session_state.flip_notes_topic = final_topic
 
-        # RENDER CRISP GLITCH-FREE REGISTER CARD (SINGLE CONTAINER)
+        # RENDER CRISP GLITCH-FREE REGISTER CARD WITH SIDE-ARROWS & SWIPE GESTURE
         if st.session_state.dynamic_pages_list:
             pages = st.session_state.dynamic_pages_list
             total_pages = len(pages)
             curr_pg = min(st.session_state.current_note_page, total_pages)
 
             current_page_text = pages[curr_pg - 1]
-            
-            # Format text cleanly with linebreaks inside the div
             safe_text = current_page_text.replace("\n", "<br>")
 
-            register_html = f"""
-            <div class="register-flip-container">
-                <div class="register-outer-card">
-                    <span class="page-turn-pill">A4 SHEET {curr_pg} OF {total_pages}</span>
-                    <div style="font-family:'Plus Jakarta Sans', sans-serif; font-size:17px; font-weight:700; color:#0f172a; margin-bottom:2px; border-bottom:1.5px solid #ef4444; padding-bottom:2px;">
-                        {st.session_state.get('flip_notes_topic')}
-                    </div>
-                    <div style="font-size:11px; color:#64748b; margin-bottom:8px; font-family:'Plus Jakarta Sans', sans-serif;">
-                        <b>Subject:</b> {active_subj} | <b>MLK PG College Balrampur</b>
-                    </div>
-                    <div class="register-inner-content">
-                        {safe_text}
-                    </div>
-                </div>
-            </div>
-            """
-            st.markdown(register_html, unsafe_allow_html=True)
-
-            # SINGLE CLEAN PAGINATION CONTROLS
-            c1, c2, c3 = st.columns([1.2, 1.6, 1.2])
-            with c1:
-                if st.button("◀ Previous Page", disabled=(curr_pg == 1), key="btn_prev", use_container_width=True):
+            # Register Presentation Layout with Compact Floating Side-Arrows
+            sheet_layout_cols = st.columns([0.8, 8.4, 0.8], gap="small")
+            
+            # LEFT ARROW BUTTON
+            with sheet_layout_cols[0]:
+                st.markdown("<div style='height: 200px;'></div>", unsafe_allow_html=True)
+                st.markdown('<div class="arrow-btn-wrapper">', unsafe_allow_html=True)
+                if st.button("‹", disabled=(curr_pg == 1), key="arrow_left", use_container_width=True, help="Previous Page"):
                     st.session_state.current_note_page = max(1, curr_pg - 1)
                     st.rerun()
-            with c2:
-                st.markdown(f"""
-                <div style="text-align:center; padding-top:6px;">
-                    <span style="color:#94A3B8; font-size:12px; font-weight:600;">Sheet {curr_pg} of {total_pages}</span>
+                st.markdown('</div>', unsafe_allow_html=True)
+
+            # NOTEBOOK SHEET CONTAINER WITH TOUCH/MOUSE SWIPE JAVASCRIPT
+            with sheet_layout_cols[1]:
+                register_html = f"""
+                <div class="register-flip-container" id="notebook_touch_area">
+                    <div class="register-outer-card" id="notebook_page_card">
+                        <span class="page-turn-pill">A4 SHEET {curr_pg} OF {total_pages}</span>
+                        <div style="font-family:'Plus Jakarta Sans', sans-serif; font-size:17px; font-weight:700; color:#0f172a; margin-bottom:2px; border-bottom:1.5px solid #ef4444; padding-bottom:2px;">
+                            {st.session_state.get('flip_notes_topic')}
+                        </div>
+                        <div style="font-size:11px; color:#64748b; margin-bottom:8px; font-family:'Plus Jakarta Sans', sans-serif;">
+                            <b>Subject:</b> {active_subj} | <b>MLK PG College Balrampur</b>
+                        </div>
+                        <div class="register-inner-content">
+                            {safe_text}
+                        </div>
+                    </div>
                 </div>
-                """, unsafe_allow_html=True)
-            with c3:
-                if st.button("Next Page ▶", disabled=(curr_pg == total_pages), key="btn_next", use_container_width=True):
+
+                <script>
+                    (function() {{
+                        const target = window.parent.document.getElementById('notebook_touch_area') || document.getElementById('notebook_touch_area');
+                        if (!target) return;
+
+                        let startX = 0;
+                        let startY = 0;
+
+                        target.addEventListener('touchstart', (e) => {{
+                            startX = e.changedTouches[0].screenX;
+                            startY = e.changedTouches[0].screenY;
+                        }}, {{passive: true}});
+
+                        target.addEventListener('touchend', (e) => {{
+                            let diffX = e.changedTouches[0].screenX - startX;
+                            let diffY = e.changedTouches[0].screenY - startY;
+
+                            // Horizontal Swipe Detection
+                            if (Math.abs(diffX) > 45 && Math.abs(diffY) < 60) {{
+                                if (diffX < 0) {{
+                                    // Swipe Left -> Next Page
+                                    const nextBtn = window.parent.document.querySelector('button[aria-label="arrow_right"]') || Array.from(window.parent.document.querySelectorAll('button')).find(el => el.innerText.trim() === '›');
+                                    if (nextBtn && !nextBtn.disabled) nextBtn.click();
+                                }} else {{
+                                    // Swipe Right -> Previous Page
+                                    const prevBtn = window.parent.document.querySelector('button[aria-label="arrow_left"]') || Array.from(window.parent.document.querySelectorAll('button')).find(el => el.innerText.trim() === '‹');
+                                    if (prevBtn && !prevBtn.disabled) prevBtn.click();
+                                }}
+                            }}
+                        }}, {{passive: true}});
+                    }})();
+                </script>
+                """
+                st.markdown(register_html, unsafe_allow_html=True)
+                st.markdown(f"<div style='text-align:center; color:#94A3B8; font-size:12px; margin-top:-6px;'>👉 <b>Swipe Left/Right</b> or tap arrows to flip pages • Sheet {curr_pg} of {total_pages}</div>", unsafe_allow_html=True)
+
+            # RIGHT ARROW BUTTON
+            with sheet_layout_cols[2]:
+                st.markdown("<div style='height: 200px;'></div>", unsafe_allow_html=True)
+                st.markdown('<div class="arrow-btn-wrapper">', unsafe_allow_html=True)
+                if st.button("›", disabled=(curr_pg == total_pages), key="arrow_right", use_container_width=True, help="Next Page"):
                     st.session_state.current_note_page = min(total_pages, curr_pg + 1)
                     st.rerun()
+                st.markdown('</div>', unsafe_allow_html=True)
 
     # ================= 3. EXAM ENGINE (WITH PHOTO ANSWER UPLOAD) =================
     def render_exam_engine():
