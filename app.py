@@ -50,7 +50,7 @@ def get_ai_response(prompt):
     if not gemini_key:
         return "⚠️ Pehle sidebar mein apni Gemini API Key paste karein."
     try:
-       supported_model = None
+        supported_model = None
         for m in genai.list_models():
             if 'generateContent' in m.supported_generation_methods:
                 if 'gemini' in m.name:
@@ -64,7 +64,6 @@ def get_ai_response(prompt):
         return response.text
     except Exception as e:
         return f"AI Error: {e}"
-
 # ================= 1. UNIT MODULES & AI PREP =================
 if menu == "📖 Unit Modules & AI Prep":
     st.markdown('<div class="main-heading">BCA Syllabus & AI-Assisted Preparation</div>', unsafe_allow_html=True)
