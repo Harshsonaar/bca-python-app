@@ -38,27 +38,37 @@ if "active_code" not in st.session_state:
 if "last_error" not in st.session_state:
     st.session_state.last_error = ""
 
+# Editor Preferences
+if "editor_rows" not in st.session_state:
+    st.session_state.editor_rows = 240
+
+if "editor_font_size" not in st.session_state:
+    st.session_state.editor_font_size = "14px"
+
+if "indent_spaces" not in st.session_state:
+    st.session_state.indent_spaces = 4
+
 # ================= CYBER CODER BLACK & ELECTRIC YELLOW CSS =================
-st.markdown("""
+st.markdown(f"""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Patrick+Hand&display=swap');
 
-    html, body, [class*="css"] {
+    html, body, [class*="css"] {{
         font-family: 'Plus Jakarta Sans', sans-serif;
-    }
-    code, pre {
+    }}
+    code, pre {{
         font-family: 'JetBrains Mono', monospace !important;
-    }
+    }}
 
     /* Ambient Obsidian & Electric Gold Canvas */
-    .stApp {
+    .stApp {{
         background: radial-gradient(circle at 50% -20%, rgba(255, 230, 0, 0.16) 0%, rgba(18, 16, 5, 0.6) 40%, #08080A 100%) !important;
         color: #F8FAFC;
-    }
+    }}
 
     /* Streamlit Host Overrides */
-    header[data-testid="stHeader"] {display: none !important;}
-    footer {display: none !important; visibility: hidden !important;}
+    header[data-testid="stHeader"] {{display: none !important;}}
+    footer {{display: none !important; visibility: hidden !important;}}
     .viewerBadge_container__1QSob, 
     .viewerBadge_link__1QSob,
     [data-testid="stStatusWidget"], 
@@ -66,21 +76,21 @@ st.markdown("""
     div[data-testid="stToolbar"],
     div[data-testid="stDecoration"],
     #MainMenu,
-    div[class*="viewerBadge"] {
+    div[class*="viewerBadge"] {{
         display: none !important;
         visibility: hidden !important;
         opacity: 0 !important;
         pointer-events: none !important;
-    }
+    }}
 
-    .block-container {
+    .block-container {{
         padding-top: 1rem !important;
         padding-bottom: 5rem !important;
         max-width: 1180px !important;
-    }
+    }}
 
     /* ================= OPENING DEVELOPER BOOT SCREEN ================= */
-    .splash-box {
+    .splash-box {{
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -88,8 +98,8 @@ st.markdown("""
         min-height: 75vh;
         text-align: center;
         position: relative;
-    }
-    .system-status-badge {
+    }}
+    .system-status-badge {{
         display: inline-flex;
         align-items: center;
         gap: 8px;
@@ -104,8 +114,8 @@ st.markdown("""
         box-shadow: 0 0 25px rgba(255, 230, 0, 0.35);
         margin-bottom: 16px;
         font-family: 'JetBrains Mono', monospace;
-    }
-    .splash-author {
+    }}
+    .splash-author {{
         font-size: 38px;
         font-weight: 800;
         background: linear-gradient(135deg, #FFFFFF 0%, #FFE600 50%, #FFAA00 100%);
@@ -113,14 +123,14 @@ st.markdown("""
         -webkit-text-fill-color: transparent;
         letter-spacing: -0.5px;
         margin-bottom: 8px;
-    }
-    .splash-sub {
+    }}
+    .splash-sub {{
         font-size: 14px;
         color: #94A3B8;
         font-family: 'JetBrains Mono', monospace;
         margin-bottom: 24px;
-    }
-    .coder-terminal-box {
+    }}
+    .coder-terminal-box {{
         background: #0D0E12;
         border: 1px solid rgba(255, 230, 0, 0.3);
         border-left: 4px solid #FFE600;
@@ -135,10 +145,10 @@ st.markdown("""
         box-shadow: 0 10px 35px rgba(0,0,0,0.8);
         margin-bottom: 24px;
         line-height: 1.6;
-    }
+    }}
 
     /* Cyber Coder Top Banner */
-    .cyber-top-banner {
+    .cyber-top-banner {{
         background: rgba(13, 14, 18, 0.85);
         border: 1px solid rgba(255, 230, 0, 0.25);
         border-radius: 16px;
@@ -149,8 +159,8 @@ st.markdown("""
         justify-content: space-between;
         align-items: center;
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
-    }
-    .author-glow-pill {
+    }}
+    .author-glow-pill {{
         display: inline-flex;
         align-items: center;
         gap: 6px;
@@ -163,10 +173,10 @@ st.markdown("""
         color: #FFE600;
         font-family: 'JetBrains Mono', monospace;
         box-shadow: 0 0 15px rgba(255, 230, 0, 0.25);
-    }
+    }}
 
     /* Top Navigation Dock */
-    div[data-testid="stRadio"] {
+    div[data-testid="stRadio"] {{
         background: rgba(13, 14, 18, 0.9) !important;
         border: 1px solid rgba(255, 230, 0, 0.25) !important;
         padding: 6px 10px !important;
@@ -174,38 +184,38 @@ st.markdown("""
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7) !important;
         margin: 0 auto 16px auto !important;
         width: 100% !important;
-        max-width: 860px !important;
-    }
-    div[data-testid="stRadio"] > label {display: none !important;}
-    div[data-testid="stRadio"] > div {
+        max-width: 960px !important;
+    }}
+    div[data-testid="stRadio"] > label {{display: none !important;}}
+    div[data-testid="stRadio"] > div {{
         display: flex !important;
         flex-direction: row !important;
         justify-content: space-between !important;
         align-items: center !important;
         flex-wrap: wrap !important;
         gap: 4px !important;
-    }
-    div[data-testid="stRadio"] label {
+    }}
+    div[data-testid="stRadio"] label {{
         background: transparent !important;
         border-radius: 20px !important;
-        padding: 6px 14px !important;
-        font-size: 12.5px !important;
+        padding: 6px 12px !important;
+        font-size: 12px !important;
         font-weight: 700 !important;
         color: #94A3B8 !important;
         font-family: 'JetBrains Mono', monospace !important;
         transition: all 0.2s ease !important;
         margin: 0 !important;
-    }
-    div[data-testid="stRadio"] label:hover {
+    }}
+    div[data-testid="stRadio"] label:hover {{
         background: rgba(255, 230, 0, 0.15) !important;
         color: #FFE600 !important;
-    }
-    div[data-testid="stRadio"] div[role="radiogroup"] > label > div:first-child {
+    }}
+    div[data-testid="stRadio"] div[role="radiogroup"] > label > div:first-child {{
         display: none !important;
-    }
+    }}
 
     /* ================= REGISTER NOTEBOOK CARD ================= */
-    .register-center-wrapper {
+    .register-center-wrapper {{
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -213,8 +223,8 @@ st.markdown("""
         width: 100%;
         margin-top: 6px;
         margin-bottom: 12px;
-    }
-    .notebook-paper-a4 {
+    }}
+    .notebook-paper-a4 {{
         background-color: #ffffff !important;
         background-image: 
             linear-gradient(90deg, transparent 42px, #f43f5e 42px, #f43f5e 43.5px, transparent 43.5px),
@@ -231,10 +241,10 @@ st.markdown("""
         position: relative !important;
         box-sizing: border-box !important;
         color: #1e3a8a !important;
-    }
+    }}
 
     /* Left Ring Binder */
-    .notebook-paper-a4::before {
+    .notebook-paper-a4::before {{
         content: '' !important;
         position: absolute !important;
         top: 14px !important;
@@ -244,23 +254,23 @@ st.markdown("""
         background-image: radial-gradient(circle, #94a3b8 4px, transparent 5px) !important;
         background-size: 12px 26px !important;
         background-repeat: repeat-y !important;
-    }
+    }}
 
-    .notebook-title-row {
+    .notebook-title-row {{
         display: flex;
         justify-content: space-between;
         align-items: center;
         border-bottom: 2px solid #ef4444;
         padding-bottom: 4px;
         margin-bottom: 10px;
-    }
-    .notebook-title-text {
+    }}
+    .notebook-title-text {{
         font-family: 'Plus Jakarta Sans', sans-serif !important;
         font-weight: 700 !important;
         font-size: 16px !important;
         color: #0f172a !important;
-    }
-    .notebook-badge {
+    }}
+    .notebook-badge {{
         font-family: 'JetBrains Mono', monospace !important;
         font-size: 11px !important;
         font-weight: 700 !important;
@@ -269,30 +279,49 @@ st.markdown("""
         border: 1px solid rgba(255, 230, 0, 0.4) !important;
         padding: 2px 8px !important;
         border-radius: 6px !important;
-    }
+    }}
 
-    .notebook-handwritten-text {
+    .notebook-handwritten-text {{
         font-family: 'Patrick Hand', cursive !important;
         font-size: 16.5px !important;
         line-height: 26px !important;
         color: #1e3a8a !important;
         word-break: break-word !important;
         white-space: pre-wrap !important;
-    }
+    }}
 
-    /* Cyber Panels */
-    .cyber-panel {
-        background: rgba(13, 14, 18, 0.85);
-        border: 1px solid rgba(255, 230, 0, 0.2);
+    /* Cyber Panels & Formula Display */
+    .cyber-panel {{
+        background: rgba(13, 14, 18, 0.88);
+        border: 1px solid rgba(255, 230, 0, 0.25);
         border-radius: 14px;
         padding: 20px;
         backdrop-filter: blur(20px);
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
         margin-top: 14px;
-    }
+    }}
+
+    .formula-card {{
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 230, 0, 0.18);
+        border-left: 3px solid #FFE600;
+        border-radius: 8px;
+        padding: 12px 16px;
+        margin-bottom: 12px;
+    }}
+
+    /* Dynamic Editor Area Styling */
+    textarea[aria-label="Python Code Editor:"] {{
+        font-size: {st.session_state.editor_font_size} !important;
+        font-family: 'JetBrains Mono', monospace !important;
+        background-color: #07080a !important;
+        color: #F8FAFC !important;
+        border: 1px solid rgba(255, 230, 0, 0.3) !important;
+        line-height: 1.5 !important;
+    }}
 
     /* Electric Yellow Buttons */
-    .stButton>button {
+    .stButton>button {{
         background: linear-gradient(135deg, #FFE600 0%, #EAB308 100%) !important;
         color: #0A0A0C !important;
         border: 1px solid #FFE600 !important;
@@ -304,25 +333,23 @@ st.markdown("""
         letter-spacing: 0.5px !important;
         transition: all 0.2s ease !important;
         box-shadow: 0 4px 15px rgba(255, 230, 0, 0.3) !important;
-    }
-    .stButton>button:hover {
+    }}
+    .stButton>button:hover {{
         transform: translateY(-2px);
         box-shadow: 0 8px 25px rgba(255, 230, 0, 0.6) !important;
-    }
+    }}
 
-    /* File Drawer Tabs */
-    .file-tab {
-        background: rgba(255, 255, 255, 0.05);
-        border: 1px solid rgba(255, 230, 0, 0.2);
-        border-radius: 8px;
-        padding: 6px 12px;
-        font-family: 'JetBrains Mono', monospace;
-        font-size: 12px;
-        color: #FFE600;
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-    }
+    @media (max-width: 768px) {{
+        .notebook-paper-a4 {{
+            padding: 16px 14px 22px 46px !important;
+            max-width: 95vw !important;
+            min-height: 440px !important;
+        }}
+        .notebook-handwritten-text {{
+            font-size: 15px !important;
+            line-height: 24px !important;
+        }}
+    }}
 </style>
 """, unsafe_allow_html=True)
 
@@ -365,14 +392,15 @@ def get_ai_response(prompt, image_input=None, forced_language=None, current_subj
         )
 
     optimized_prompt = f"""
-    You are a distinguished computer science professor and AI Copilot for the BCA curriculum at MLK PG College, Balrampur (affiliated with Maa Pateshwari State University).
-    Subject: {current_subject}
+    You are a distinguished computer science and mathematics professor for the BCA curriculum at MLK PG College, Balrampur (affiliated with Maa Pateshwari State University).
+    Subject Context: {current_subject}
     {lang_instruction}
 
-    TEACHING & CODE RULES:
+    TEACHING RULES:
     1. Write in clean, concise student register notes or clean runnable Python scripts.
     2. When analyzing code or fixing errors, explain step-by-step in simple language and provide fully working optimized code.
     3. Separate individual pages with the exact token '[PAGE_BREAK]' if asked for notes.
+    4. Write mathematical derivations with crystal clear steps and memory shortcuts.
 
     Query:
     {prompt}
@@ -417,8 +445,9 @@ if not st.session_state.system_booted:
         <div class="coder-terminal-box">
             <div><span style="color:#38BDF8;">root@harshraj-os:~$</span> initialize_environment</div>
             <div style="color:#A3E635;">✔ Initializing Neural Kernel & LLM Gateway...</div>
-            <div style="color:#A3E635;">✔ Loading Syllabus Modules: [Python, CSA, Discrete Maths]</div>
+            <div style="color:#A3E635;">✔ Loading Syllabus Matrix: [Python, CSA, Discrete Maths]</div>
             <div style="color:#A3E635;">✔ Virtual File Storage & AI Code Copilot: Ready</div>
+            <div style="color:#A3E635;">✔ Mathematics Encyclopedia & Formula Engine: Mounted</div>
             <div style="color:#FFE600;">⚡ Status: Environment Ready. High-Performance Mode Engaged.</div>
         </div>
     </div>
@@ -471,6 +500,7 @@ else:
         label="Main Navigation",
         options=[
             "📝 Smart Register",
+            "📐 Maths Encyclopedia",
             "📖 Syllabus Explorer",
             "🎯 Exam Engine",
             "🔬 Projects Lab",
@@ -592,7 +622,109 @@ else:
                     st.session_state.current_note_page = min(total_pages, curr_pg + 1)
                     st.rerun()
 
-    # ================= 2. SYLLABUS EXPLORER =================
+    # ================= 2. MATHS ENCYCLOPEDIA (NEW SPECIALIZED MENU) =================
+    elif selected_nav == "📐 Maths Encyclopedia":
+        st.markdown("#### 📐 Mathematics & Numerical Methods Formula Engine")
+        st.caption("Complete differentiation table, limits, indeterminate forms, matrix theorems, and discrete math shortcuts with worked exam questions.")
+
+        math_tab1, math_tab2, math_tab3, math_tab4 = st.tabs([
+            "⚡ Differentiation Master Rules",
+            "🎯 L'Hopital & Limits",
+            "🔢 Matrices & Consistency",
+            "🕸️ Discrete & Numerical Solvers"
+        ])
+
+        with math_tab1:
+            st.markdown("##### 📌 Standard Derivatives & Calculus Rules")
+            
+            diff_formulas = [
+                ("Power Rule", r"\frac{d}{dx}(x^n) = n x^{n-1}", "Derivative of $x^5 = 5x^4$"),
+                ("Product Rule (u · v)", r"\frac{d}{dx}(u \cdot v) = u \frac{dv}{dx} + v \frac{du}{dx}", "Derivative of $x^2 \sin x = x^2 \cos x + 2x \sin x$"),
+                ("Quotient Rule (u / v)", r"\frac{d}{dx}\left(\frac{u}{v}\right) = \frac{v \frac{du}{dx} - u \frac{dv}{dx}}{v^2}", "Derivative of $\\frac{\\sin x}{x} = \\frac{x \\cos x - \\sin x}{x^2}$"),
+                ("Chain Rule", r"\frac{d}{dx}[f(g(x))] = f'(g(x)) \cdot g'(x)", "Derivative of $\sin(x^3) = \cos(x^3) \cdot 3x^2$"),
+                ("Exponential Functions", r"\frac{d}{dx}(e^{ax}) = a e^{ax}, \quad \frac{d}{dx}(a^x) = a^x \ln a", "Derivative of $e^{4x} = 4e^{4x}$"),
+                ("Logarithmic Functions", r"\frac{d}{dx}(\ln x) = \frac{1}{x}, \quad \frac{d}{dx}(\log_a x) = \frac{1}{x \ln a}", "Derivative of $\ln(5x) = \\frac{1}{5x} \cdot 5 = \\frac{1}{x}$"),
+                ("Trigonometric Derivatives", r"\frac{d}{dx}(\sin x) = \cos x, \quad \frac{d}{dx}(\cos x) = -\sin x, \quad \frac{d}{dx}(\tan x) = \sec^2 x", "Derivative of $\tan(2x) = 2\sec^2(2x)$"),
+                ("Inverse Trigonometric", r"\frac{d}{dx}(\sin^{-1} x) = \frac{1}{\sqrt{1-x^2}}, \quad \frac{d}{dx}(\tan^{-1} x) = \frac{1}{1+x^2}", "Derivative of $\tan^{-1}(3x) = \\frac{3}{1+9x^2}$"),
+                ("Leibnitz's n-th Derivative", r"y_n = \sum_{r=0}^{n} {}^nC_r \, u_{n-r} \, v_r", "n-th derivative of $x^2 e^{ax} = a^{n-2} e^{ax}[a^2 x^2 + 2nax + n(n-1)]$")
+            ]
+
+            for name, formula, example in diff_formulas:
+                with st.expander(f"🔹 {name}"):
+                    st.latex(formula)
+                    st.markdown(f"**Example Question & Solution:** {example}")
+
+        with math_tab2:
+            st.markdown("##### 🎯 Indeterminate Forms & L'Hopital's Rule")
+            st.latex(r"\lim_{x \to a} \frac{f(x)}{g(x)} = \lim_{x \to a} \frac{f'(x)}{g'(x)} \quad \text{if form is } \frac{0}{0} \text{ or } \frac{\infty}{\infty}")
+            
+            st.markdown("""
+            <div class="formula-card">
+                <b>⚡ Working Shortcut:</b> Agar limit $x \to a$ put karne par directly $\\frac{0}{0}$ ya $\\frac{\\infty}{\\infty}$ form bane, toh quotient rule <b>mat</b> lagana! Numerator ka alag derivative aur Denominator ka alag derivative karo jab tak non-zero finite answer na mil jaye.
+            </div>
+            """, unsafe_allow_html=True)
+
+            with st.expander("📝 Solved University Example: Evaluate lim (x -> 0) [sin(x) - x] / x^3"):
+                st.markdown(r"""
+                - **Step 1:** Direct limit $x = 0 \implies \frac{\sin 0 - 0}{0^3} = \frac{0}{0}$ (Indeterminate).
+                - **Step 2 (First L'Hopital):** $\lim_{x \to 0} \frac{\cos x - 1}{3x^2} \implies \frac{1 - 1}{0} = \frac{0}{0}$.
+                - **Step 3 (Second L'Hopital):** $\lim_{x \to 0} \frac{-\sin x}{6x} = -\frac{1}{6} \lim_{x \to 0} \frac{\sin x}{x}$.
+                - **Final Result:** $-\frac{1}{6}(1) = \mathbf{-\frac{1}{6}}$.
+                """)
+
+        with math_tab3:
+            st.markdown("##### 🔢 Matrices, Rank & System of Equations (AX = B)")
+            st.markdown(r"""
+            - **Rank via Echelon Form:** Non-zero rows ki sankhya ko matrix ka Rank bolte hain ($r$).
+            - **Rouche-Capelli Consistency Criterion:**
+              1. $Rank(A) = Rank(A|B) = n$ (variables) $\implies$ **Unique Solution** (Consistent).
+              2. $Rank(A) = Rank(A|B) < n \implies$ **Infinitely Many Solutions** (Consistent).
+              3. $Rank(A) \neq Rank(A|B) \implies$ **Inconsistent (No Solution)**.
+            - **Cayley-Hamilton Theorem:** Har square matrix apni characteristic equation $|A - \lambda I| = 0$ ko satisfy karti hai ($A^2 - \text{tr}(A)A + |A|I = O$).
+            """)
+
+            with st.expander("📝 Fast Eigenvalues Trick: 2x2 Matrix"):
+                st.markdown(r"""
+                For matrix $A = \begin{pmatrix} a & b \\ c & d \end{pmatrix}$:
+                $$\lambda^2 - \text{Trace}(A)\lambda + \det(A) = 0$$
+                - **Verification Rule:** Sum of Eigenvalues = $\text{Trace}(A) = a + d$, Product of Eigenvalues = $\det(A)$.
+                """)
+
+        with math_tab4:
+            st.markdown("##### 🕸️ Discrete Maths & Numerical Methods Shortcuts")
+            c_d1, c_d2 = st.columns(2)
+            with c_d1:
+                st.markdown("""
+                <div class="formula-card">
+                    <b>Handshaking Theorem:</b><br>
+                    $$\sum_{v \in V} \deg(v) = 2E$$<br>
+                    <i>Sum of degrees of all vertices is equal to twice the number of edges.</i>
+                </div>
+                """, unsafe_allow_html=True)
+                st.markdown("""
+                <div class="formula-card">
+                    <b>Euler's Planar Formula:</b><br>
+                    $$V - E + R = 2$$<br>
+                    <i>Vertices - Edges + Regions = 2 for connected planar graphs.</i>
+                </div>
+                """, unsafe_allow_html=True)
+            with c_d2:
+                st.markdown("""
+                <div class="formula-card">
+                    <b>Newton-Raphson Method:</b><br>
+                    $$x_{n+1} = x_n - \frac{f(x_n)}{f'(x_n)}$$<br>
+                    <i>Quadratic Order of Convergence (Order = 2). Rapid root locator.</i>
+                </div>
+                """, unsafe_allow_html=True)
+                st.markdown("""
+                <div class="formula-card">
+                    <b>Bisection Method Formula:</b><br>
+                    $$c = \frac{a + b}{2} \quad \text{where } f(a) \cdot f(b) < 0$$<br>
+                    <i>Linear Order of Convergence (Order = 1). Always guaranteed convergence.</i>
+                </div>
+                """, unsafe_allow_html=True)
+
+    # ================= 3. SYLLABUS EXPLORER =================
     elif selected_nav == "📖 Syllabus Explorer":
         st.markdown(f"#### 📚 University Syllabus Matrix // {active_subj}")
         
@@ -635,7 +767,7 @@ else:
                         summary = get_ai_response(f"Provide complete exam summary for {u_title} under {active_subj}.", current_subject=active_subj)
                         st.info(summary)
 
-    # ================= 3. EXAM ENGINE =================
+    # ================= 4. EXAM ENGINE =================
     elif selected_nav == "🎯 Exam Engine":
         st.markdown(f"#### 🎯 Examination Simulator & Vision Evaluator // {active_subj}")
 
@@ -675,7 +807,7 @@ else:
                         </div>
                         """, unsafe_allow_html=True)
 
-    # ================= 4. PROJECTS LAB =================
+    # ================= 5. PROJECTS LAB =================
     elif selected_nav == "🔬 Projects Lab":
         st.markdown(f"#### 🔬 Academic Capstone Blueprints // {active_subj}")
 
@@ -696,7 +828,7 @@ else:
                 </div>
                 """, unsafe_allow_html=True)
 
-    # ================= 5. AI MENTOR =================
+    # ================= 6. AI MENTOR =================
     elif selected_nav == "🤖 AI Mentor":
         st.markdown(f"#### 🤖 24/7 AI Terminal Mentor // {active_subj}")
         
@@ -716,12 +848,44 @@ else:
                     </div>
                     """, unsafe_allow_html=True)
 
-    # ================= 6. GOOGLE COLAB-STYLE CODE SANDBOX & VIRTUAL STORAGE =================
+    # ================= 7. GOOGLE COLAB-STYLE CODE SANDBOX & VIRTUAL STORAGE =================
     elif selected_nav == "💻 Code Sandbox & Storage":
-        st.markdown(f"#### 💻 Interactive Colab Sandbox & File Vault // {active_subj}")
+        st.markdown(f"#### 💻 Interactive Colab Sandbox, Settings & CheatSheet // {active_subj}")
+
+        # Top Drawer: Settings & Documentation CheatSheet
+        drawer_col1, drawer_col2, drawer_col3 = st.columns([1.5, 1.5, 1.2])
+        
+        with drawer_col1:
+            with st.expander("⚙️ Editor & Indentation Settings", expanded=False):
+                st.session_state.editor_rows = st.slider("Editor Row Height (px):", min_value=150, max_value=500, value=st.session_state.editor_rows, step=25)
+                st.session_state.editor_font_size = st.selectbox("Editor Font Size:", ["12px", "14px", "16px", "18px"], index=1)
+                st.session_state.indent_spaces = st.selectbox("Indentation Assist Tab Width:", [2, 4], index=1)
+                st.caption(f"Configured: {st.session_state.indent_spaces} spaces indentation • Font: {st.session_state.editor_font_size}")
+
+        with drawer_col2:
+            with st.expander("📚 Python Keywords & Syntax Guide", expanded=False):
+                st.markdown("""
+                - `def func(*args, **kwargs)` : Variadic arguments & dictionaries.
+                - `lambda x, y: x + y` : Anonymous single-line function.
+                - `for-else` : Else executes only if loop never encounters `break`.
+                - `try-except-else-finally` : Complete exception control.
+                - `yield val` : Generator function stream producer.
+                - `is` vs `==` : `is` tests memory identity (`id()`), `==` tests values.
+                """)
+
+        with drawer_col3:
+            with st.expander("📦 Standard Library Matrix", expanded=False):
+                st.markdown("""
+                - `import math` : `isqrt()`, `sin()`, `log()`, `pi`
+                - `import re` : `re.findall()`, `re.sub()`, `re.match()`
+                - `import json` : `json.loads()`, `json.dumps()`
+                - `import datetime` : `datetime.now()`, `strftime()`
+                - `import collections` : `Counter`, `defaultdict`
+                - `import itertools` : `permutations()`, `combinations()`
+                """)
 
         # Storage & File Management Toolbar
-        with st.expander("📁 Virtual File Vault (Save, Load & Manage Files)", expanded=True):
+        with st.expander("📁 Virtual File Vault (Save, Load & Manage Files)", expanded=False):
             f_col1, f_col2, f_col3, f_col4 = st.columns([2, 1.2, 1.2, 1.2])
             with f_col1:
                 saved_files = list(st.session_state.saved_scripts.keys())
@@ -747,7 +911,7 @@ else:
         user_code = st.text_area(
             "Python Code Editor:",
             value=st.session_state.active_code,
-            height=220,
+            height=st.session_state.editor_rows,
             key="code_editor_area"
         )
         st.session_state.active_code = user_code
