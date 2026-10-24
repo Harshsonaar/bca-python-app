@@ -14,10 +14,10 @@ st.set_page_config(
 if "app_entered" not in st.session_state:
     st.session_state.app_entered = False
 
-# ================= APPLE FROSTED GLASS & MODERN UI CSS =================
+# ================= RESPONSIVE DOCK & APPLE GLASS UI CSS =================
 st.markdown("""
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap');
 
     html, body, [class*="css"] {
         font-family: -apple-system, BlinkMacSystemFont, "Plus Jakarta Sans", "SF Pro Display", sans-serif;
@@ -30,7 +30,7 @@ st.markdown("""
     .stApp {
         background: radial-gradient(circle at 50% 0%, rgba(30, 41, 69, 0.75) 0%, rgba(10, 13, 20, 0.98) 75%);
         color: #F1F5F9;
-        padding-bottom: 120px !important;
+        padding-bottom: 125px !important;
     }
 
     /* Premium Intro Splash Screen */
@@ -158,31 +158,38 @@ st.markdown("""
         border-color: rgba(255, 255, 255, 0.4) !important;
     }
 
-    /* Floating Apple Dock at the Bottom */
+    /* ================= ADAPTIVE DEVICE AUTO-DETECTION DOCK ================= */
+    /* DESKTOP / LAPTOP DEFAULT STYLING */
     div[data-testid="stRadio"] {
-        position: fixed;
-        bottom: 18px;
-        left: 50%;
-        transform: translateX(-50%);
-        z-index: 999999;
-        background: rgba(20, 24, 38, 0.7) !important;
-        border: 1px solid rgba(255, 255, 255, 0.15) !important;
-        padding: 8px 18px !important;
-        border-radius: 36px !important;
-        backdrop-filter: blur(35px) saturate(180%) !important;
-        -webkit-backdrop-filter: blur(35px) saturate(180%) !important;
-        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6), inset 0 1px 1px rgba(255, 255, 255, 0.15) !important;
-        max-width: 95vw;
+        position: fixed !important;
+        bottom: 20px !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+        z-index: 999999 !important;
+        background: rgba(18, 22, 34, 0.78) !important;
+        border: 1px solid rgba(255, 255, 255, 0.16) !important;
+        padding: 8px 20px !important;
+        border-radius: 40px !important;
+        backdrop-filter: blur(30px) saturate(190%) !important;
+        -webkit-backdrop-filter: blur(30px) saturate(190%) !important;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.65), inset 0 1px 1px rgba(255, 255, 255, 0.2) !important;
+        width: auto !important;
+        max-width: 90vw !important;
     }
+
     div[data-testid="stRadio"] > label {
         display: none !important;
     }
+
     div[data-testid="stRadio"] > div {
+        display: flex !important;
         flex-direction: row !important;
-        gap: 10px !important;
+        flex-wrap: nowrap !important;
+        gap: 12px !important;
         align-items: center !important;
         justify-content: center !important;
     }
+
     div[data-testid="stRadio"] label {
         background: transparent !important;
         border-radius: 20px !important;
@@ -191,11 +198,59 @@ st.markdown("""
         font-size: 13px !important;
         font-weight: 500 !important;
         color: #CBD5E1 !important;
-        transition: all 0.25s ease !important;
+        white-space: nowrap !important;
+        cursor: pointer !important;
+        transition: all 0.2s ease !important;
     }
+
     div[data-testid="stRadio"] label:hover {
-        background: rgba(255, 255, 255, 0.08) !important;
+        background: rgba(255, 255, 255, 0.1) !important;
         color: #FFFFFF !important;
+    }
+
+    /* PHONE / MOBILE AUTO-DETECTION (< 768px Viewport) */
+    @media (max-width: 768px) {
+        .splash-title {
+            font-size: 36px !important;
+        }
+        .hero-title {
+            font-size: 22px !important;
+        }
+        .hero-banner {
+            padding: 16px 18px !important;
+        }
+        .apple-glass-card {
+            padding: 16px !important;
+        }
+
+        /* Mobile Floating Dock (Horizontal Pill, No vertical stacking) */
+        div[data-testid="stRadio"] {
+            bottom: 12px !important;
+            padding: 6px 10px !important;
+            border-radius: 30px !important;
+            width: 94vw !important;
+            max-width: 94vw !important;
+            overflow-x: auto !important;
+            -webkit-overflow-scrolling: touch !important;
+            scrollbar-width: none !important;
+        }
+        div[data-testid="stRadio"]::-webkit-scrollbar {
+            display: none !important;
+        }
+        div[data-testid="stRadio"] > div {
+            display: flex !important;
+            flex-direction: row !important;
+            flex-wrap: nowrap !important;
+            gap: 6px !important;
+            width: max-content !important;
+            justify-content: flex-start !important;
+        }
+        div[data-testid="stRadio"] label {
+            padding: 5px 10px !important;
+            font-size: 11px !important;
+            border-radius: 16px !important;
+            flex-shrink: 0 !important;
+        }
     }
 
     .badge-status {
@@ -520,7 +575,7 @@ print(f"Total Aggregate Marks: {aggregate} / {len(scores)*100}")""", language="p
                 * Har recursive call system call stack mein stack frame add karti hai.
                 * **Base Case:** Stopping condition hona mandatory hai; otherwise stack overflow ho jayega aur Python `RecursionError` throw karega.
                 """)
-                st.code("""# Tower of Hanoi or Fibonacci via recursion
+                st.code("""# Fibonacci series via recursion
 def fibonacci(n):
     if n <= 0:
         return 0
