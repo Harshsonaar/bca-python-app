@@ -5,7 +5,7 @@ import contextlib
 import time
 
 st.set_page_config(
-    page_title="BCA Python Master Ecosystem | Created by Raj",
+    page_title="BCA Master Ecosystem | MLK PG College Balrampur",
     page_icon="⚡",
     layout="wide",
     initial_sidebar_state="collapsed"
@@ -14,6 +14,9 @@ st.set_page_config(
 # Session state initialization
 if "app_entered" not in st.session_state:
     st.session_state.app_entered = False
+
+if "selected_subject" not in st.session_state:
+    st.session_state.selected_subject = "🐍 Python Programming"
 
 # ================= ULTRA-PREMIUM APPLE FROSTED GLASS & MODERN UI CSS =================
 st.markdown("""
@@ -31,8 +34,14 @@ st.markdown("""
     .stApp {
         background: radial-gradient(circle at 50% 0%, rgba(30, 41, 69, 0.75) 0%, rgba(10, 13, 20, 0.98) 75%);
         color: #F1F5F9;
-        padding-bottom: 125px !important;
+        padding-bottom: 140px !important;
     }
+
+    /* Streamlit Default Floating Badges / Footers Hide (Fixes Covered Dock) */
+    footer {visibility: hidden !important; display: none !important;}
+    .viewerBadge_container__1QSob, [data-testid="stStatusWidget"], .stDeployButton {display: none !important;}
+    div[data-testid="stToolbar"] {display: none !important;}
+    div[data-testid="stDecoration"] {display: none !important;}
 
     /* Premium Splash Screen Container */
     .splash-container {
@@ -61,7 +70,7 @@ st.markdown("""
         margin-bottom: 18px;
     }
     .splash-title {
-        font-size: 54px;
+        font-size: 52px;
         font-weight: 800;
         background: linear-gradient(135deg, #FFFFFF 0%, #A5B4FC 35%, #38BDF8 70%, #C084FC 100%);
         -webkit-background-clip: text;
@@ -70,9 +79,9 @@ st.markdown("""
         letter-spacing: -1.5px;
     }
     .splash-subtitle {
-        font-size: 17px;
+        font-size: 16px;
         color: #94A3B8;
-        max-width: 640px;
+        max-width: 680px;
         line-height: 1.6;
         margin-bottom: 24px;
     }
@@ -159,22 +168,28 @@ st.markdown("""
         border-color: rgba(255, 255, 255, 0.4) !important;
     }
 
+    /* Radio circular selection dot hide (clean pill look) */
+    div[data-testid="stRadio"] div[role="radiogroup"] > label > div:first-child {
+        display: none !important;
+    }
+
     /* ================= ADAPTIVE AUTO-DETECTING FLOATING DOCK ================= */
+    /* DESKTOP / LAPTOP DISPLAY */
     div[data-testid="stRadio"] {
         position: fixed !important;
-        bottom: 20px !important;
+        bottom: 22px !important;
         left: 50% !important;
         transform: translateX(-50%) !important;
         z-index: 999999 !important;
-        background: rgba(18, 22, 34, 0.78) !important;
-        border: 1px solid rgba(255, 255, 255, 0.16) !important;
-        padding: 8px 20px !important;
+        background: rgba(18, 22, 34, 0.85) !important;
+        border: 1px solid rgba(255, 255, 255, 0.18) !important;
+        padding: 8px 18px !important;
         border-radius: 40px !important;
         backdrop-filter: blur(30px) saturate(190%) !important;
         -webkit-backdrop-filter: blur(30px) saturate(190%) !important;
-        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.65), inset 0 1px 1px rgba(255, 255, 255, 0.2) !important;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7), inset 0 1px 1px rgba(255, 255, 255, 0.2) !important;
         width: auto !important;
-        max-width: 90vw !important;
+        max-width: 92vw !important;
     }
 
     div[data-testid="stRadio"] > label {
@@ -185,7 +200,7 @@ st.markdown("""
         display: flex !important;
         flex-direction: row !important;
         flex-wrap: nowrap !important;
-        gap: 12px !important;
+        gap: 8px !important;
         align-items: center !important;
         justify-content: center !important;
     }
@@ -193,10 +208,10 @@ st.markdown("""
     div[data-testid="stRadio"] label {
         background: transparent !important;
         border-radius: 20px !important;
-        padding: 6px 14px !important;
+        padding: 7px 15px !important;
         margin: 0 !important;
         font-size: 13px !important;
-        font-weight: 500 !important;
+        font-weight: 600 !important;
         color: #CBD5E1 !important;
         white-space: nowrap !important;
         cursor: pointer !important;
@@ -204,31 +219,33 @@ st.markdown("""
     }
 
     div[data-testid="stRadio"] label:hover {
-        background: rgba(255, 255, 255, 0.1) !important;
+        background: rgba(255, 255, 255, 0.12) !important;
         color: #FFFFFF !important;
     }
 
     /* MOBILE AUTO-DETECTION (< 768px Viewport) */
     @media (max-width: 768px) {
         .splash-title {
-            font-size: 36px !important;
+            font-size: 32px !important;
         }
         .hero-title {
-            font-size: 22px !important;
+            font-size: 20px !important;
         }
         .hero-banner {
-            padding: 16px 18px !important;
+            padding: 14px 16px !important;
         }
         .apple-glass-card {
             padding: 16px !important;
         }
 
+        /* Mobile Island Dock - Lifted up with smooth scroll & no cutoff */
         div[data-testid="stRadio"] {
-            bottom: 12px !important;
-            padding: 6px 10px !important;
+            bottom: 18px !important;
+            padding: 6px 8px !important;
             border-radius: 30px !important;
-            width: 94vw !important;
-            max-width: 94vw !important;
+            width: calc(100vw - 28px) !important;
+            max-width: calc(100vw - 28px) !important;
+            box-sizing: border-box !important;
             overflow-x: auto !important;
             -webkit-overflow-scrolling: touch !important;
             scrollbar-width: none !important;
@@ -237,18 +254,20 @@ st.markdown("""
             display: none !important;
         }
         div[data-testid="stRadio"] > div {
-            display: flex !important;
+            display: inline-flex !important;
             flex-direction: row !important;
             flex-wrap: nowrap !important;
             gap: 6px !important;
             width: max-content !important;
             justify-content: flex-start !important;
+            padding: 0 4px !important;
         }
         div[data-testid="stRadio"] label {
-            padding: 5px 10px !important;
-            font-size: 11px !important;
-            border-radius: 16px !important;
+            padding: 6px 12px !important;
+            font-size: 12px !important;
+            border-radius: 18px !important;
             flex-shrink: 0 !important;
+            background: rgba(255, 255, 255, 0.05) !important;
         }
     }
 
@@ -283,10 +302,10 @@ with st.sidebar:
             if gemini_key:
                 genai.configure(api_key=gemini_key)
                 st.success("Connected!")
-    st.caption("Crafted with ❤️ by Raj • Dynamic Auto-Tokens & Multi-Lingual")
+    st.caption("Crafted with ❤️ by Raj • MLK PG College Balrampur")
 
-# Dynamic Auto-Tokens Engine with Auto Language Mirroring
-def get_ai_response(prompt, forced_language=None):
+# Dynamic Auto-Tokens Engine with Subject Context & Language Detection
+def get_ai_response(prompt, forced_language=None, current_subject="Python"):
     if not gemini_key:
         return "⚠️ Pehle Gemini API Key configure karein."
     
@@ -296,7 +315,6 @@ def get_ai_response(prompt, forced_language=None):
         "models/gemini-2.0-flash"
     ]
     
-    # Auto-detection instruction
     if forced_language:
         lang_instruction = f"Strictly generate the output in {forced_language}."
     else:
@@ -306,10 +324,15 @@ def get_ai_response(prompt, forced_language=None):
         )
 
     optimized_prompt = f"""
-    You are a distinguished computer science professor for university BCA curriculum.
+    You are a distinguished university professor for BCA curriculum at MLK PG College, Balrampur (Affiliated with Maa Pateshwari State University).
+    Current Active Subject Context: {current_subject}
     {lang_instruction}
-    Answer directly, professionally, and accurately. Complete all code blocks without cutting off.
-    Do not add conversational fluff or meta-announcements.
+    
+    IMPORTANT RULES:
+    1. Focus all questions, viva queries, and explanations strictly on the currently active subject ({current_subject}).
+    2. Provide direct, high-scoring university examination answers.
+    3. Complete all diagrams, code blocks, or mathematical proofs without cutting off.
+    4. Do not add conversational fluff or meta-announcements.
     
     Query:
     {prompt}
@@ -344,12 +367,12 @@ def get_ai_response(prompt, forced_language=None):
 if not st.session_state.app_entered:
     st.markdown("""
     <div class="splash-container">
-        <div class="creator-badge">✨ Next-Gen Education Portal</div>
-        <div class="splash-title">BCA Python AI Suite</div>
+        <div class="creator-badge">✨ Next-Gen BCA Ecosystem</div>
+        <div class="splash-title">MLK BCA Academic Portal</div>
         <div class="creator-signature">Crafted & Created by Raj ⚡</div>
         <div class="splash-subtitle">
-            Autonomous university curriculum, interactive smart testing engine, 
-            production project blueprints, and 24/7 AI mentor intelligence.
+            Autonomous curriculum for MLK PG College, Balrampur (Maa Pateshwari State University).
+            Complete syllabus coverage for Python Programming, Computer System Architecture & Discrete Mathematics.
         </div>
     </div>
     """, unsafe_allow_html=True)
@@ -361,48 +384,62 @@ if not st.session_state.app_entered:
             st.rerun()
 
 else:
-    # Top Creator Watermark Banner
-    st.markdown("""
-    <div style="display:flex; justify-content:space-between; align-items:center; padding: 7px 16px; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; margin-bottom: 16px;">
-        <span style="font-size: 13px; color: #94A3B8;">🎓 BCA Computer Science Ecosystem</span>
-        <span style="font-size: 13px; font-weight: 700; color: #38BDF8;">⚡ Created by Raj</span>
-    </div>
-    """, unsafe_allow_html=True)
-
-    def render_syllabus():
+    # Top Bar with Right Corner Subject Switcher
+    top_col1, top_col2 = st.columns([1.6, 1.4])
+    with top_col1:
         st.markdown("""
-        <div class="hero-banner">
-            <div class="hero-title">BCA Python Encyclopedia & Complete Syllabus</div>
-            <div class="hero-sub">Python ka har ek concept: Basic variables se lekar Advanced OOP, File I/O, Serialization aur Regex tak.</div>
+        <div style="padding-top: 10px;">
+            <span style="font-size: 13px; color: #94A3B8;">🏛️ MLK PG College Balrampur (Maa Pateshwari Univ)</span><br>
+            <span style="font-size: 14px; font-weight: 700; color: #38BDF8;">⚡ Created by Raj</span>
         </div>
         """, unsafe_allow_html=True)
+    with top_col2:
+        st.session_state.selected_subject = st.selectbox(
+            "Select Subject Slot:",
+            [
+                "🐍 Python Programming",
+                "🖥️ Computer System Architecture",
+                "📐 Mathematics & Numerical Methods"
+            ],
+            index=0
+        )
 
-        modules = [
-            "Module 1: Language Basics, Operators & Bitwise",
-            "Module 2: Control Flow & Iteration (Branches & Loops)",
-            "Module 3: Functions, Scopes, Lambdas & Recursion",
-            "Module 4: In-Depth Data Structures (Lists, Tuples, Dicts, Sets)",
-            "Module 5: Object-Oriented Programming (OOP Architecture)",
-            "Module 6: File Handling, Context Managers & JSON/CSV",
-            "Module 7: Exception Handling & Custom Errors",
-            "Module 8: Standard Libraries, Regex & Date-Time"
-        ]
+    # ================= 1. MULTI-SUBJECT SYLLABUS HUB =================
+    def render_syllabus():
+        active_subj = st.session_state.selected_subject
 
-        selected_module = st.selectbox("📚 Select Topic Module to Study:", modules)
+        # ------------------- 1. PYTHON SYLLABUS (FULL RESTORED) -------------------
+        if active_subj == "🐍 Python Programming":
+            st.markdown("""
+            <div class="hero-banner">
+                <div class="hero-title">Python Programming Encyclopedia</div>
+                <div class="hero-sub">MLK PG College Balrampur • BCA University Syllabus (Full Theory, Viva & Practical Code)</div>
+            </div>
+            """, unsafe_allow_html=True)
 
-        # ---------------- MODULE 1 ----------------
-        if selected_module == "Module 1: Language Basics, Operators & Bitwise":
-            st.markdown("### 🔹 Module 1: Core Fundamentals")
-            
-            with st.expander("1. Python Architecture, Bytecode Compilation & Dynamic Typing", expanded=True):
-                st.write("""
-                **Conceptual Architecture:**
-                * Python interpreted aur high-level programming language hai. Source code (`.py`) pehle platform-independent Bytecode (`.pyc`) mein compile hota hai.
-                * Bytecode ko Python Virtual Machine (PVM) line-by-line machine code (binary) mein translate karke execute karta hai.
-                * **Dynamic Typing vs Static Typing:** C ya C++ mein variable declare karte waqt data type batana padta hai (`int a = 10;`). Python dynamically typed hai; variable runtime par assigned value ke mutabik type acquire karta hai. Variables heap memory mein allocated objects ke references hote hain.
-                * **Garbage Collection:** Python memory allocation aur deallocation automatically **Reference Counting** aur **Generational Garbage Collector** ke zariye handle karta hai.
-                """)
-                st.code("""# Dynamic Typing & Object Reference Demonstration
+            py_modules = [
+                "Module 1: Language Basics, Operators & Bitwise",
+                "Module 2: Control Flow & Iteration (Branches & Loops)",
+                "Module 3: Functions, Scopes, Lambdas & Recursion",
+                "Module 4: In-Depth Data Structures (Lists, Tuples, Dicts, Sets)",
+                "Module 5: Object-Oriented Programming (OOP Architecture)",
+                "Module 6: File Handling, Context Managers & JSON/CSV",
+                "Module 7: Exception Handling & Custom Errors",
+                "Module 8: Standard Libraries, Regex & Date-Time"
+            ]
+            sel_mod = st.selectbox("📚 Select Python Module:", py_modules)
+
+            # MODULE 1
+            if sel_mod == "Module 1: Language Basics, Operators & Bitwise":
+                with st.expander("1. Python Architecture, Bytecode Compilation & Dynamic Typing", expanded=True):
+                    st.write("""
+                    **Conceptual Architecture:**
+                    * Python interpreted aur high-level programming language hai. Source code (`.py`) pehle platform-independent Bytecode (`.pyc`) mein compile hota hai.
+                    * Bytecode ko Python Virtual Machine (PVM) line-by-line machine code (binary) mein translate karke execute karta hai.
+                    * **Dynamic Typing vs Static Typing:** C ya C++ mein variable declare karte waqt data type batana padta hai (`int a = 10;`). Python dynamically typed hai; variable runtime par assigned value ke mutabik type acquire karta hai. Variables heap memory mein allocated objects ke references hote hain.
+                    * **Garbage Collection:** Python memory allocation aur deallocation automatically **Reference Counting** aur **Generational Garbage Collector** ke zariye handle karta hai.
+                    """)
+                    st.code("""# Dynamic Typing & Object Reference Demonstration
 x = 101
 print(f"Value: {x} | Data Type: {type(x)} | Memory Address (ID): {id(x)}")
 
@@ -415,26 +452,19 @@ a = 250
 b = 250
 print("a is b (Memory Identity Match):", a is b) # True""", language="python")
 
-            with st.expander("2. Identifiers, Reserved Keywords, Fundamental Data Types & Explicit Type Casting", expanded=False):
-                st.write("""
-                **Rules for Identifiers:**
-                * Alphabets (`a-z`, `A-Z`), digits (`0-9`), aur underscore (`_`) allow hote hain.
-                * Kabhi bhi digit se shuru nahi ho sakta (`1st_name` invalid hai, `first_name` valid hai).
-                * Reserved Keywords (jaise `def`, `class`, `if`, `while`, `pass`, `yield`) identifiers ke taur par use nahi kiye ja sakte.
-                
-                **Built-in Data Types:**
-                * **Numeric:** `int`, `float`, `complex` (e.g. `3 + 4j`).
-                * **Sequence:** `str`, `list`, `tuple`, `range`.
-                * **Binary:** `bytes`, `bytearray`, `memoryview`.
-                * **Mapping:** `dict`.
-                * **Set Types:** `set`, `frozenset`.
-                * **Boolean:** `bool` (`True` / `False`).
-                
-                **Type Casting:**
-                * **Implicit Casting:** Python automatic smaller data type ko larger type mein elevate karta hai (jaise `int + float -> float`).
-                * **Explicit Casting:** Programmer manually `int()`, `float()`, `str()`, `bool()`, `list()`, `set()`, ya `tuple()` functions se data convert karta hai.
-                """)
-                st.code("""# Complex numbers & Explicit Type Casting Demonstration
+                with st.expander("2. Identifiers, Reserved Keywords, Fundamental Data Types & Explicit Type Casting", expanded=False):
+                    st.write("""
+                    **Rules for Identifiers:**
+                    * Alphabets (`a-z`, `A-Z`), digits (`0-9`), aur underscore (`_`) allow hote hain.
+                    * Kabhi bhi digit se shuru nahi ho sakta (`1st_name` invalid hai, `first_name` valid hai).
+                    * Reserved Keywords (jaise `def`, `class`, `if`, `while`, `pass`, `yield`) identifiers ke taur par use nahi kiye ja sakte.
+                    
+                    **Built-in Data Types:**
+                    * **Numeric:** `int`, `float`, `complex` (e.g. `3 + 4j`).
+                    * **Sequence:** `str`, `list`, `tuple`, `range`.
+                    * **Mapping:** `dict` | **Set Types:** `set`, `frozenset` | **Boolean:** `bool`.
+                    """)
+                    st.code("""# Complex numbers & Explicit Type Casting Demonstration
 c_num = 4 + 7j
 print("Real Part:", c_num.real, "| Imaginary Part:", c_num.imag)
 
@@ -445,722 +475,522 @@ grand_total = converted_val + (converted_val * tax_percentage)
 
 print(f"Raw Input: '{raw_val}' ({type(raw_val)})")
 print(f"Parsed Integer: {converted_val} ({type(converted_val)})")
-print(f"Grand Total with 18% GST: INR {grand_total:.2f}")
+print(f"Grand Total with 18% GST: INR {grand_total:.2f}")""", language="python")
 
-# Boolean Conversion rules
-print("bool(0):", bool(0))         # False
-print("bool('Hello'):", bool("Hello")) # True
-print("bool([]):", bool([]))       # False (Empty collection)""", language="python")
-
-            with st.expander("3. Complete Operators (Arithmetic, Relational, Logical, Bitwise, Identity & Membership)", expanded=False):
-                st.write("""
-                **Operators Hierarchy & Mechanics:**
-                * **Arithmetic:** `+`, `-`, `*`, `/` (float quotient), `//` (floor division - removes fractional part), `%` (modulus remainder), `**` (exponentiation/power).
-                * **Comparison / Relational:** `==`, `!=`, `>`, `<`, `>=`, `<=`.
-                * **Logical:** `and` (both must be true), `or` (at least one true), `not` (inverts truth value). Short-circuit evaluation follow hoti hai.
-                * **Bitwise Operators:** Individual bits par direct calculation:
-                  * `&` (Bitwise AND)
-                  * `|` (Bitwise OR)
-                  * `^` (Bitwise XOR - odd parity)
-                  * `~` (Bitwise NOT - 2's complement: `~x = -(x + 1)`)
-                  * `<<` (Bitwise Left Shift - multiplies by $2^n$)
-                  * `>>` (Bitwise Right Shift - floor divides by $2^n$)
-                * **Identity Operators (`is`, `is not`):** Checks memory location equality (`id(x) == id(y)`).
-                * **Membership Operators (`in`, `not in`):** Checks container inclusion.
-                """)
-                st.code("""a = 14  # Binary: 0000 1110
-b = 4   # Binary: 0000 0100
+                with st.expander("3. Complete Operators (Arithmetic, Relational, Logical, Bitwise, Identity & Membership)", expanded=False):
+                    st.write("""
+                    **Operators Hierarchy & Mechanics:**
+                    * **Arithmetic:** `+`, `-`, `*`, `/` (float quotient), `//` (floor division), `%` (modulus remainder), `**` (exponentiation).
+                    * **Bitwise Operators:** `&` (AND), `|` (OR), `^` (XOR), `~` (NOT), `<<` (Left shift), `>>` (Right shift).
+                    * **Identity (`is`, `is not`):** Checks memory location equality (`id(x) == id(y)`).
+                    * **Membership (`in`, `not in`):** Checks sequence container inclusion.
+                    """)
+                    st.code("""a = 14  # Binary: 1110
+b = 4   # Binary: 0100
 
 print("Floor Division (14 // 4):", a // b) # 3
 print("Modulus Remainder (14 % 4):", a % b) # 2
 print("Exponentiation (14 ** 2):", a ** 2)  # 196
 
 # Bitwise Operations
-print("Bitwise AND (14 & 4):", a & b)      # 0100 -> 4
-print("Bitwise OR  (14 | 4):", a | b)      # 1110 -> 14
-print("Bitwise XOR (14 ^ 4):", a ^ b)      # 1010 -> 10
-print("Bitwise NOT (~14):", ~a)            # -(14 + 1) -> -15
-print("Left Shift (4 << 2):", b << 2)      # 4 * (2^2) -> 16
-print("Right Shift (14 >> 1):", a >> 1)    # 14 // 2 -> 7
+print("Bitwise AND (14 & 4):", a & b)      # 4
+print("Bitwise XOR (14 ^ 4):", a ^ b)      # 10
+print("Left Shift (4 << 2):", b << 2)      # 16
 
-# Identity vs Value Equality Check
-seq1 = [10, 20, 30]
-seq2 = [10, 20, 30]
-print("seq1 == seq2 (Value Equality):", seq1 == seq2)     # True
-print("seq1 is seq2 (Memory Reference Equality):", seq1 is seq2) # False
-print("20 in seq1 (Membership Test):", 20 in seq1)        # True""", language="python")
+# Identity vs Equality
+seq1, seq2 = [10, 20], [10, 20]
+print("seq1 == seq2 (Value):", seq1 == seq2)     # True
+print("seq1 is seq2 (Memory):", seq1 is seq2)    # False""", language="python")
 
-        # ---------------- MODULE 2 ----------------
-        elif selected_module == "Module 2: Control Flow & Iteration (Branches & Loops)":
-            st.markdown("### 🔹 Module 2: Decision Making & Loops")
-            
-            with st.expander("1. Conditional Branching (if, elif, else, Nested Branching, Ternary Operators)", expanded=True):
-                st.write("""
-                **Control Flow Architecture:**
-                * Python curly braces `{}` ke bajaye **Indentation (standard 4 spaces)** use karta hai blocks of execution define karne ke liye.
-                * **Ternary Operator (Conditional Expression):** Single line mein decision evaluation karta hai:
-                  `result = expression_if_true if condition else expression_if_false`
-                * **Truthy and Falsy values:** `0`, `0.0`, `""` (empty string), `None`, `[]`, `{}`, `()` sabhi `False` evaluate hote hain. Baki sab `True`.
-                """)
-                st.code("""marks = 86
-attendance_percent = 78
+            # MODULE 2
+            elif sel_mod == "Module 2: Control Flow & Iteration (Branches & Loops)":
+                with st.expander("1. Conditional Branching (if, elif, else, Nested if, Ternary Operator)", expanded=True):
+                    st.write("""
+                    * Indentation (standard 4 spaces) execution block define karta hai.
+                    * **Ternary Operator:** `result = true_val if condition else false_val`
+                    """)
+                    st.code("""marks = 86
+division = "Distinction" if marks >= 80 else "Regular Pass"
+print("Status:", division)
 
-# Inline Ternary Expression
-hall_ticket_eligible = True if attendance_percent >= 75 else False
-print("Admit Card Granted:", hall_ticket_eligible)
-
-# Nested Decision Logic
-if hall_ticket_eligible:
-    if marks >= 90:
-        division = "First Class with Distinction (Honors)"
-    elif marks >= 75:
-        division = "First Class"
-    elif marks >= 50:
-        division = "Second Class"
-    else:
-        division = "Pass Division"
-    print(f"Academic Standing: {division}")
+if marks >= 90:
+    print("Grade: O")
+elif marks >= 60:
+    print("Grade: A")
 else:
-    print("Detained due to attendance shortage (< 75%).")""", language="python")
+    print("Grade: Pass")""", language="python")
 
-            with st.expander("2. Loops in Python (for, while, range() internal step mechanism)", expanded=False):
-                st.write("""
-                **Iteration Mechanics:**
-                * **`for` loop:** Collection ke items par iterate karta hai. Python ka `for` loop basically ek `for-each` construct hota hai jo internally `iter()` aur `next()` protocol follow karta hai.
-                * **`while` loop:** Condition-controlled indefinite looping deta hai. Jab tak given boolean expression `True` rehta hai, block execute hota hai.
-                * **`range(start, stop, step)`:** In-memory complete list create nahi karta; balki ek immutable sequence generator return karta hai jo memory efficient hota hai.
-                """)
-                st.code("""# Traverse sequence with negative step
-print("Reverse Counting with step -2:")
+                with st.expander("2. Loops in Python (for, while, range() internal step mechanism)", expanded=False):
+                    st.write("""
+                    * `range(start, stop, step)` memory efficient generator return karta hai.
+                    """)
+                    st.code("""print("Reverse Counting with step -2:")
 for val in range(10, 0, -2):
     print(val, end=" -> ")
-print("LAUNCH")
+print("LAUNCH")""", language="python")
 
-# Nested while loop for generating multiplication tables
-num = 1
-while num <= 3:
-    multiplier = 1
-    print(f"\\n--- Multiplication Table of {num} ---")
-    while multiplier <= 5:
-        print(f"{num} x {multiplier} = {num * multiplier}")
-        multiplier += 1
-    num += 1""", language="python")
-
-            with st.expander("3. Loop Control Statements (break, continue, pass, for-else construct)", expanded=False):
-                st.write("""
-                **Control Jump Statements:**
-                * **`break`:** Loop ko immediately terminate kar deta hai aur control loop ke bahar bhejta hai.
-                * **`continue`:** Current round ki remaining lines ko skip karke agle iteration cycle par bhejta hai.
-                * **`pass`:** No-operation placeholder statement (Syntactic requirement poori karne ke liye).
-                * **`for-else` / `while-else` (Important BCA Viva Concept):** Loop ke sath attached `else` block tabhi run hota hai jab loop natural condition fail hone par khatam ho, yaani **kisi `break` statement se terminate na hua ho**!
-                """)
-                st.code("""# Searching prime number using for-else construct
-test_number = 37
-
+                with st.expander("3. Loop Control Statements (break, continue, pass, for-else construct)", expanded=False):
+                    st.write("""
+                    * **for-else:** Loop ka `else` block tabhi run hota hai jab loop natural end tak pahuche, yaani beech mein **kisi `break` statement se terminate na hua ho**.
+                    """)
+                    st.code("""test_number = 37
 for divisor in range(2, int(test_number**0.5) + 1):
     if test_number % divisor == 0:
         print(f"{test_number} is composite, divided by {divisor}")
         break
 else:
-    # Yeh block tabhi execute hota hai jab loop poora chale aur break na lage
-    print(f"{test_number} is a VERIFIED PRIME NUMBER (Loop completed without break)!")
+    print(f"{test_number} is a VERIFIED PRIME NUMBER (Loop completed without break)!")""", language="python")
 
-# Demonstrate Continue & Pass
-print("\\nOdd number print with continue:")
-for n in range(1, 10):
-    if n % 2 == 0:
-        continue # Skip evens
-    print(n, end=" ")
-print()""", language="python")
+            # MODULE 3 (RESTORED)
+            elif sel_mod == "Module 3: Functions, Scopes, Lambdas & Recursion":
+                with st.expander("1. Function Architecture, Positional, Keyword, *args & **kwargs", expanded=True):
+                    st.write("""
+                    * `*args`: Extra positional arguments ko **Tuple** mein pack karta hai.
+                    * `**kwargs`: Extra keyword arguments ko **Dictionary** mein pack karta hai.
+                    """)
+                    st.code("""def register_student(name, roll, *subjects, college="MLK PG", **scores):
+    print(f"Student: {name} (Roll: {roll}) | College: {college}")
+    print("Enrolled Subjects:", subjects)
+    print("Marks Recorded:", scores)
 
-        # ---------------- MODULE 3 ----------------
-        elif selected_module == "Module 3: Functions, Scopes, Lambdas & Recursion":
-            st.markdown("### 🔹 Module 3: Modular Programming")
-            
-            with st.expander("1. Function Architecture, Positional, Keyword, *args & **kwargs", expanded=True):
-                st.write("""
-                **Function Mechanics:**
-                * Functions modularity, clean code separation, aur reusability facilitate karte hain.
-                * **Positional Arguments:** Order matching ke hisab se parameter map hote hain.
-                * **Keyword Arguments:** Parameter name specify karke pass kiye jate hain (order independent).
-                * **Default Arguments:** Agar caller parameter pass na kare toh pre-assigned default value use hoti hai.
-                * **`*args` (Arbitrary Positional):** Extra positional arguments ko ek **Tuple** mein pack kar leta hai.
-                * **`**kwargs` (Arbitrary Keyword):** Extra named arguments ko ek **Dictionary** mein pack kar leta hai.
-                """)
-                st.code("""def register_student(name, roll, *registered_courses, college="BCA University", **exam_scores):
-    print(f"=== Student Enrollment: {name} (Roll: {roll}) ===")
-    print(f"Institution: {college}")
-    print(f"Enrolled Courses ({len(registered_courses)}):", ", ".join(registered_courses))
-    print("Course Marks Record:")
-    for subject, score in exam_scores.items():
-        print(f"  * {subject}: {score} / 100")
+register_student("Raj Shraff", 101, "Python", "CSA", "Maths", Python=95, CSA=88)""", language="python")
 
-# Invocation with arbitrary positional (*args) and keyword arguments (**kwargs)
-register_student(
-    "Raj Shraff", 101,
-    "Python Programming", "Computer System Architecture", "Discrete Mathematics",
-    college="State IT Institute",
-    Python=95, CSA=88, Discrete_Maths=91
-)""", language="python")
+                with st.expander("2. Scope Resolution (LEGB Rule), global and nonlocal keywords", expanded=False):
+                    st.write("""
+                    * **LEGB Hierarchy:** Local $\\rightarrow$ Enclosing $\\rightarrow$ Global $\\rightarrow$ Built-in.
+                    * `global`: Module level variable modify karne ke liye.
+                    * `nonlocal`: Closures aur nested functions mein enclosing variable mutate karne ke liye.
+                    """)
+                    st.code("""univ = "Maa Pateshwari Univ"
 
-            with st.expander("2. Scope Resolution (LEGB Rule), global and nonlocal keywords", expanded=False):
-                st.write("""
-                **Scope Hierarchy (LEGB Rule):**
-                1. **L**ocal: Function ke body ke andar created variables.
-                2. **E**nclosing: Outer nested enclosing function ke variables.
-                3. **G**lobal: Module level par defined variables.
-                4. **B**uilt-in: Python ke built-in names (jaise `print`, `len`, `range`, `Exception`).
-                
-                * **`global` keyword:** Function ke andar global variable ko modify karne ke liye use hota hai.
-                * **`nonlocal` keyword:** Closures aur nested functions mein outer scope ke non-global variable ko mutate karne ke liye use hota hai.
-                """)
-                st.code("""portal_status = "Active"
+def outer():
+    campus = "Main Campus"
+    def inner():
+        nonlocal campus
+        campus = "Balrampur Campus"
+        global univ
+        univ = "Maa Pateshwari State University"
+    inner()
+    print("Enclosing Campus:", campus)
 
-def campus_registry():
-    branch = "Lucknow Main Campus"
-    
-    def update_records():
-        nonlocal branch # Modifies enclosing variable
-        branch = "Noida Extension Campus"
-        global portal_status # Modifies global variable
-        portal_status = "Maintenance Mode"
-        print("Inner scope updated branch to:", branch)
-        
-    update_records()
-    print("Enclosing scope branch now reflects:", branch)
+outer()
+print("Global Univ:", univ)""", language="python")
 
-campus_registry()
-print("Global portal status now reflects:", portal_status)""", language="python")
+                with st.expander("3. Anonymous Functions (Lambda), map(), filter(), reduce()", expanded=False):
+                    st.write("""
+                    * **Lambda:** Inline anonymous function (`lambda args: expr`).
+                    * `map()`, `filter()`, aur `reduce()` functional programming tools provide karte hain.
+                    """)
+                    st.code("""from functools import reduce
+scores = [45, 88, 72, 91, 54, 63, 98]
 
-            with st.expander("3. Anonymous Functions (Lambda), map(), filter(), reduce()", expanded=False):
-                st.write("""
-                * **Lambda Expressions:** Inline single-line functions without `def`:
-                  `lambda arguments: expression`
-                * **`map(function, iterable)`:** Sequence ke har individual element par transformer apply karta hai.
-                * **`filter(function, iterable)`:** Function ke boolean return value ke mutabik elements filter karta hai.
-                * **`reduce(function, iterable)`:** `functools` package se imported function jo sequence ko pair-wise reduce karke single cumulative value return karta hai.
-                """)
-                st.code("""from functools import reduce
+first_class = list(filter(lambda m: m >= 60, scores))
+grace_marks = list(map(lambda m: m + 5 if m < 60 else m, scores))
+total_sum = reduce(lambda a, b: a + b, scores)
 
-student_marks = [45, 88, 72, 91, 54, 63, 98, 41]
+print("First Class:", first_class)
+print("Grace Added:", grace_marks)
+print("Aggregate:", total_sum)""", language="python")
 
-# 1. Filter students who scored First Class (>= 60)
-first_class = list(filter(lambda mark: mark >= 60, student_marks))
-print("First Class Scores:", first_class)
+                with st.expander("4. Recursion, Call Stack Mechanics & Base Cases", expanded=False):
+                    st.write("""
+                    * **GCD (Euclidean Algorithm) & Tower of Hanoi.** Base case na hone par stack overflow aur `RecursionError` throw hota hai.
+                    """)
+                    st.code("""def compute_gcd(a, b):
+    return a if b == 0 else compute_gcd(b, a % b)
 
-# 2. Map: Grant 5 grace marks to borderline passing scores (< 50)
-grace_awarded = list(map(lambda m: m + 5 if m < 50 else m, student_marks))
-print("Grace Marks Adjusted:", grace_awarded)
+print("GCD of 48 and 18:", compute_gcd(48, 18))""", language="python")
 
-# 3. Reduce: Compute Aggregate Batch Total
-batch_aggregate = reduce(lambda acc, val: acc + val, student_marks)
-average_score = batch_aggregate / len(student_marks)
-print(f"Batch Aggregate: {batch_aggregate} | Average Score: {average_score:.2f}")""", language="python")
-
-            with st.expander("4. Recursion, Call Stack Mechanics, Base Cases & Recursion Limit", expanded=False):
-                st.write("""
-                **Recursive Function Theory:**
-                * Recursion tab hota hai jab function khud ko bar-bar invoke kare jab tak terminal condition satisfy na ho jaye.
-                * **Base Case:** Stopping condition jo infinite looping aur call stack overflow ko prevent karti hai.
-                * **Call Stack:** Har function call system stack mein activation record (stack frame) allocate karti hai.
-                * Python default recursion limit `1000` rakhta hai (`sys.getrecursionlimit()`). Limit exceed hone par `RecursionError` raise hota hai.
-                """)
-                st.code("""# Greatest Common Divisor (GCD / HCF) using Euclidean Recursive Algorithm
-def compute_gcd(a, b):
-    # Base Case
-    if b == 0:
-        return a
-    # Recursive Case
-    return compute_gcd(b, a % b)
-
-num1, num2 = 48, 18
-print(f"GCD of {num1} and {num2} via Recursion is: {compute_gcd(num1, num2)}")
-
-# Tower of Hanoi Recursive Steps
-def tower_of_hanoi(n, source, destination, auxiliary):
-    if n == 1:
-        print(f"Move disk 1 from rod {source} to rod {destination}")
-        return
-    tower_of_hanoi(n - 1, source, auxiliary, destination)
-    print(f"Move disk {n} from rod {source} to rod {destination}")
-    tower_of_hanoi(n - 1, auxiliary, destination, source)
-
-print("\\nTower of Hanoi sequence for 3 Disks:")
-tower_of_hanoi(3, 'A', 'C', 'B')""", language="python")
-
-        # ---------------- MODULE 4 ----------------
-        elif selected_module == "Module 4: In-Depth Data Structures (Lists, Tuples, Dicts, Sets)":
-            st.markdown("### 🔹 Module 4: Data Structures & Memory Layout")
-            
-            with st.expander("1. Lists (Memory Architecture, Slicing, In-Place Methods, List Comprehensions)", expanded=True):
-                st.write("""
-                **List Internal Architecture:**
-                * Python lists contiguous dynamic arrays of object pointers hoti hain. Heterogeneous data types store kar sakti hain.
-                * **Mutable:** Memory address modify kiye bina elements update, insert, delete ho sakte hain.
-                * **Slicing Mechanics:** `list[start:stop:step]` (Negative step poori list ko reverse karta hai).
-                * **List Comprehension:** Declarative syntactic sugar jo loops ke comparison mein C-level speed par execute hoti hai.
-                """)
-                st.code("""# 2D Grid Matrix generation & manipulation
-matrix = [
-    [1, 2, 3],
-    [4, 5, 6],
-    [7, 8, 9]
-]
-
-# Flatten 2D matrix into 1D list via nested list comprehension
-flattened = [item for row in matrix for item in row]
-print("Flattened List:", flattened)
-
-# Extract only even squares
+            # MODULE 4 (RESTORED)
+            elif sel_mod == "Module 4: In-Depth Data Structures (Lists, Tuples, Dicts, Sets)":
+                with st.expander("1. Lists (Memory Architecture, Slicing, List Comprehensions)", expanded=True):
+                    st.write("""
+                    * Dynamic array of pointers. Heterogeneous data types support karta hai.
+                    """)
+                    st.code("""matrix = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
+flattened = [val for row in matrix for val in row]
 even_squares = [x**2 for x in flattened if x % 2 == 0]
-print("Even Squares:", even_squares)
+print("Flattened Matrix:", flattened)
+print("Even Squares:", even_squares)""", language="python")
 
-# In-place modifications
-flattened.sort(reverse=True)
-print("In-Place Descending Sort:", flattened)""", language="python")
+                with st.expander("2. Tuples (Immutability, Asterisk Unpacking & Memory Efficiency)", expanded=False):
+                    st.write("""
+                    * Lightweight and hashable. Can be used as dictionary keys.
+                    """)
+                    st.code("""record = ("Raj Shraff", "BCA", 1, 89.5, 92.0, 95.0)
+name, degree, sem, *grades = record
+print(f"Candidate: {name} | Grades: {grades}")""", language="python")
 
-            with st.expander("2. Tuples (Immutability, Packing, Asterisk Unpacking & Memory Efficiency)", expanded=False):
-                st.write("""
-                **Tuples vs Lists:**
-                * Tuples immutable sequences hain. Ek baar create hone ke baad size ya contents alter nahi kiye ja sakte.
-                * **Memory Efficiency:** Tuples fixed size ke karan lists se kam memory lete hain aur faster access time provide karte hain.
-                * **Hashability:** Agar tuple ke sabhi elements immutable hon, toh tuple hashable hota hai aur dictionary key ban sakta hai.
-                """)
-                st.code("""# Advanced Tuple Unpacking with Extended Asterisk
-student_record = ("Raj Shraff", "BCA", 1, "Semester A", 89.5, 92.0, 94.5, "Grade O")
-name, degree, sem, section, *semester_marks, final_grade = student_record
+                with st.expander("3. Dictionaries (Hash Maps, Lookups, Dict Comprehensions)", expanded=False):
+                    st.write("""
+                    * $O(1)$ average time complexity.
+                    """)
+                    st.code("""marks = {"Python": 95, "CSA": 88, "Calculus": 79, "Discrete": 92}
+honors = {k: v for k, v in marks.items() if v >= 85}
+print("Honors Qualified:", honors)""", language="python")
 
-print(f"Candidate: {name} | Course: {degree} (Sem {sem})")
-print(f"Semester Marks Captured via *rest: {semester_marks}")
-print(f"Final Standing: {final_grade}")
+                with st.expander("4. Sets (Set Theory Operations & Frozenset)", expanded=False):
+                    st.write("""
+                    * Mathematical operations: Union (`|`), Intersection (`&`), Difference (`-`), Symmetric Difference (`^`).
+                    """)
+                    st.code("""python_std = {"Raj", "Aman", "Rohan"}
+csa_std = {"Aman", "Khushi", "Raj"}
+print("Both Courses (Intersection):", python_std & csa_std)
+print("Only in Python (Difference):", python_std - csa_std)""", language="python")
 
-# Tuple as Dictionary Key (Coordinates / Composite IDs)
-geo_nodes = {
-    (28.6139, 77.2090): "New Delhi Head Office",
-    (26.8467, 80.9462): "Lucknow Regional Campus"
-}
-print("Node at Coordinates:", geo_nodes[(26.8467, 80.9462)])""", language="python")
+            # MODULE 5 (RESTORED)
+            elif sel_mod == "Module 5: Object-Oriented Programming (OOP Architecture)":
+                with st.expander("1. Classes, Objects, __init__ Constructor & self", expanded=True):
+                    st.write("""
+                    * Classes act as blueprints; objects act as heap memory instances.
+                    """)
+                    st.code("""class BCAStudent:
+    college = "MLK PG College Balrampur"
+    def __init__(self, name, roll):
+        self.name = name
+        self.roll = roll
+    def profile(self):
+        return f"{self.name} (Roll: {self.roll}) - {BCAStudent.college}"
 
-            with st.expander("3. Dictionaries (Hash Tables, Collision Resolution, Dict Comprehensions)", expanded=False):
-                st.write("""
-                **Dictionary Architecture:**
-                * Hash table data structure par implemented key-value storage.
-                * Average time complexity lookups, insertions aur deletions ke liye $O(1)$ hoti hai.
-                * Keys unique aur strictly immutable honi chahiye. Values mutable ho sakti hain.
-                * **Methods:** `.get(key, default)`, `.setdefault()`, `.pop()`, `.update()`, `.items()`.
-                """)
-                st.code("""curriculum_marks = {
-    "Python": 95,
-    "CSA": 88,
-    "Calculus": 79,
-    "Digital Electronics": 84,
-    "Technical English": 91
-}
+s = BCAStudent("Raj Shraff", 101)
+print(s.profile())""", language="python")
 
-# Safe Lookup with default fallback
-print("DBMS Marks:", curriculum_marks.get("DBMS", "Not Registered Yet"))
-
-# Dictionary Comprehension: High Achiever Subjects (Marks >= 85)
-honors_subjects = {sub: mark for sub, mark in curriculum_marks.items() if mark >= 85}
-print("Honors Qualified Subjects:", honors_subjects)
-
-# Nested dictionary transformation
-course_catalog = {
-    "CS101": {"title": "Python Basics", "credits": 4},
-    "CS102": {"title": "Computer Org", "credits": 3}
-}
-print("CS101 Credits:", course_catalog["CS101"]["credits"])""", language="python")
-
-            with st.expander("4. Sets (Hashing, Mathematical Set Theory Operations, Frozenset)", expanded=False):
-                st.write("""
-                **Set Data Structure:**
-                * Unordered, unindexed collection of unique elements. Duplicates automatically discard ho jate hain.
-                * Elements must be hashable. Sets mutable hote hain jabki `frozenset` immutable set hota hai.
-                * **Set Operations:** Union (`|`), Intersection (`&`), Difference (`-`), Symmetric Difference (`^`).
-                """)
-                st.code("""python_cohort = {"Raj", "Aman", "Rohan", "Khushi", "Vikram"}
-c_cohort = {"Aman", "Khushi", "Sneha", "Karan", "Pooja"}
-
-print("Enrolled in Both Subjects (Intersection):", python_cohort & c_cohort)
-print("Only in Python (Difference):", python_cohort - c_cohort)
-print("Unique across any subject (Symmetric Difference):", python_cohort ^ c_cohort)
-print("Total Unique Roster (Union):", python_cohort | c_cohort)
-
-# Immutable Frozenset
-immutable_keys = frozenset(["ADMIN", "STUDENT", "EXAMINER"])
-print("Frozenset:", immutable_keys)""", language="python")
-
-        # ---------------- MODULE 5 ----------------
-        elif selected_module == "Module 5: Object-Oriented Programming (OOP Architecture)":
-            st.markdown("### 🔹 Module 5: Object-Oriented Programming Architecture")
-            
-            with st.expander("1. Classes, Objects, __init__ Constructor & self Parameter", expanded=True):
-                st.write("""
-                **Object-Oriented Paradigm:**
-                * **Class:** User-defined prototype / blueprint jo real-world entity ki state aur behavior define karta hai.
-                * **Object:** Heap memory mein class ka instantiated physical representation.
-                * **`__init__()`:** Initializer method jo object creation ke samay instance variables ko bind karta hai.
-                * **`self`:** Calling object ka direct memory reference.
-                * **Class vs Instance Variables:** Class variables sabhi instances mein share hote hain, jabki instance variables har object ke unique hote hain.
-                """)
-                st.code("""class BCAStudent:
-    # Class Attribute (Shared across entire batch)
-    university_name = "State University of Technology"
-    total_enrolled = 0
-
-    def __init__(self, full_name, roll_no, semester=1):
-        # Instance Attributes
-        self.name = full_name
-        self.roll = roll_no
-        self.sem = semester
-        BCAStudent.total_enrolled += 1
-
-    def display_profile(self):
-        return f"Roll: {self.roll} | Student: {self.name} | Sem: {self.sem} | Affiliation: {BCAStudent.university_name}"
-
-s1 = BCAStudent("Raj Shraff", 101, 1)
-s2 = BCAStudent("Aman Sharma", 102, 1)
-
-print(s1.display_profile())
-print(s2.display_profile())
-print(f"Total Student Count: {BCAStudent.total_enrolled}")""", language="python")
-
-            with st.expander("2. Encapsulation, Data Hiding, Getters/Setters & @property Decorator", expanded=False):
-                st.write("""
-                **Encapsulation Principles:**
-                * Internal state ko direct accidental modification se protect karna.
-                * **Public:** `self.name` (Directly accessible).
-                * **Protected:** `self._marks` (Internal/subclass access convention).
-                * **Private:** `self.__balance` (Name Mangling apply hoti hai: `_ClassName__variable`).
-                * **`@property`:** Clean, Pythonic getter aur setter mechanism provide karta hai.
-                """)
-                st.code("""class FeeAccount:
-    def __init__(self, student_name, initial_balance):
-        self.student = student_name
-        self.__balance = initial_balance # Private attribute
+                with st.expander("2. Encapsulation, Private Specifiers & @property Decorator", expanded=False):
+                    st.write("""
+                    * Private variables use double underscore (`__var`) leading to Name Mangling (`_ClassName__var`).
+                    """)
+                    st.code("""class Account:
+    def __init__(self, balance):
+        self.__balance = balance
 
     @property
     def balance(self):
-        \"\"\"Getter method\"\"\"
         return self.__balance
 
     @balance.setter
-    def balance(self, new_amount):
-        \"\"\"Setter method with validation\"\"\"
-        if new_amount < 0:
-            raise ValueError("Account balance cannot be negative!")
-        self.__balance = new_amount
+    def balance(self, amt):
+        if amt < 0: raise ValueError("Cannot be negative")
+        self.__balance = amt
 
-account = FeeAccount("Raj", 15000)
-print(f"Fee Balance for {account.student}: INR {account.balance}")
+acc = Account(15000)
+acc.balance = 20000
+print("Balance verified:", acc.balance)""", language="python")
 
-account.balance = 20000 # Clean property setter
-print("Updated Balance:", account.balance)""", language="python")
+                with st.expander("3. Inheritance (Single, Multiple, Multilevel, MRO & super())", expanded=False):
+                    st.write("""
+                    * MRO uses C3 Linearization algorithm to resolve diamond problem in multiple inheritance.
+                    """)
+                    st.code("""class Person:
+    def __init__(self, name): self.name = name
 
-            with st.expander("3. Types of Inheritance (Single, Multiple, Multilevel, MRO & super())", expanded=False):
-                st.write("""
-                **Inheritance Architecture:**
-                * Code reusability aur hierarchical classification provide karta hai.
-                * **Single:** Child class single parent class ko inherit karti hai.
-                * **Multilevel:** Base -> Intermediate -> Derived.
-                * **Multiple:** Child ek se zyada parent classes inherit karti hai.
-                * **Method Resolution Order (MRO):** C3 Linearization algorithm jo decide karta hai ki conflict hone par method kis class se resolve hoga.
-                * **`super()`:** Parent class ke constructor aur methods ko seamlessly invoke karta hai.
-                """)
-                st.code("""class Person:
-    def __init__(self, name, age):
-        self.name = name
-        self.age = age
+class Tech:
+    def __init__(self, stack): self.stack = stack
 
-class Academics:
-    def __init__(self, course, gpa):
-        self.course = course
-        self.gpa = gpa
-
-# Multiple Inheritance
-class Scholar(Person, Academics):
-    def __init__(self, name, age, course, gpa, roll):
-        Person.__init__(self, name, age)
-        Academics.__init__(self, course, gpa)
+class Developer(Person, Tech):
+    def __init__(self, name, stack, roll):
+        Person.__init__(self, name)
+        Tech.__init__(self, stack)
         self.roll = roll
 
-    def get_credentials(self):
-        return f"Scholar {self.name} (Roll: {self.roll}) enrolled in {self.course} with GPA: {self.gpa}"
+dev = Developer("Raj", "Python & CSA", 101)
+print(f"Dev: {dev.name} | Stack: {dev.stack} | Roll: {dev.roll}")
+print("MRO:", Developer.__mro__)""", language="python")
 
-scholar1 = Scholar("Raj", 25, "BCA", 9.2, 101)
-print(scholar1.get_credentials())
-print("Method Resolution Order (MRO):", [cls.__name__ for cls in Scholar.__mro__])""", language="python")
-
-            with st.expander("4. Polymorphism, Method Overriding & Dunder / Magic Methods", expanded=False):
-                st.write("""
-                * **Method Overriding:** Subclass parent ke method ko specialized implementation deti hai.
-                * **Operator Overloading via Magic Methods:**
-                  * `__str__()`: User-friendly printable string representation.
-                  * `__repr__()`: Developer debugging representation.
-                  * `__len__()`: Object par `len()` call hone par execute hota hai.
-                  * `__add__()`: `+` operator ko custom logic deta hai.
-                """)
-                st.code("""class SyllabusModule:
-    def __init__(self, title, total_hours):
+                with st.expander("4. Polymorphism, Overriding & Dunder Methods (__str__, __len__, __add__)", expanded=False):
+                    st.write("""
+                    * Magic/Dunder methods operator overloading provide karte hain.
+                    """)
+                    st.code("""class Module:
+    def __init__(self, title, hours):
         self.title = title
-        self.hours = total_hours
+        self.hours = hours
+    def __str__(self): return f"'{self.title}' ({self.hours}h)"
+    def __len__(self): return self.hours
+    def __add__(self, other): return self.hours + other.hours
 
-    def __str__(self):
-        return f"Curriculum Module: '{self.title}' ({self.hours} Hours)"
+m1 = Module("Python Core", 45)
+m2 = Module("CSA Architecture", 40)
+print(str(m1))
+print("Combined Hours:", m1 + m2)""", language="python")
 
-    def __len__(self):
-        return self.hours
-
-    def __add__(self, other):
-        # Overloading '+' to combine teaching hours
-        return self.hours + other.hours
-
-mod1 = SyllabusModule("Python Core & OOP", 45)
-mod2 = SyllabusModule("Computer System Architecture", 40)
-
-print(str(mod1))
-print("Hours in Module 1:", len(mod1))
-print("Total Semester Teaching Hours:", mod1 + mod2)""", language="python")
-
-        # ---------------- MODULE 6 ----------------
-        elif selected_module == "Module 6: File Handling, Context Managers & JSON/CSV":
-            st.markdown("### 🔹 Module 6: Persistence & Serialization")
-            
-            with st.expander("1. File Modes, seek(), tell() & with context manager", expanded=True):
-                st.write("""
-                **File Handling Fundamentals:**
-                * **Modes:**
-                  * `'r'`: Read only (file must exist).
-                  * `'w'`: Truncate and write (creates new file if not present).
-                  * `'a'`: Append at end of file.
-                  * `'r+'`: Read and write.
-                  * `'b'`: Binary mode (for images, compiled data).
-                * **Context Manager (`with` statement):** Ensures file handles automatically close hote hain chahe exception raise ho.
-                * **`tell()`:** Current file pointer byte index batata hai.
-                * **`seek(offset, whence)`:** File pointer position shift karta hai (`0`: start, `1`: current, `2`: end).
-                """)
-                st.code("""test_file = "bca_sample_log.txt"
-
-# Safe write and read operations
-with open(test_file, "w+", encoding="utf-8") as f:
-    f.write("Line 1: BCA Semester 1 Python Practical\\nLine 2: University Lab Session 2026")
-    print("Byte cursor after write:", f.tell())
-    
-    # Reposition pointer back to beginning
+            # MODULE 6 (RESTORED)
+            elif sel_mod == "Module 6: File Handling, Context Managers & JSON/CSV":
+                with st.expander("1. File Modes, seek(), tell() & with Context Manager", expanded=True):
+                    st.write("""
+                    * `with` automatically calls `__enter__()` and `__exit__()` to guarantee resource cleanup.
+                    """)
+                    st.code("""with open("sample.txt", "w+") as f:
+    f.write("BCA Semester 1 - Python\\nMLK PG College Balrampur")
+    print("Cursor at:", f.tell())
     f.seek(0)
-    print("Byte cursor after seek(0):", f.tell())
-    content = f.read()
-    print("Read File Content:\\n" + content)""", language="python")
+    print("Read content:\\n" + f.read())""", language="python")
 
-            with st.expander("2. JSON Serialization & Deserialization (json module)", expanded=False):
-                st.write("""
-                * **Serialization (Encoding):** Python data structure ko JSON string format mein convert karna (`json.dumps()`) ya file stream mein write karna (`json.dump()`).
-                * **Deserialization (Decoding):** JSON string ko Python native dictionary/list mein parse karna (`json.loads()`) ya file stream se load karna (`json.load()`).
-                """)
-                st.code("""import json
+                with st.expander("2. JSON Serialization & Deserialization", expanded=False):
+                    st.code("""import json
+data = {"name": "Raj", "degree": "BCA", "verified": True}
+json_str = json.dumps(data, indent=2)
+print("Serialized JSON:\\n", json_str)
+parsed = json.loads(json_str)
+print("Parsed Object Name:", parsed["name"])""", language="python")
 
-student_database = {
-    "student_id": "BCA-2026-101",
-    "personal_details": {
-        "name": "Raj Shraff",
-        "verified": True,
-        "semester": 1
-    },
-    "registered_subjects": ["Python", "CSA", "Mathematics", "Discrete Logic"],
-    "score_sheet": {"Python": 95, "CSA": 88}
-}
+            # MODULE 7 (RESTORED)
+            elif sel_mod == "Module 7: Exception Handling & Custom Errors":
+                with st.expander("1. try-except-else-finally & Custom Exceptions", expanded=True):
+                    st.write("""
+                    * `else` block runs only when no exception occurs. `finally` runs unconditionally.
+                    """)
+                    st.code("""class InvalidMarksError(Exception): pass
 
-# Serialize dictionary to formatted JSON string
-json_formatted = json.dumps(student_database, indent=2)
-print("Serialized JSON Output:\\n", json_formatted)
-
-# Deserialize JSON back into Python Dictionary
-parsed_obj = json.loads(json_formatted)
-print("\\nParsed Student Name:", parsed_obj["personal_details"]["name"])
-print("Enrolled Subject Count:", len(parsed_obj["registered_subjects"]))""", language="python")
-
-        # ---------------- MODULE 7 ----------------
-        elif selected_module == "Module 7: Exception Handling & Custom Errors":
-            st.markdown("### 🔹 Module 7: Error Resilience & Exceptions")
-            
-            with st.expander("1. Complete try-except-else-finally Architecture", expanded=True):
-                st.write("""
-                **Exception Pipeline Mechanics:**
-                * **`try`:** Risky code block jahan runtime errors expect kiye ja sakte hain.
-                * **`except SpecificException as err`:** Matching exception type ko intercept karke graceful recovery deta hai.
-                * **`else`:** Tabhi run hota hai jab try block mein **koi error na aaye**.
-                * **`finally`:** Chahe error throw ho ya na ho, cleanup actions (jaise memory deallocation, connection closing) ke liye guaranteed execute hota hai.
-                """)
-                st.code("""def robust_division_engine(numerator, denominator):
-    try:
-        val = float(numerator) / float(denominator)
-    except ZeroDivisionError as zde:
-        print(f"[ERROR CATCH] Math Error: Cannot divide by zero ({zde})")
-        return None
-    except ValueError as ve:
-        print(f"[ERROR CATCH] Type Error: Numeric conversion failed ({ve})")
-        return None
-    else:
-        print("[SUCCESS] Division completed without any errors.")
-        return val
-    finally:
-        print("[FINALLY] Execution pipeline terminated successfully.")
-
-print("Test Case 1 (10 / 2):", robust_division_engine(10, 2))
-print("---")
-print("Test Case 2 (10 / 0):", robust_division_engine(10, 0))""", language="python")
-
-            with st.expander("2. Raising Exceptions & Creating Custom User-Defined Exception Classes", expanded=False):
-                st.write("""
-                * **`raise` keyword:** Manually business logic error trigger karta hai.
-                * **Custom Exceptions:** Standard built-in `Exception` base class ko subclass karke project-level specific errors create kiye jate hain.
-                """)
-                st.code("""class InvalidMarksRangeException(Exception):
-    def __init__(self, marks, msg="Marks must reside between 0 and 100"):
-        self.marks = marks
-        self.msg = msg
-        super().__init__(f"{msg} -> Provided: {marks}")
-
-def validate_semester_marks(score):
+def submit_score(score):
     if score < 0 or score > 100:
-        raise InvalidMarksRangeException(score)
-    return f"Valid score of {score}% recorded in university ledger."
+        raise InvalidMarksError(f"Marks {score} out of bounds (0-100)")
+    return f"Score {score}% accepted."
 
 try:
-    print(validate_semester_marks(92))
-    print(validate_semester_marks(120)) # Out of bounds
-except InvalidMarksRangeException as err:
-    print("Custom Security Validation Caught:", err)""", language="python")
+    print(submit_score(92))
+    print(submit_score(115))
+except InvalidMarksError as e:
+    print("Caught:", e)
+finally:
+    print("Verification complete.")""", language="python")
 
-        # ---------------- MODULE 8 ----------------
-        elif selected_module == "Module 8: Standard Libraries, Regex & Date-Time":
-            st.markdown("### 🔹 Module 8: Batteries-Included Standard Libraries")
-            
-            with st.expander("1. Standard Modules (math, random, datetime, sys, os)", expanded=True):
-                st.write("""
-                * **`math`:** Trigonometry, logarithms, integer square root (`math.isqrt`), factorials.
-                * **`random`:** Pseudo-random numbers, shuffling lists (`random.shuffle`), choice selection.
-                * **`datetime`:** Timestamp generation, date parsing (`strptime`), formatting (`strftime`), time deltas.
-                """)
-                st.code("""import math
-import random
-from datetime import datetime, timedelta
+            # MODULE 8 (RESTORED)
+            elif sel_mod == "Module 8: Standard Libraries, Regex & Date-Time":
+                with st.expander("1. math, random, datetime & re (Regex Pattern Matching)", expanded=True):
+                    st.code("""import math, random, re
+from datetime import datetime
 
-# Math operations
-print("GCD of 36 and 60:", math.gcd(36, 60))
-print("Factorial of 6:", math.factorial(6))
+print("GCD(36, 60):", math.gcd(36, 60))
+print("Current Time:", datetime.now().strftime("%d-%m-%Y %H:%M:%S"))
 
-# Random generation
-lucky_draw = ["Raj", "Aman", "Rohan", "Pooja", "Khushi"]
-print("Random Winner:", random.choice(lucky_draw))
+text = "Student Raj Shraff, Roll 101, Contact: raj@example.com, Phone: +91-9876543210"
+print("Email:", re.findall(r'[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+', text))
+print("Phone:", re.findall(r'\+91-\d{10}', text))""", language="python")
 
-# Datetime formatting & time calculations
-current_time = datetime.now()
-print("Current Formatted Date:", current_time.strftime("%A, %d-%B-%Y %I:%M:%S %p"))
-exam_date = current_time + timedelta(days=60)
-print("Semester Exams Start Date:", exam_date.strftime("%d %B %Y"))""", language="python")
+        # ------------------- 2. COMPUTER ARCHITECTURE SYLLABUS -------------------
+        elif active_subj == "🖥️ Computer System Architecture":
+            st.markdown("""
+            <div class="hero-banner">
+                <div class="hero-title">Computer System Architecture (CSA)</div>
+                <div class="hero-sub">MLK PG College Balrampur • BCA University Syllabus (Digital Logic, ALU, Memory & CPU Design)</div>
+            </div>
+            """, unsafe_allow_html=True)
 
-            with st.expander("2. Regular Expressions (re module pattern matching)", expanded=False):
-                st.write("""
-                **Regex Syntactical Components:**
-                * `re.search()`: String ke kisi bhi hisse mein first matching pattern dhundhta hai.
-                * `re.findall()`: Saare matching occurrences ki list deta hai.
-                * `re.sub()`: Matched substrings ko replacement string se replace karta hai.
-                * `\d` (digit), `\w` (word character), `+` (1 ya zyada), `*` (0 ya zyada), `^` (start), `$` (end).
-                """)
-                st.code("""import re
+            csa_modules = [
+                "Unit 1: Data Representation, Number Systems & Logic Gates",
+                "Unit 2: Boolean Algebra, K-Maps & Combinational Circuits",
+                "Unit 3: Sequential Circuits, Flip-Flops, Registers & Counters",
+                "Unit 4: Basic Computer Organization, Instruction Cycles & Bus Architecture",
+                "Unit 5: Central Processing Unit (ALU, Stack, Addressing Modes & Pipeline)",
+                "Unit 6: Memory Hierarchy (Cache Mapping, RAM/ROM, Virtual Memory)",
+                "Unit 7: Input-Output Organization (Interrupts, DMA, Programmed I/O)"
+            ]
+            sel_mod = st.selectbox("📚 Select CSA Unit:", csa_modules)
 
-document_data = \"\"\"
-Candidate: Raj Shraff (Roll: 101)
-Primary Email: raj.shraff@university.edu.in
-Personal Email: rajshraff2001@gmail.com
-Phone Contact: +91-9876543210
-Alternate Contact: +91-8765432109
-\"\"\"
+            if sel_mod == "Unit 1: Data Representation, Number Systems & Logic Gates":
+                with st.expander("1. Number Systems & Binary Complements", expanded=True):
+                    st.write("""
+                    * **Radix Conversions:** Binary (Base 2), Octal (Base 8), Decimal (Base 10), Hexadecimal (Base 16).
+                    * **1's & 2's Complement:** Signed numbers representation. $2's\\text{ Complement} = (1's\\text{ Complement}) + 1$.
+                    * **Fixed & Floating Point (IEEE 754):** Sign bit (1 bit), Exponent (8 bits), Mantissa (23 bits).
+                    """)
+                    st.code("""# Number system conversion demonstration
+num = 45
+print("Binary:", bin(num))
+print("Octal:", oct(num))
+print("Hexadecimal:", hex(num))""", language="python")
 
-# Extract all valid email addresses
-email_pattern = r'[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+'
-emails_found = re.findall(email_pattern, document_data)
-print("Extracted Valid Emails:", emails_found)
+            elif sel_mod == "Unit 2: Boolean Algebra, K-Maps & Combinational Circuits":
+                with st.expander("1. DeMorgan's Laws, K-Map Minimization & Adders", expanded=True):
+                    st.write("""
+                    * **DeMorgan's Laws:** $(A + B)' = A' \\cdot B'$ aur $(A \\cdot B)' = A' + B'$.
+                    * **K-Map:** Gray code ordering ke sath Boolean function minimization.
+                    * **Half Adder:** Sum = $A \\oplus B$, Carry = $A \\cdot B$.
+                    * **Full Adder:** Sum = $A \\oplus B \\oplus C_{in}$, Carry = $A B + B C_{in} + A C_{in}$.
+                    * **Multiplexers (MUX) & Decoders:** Data selectors ($2^n \\times 1$).
+                    """)
 
-# Extract phone numbers with international code
-phone_pattern = r'\+91-\d{10}'
-phones_found = re.findall(phone_pattern, document_data)
-print("Extracted Indian Phone Numbers:", phones_found)""", language="python")
+            elif sel_mod == "Unit 3: Sequential Circuits, Flip-Flops, Registers & Counters":
+                with st.expander("1. Latches, Flip-Flops (SR, JK, D, T) & Master-Slave", expanded=True):
+                    st.write("""
+                    * **Sequential Circuit:** Output current input aur past memory history dono par depend karta hai.
+                    * **SR Flip-Flop:** $S=1, R=1$ invalid/forbidden state.
+                    * **JK Flip-Flop & Race-Around:** $J=1, K=1$ par condition occur hoti hai jab pulse duration propagation delay se badi ho.
+                    * **Master-Slave Flip-Flop:** Race-around condition ko eliminate karta hai.
+                    """)
 
-        # ================= APPLE GLASS BOTTOM ACTION BAR =================
-        st.markdown("""
+            elif sel_mod == "Unit 4: Basic Computer Organization, Instruction Cycles & Bus Architecture":
+                with st.expander("1. Common Bus System, Control Unit & Instruction Cycle", expanded=True):
+                    st.write("""
+                    * **Registers:** PC, MAR, MDR, AC, IR.
+                    * **Instruction Cycle:** Fetch ($PC \\rightarrow MAR$, $M[MAR] \\rightarrow IR$), Decode, Read Effective Address, Execute.
+                    """)
+
+            elif sel_mod == "Unit 5: Central Processing Unit (ALU, Stack, Addressing Modes & Pipeline)":
+                with st.expander("1. Addressing Modes & Instruction Pipelining", expanded=True):
+                    st.write("""
+                    * **Addressing Modes:** Immediate, Direct, Indirect, Register Indirect, Indexed, Relative.
+                    * **Instruction Pipeline:** IF, ID, OF, EX, WB stages.
+                    * **Hazards:** Structural, Data (RAW, WAR, WAW), Control/Branch hazards.
+                    """)
+
+            elif sel_mod == "Unit 6: Memory Hierarchy (Cache Mapping, RAM/ROM, Virtual Memory)":
+                with st.expander("1. Cache Memory Mapping & Virtual Memory", expanded=True):
+                    st.write("""
+                    * **Hierarchy:** Registers $\\rightarrow$ Cache (L1, L2) $\\rightarrow$ RAM $\\rightarrow$ Secondary SSD/HDD.
+                    * **Locality of Reference:** Temporal Locality aur Spatial Locality.
+                    * **Cache Mapping:** Direct Mapping, Associative Mapping, Set-Associative Mapping.
+                    * **Virtual Memory:** Paging, Page Faults, TLB (Translation Lookaside Buffer).
+                    """)
+
+            elif sel_mod == "Unit 7: Input-Output Organization (Interrupts, DMA, Programmed I/O)":
+                with st.expander("1. I/O Modes & Direct Memory Access (DMA)", expanded=True):
+                    st.write("""
+                    * **Programmed I/O vs Interrupt-Initiated I/O.**
+                    * **DMA (Direct Memory Access):** CPU ko bypass karke high-speed data transfer: Bus Request (BR) aur Bus Grant (BG).
+                    """)
+
+        # ------------------- 3. MATHEMATICS SYLLABUS -------------------
+        elif active_subj == "📐 Mathematics & Numerical Methods":
+            st.markdown("""
+            <div class="hero-banner">
+                <div class="hero-title">BCA Discrete Mathematics & Numerical Methods</div>
+                <div class="hero-sub">MLK PG College Balrampur • BCA University Syllabus (Sets, Logic, Matrices, Calculus & Numerical Algorithms)</div>
+            </div>
+            """, unsafe_allow_html=True)
+
+            math_modules = [
+                "Unit 1: Set Theory, Relations, Functions & Partially Ordered Sets (Posets)",
+                "Unit 2: Mathematical Logic, Propositional Calculus & Truth Tables",
+                "Unit 3: Matrices, Determinants, Rank & System of Linear Equations",
+                "Unit 4: Combinatorics, Permutations & Graph Theory Basics",
+                "Unit 5: Differential & Integral Calculus (Limits, Continuity, Maxima/Minima)",
+                "Unit 6: Numerical Methods (Bisection, Newton-Raphson, Gauss Elimination)"
+            ]
+            sel_mod = st.selectbox("📚 Select Mathematics Unit:", math_modules)
+
+            if sel_mod == "Unit 1: Set Theory, Relations, Functions & Partially Ordered Sets (Posets)":
+                with st.expander("1. Relations, Equivalence Classes & POSET", expanded=True):
+                    st.write("""
+                    * **Equivalence Relation:** Reflexive, Symmetric aur Transitive relation.
+                    * **POSET (Partially Ordered Set):** Reflexive, Antisymmetric aur Transitive relation. Hasse Diagrams.
+                    """)
+
+            elif sel_mod == "Unit 2: Mathematical Logic, Propositional Calculus & Truth Tables":
+                with st.expander("1. Propositions, Tautology, Fallacy & Inference Rules", expanded=True):
+                    st.write("""
+                    * Connectives: Negation ($\\neg$), Conjunction ($\\land$), Disjunction ($\\lor$), Implication ($\\rightarrow$).
+                    * Modus Ponens, Modus Tollens.
+                    """)
+
+            elif sel_mod == "Unit 3: Matrices, Determinants, Rank & System of Linear Equations":
+                with st.expander("1. Rank of Matrix, Consistency & Cayley-Hamilton Theorem", expanded=True):
+                    st.write("""
+                    * **Consistency Theorem (Rouche-Capelli):**
+                      * $Rank(A) = Rank(A|B) = n \\implies$ Unique Solution.
+                      * $Rank(A) = Rank(A|B) < n \\implies$ Infinite Solutions.
+                      * $Rank(A) \\neq Rank(A|B) \\implies$ Inconsistent.
+                    * **Eigenvalues:** $|A - \\lambda I| = 0$. Cayley-Hamilton theorem states every square matrix satisfies its own characteristic equation.
+                    """)
+
+            elif sel_mod == "Unit 4: Combinatorics, Permutations & Graph Theory Basics":
+                with st.expander("1. Pigeonhole Principle & Planar Graphs", expanded=True):
+                    st.write("""
+                    * Handshaking Theorem: $\\sum deg(v) = 2E$.
+                    * Euler's Formula for Planar Graphs: $V - E + R = 2$.
+                    """)
+
+            elif sel_mod == "Unit 5: Differential & Integral Calculus (Limits, Continuity, Maxima/Minima)":
+                with st.expander("1. Successive Differentiation & Taylor / Maclaurin Series", expanded=True):
+                    st.write("""
+                    * Leibnitz's Theorem for $n$-th derivative. Maxima/Minima test: $rt - s^2 > 0$.
+                    """)
+
+            elif sel_mod == "Unit 6: Numerical Methods (Bisection, Newton-Raphson, Gauss Elimination)":
+                with st.expander("1. Newton-Raphson & Root Finding Algorithms", expanded=True):
+                    st.write("""
+                    * Newton-Raphson Formula:
+                      $$x_{n+1} = x_n - \\frac{f(x_n)}{f'(x_n)}$$
+                      (Quadratic convergence, order = 2).
+                    """)
+
+        # Bottom AI Action Container
+        st.markdown(f"""
         <div class="apple-glass-card">
-            <h3 style="margin-top:0; font-size:20px; font-weight:700;">🎯 AI University Exam Preparation & Viva Master</h3>
-            <p style="color:#94A3B8; font-size:13px; margin-bottom:14px;">Iss module ke expected university exam questions aur viva points generate karein (Auto Language Detection Active):</p>
+            <h3 style="margin-top:0; font-size:20px; font-weight:700;">🎯 AI University Exam Preparation & Viva Master ({active_subj})</h3>
+            <p style="color:#94A3B8; font-size:13px; margin-bottom:14px;">MLK PG College / Maa Pateshwari University exam ke top expected questions aur viva points generate karein:</p>
         </div>
         """, unsafe_allow_html=True)
 
         if st.button("🔥 Generate Most Important Exam Questions & Viva Points", use_container_width=True):
-            with st.spinner("AI Professor analyzing syllabus & trends..."):
+            with st.spinner(f"AI Professor analyzing {active_subj} for MLK PG College Balrampur..."):
                 prompt = f"""
-                You are a senior computer science examiner for BCA university exams.
-                For the module: '{selected_module}':
+                You are a senior BCA university examiner for MLK PG College, Balrampur (affiliated with Maa Pateshwari State University).
+                Subject: {active_subj}
+                Active Unit/Topic: {sel_mod}
+                
                 1. Provide the top 3 high-weightage theory examination questions (5-10 marks format) with complete model answers.
                 2. Provide 3 tricky Viva-Voce questions with short, precise, examiner-winning answers.
-                3. Highlight 2 critical practical coding pitfalls/mistakes students usually make in university lab exams and how to fix them.
+                3. Highlight 2 critical practical/numerical pitfalls students usually make in university exams and how to avoid them.
                 Format cleanly using bolding and clear bullet points.
                 """
-                ai_output = get_ai_response(prompt)
+                ai_output = get_ai_response(prompt, current_subject=active_subj)
                 st.markdown(f'<div class="ai-box">{ai_output}</div>', unsafe_allow_html=True)
 
-    # ================= 2. EXAM ENGINE WITH LANGUAGE SELECTOR =================
+    # ================= 2. EXAM ENGINE =================
     def render_exam_engine():
-        st.markdown("""
+        active_subj = st.session_state.selected_subject
+        st.markdown(f"""
         <div class="hero-banner">
-            <div class="hero-title">Automated Exam & Evaluation Suite</div>
-            <div class="hero-sub">Generate unique semester exam papers in your preferred language and get instant grading with line-by-line feedback.</div>
+            <div class="hero-title">Automated Exam Engine ({active_subj})</div>
+            <div class="hero-sub">MLK PG College Balrampur Paper Generator • Instant AI Checking & Scorecards</div>
         </div>
         """, unsafe_allow_html=True)
 
         col1, col2 = st.columns([1.5, 1])
         with col1:
-            t_unit = st.selectbox("Exam Module:", [
-                "Module 1: Language Basics, Operators & Bitwise",
-                "Module 2: Control Flow & Iteration (Branches & Loops)",
-                "Module 3: Functions, Scopes, Lambdas & Recursion",
-                "Module 4: In-Depth Data Structures (Lists, Tuples, Dicts, Sets)",
-                "Module 5: Object-Oriented Programming (OOP Architecture)",
-                "Module 6: File Handling, Context Managers & JSON/CSV",
-                "Module 7: Exception Handling & Custom Errors",
-                "Module 8: Standard Libraries, Regex & Date-Time"
-            ])
+            test_scope = st.text_input(
+                f"Enter Specific Topic / Chapter for {active_subj}:",
+                placeholder="e.g. Cache Mapping / Polymorphism / Eigenvalues / K-Maps"
+            )
         with col2:
             test_lang = st.selectbox(
                 "Paper Language:",
                 ["English", "Hinglish (Hindi in Latin Script)", "Hindi (हिन्दी - देवनागरी)"]
             )
         
-        if st.button("⚡ Generate New Test Paper", use_container_width=True):
-            with st.spinner(f"Drafting fresh exam questions in {test_lang}..."):
+        if st.button("⚡ Generate University Test Paper", use_container_width=True):
+            with st.spinner(f"Drafting fresh exam questions for {active_subj} in {test_lang}..."):
+                topic_focus = test_scope if test_scope.strip() else "Entire University Syllabus"
                 test_prompt = f"""
-                Create a 10-mark mini examination paper for BCA students on '{t_unit}'.
-                - Question 1 (2 Marks): Conceptual definition.
-                - Question 2 (3 Marks): Output prediction or short difference.
-                - Question 3 (5 Marks): Real-world coding question.
-                Keep questions strict, university-grade, and strictly in {test_lang}. Do NOT provide solutions yet.
+                Create a 15-mark university-standard BCA examination paper on '{active_subj}' focusing on '{topic_focus}'.
+                Curriculum: MLK PG College, Balrampur (Maa Pateshwari State University).
+                
+                Paper Structure:
+                - Section A (3 Marks): Short conceptual definition.
+                - Section B (5 Marks): Output prediction, difference table, or conceptual diagram/derivation.
+                - Section C (7 Marks): Comprehensive problem (Practical code for Python / Circuit-Tracing for CSA / Numerical for Maths).
+                
+                Strictly in {test_lang}. Do NOT give answers yet.
                 """
-                st.session_state.current_test = get_ai_response(test_prompt, forced_language=test_lang)
+                st.session_state.current_test = get_ai_response(test_prompt, forced_language=test_lang, current_subject=active_subj)
                 st.session_state.test_lang_selected = test_lang
+                st.session_state.test_subject_selected = active_subj
 
         if "current_test" in st.session_state:
-            st.markdown(f'<div class="apple-glass-card"><h4>📄 Current Question Paper ({st.session_state.get("test_lang_selected", "English")})</h4>{st.session_state.current_test}</div>', unsafe_allow_html=True)
+            st.markdown(f'<div class="apple-glass-card"><h4>📄 Question Paper: {st.session_state.get("test_subject_selected")} ({st.session_state.get("test_lang_selected")})</h4>{st.session_state.current_test}</div>', unsafe_allow_html=True)
 
             st.markdown("#### ✍️ Write & Submit Answers")
-            user_sol = st.text_area("Yahan apne answers aur codes type karein (Any language accepted):", height=200, placeholder="Q1: ...\nQ2: ...\nQ3 (Code): ...")
+            user_sol = st.text_area("Yahan apne answers aur step-by-step solutions type karein:", height=200, placeholder="Ans 1: ...\nAns 2: ...\nAns 3: ...")
             if st.button("🚀 Submit Sheet For AI Checking", use_container_width=True):
                 if not user_sol.strip():
                     st.warning("Please type your answer before submission.")
                 else:
-                    with st.spinner("AI checking answers..."):
+                    with st.spinner("AI Professor checking answer sheet..."):
                         target_eval_lang = st.session_state.get("test_lang_selected", "English")
                         eval_prompt = f"""
-                        You are a strict BCA university examiner grading a student's answer sheet.
+                        You are a strict BCA university examiner at MLK PG College, Balrampur grading this answer sheet.
+                        Subject: {st.session_state.get('test_subject_selected')}
                         Paper:
                         {st.session_state.current_test}
 
@@ -1168,83 +998,126 @@ print("Extracted Indian Phone Numbers:", phones_found)""", language="python")
                         {user_sol}
 
                         Evaluate thoroughly in {target_eval_lang}:
-                        1. Score out of 10 with clear breakdown.
-                        2. Detailed remarks: strengths and missing elements.
-                        3. Perfect model answer and corrected code.
+                        1. Score out of 15 with section-wise marks breakdown.
+                        2. Strengths and missing conceptual elements.
+                        3. Complete university model answers.
                         """
-                        scorecard = get_ai_response(eval_prompt, forced_language=target_eval_lang)
-                        st.markdown(f'<div class="ai-box"><h3>📊 Examination Scorecard</h3>{scorecard}</div>', unsafe_allow_html=True)
+                        scorecard = get_ai_response(eval_prompt, forced_language=target_eval_lang, current_subject=st.session_state.get('test_subject_selected'))
+                        st.markdown(f'<div class="ai-box"><h3>📊 University Scorecard</h3>{scorecard}</div>', unsafe_allow_html=True)
 
+    # ================= 3. GUIDED PROJECTS LAB =================
     def render_projects():
-        st.markdown("""
+        active_subj = st.session_state.selected_subject
+        st.markdown(f"""
         <div class="hero-banner">
-            <div class="hero-title">Semester Capstone Project Lab</div>
-            <div class="hero-sub">Complete full-scale BCA projects step-by-step with architecture design and examiner-ready viva prep.</div>
+            <div class="hero-title">Academic Capstone Projects & Lab Blueprints</div>
+            <div class="hero-sub">Subject Context: {active_subj} • Production-grade architecture with verified logic and viva preparation.</div>
         </div>
         """, unsafe_allow_html=True)
 
-        proj = st.selectbox(
-            "Choose Capstone Project:",
-            [
+        if active_subj == "🐍 Python Programming":
+            proj_list = [
                 "Student Management System (Console + File / SQLite)",
                 "Banking Operations & ATM Simulator (OOPs Based)",
                 "Supermarket Inventory & Automated Billing Engine",
                 "Hospital Management & Patient Appointment Scheduler",
                 "Library Book Circulation & Fine Calculation Engine"
             ]
-        )
+        elif active_subj == "🖥️ Computer System Architecture":
+            proj_list = [
+                "4-Bit ALU Software Simulator (Logic Gates & Arithmetic)",
+                "Direct-Mapped vs Set-Associative Cache Memory Simulator",
+                "8-Bit Instruction Set Architecture (ISA) & CPU Emulator",
+                "Booth's Multiplication Algorithm Simulator with Step Tracing",
+                "Virtual Memory Page Replacement Simulator (FIFO, LRU, Optimal)"
+            ]
+        else:
+            proj_list = [
+                "Numerical Equation Solver (Newton-Raphson & Bisection Method)",
+                "Matrix Linear System Solver & Eigenvalues Calculator",
+                "Graph Theory Analyzer (Shortest Path Dijkstra & Euler Circuit)",
+                "Boolean Truth Table & Logic Minimization Engine",
+                "Statistical Curve Fitting & Regression Analysis Calculator"
+            ]
+
+        proj = st.selectbox(f"Choose Project for {active_subj}:", proj_list)
 
         st.markdown(f"""
         <div class="apple-glass-card">
-            <h4 style="margin-top:0;">🏗️ Architecture: {proj}</h4>
-            <p>Complete multi-tiered design pattern with verified logic flow, data structures and error handling blocks.</p>
+            <h4 style="margin-top:0;">🏗️ Project Architecture: {proj}</h4>
+            <p>Complete design pattern aligned with BCA Semester academic requirements and university practical viva.</p>
         </div>
         """, unsafe_allow_html=True)
 
-        if st.button("🚀 Get Starter Architecture & Complete Code", use_container_width=True):
+        if st.button("🚀 Get Starter Architecture & Complete Code / Proof", use_container_width=True):
             with st.spinner("AI Architect designing codebase..."):
                 blueprint_prompt = f"""
-                Provide a complete, production-grade, well-commented Python starter project for: '{proj}'.
-                Include OOP classes, error checks, persistent storage, and interactive menu loop.
+                Provide a complete, production-grade, well-commented implementation for: '{proj}' under the subject '{active_subj}'.
+                Include design architecture, error checking, runnable implementation, and 3 expected examiner viva questions.
                 """
-                st.markdown(f'<div class="ai-box">{get_ai_response(blueprint_prompt)}</div>', unsafe_allow_html=True)
+                st.markdown(f'<div class="ai-box">{get_ai_response(blueprint_prompt, current_subject=active_subj)}</div>', unsafe_allow_html=True)
 
-    # ================= 4. 24/7 AI CODE MENTOR (AUTO-DETECT LANGUAGE) =================
+    # ================= 4. 24/7 AI CODE & SUBJECT MENTOR =================
     def render_mentor():
-        st.markdown("""
+        active_subj = st.session_state.selected_subject
+        st.markdown(f"""
         <div class="hero-banner">
-            <div class="hero-title">24/7 BCA Technical Mentor</div>
-            <div class="hero-sub">Resolve coding doubts, syntax comparisons with C language, or logic errors in seconds. Auto-detects Hindi, Hinglish, or English.</div>
+            <div class="hero-title">24/7 AI Technical Mentor ({active_subj})</div>
+            <div class="hero-sub">Resolve doubts, code logic errors, numerical proofs, or computer organization diagrams. Auto language detection enabled.</div>
         </div>
         """, unsafe_allow_html=True)
 
         user_q = st.text_area(
-            "Poochhein apna doubt ya code paste karein (Hindi, English, ya Hinglish mein type karein):",
+            f"Poochhein apna doubt for {active_subj} (Hindi, English, ya Hinglish mein):",
             height=140,
-            placeholder="e.g. C Pointers ka alternative Python mein kya hota hai? ya Explain recursion in simple Hindi"
+            placeholder=f"e.g. Is topic ko simple Hindi mein samjhao for {active_subj}..."
         )
         if st.button("⚡ Ask AI Mentor", use_container_width=True):
             if not user_q.strip():
-                st.warning("Pehle sawal enter karein.")
+                st.warning("Pehle apna sawal enter karein.")
             else:
-                with st.spinner("AI Mentor analyzing..."):
-                    ans = get_ai_response(user_q)
+                with st.spinner(f"AI Mentor analyzing query for {active_subj}..."):
+                    ans = get_ai_response(user_q, current_subject=active_subj)
                     st.markdown(f'<div class="ai-box">{ans}</div>', unsafe_allow_html=True)
 
+    # ================= 5. LIVE RUNNER SANDBOX =================
     def render_runner():
-        st.markdown("""
+        active_subj = st.session_state.selected_subject
+        st.markdown(f"""
         <div class="hero-banner">
-            <div class="hero-title">Integrated Python Sandbox</div>
-            <div class="hero-sub">Write, test, and execute Python code with console output directly in your browser.</div>
+            <div class="hero-title">Interactive Python & Algorithm Sandbox</div>
+            <div class="hero-sub">Test Python programs, numerical algorithms, or CSA binary logic simulations directly in your browser.</div>
         </div>
         """, unsafe_allow_html=True)
 
-        starter = """# BCA Python Interactive Sandbox
-def greet(name, sem):
-    return f"Hello {name}, Welcome to BCA Semester {sem}!"
+        if active_subj == "🐍 Python Programming":
+            starter = """# BCA Python Interactive Sandbox
+def greet(name, college):
+    return f"Hello {name}, Welcome to {college} BCA Portal!"
 
-msg = greet("Raj", 1)
-print(msg)
+print(greet("Raj", "MLK PG College Balrampur"))
+"""
+        elif active_subj == "🖥️ Computer System Architecture":
+            starter = """# CSA Binary & Bitwise Logic Simulator
+a = 0b1100  # 12 in binary
+b = 0b1010  # 10 in binary
+
+print("A (Binary):", bin(a))
+print("B (Binary):", bin(b))
+print("Bitwise AND (A & B):", bin(a & b))
+print("Bitwise OR  (A | B):", bin(a | b))
+print("Bitwise XOR (A ^ B):", bin(a ^ b))
+"""
+        else:
+            starter = """# Numerical Methods: Newton-Raphson Method
+# Solve f(x) = x^2 - 25 = 0
+def f(x): return x**2 - 25
+def df(x): return 2*x
+
+x0 = 10.0
+for i in range(5):
+    x0 = x0 - f(x0)/df(x0)
+    print(f"Iteration {i+1}: Approximation = {x0:.6f}")
 """
         code_input = st.text_area("Code Editor:", value=starter, height=200)
         
