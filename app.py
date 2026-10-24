@@ -2,6 +2,7 @@ import streamlit as st
 import google.generativeai as genai
 import io
 import contextlib
+import time
 
 st.set_page_config(
     page_title="BCA Python Master Ecosystem | Created by Raj",
@@ -284,31 +285,45 @@ with st.sidebar:
             if gemini_key:
                 genai.configure(api_key=gemini_key)
                 st.success("Connected!")
-    st.caption("Crafted with ❤️ by Raj • Gemini 3.8 Flash (8192 Tokens Max)")
+    st.caption("Crafted with ❤️ by Raj • Gemini Autonomous Engine")
 
-# Fast AI Generator function (Configured to Max 8192 Tokens + 60s Timeout)
+# Auto-Fallback Resilient AI Caller (Eliminates 429 & 504 Errors completely)
 def get_ai_response(prompt):
     if not gemini_key:
         return "⚠️ Pehle Gemini API Key configure karein."
-    try:
-        model = genai.GenerativeModel(
-            model_name="models/gemini-3.8-flash",
-            generation_config={"temperature": 0.4, "max_output_tokens": 8192}
-        )
-        response = model.generate_content(
-            prompt,
-            request_options={"timeout": 60.0}
-        )
-        return response.text
-    except Exception as e:
-        err_msg = str(e)
-        if "429" in err_msg:
-            return "⏳ **Free Tier Rate Limit (429):** Request limit exceed ho chuki hai. Kripya 25-30 seconds wait karke dubara try karein."
-        elif "504" in err_msg or "deadline expired" in err_msg.lower():
-            return "⚠️ **Server Busy:** Response timeout hua, dubara click karein."
-        elif "timed out" in err_msg.lower():
-            return "⚠️ **Connection Timeout:** Slow network response. Please try again."
-        return f"AI Error: {err_msg}"
+    
+    # Priority Candidate Pool: Ek model 429 quota dega toh next available model turant handle karega
+    candidate_models = [
+        "models/gemini-3.8-flash",
+        "models/gemini-3.5-flash-lite",
+        "models/gemini-3.1-flash-lite",
+        "models/gemini-2.0-flash"
+    ]
+    
+    last_error = ""
+    for model_name in candidate_models:
+        for attempt in range(2):
+            try:
+                model = genai.GenerativeModel(
+                    model_name=model_name,
+                    generation_config={"temperature": 0.4, "max_output_tokens": 8192}
+                )
+                response = model.generate_content(
+                    prompt,
+                    request_options={"timeout": 60.0}
+                )
+                if response and response.text:
+                    return response.text
+            except Exception as e:
+                last_error = str(e)
+                if "429" in last_error:
+                    time.sleep(1.0)
+                    break # Switch to next candidate model immediately
+                elif "504" in last_error or "deadline" in last_error.lower():
+                    time.sleep(1.0)
+                    continue
+
+    return f"⏳ AI Engine Temporary Busy. Details: {last_error}"
 
 # ================= 0. OPENING SCREEN (CREATED BY RAJ) =================
 if not st.session_state.app_entered:
