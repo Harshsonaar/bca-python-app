@@ -22,7 +22,7 @@ if "selected_subject" not in st.session_state:
 # ================= ULTRA-PREMIUM APPLE FROSTED GLASS & MODERN UI CSS =================
 st.markdown("""
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Caveat:wght@500;600;700&family=Kalam:wght@400;700&display=swap');
 
     html, body, [class*="css"] {
         font-family: -apple-system, BlinkMacSystemFont, "Plus Jakarta Sans", "SF Pro Display", sans-serif;
@@ -152,24 +152,93 @@ st.markdown("""
         margin-top: 24px;
     }
 
-    /* Handwritten Styled Paper Card */
-    .handwritten-card {
-        background: rgba(18, 24, 38, 0.95);
-        border: 2px dashed rgba(56, 189, 248, 0.4);
-        border-radius: 16px;
-        padding: 24px 28px;
-        margin-top: 18px;
-        color: #F8FAFC;
-        line-height: 1.7;
-        box-shadow: 0 20px 45px rgba(0, 0, 0, 0.55);
+    /* ================= REAL NOTEBOOK / REGISTER PAGE DESIGN ================= */
+    .notebook-paper {
+        background-color: #fbfbfa !important;
+        /* Ruled lines pattern + Red Margin line on Left */
+        background-image: 
+            linear-gradient(90deg, transparent 54px, #f43f5e 54px, #f43f5e 56px, transparent 56px),
+            linear-gradient(#dbeafe 1px, transparent 1px) !important;
+        background-size: 100% 100%, 100% 32px !important;
+        border-radius: 12px !important;
+        padding: 40px 30px 40px 75px !important;
+        margin-top: 22px !important;
+        color: #172554 !important; /* Real Ballpen Blue Ink */
+        font-family: 'Kalam', 'Caveat', cursive, sans-serif !important;
+        font-size: 19px !important;
+        line-height: 32px !important;
+        box-shadow: 
+            0 1px 3px rgba(0,0,0,0.2), 
+            0 10px 30px rgba(0,0,0,0.45), 
+            inset 30px 0 20px -20px rgba(0,0,0,0.12) !important;
+        border: 1px solid #e2e8f0 !important;
+        position: relative !important;
     }
-    .handwritten-title {
-        font-size: 24px;
-        font-weight: 700;
-        color: #38BDF8;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.15);
-        padding-bottom: 8px;
-        margin-bottom: 16px;
+
+    /* Spiral / Hole punch effect on left side */
+    .notebook-paper::before {
+        content: '' !important;
+        position: absolute !important;
+        top: 20px !important;
+        left: 18px !important;
+        width: 16px !important;
+        height: 90% !important;
+        background-image: radial-gradient(circle, #cbd5e1 6px, transparent 7px) !important;
+        background-size: 16px 36px !important;
+        background-repeat: repeat-y !important;
+    }
+
+    .notebook-title {
+        font-family: 'Kalam', cursive !important;
+        font-size: 32px !important;
+        font-weight: 700 !important;
+        color: #0f172a !important;
+        border-bottom: 2px solid #ef4444 !important;
+        padding-bottom: 8px !important;
+        margin-bottom: 18px !important;
+        letter-spacing: 0.5px !important;
+    }
+
+    .notebook-paper h1, .notebook-paper h2, .notebook-paper h3, .notebook-paper h4 {
+        font-family: 'Kalam', cursive !important;
+        color: #1e3a8a !important;
+        font-weight: 700 !important;
+        margin-top: 18px !important;
+        margin-bottom: 8px !important;
+    }
+
+    .notebook-paper p, .notebook-paper li {
+        font-family: 'Kalam', cursive !important;
+        color: #1e293b !important;
+        font-weight: 500 !important;
+    }
+
+    .notebook-paper code {
+        font-family: 'JetBrains Mono', monospace !important;
+        background: #f1f5f9 !important;
+        color: #0369a1 !important;
+        padding: 2px 8px !important;
+        border-radius: 6px !important;
+        font-size: 15px !important;
+        border: 1px solid #cbd5e1 !important;
+    }
+
+    .notebook-paper pre {
+        background: #f8fafc !important;
+        border: 1px solid #cbd5e1 !important;
+        border-left: 4px solid #3b82f6 !important;
+        border-radius: 8px !important;
+        padding: 12px 16px !important;
+        color: #0f172a !important;
+    }
+
+    /* Highlighter pen style callout inside notebook */
+    .notebook-highlight {
+        background: #fef08a !important; /* Yellow highlighter */
+        padding: 2px 6px !important;
+        border-radius: 4px !important;
+        color: #854d0e !important;
+        font-weight: 700 !important;
     }
 
     /* AI Response Glass Box */
@@ -306,6 +375,17 @@ st.markdown("""
             font-size: 12px !important;
             border-radius: 18px !important;
             flex-shrink: 0 !important;
+        }
+        .notebook-paper {
+            padding: 30px 18px 30px 48px !important;
+            font-size: 17px !important;
+            line-height: 28px !important;
+            background-size: 100% 100%, 100% 28px !important;
+        }
+        .notebook-paper::before {
+            left: 10px !important;
+            width: 12px !important;
+            background-size: 12px 30px !important;
         }
     }
 
@@ -996,13 +1076,13 @@ print("Converged Root:", round(root, 5))""", language="python")
                 ai_output = get_ai_response(prompt, current_subject=active_subj)
                 st.markdown(f'<div class="ai-box">{ai_output}</div>', unsafe_allow_html=True)
 
-    # ================= 2. HANDWRITTEN NOTES GENERATOR WITH EXAMPLES =================
+    # ================= 2. REAL HANDWRITTEN COPY PAGE GENERATOR =================
     def render_handwritten_notes():
         active_subj = st.session_state.selected_subject
         st.markdown(f"""
         <div class="hero-banner">
-            <div class="hero-title">📝 Handwritten Notes & Solved Examples</div>
-            <div class="hero-sub">Subject Context: {active_subj} • Exam-oriented handwritten style points, memory tricks, and step-by-step example questions.</div>
+            <div class="hero-title">📝 Real Handwritten Notes & Solved Examples</div>
+            <div class="hero-sub">Subject Context: {active_subj} • Pure register notebook page layout with real ink handwriting font and tricks.</div>
         </div>
         """, unsafe_allow_html=True)
 
@@ -1020,6 +1100,7 @@ print("Converged Root:", round(root, 5))""", language="python")
         elif active_subj == "🖥️ Computer System Architecture":
             suggested_topics = [
                 "2's Complement Direct Trick & Overflow Detection",
+                "Truth Table Chart of Full Adder & Circuit with 2 HA",
                 "Half Adder & Full Adder Design using 2 HA and 1 OR Gate",
                 "K-Map 4-Variable Minimization & Grouping Strategy",
                 "JK Flip-Flop Race-Around Condition & Master-Slave Solution",
@@ -1049,30 +1130,34 @@ print("Converged Root:", round(root, 5))""", language="python")
 
         final_topic = custom_topic.strip() if custom_topic.strip() else chosen_topic
 
-        if st.button("✨ Generate Complete Handwritten Notes", use_container_width=True):
-            with st.spinner(f"Writing crystal-clear handwritten notes for {final_topic}..."):
+        if st.button("✍️ Write on Real Notebook Page", use_container_width=True):
+            with st.spinner(f"Writing handwritten notes on notebook paper for {final_topic}..."):
                 notes_prompt = f"""
-                You are a top-rank BCA student and professor at MLK PG College Balrampur.
-                Create comprehensive, high-scoring 'Handwritten Style Notes' for the topic: '{final_topic}' in {active_subj}.
-                
-                Language Requirement: {notes_lang}.
+                You are writing neat, high-scoring 'Handwritten Student Register Notes' for a BCA student at MLK PG College Balrampur.
+                Topic: '{final_topic}'
+                Subject: {active_subj}
+                Language: {notes_lang}
 
-                Structure of Notes:
-                1. 📌 Core Concept in 3-4 bullet points (Easiest language, no unnecessary jargon).
-                2. ⚡ Memory Trick / Formula Box (How to remember in exams forever).
-                3. 📊 Diagrammatic / ASCII Flow representation (Text-based circuit, memory block, or logic diagram).
-                4. 📝 Solved University Exam Question (High probability 5-10 marks format with full step-by-step solution).
-                5. ⚠️ 1 Critical Examiner Warning (Mistake students usually make and lose marks).
+                Formatting Instructions:
+                Write as if a brilliant university student wrote it by blue pen in a notebook.
+                1. 📌 Core Concept (Asli Matlab Kya Hai?) - In simple bullet points.
+                2. ⚡ Memory Trick & Formula Box (Exam ke liye direct shortcut)
+                3. 📊 Truth Table / Logic Diagram / Derivation Steps (Clean formatted table or ASCII circuit representation)
+                4. 📝 Solved University Exam Question (5-10 Marks format with step-by-step verified solution)
+                5. ⚠️ Examiner Warning (Kahan marks kat te hain aur kaise bachein)
 
-                Keep it completely comprehensive so the student never needs to re-read anywhere else.
+                Keep it crystal clear and ready to copy into exam registers.
                 """
                 st.session_state.current_notes = get_ai_response(notes_prompt, forced_language=notes_lang, current_subject=active_subj)
                 st.session_state.notes_topic = final_topic
 
         if "current_notes" in st.session_state:
             st.markdown(f"""
-            <div class="handwritten-card">
-                <div class="handwritten-title">📖 Notes: {st.session_state.get('notes_topic')} ({active_subj})</div>
+            <div class="notebook-paper">
+                <div class="notebook-title">✍️ {st.session_state.get('notes_topic')}</div>
+                <div style="font-size:14px; color:#64748b; margin-bottom:14px; font-family:'Plus Jakarta Sans', sans-serif;">
+                    <b>Subject:</b> {active_subj} | <b>Institution:</b> MLK PG College Balrampur
+                </div>
                 {st.session_state.current_notes}
             </div>
             """, unsafe_allow_html=True)
