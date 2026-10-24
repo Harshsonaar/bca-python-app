@@ -30,7 +30,7 @@ if "notebook_cells" not in st.session_state:
     st.session_state.notebook_cells = [
         {
             "id": 1,
-            "code": "# Python Cell 1: Verification & Metadata\nstudent_name = 'Harsh Raj Soni'\ninstitution = 'MLK PG College, Balrampur'\nprint(f'Academic Portal Active | Scholar: {student_name} [{institution}]')",
+            "code": "# Python Cell 1: Verification & Metadata\ndeveloper_name = 'Harsh Raj Soni'\ninstitution = 'MLK PG College, Balrampur'\nprint(f'Academic Portal Active | Developer: {developer_name} [{institution}]')",
             "output": "",
             "error": ""
         },
@@ -107,17 +107,6 @@ st.markdown("""
         font-size: 12px;
         font-weight: 700;
         color: #60A5FA;
-    }
-
-    /* Subject Tiles Styling */
-    .tile-label {
-        font-size: 11px;
-        font-weight: 700;
-        letter-spacing: 0.8px;
-        text-transform: uppercase;
-        color: #94A3B8;
-        margin-bottom: 6px;
-        display: block;
     }
 
     /* Formal Navigation Bar */
@@ -240,13 +229,20 @@ st.markdown("""
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
         margin-top: 12px;
     }
-    .formula-card {
+    .unit-card {
         background: rgba(255, 255, 255, 0.03);
         border: 1px solid rgba(255, 255, 255, 0.08);
         border-left: 3px solid #3B82F6;
-        border-radius: 8px;
-        padding: 10px 14px;
-        margin-bottom: 10px;
+        border-radius: 10px;
+        padding: 14px 18px;
+        margin-bottom: 12px;
+    }
+    .unit-list {
+        font-size: 13.5px;
+        color: #CBD5E1;
+        line-height: 1.8;
+        padding-left: 18px;
+        margin: 0;
     }
 
     /* Colab Cells (Formal Navy Edition) */
@@ -418,35 +414,26 @@ else:
             </div>
         </div>
         <div class="formal-author-pill">
-            Scholar: Harsh Raj Soni
+            Developer: Harsh Raj Soni
         </div>
     </div>
     """, unsafe_allow_html=True)
 
-    # ================= SUBJECT TILES SWITCHER (FORMAL & CLEAN) =================
-    st.markdown('<span class="tile-label">Academic Subject Discipline</span>', unsafe_allow_html=True)
-    tile_col1, tile_col2, tile_col3 = st.columns(3)
-    
-    with tile_col1:
-        is_py = (st.session_state.selected_subject == "🐍 Python Programming")
-        btn_py = st.button("🐍 Python Programming", use_container_width=True, type="primary" if is_py else "secondary")
-        if btn_py:
-            st.session_state.selected_subject = "🐍 Python Programming"
-            st.rerun()
-
-    with tile_col2:
-        is_csa = (st.session_state.selected_subject == "🖥️ Computer System Architecture")
-        btn_csa = st.button("🖥️ Computer System Architecture", use_container_width=True, type="primary" if is_csa else "secondary")
-        if btn_csa:
-            st.session_state.selected_subject = "🖥️ Computer System Architecture"
-            st.rerun()
-
-    with tile_col3:
-        is_math = (st.session_state.selected_subject == "📐 Mathematics & Numerical Methods")
-        btn_math = st.button("📐 Mathematics & Numerical Methods", use_container_width=True, type="primary" if is_math else "secondary")
-        if btn_math:
-            st.session_state.selected_subject = "📐 Mathematics & Numerical Methods"
-            st.rerun()
+    # ================= SINGLE INTERACTIVE TILE (TAP TO SWITCH SUBJECT LIST-WISE) =================
+    curr_sub = st.session_state.selected_subject
+    with st.expander(f"📚 Active Stream: {curr_sub} (Tap here to Switch Subject)", expanded=False):
+        st.markdown("<span style='font-size:12px; color:#94A3B8;'>Choose curriculum subject from list:</span>", unsafe_allow_html=True)
+        sub_list = [
+            "🐍 Python Programming",
+            "🖥️ Computer System Architecture",
+            "📐 Mathematics & Numerical Methods"
+        ]
+        for s in sub_list:
+            is_active = (s == curr_sub)
+            label = f"✔ {s} [ACTIVE]" if is_active else f"➔ Switch to {s}"
+            if st.button(label, key=f"switch_sub_{s}", use_container_width=True, type="primary" if is_active else "secondary"):
+                st.session_state.selected_subject = s
+                st.rerun()
 
     active_subj = st.session_state.selected_subject
 
@@ -655,15 +642,142 @@ else:
             st.latex(r"Speedup = \frac{n \cdot k}{k + n - 1}")
             st.write("Address division: Tag | Line Index | Word Offset")
 
-    # ================= 3. SYLLABUS EXPLORER =================
+    # ================= 3. SYLLABUS EXPLORER (STRUCTURED LIST-WISE CARDS) =================
     elif selected_nav == "📖 Syllabus Explorer":
-        st.markdown(f"#### 📚 Syllabus Blueprint — {active_subj}")
+        st.markdown(f"#### 📚 Official Curriculum Syllabus Breakdown — {active_subj}")
+        st.caption("Maa Pateshwari State University affiliated curriculum structure with topic-wise lists.")
+
         if active_subj == "🐍 Python Programming":
-            st.info("Module 1: Basics & Bytecode | Module 2: Control Flow & Loops | Module 3: Functions & Scopes | Module 4: Data Structures | Module 5: OOPs | Module 6: Files & JSON")
+            syllabus_data = [
+                ("Module 1: Language Fundamentals & Architecture", [
+                    "Python execution pipeline: Source code (.py) to Bytecode (.pyc) & Python Virtual Machine (PVM)",
+                    "Dynamic typing vs Static typing, Garbage collection & Reference counting",
+                    "Identifiers, Keywords, Literals, Data Types (int, float, complex, bool, str)",
+                    "Operators & Precedence: Arithmetic, Logical, Bitwise (&, |, ^, ~, <<, >>), Identity (is) & Membership (in)"
+                ]),
+                ("Module 2: Control Flow & Iterative Constructs", [
+                    "Conditional Statements: if, if-else, nested if-elif-else ladders",
+                    "Loops: while loop, for loop, range() generator function",
+                    "Loop Control: break, continue, pass statements",
+                    "Advanced Construct: Python for-else and while-else mechanics and prime number validation"
+                ]),
+                ("Module 3: Functions, Scopes & Functional Programming", [
+                    "Function definitions, default arguments, keyword arguments",
+                    "Variable-length arguments: *args (tuples) and **kwargs (dictionaries)",
+                    "Scope rules: Local, Enclosing, Global, Built-in (LEGB) & global, nonlocal keywords",
+                    "Anonymous functions: lambda expressions, map(), filter(), reduce()",
+                    "Recursion fundamentals, base-case evaluation & recursion limit"
+                ]),
+                ("Module 4: In-Depth Data Structures", [
+                    "Lists: Indexing, slicing, mutability, methods (append, extend, pop), List Comprehensions",
+                    "Tuples: Immutability, tuple packing & unpacking, tuple as dictionary keys",
+                    "Dictionaries: Key-value hash maps, hashing principles, dict methods & comprehensions",
+                    "Sets: Set theory operations (union, intersection, difference, symmetric difference)"
+                ]),
+                ("Module 5: Object-Oriented Programming (OOP Architecture)", [
+                    "Classes and Objects: Class attributes, instance attributes, self reference",
+                    "Constructors: __init__() magic method and object lifecycle",
+                    "Encapsulation: Public, protected (_var) and private (__var) name mangling",
+                    "Inheritance: Single, multiple, multilevel, hierarchical, and MRO (Method Resolution Order)",
+                    "Polymorphism: Method overriding, duck typing, and Operator Overloading (dunder methods)"
+                ]),
+                ("Module 6: File Handling, Exceptions & Standard Modules", [
+                    "File I/O modes ('r', 'w', 'a', 'b', '+'), seek() and tell() cursor positioning",
+                    "Context managers: with statement and automatic file closing",
+                    "Exception Handling: try, except, else, finally blocks & custom user exceptions",
+                    "Built-in Modules: math, re (regex), json, datetime, sys, os"
+                ])
+            ]
+
         elif active_subj == "🖥️ Computer System Architecture":
-            st.info("Unit 1: Number Systems | Unit 2: Logic Gates & Adders | Unit 3: Flip-Flops & Registers | Unit 4: CPU Architecture | Unit 5: Memory Hierarchy | Unit 6: I/O Organization")
+            syllabus_data = [
+                ("Unit 1: Data Representation & Number Systems", [
+                    "Number Systems: Binary, Octal, Decimal, Hexadecimal conversions",
+                    "Complements arithmetic: 1's complement and 2's complement subtraction",
+                    "Fixed-point and Floating-point representation (IEEE 754 standard)",
+                    "Error detection and correction: Parity bit and Hamming code"
+                ]),
+                ("Unit 2: Digital Logic & Combinational Circuits", [
+                    "Boolean Algebra: DeMorgan's Laws, SOP and POS canonical forms",
+                    "K-Map Minimization: 2, 3, and 4 variable K-Maps, Don't care conditions",
+                    "Logic Gates: AND, OR, NOT, NAND, NOR (Universal Gates), XOR, XNOR",
+                    "Arithmetic Circuits: Half Adder, Full Adder, Half Subtractor, Full Subtractor",
+                    "MSI Components: Multiplexers, Demultiplexers, Decoders, Encoders"
+                ]),
+                ("Unit 3: Sequential Logic & Storage Elements", [
+                    "Latches vs Flip-Flops: SR, D, JK, T Flip-Flops and characteristic tables",
+                    "Race-around condition in JK flip-flop and Master-Slave JK flip-flop architecture",
+                    "Registers: Shift registers (SISO, SIPO, PISO, PIPO), Universal shift registers",
+                    "Counters: Synchronous vs Asynchronous (Ripple) counters, Modulo-N counters"
+                ]),
+                ("Unit 4: Central Processing Unit & Instruction Cycle", [
+                    "CPU Architecture: General Register Organization, Stack Organization",
+                    "Instruction formats: Three-address, Two-address, One-address (Accumulator), Zero-address",
+                    "Addressing Modes: Immediate, Direct, Indirect, Register, Relative, Indexed",
+                    "Instruction Cycle phases: Fetch, Decode, Read Effective Address, Execute, Interrupt cycle"
+                ]),
+                ("Unit 5: Memory Hierarchy & Pipelining", [
+                    "Memory hierarchy: Registers, Cache, Main Memory (RAM/ROM), Secondary Storage",
+                    "Cache Memory: Locality of Reference (Spatial & Temporal), Mapping techniques (Direct, Associative, Set-Associative)",
+                    "Virtual Memory: Paging, Segmentation, TLB, Page replacement algorithms",
+                    "Instruction Pipelining: Pipelining hazards (Structural, Data, Control), Speedup factor"
+                ]),
+                ("Unit 6: Input-Output Organization", [
+                    "Peripheral devices & I/O interface modules",
+                    "Data Transfer Modes: Programmed I/O, Interrupt-driven I/O, Direct Memory Access (DMA)",
+                    "DMA Controller architecture: Cycle stealing and Burst transfer modes",
+                    "Interrupts: Daisy chaining, Priority encoder, Software vs Hardware interrupts"
+                ])
+            ]
+
         else:
-            st.info("Unit 1: Set Theory & POSET | Unit 2: Propositional Logic | Unit 3: Matrices & Rank | Unit 4: Graph Theory | Unit 5: Calculus & Limits | Unit 6: Numerical Methods")
+            syllabus_data = [
+                ("Unit 1: Set Theory, Relations & POSET", [
+                    "Sets: Subsets, Power set, Cartesian products, Cardinality principles",
+                    "Relations: Reflexive, Symmetric, Transitive, Anti-symmetric relations",
+                    "Equivalence Relations: Equivalence classes, Partition of sets",
+                    "Partially Ordered Sets (POSET): Maximal, Minimal, LUB, GLB, Hasse Diagrams"
+                ]),
+                ("Unit 2: Mathematical Logic & Propositional Calculus", [
+                    "Propositions, Logical connectives: Conjunction, Disjunction, Negation, Conditional, Biconditional",
+                    "Truth Tables, Tautology, Contradiction, Contingency",
+                    "Logical Equivalence laws: DeMorgan's laws, Distributive laws",
+                    "Rules of Inference: Modus Ponens, Modus Tollens, Syllogisms"
+                ]),
+                ("Unit 3: Matrices & Systems of Linear Equations", [
+                    "Matrices: Types of matrices, Symmetric, Skew-symmetric, Orthogonal matrices",
+                    "Rank of a Matrix: Echelon form, Normal form (sweep-out process)",
+                    "Linear Systems ($AX = B$): Consistency criteria, Rouche-Capelli Theorem (Unique, Infinite, No solution)",
+                    "Eigenvalues & Eigenvectors: Characteristic equation, Cayley-Hamilton Theorem & Inverse calculation"
+                ]),
+                ("Unit 4: Combinatorics & Graph Theory", [
+                    "Counting Principles: Permutations and Combinations, Pigeonhole Principle",
+                    "Graphs: Vertices, Edges, Degrees, Subgraphs, Bipartite graphs, Complete graphs",
+                    "Theorems: Handshaking Theorem ($\sum \deg(v) = 2E$), Euler's Planar Formula ($V - E + R = 2$)",
+                    "Graph Traversals: Eulerian graphs, Hamiltonian paths, Trees and Spanning trees"
+                ]),
+                ("Unit 5: Differential Calculus & Indeterminate Forms", [
+                    "Successive Differentiation: Higher-order derivatives, Standard n-th derivatives",
+                    "Leibnitz's Theorem: Product rule for n-th derivatives and verified proofs",
+                    "Limits: Evaluation of indeterminate forms ($0/0, \infty/\infty, 0 \cdot \infty, \infty - \infty$)",
+                    "L'Hopital's Rule: Rigorous application and multi-step evaluation"
+                ]),
+                ("Unit 6: Numerical Methods", [
+                    "Roots of Equations: Bisection Method, Regula-Falsi Method",
+                    "Newton-Raphson Method: Derivation, Quadratic convergence (Order = 2)",
+                    "Linear System Solvers: Gauss Elimination Method, Gauss-Seidel Iterative Method",
+                    "Interpolation: Newton's Forward and Backward difference interpolation"
+                ])
+            ]
+
+        # Render Clean List-Wise Units
+        for unit_title, topic_items in syllabus_data:
+            with st.expander(f"📌 {unit_title}", expanded=False):
+                st.markdown("<ul class='unit-list'>" + "".join([f"<li>{item}</li>" for item in topic_items]) + "</ul>", unsafe_allow_html=True)
+                if st.button(f"✨ Deep Dive AI Analysis: {unit_title[:24]}...", key=f"deep_{unit_title[:15]}"):
+                    with st.spinner(f"Formulating academic summary for {unit_title}..."):
+                        analysis = get_ai_response(f"Provide a structured academic summary and 2 high-frequency university exam questions for '{unit_title}' in {active_subj}.", current_subject=active_subj)
+                        st.info(analysis)
 
     # ================= 4. EXAM ENGINE =================
     elif selected_nav == "🎯 Exam Engine":
