@@ -167,6 +167,17 @@ st.markdown("""
         box-shadow: 0 15px 35px rgba(0, 0, 0, 0.45);
     }
 
+    /* Exam Question Callout Box */
+    .solved-box {
+        background: rgba(30, 41, 59, 0.7);
+        border: 1px solid rgba(56, 189, 248, 0.4);
+        border-left: 4px solid #38BDF8;
+        padding: 16px 20px;
+        border-radius: 12px;
+        margin-top: 14px;
+        margin-bottom: 14px;
+    }
+
     /* Apple-style Gradient Buttons */
     .stButton>button {
         background: linear-gradient(135deg, rgba(59, 130, 246, 0.9) 0%, rgba(147, 51, 234, 0.9) 100%) !important;
@@ -255,7 +266,6 @@ st.markdown("""
             padding: 16px !important;
         }
 
-        /* Top Sticky Navigation on Mobile - Smooth Horizontal Touch Scroll */
         div[data-testid="stRadio"] {
             top: 8px !important;
             padding: 6px 8px !important;
@@ -343,11 +353,11 @@ def get_ai_response(prompt, image_input=None, forced_language=None, current_subj
     Current Active Subject Context: {current_subject}
     {lang_instruction}
     
-    IMPORTANT RULES:
-    1. If an image is provided, carefully examine the handwritten question, code snippet, error screenshot, circuit diagram, or mathematical formula in the image and provide a thorough, accurate solution.
-    2. Focus all solutions, viva queries, and explanations strictly on the currently active subject ({current_subject}).
-    3. Complete all diagrams, code blocks, or mathematical proofs without cutting off.
-    4. Do not add conversational fluff or meta-announcements.
+    TEACHING RULES:
+    1. Explain concepts in the most crystal-clear, intuitive, and easy language so the student never needs to re-read twice.
+    2. Provide step-by-step methods, exam tricks/shortcuts, and direct formulas for every question.
+    3. If an image is provided, thoroughly analyze handwritten questions, circuits, codes, or numerical formulas and solve completely.
+    4. Provide verified code or mathematical steps without cutting off. No filler fluff.
     
     Query:
     {prompt}
@@ -391,7 +401,7 @@ if not st.session_state.app_entered:
         <div class="creator-signature">Crafted & Created by Raj ⚡</div>
         <div class="splash-subtitle">
             Autonomous curriculum for MLK PG College, Balrampur (Maa Pateshwari State University).
-            Complete syllabus coverage for Python Programming, Computer System Architecture & Discrete Mathematics with Multimodal Vision Intelligence.
+            Complete syllabus coverage for Python Programming, Computer System Architecture & Discrete Mathematics with Exam Solved Questions, Tricks & Multimodal Vision.
         </div>
     </div>
     """, unsafe_allow_html=True)
@@ -446,7 +456,7 @@ else:
             st.markdown("""
             <div class="hero-banner">
                 <div class="hero-title">Python Programming Encyclopedia</div>
-                <div class="hero-sub">MLK PG College Balrampur • BCA University Syllabus (Full Theory, Viva & Practical Code)</div>
+                <div class="hero-sub">MLK PG College Balrampur • Full Theory, Solved Exam Questions & Practical Labs</div>
             </div>
             """, unsafe_allow_html=True)
 
@@ -462,496 +472,518 @@ else:
             ]
             sel_mod = st.selectbox("📚 Select Python Module:", py_modules)
 
-            # MODULE 1
             if sel_mod == "Module 1: Language Basics, Operators & Bitwise":
                 with st.expander("1. Python Architecture, Bytecode Compilation & Dynamic Typing", expanded=True):
                     st.write("""
-                    **Conceptual Architecture:**
-                    * Python interpreted aur high-level programming language hai. Source code (`.py`) pehle platform-independent Bytecode (`.pyc`) mein compile hota hai.
-                    * Bytecode ko Python Virtual Machine (PVM) line-by-line machine code (binary) mein translate karke execute karta hai.
-                    * **Dynamic Typing vs Static Typing:** C ya C++ mein variable declare karte waqt data type batana padta hai (`int a = 10;`). Python dynamically typed hai; variable runtime par assigned value ke mutabik type acquire karta hai. Variables heap memory mein allocated objects ke references hote hain.
-                    * **Garbage Collection:** Python memory allocation aur deallocation automatically **Reference Counting** aur **Generational Garbage Collector** ke zariye handle karta hai.
+                    **Samjhein Seedhi Bhasha Mein:**
+                    * Python hybrid language hai: Pehle Source Code (`.py`) compile hokar **Bytecode (`.pyc`)** banta hai, aur fir **Python Virtual Machine (PVM)** is bytecode ko line-by-line machine binary (0s aur 1s) mein convert karke run karti hai.
+                    * **Dynamic Typing Trick:** C language ki tarah `int a;` nahi likhna padta. Jo value doge, variable wahi ban jayega!
                     """)
-                    st.code("""# Dynamic Typing & Object Reference Demonstration
+                    st.markdown("""
+                    <div class="solved-box">
+                        <b>📝 Exam Question:</b> Python dynamically typed kaise hai aur 'is' vs '==' mein kya antar hota hai? (5 Marks)<br>
+                        <b>⚡ Trick to Remember:</b> <code>==</code> sirf <b>Value</b> dekhta hai, jabki <code>is</code> memory address (<b>ID</b>) dekhta hai!
+                    </div>
+                    """, unsafe_allow_html=True)
+                    st.code("""# Demonstration of Dynamic Typing & Object Identity
 x = 101
-print(f"Value: {x} | Data Type: {type(x)} | Memory Address (ID): {id(x)}")
+print(f"Value: {x} | Type: {type(x)} | Memory ID: {id(x)}")
 
-# Same identifier ab naye string object ko point karega
 x = "Raj Shraff"
-print(f"Value: {x} | Data Type: {type(x)} | Memory Address (ID): {id(x)}")
+print(f"Value: {x} | Type: {type(x)} | Memory ID: {id(x)}")
 
-# Multiple references pointing to identical immutable object (Integer Caching: -5 to 256)
-a = 250
-b = 250
-print("a is b (Memory Identity Match):", a is b) # True""", language="python")
+a = [1, 2, 3]
+b = [1, 2, 3]
+print("a == b (Values same hain):", a == b)      # True
+print("a is b (Memory address alag hai):", a is b) # False""", language="python")
 
-                with st.expander("2. Identifiers, Reserved Keywords, Fundamental Data Types & Explicit Type Casting", expanded=False):
+                with st.expander("2. Identifiers, Type Casting & Formatted I/O", expanded=False):
                     st.write("""
-                    **Rules for Identifiers:**
-                    * Alphabets (`a-z`, `A-Z`), digits (`0-9`), aur underscore (`_`) allow hote hain.
-                    * Kabhi bhi digit se shuru nahi ho sakta (`1st_name` invalid hai, `first_name` valid hai).
-                    * Reserved Keywords (jaise `def`, `class`, `if`, `while`, `pass`, `yield`) identifiers ke taur par use nahi kiye ja sakte.
-                    
-                    **Built-in Data Types:**
-                    * **Numeric:** `int`, `float`, `complex` (e.g. `3 + 4j`).
-                    * **Sequence:** `str`, `list`, `tuple`, `range`.
-                    * **Mapping:** `dict` | **Set Types:** `set`, `frozenset` | **Boolean:** `bool`.
+                    **Naming Rules & Shortcuts:**
+                    * Variable name kabhi number se shuru nahi ho sakta (`1st_num` ❌, `num_1` ✅).
+                    * **Type Casting:** `int()`, `float()`, `str()`. User input by-default hamesha `string` hoti hai, isliye number calculations ke liye `int(input())` lagana compulsory hai.
                     """)
-                    st.code("""# Complex numbers & Explicit Type Casting Demonstration
-c_num = 4 + 7j
-print("Real Part:", c_num.real, "| Imaginary Part:", c_num.imag)
+                    st.code("""# Explicit Type Casting & Modern f-string trick
+marks_input = "88"
+converted = int(marks_input)
+total = converted + 5
+print(f"Student Marks: {converted} | With Grace: {total}")""", language="python")
 
-raw_val = "180"
-converted_val = int(raw_val)
-tax_percentage = 0.18
-grand_total = converted_val + (converted_val * tax_percentage)
-
-print(f"Raw Input: '{raw_val}' ({type(raw_val)})")
-print(f"Parsed Integer: {converted_val} ({type(converted_val)})")
-print(f"Grand Total with 18% GST: INR {grand_total:.2f}")""", language="python")
-
-                with st.expander("3. Complete Operators (Arithmetic, Relational, Logical, Bitwise, Identity & Membership)", expanded=False):
+                with st.expander("3. Complete Operators (Arithmetic, Bitwise, Logical)", expanded=False):
                     st.write("""
-                    **Operators Hierarchy & Mechanics:**
-                    * **Arithmetic:** `+`, `-`, `*`, `/` (float quotient), `//` (floor division), `%` (modulus remainder), `**` (exponentiation).
-                    * **Bitwise Operators:** `&` (AND), `|` (OR), `^` (XOR), `~` (NOT), `<<` (Left shift), `>>` (Right shift).
-                    * **Identity (`is`, `is not`):** Checks memory location equality (`id(x) == id(y)`).
-                    * **Membership (`in`, `not in`):** Checks sequence container inclusion.
+                    * Floor Division `//`: Decimal ko kaat kar quotient integer deta hai (`14 // 4 = 3`).
+                    * Modulus `%`: Hamesha remainder deta hai (`14 % 4 = 2`).
+                    * Bitwise Shortcuts: `x << n` ka matlab $x \\times 2^n$, aur `x >> n` ka matlab $x // 2^n$.
                     """)
-                    st.code("""a = 14  # Binary: 1110
-b = 4   # Binary: 0100
+                    st.code("""a, b = 14, 4
+print("14 // 4 (Quotient):", a // b)
+print("14 % 4  (Remainder):", a % b)
+print("4 << 1  (4 * 2):", b << 1)
+print("14 >> 1 (14 // 2):", a >> 1)""", language="python")
 
-print("Floor Division (14 // 4):", a // b) # 3
-print("Modulus Remainder (14 % 4):", a % b) # 2
-print("Exponentiation (14 ** 2):", a ** 2)  # 196
-
-# Bitwise Operations
-print("Bitwise AND (14 & 4):", a & b)      # 4
-print("Bitwise XOR (14 ^ 4):", a ^ b)      # 10
-print("Left Shift (4 << 2):", b << 2)      # 16
-
-# Identity vs Equality
-seq1, seq2 = [10, 20], [10, 20]
-print("seq1 == seq2 (Value):", seq1 == seq2)     # True
-print("seq1 is seq2 (Memory):", seq1 is seq2)    # False""", language="python")
-
-            # MODULE 2
             elif sel_mod == "Module 2: Control Flow & Iteration (Branches & Loops)":
-                with st.expander("1. Conditional Branching (if, elif, else, Nested if, Ternary Operator)", expanded=True):
+                with st.expander("1. Decisions & for-else Loop Trick", expanded=True):
                     st.write("""
-                    * Indentation (standard 4 spaces) execution block define karta hai.
-                    * **Ternary Operator:** `result = true_val if condition else false_val`
+                    * **Ternary Operator:** `pass_status = "Pass" if marks >= 40 else "Fail"`
+                    * **Viva Trick (for-else):** Loop ke saath laga hua `else` block tabhi run hota hai jab loop bina `break` ke poora natural condition par end ho!
                     """)
-                    st.code("""marks = 86
-division = "Distinction" if marks >= 80 else "Regular Pass"
-print("Status:", division)
-
-if marks >= 90:
-    print("Grade: O")
-elif marks >= 60:
-    print("Grade: A")
-else:
-    print("Grade: Pass")""", language="python")
-
-                with st.expander("2. Loops in Python (for, while, range() internal step mechanism)", expanded=False):
-                    st.write("""
-                    * `range(start, stop, step)` memory efficient generator return karta hai.
-                    """)
-                    st.code("""print("Reverse Counting with step -2:")
-for val in range(10, 0, -2):
-    print(val, end=" -> ")
-print("LAUNCH")""", language="python")
-
-                with st.expander("3. Loop Control Statements (break, continue, pass, for-else construct)", expanded=False):
-                    st.write("""
-                    * **for-else:** Loop ka `else` block tabhi run hota hai jab loop natural end tak pahuche, yaani beech mein **kisi `break` statement se terminate na hua ho**.
-                    """)
-                    st.code("""test_number = 37
-for divisor in range(2, int(test_number**0.5) + 1):
-    if test_number % divisor == 0:
-        print(f"{test_number} is composite, divided by {divisor}")
+                    st.markdown("""
+                    <div class="solved-box">
+                        <b>📝 Exam Question:</b> Write a program using loop-else construct to check if a number is prime. (5 Marks)
+                    </div>
+                    """, unsafe_allow_html=True)
+                    st.code("""# Prime Number check via for-else
+num = 29
+for factor in range(2, int(num**0.5) + 1):
+    if num % factor == 0:
+        print(f"{num} is composite (divisible by {factor})")
         break
 else:
-    print(f"{test_number} is a VERIFIED PRIME NUMBER (Loop completed without break)!")""", language="python")
+    print(f"{num} is a Verified Prime Number (No break triggered)!")""", language="python")
 
-            # MODULE 3
             elif sel_mod == "Module 3: Functions, Scopes, Lambdas & Recursion":
-                with st.expander("1. Function Architecture, Positional, Keyword, *args & **kwargs", expanded=True):
+                with st.expander("1. *args, **kwargs, Scopes & Recursion", expanded=True):
                     st.write("""
-                    * `*args`: Extra positional arguments ko **Tuple** mein pack karta hai.
-                    * `**kwargs`: Extra keyword arguments ko **Dictionary** mein pack karta hai.
+                    * `*args`: Jab pata na ho kitne arguments aayenge, ye unhe **Tuple** bana deta hai.
+                    * `**kwargs`: Keyword arguments ko **Dictionary** bana deta hai.
+                    * **LEGB Rule Shortcut:** Local $\\rightarrow$ Enclosing $\\rightarrow$ Global $\\rightarrow$ Built-in.
                     """)
-                    st.code("""def register_student(name, roll, *subjects, college="MLK PG", **scores):
-    print(f"Student: {name} (Roll: {roll}) | College: {college}")
-    print("Enrolled Subjects:", subjects)
-    print("Marks Recorded:", scores)
+                    st.code("""def register_student(name, *subjects, **stats):
+    print(f"Student: {name}")
+    print("Subjects Tuple:", subjects)
+    print("Stats Dict:", stats)
 
-register_student("Raj Shraff", 101, "Python", "CSA", "Maths", Python=95, CSA=88)""", language="python")
+register_student("Raj", "Python", "CSA", sem=1, college="MLK PG")""", language="python")
 
-                with st.expander("2. Scope Resolution (LEGB Rule), global and nonlocal keywords", expanded=False):
-                    st.write("""
-                    * **LEGB Hierarchy:** Local $\\rightarrow$ Enclosing $\\rightarrow$ Global $\\rightarrow$ Built-in.
-                    * `global`: Module level variable modify karne ke liye.
-                    * `nonlocal`: Closures aur nested functions mein enclosing variable mutate karne ke liye.
-                    """)
-                    st.code("""univ = "Maa Pateshwari Univ"
-
-def outer():
-    campus = "Main Campus"
-    def inner():
-        nonlocal campus
-        campus = "Balrampur Campus"
-        global univ
-        univ = "Maa Pateshwari State University"
-    inner()
-    print("Enclosing Campus:", campus)
-
-outer()
-print("Global Univ:", univ)""", language="python")
-
-                with st.expander("3. Anonymous Functions (Lambda), map(), filter(), reduce()", expanded=False):
-                    st.write("""
-                    * **Lambda:** Inline anonymous function (`lambda args: expr`).
-                    * `map()`, `filter()`, aur `reduce()` functional programming tools provide karte hain.
-                    """)
-                    st.code("""from functools import reduce
-scores = [45, 88, 72, 91, 54, 63, 98]
-
-first_class = list(filter(lambda m: m >= 60, scores))
-grace_marks = list(map(lambda m: m + 5 if m < 60 else m, scores))
-total_sum = reduce(lambda a, b: a + b, scores)
-
-print("First Class:", first_class)
-print("Grace Added:", grace_marks)
-print("Aggregate:", total_sum)""", language="python")
-
-                with st.expander("4. Recursion, Call Stack Mechanics & Base Cases", expanded=False):
-                    st.write("""
-                    * **GCD (Euclidean Algorithm) & Tower of Hanoi.** Base case na hone par stack overflow aur `RecursionError` throw hota hai.
-                    """)
-                    st.code("""def compute_gcd(a, b):
-    return a if b == 0 else compute_gcd(b, a % b)
-
-print("GCD of 48 and 18:", compute_gcd(48, 18))""", language="python")
-
-            # MODULE 4
             elif sel_mod == "Module 4: In-Depth Data Structures (Lists, Tuples, Dicts, Sets)":
-                with st.expander("1. Lists (Memory Architecture, Slicing, List Comprehensions)", expanded=True):
-                    st.write("""
-                    * Dynamic array of pointers. Heterogeneous data types support karta hai.
-                    """)
-                    st.code("""matrix = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
-flattened = [val for row in matrix for val in row]
-even_squares = [x**2 for x in flattened if x % 2 == 0]
-print("Flattened Matrix:", flattened)
-print("Even Squares:", even_squares)""", language="python")
+                with st.expander("1. List Comprehensions & Dictionary Hash Maps", expanded=True):
+                    st.code("""matrix = [[1, 2], [3, 4]]
+flattened = [item for row in matrix for item in row]
+print("Flattened:", flattened)
 
-                with st.expander("2. Tuples (Immutability, Asterisk Unpacking & Memory Efficiency)", expanded=False):
-                    st.write("""
-                    * Lightweight and hashable. Can be used as dictionary keys.
-                    """)
-                    st.code("""record = ("Raj Shraff", "BCA", 1, 89.5, 92.0, 95.0)
-name, degree, sem, *grades = record
-print(f"Candidate: {name} | Grades: {grades}")""", language="python")
+scores = {"Python": 95, "CSA": 88, "Maths": 92}
+high = {k: v for k, v in scores.items() if v >= 90}
+print("High Scorers:", high)""", language="python")
 
-                with st.expander("3. Dictionaries (Hash Maps, Lookups, Dict Comprehensions)", expanded=False):
-                    st.write("""
-                    * $O(1)$ average time complexity.
-                    """)
-                    st.code("""marks = {"Python": 95, "CSA": 88, "Calculus": 79, "Discrete": 92}
-honors = {k: v for k, v in marks.items() if v >= 85}
-print("Honors Qualified:", honors)""", language="python")
-
-                with st.expander("4. Sets (Set Theory Operations & Frozenset)", expanded=False):
-                    st.write("""
-                    * Mathematical operations: Union (`|`), Intersection (`&`), Difference (`-`), Symmetric Difference (`^`).
-                    """)
-                    st.code("""python_std = {"Raj", "Aman", "Rohan"}
-csa_std = {"Aman", "Khushi", "Raj"}
-print("Both Courses (Intersection):", python_std & csa_std)
-print("Only in Python (Difference):", python_std - csa_std)""", language="python")
-
-            # MODULE 5
             elif sel_mod == "Module 5: Object-Oriented Programming (OOP Architecture)":
-                with st.expander("1. Classes, Objects, __init__ Constructor & self", expanded=True):
+                with st.expander("1. Classes, Encapsulation, Inheritance & Dunder Methods", expanded=True):
                     st.write("""
-                    * Classes act as blueprints; objects act as heap memory instances.
+                    * Class = Blueprint, Object = Real Memory Instance.
+                    * Private variables start with `__` (double underscore).
                     """)
                     st.code("""class BCAStudent:
-    college = "MLK PG College Balrampur"
     def __init__(self, name, roll):
         self.name = name
-        self.roll = roll
-    def profile(self):
-        return f"{self.name} (Roll: {self.roll}) - {BCAStudent.college}"
+        self.__roll = roll
 
-s = BCAStudent("Raj Shraff", 101)
-print(s.profile())""", language="python")
+    def get_roll(self): return self.__roll
 
-                with st.expander("2. Encapsulation, Private Specifiers & @property Decorator", expanded=False):
-                    st.write("""
-                    * Private variables use double underscore (`__var`) leading to Name Mangling (`_ClassName__var`).
-                    """)
-                    st.code("""class Account:
-    def __init__(self, balance):
-        self.__balance = balance
+s = BCAStudent("Raj", 101)
+print(f"Student: {s.name} | Roll: {s.get_roll()}")""", language="python")
 
-    @property
-    def balance(self):
-        return self.__balance
-
-    @balance.setter
-    def balance(self, amt):
-        if amt < 0: raise ValueError("Cannot be negative")
-        self.__balance = amt
-
-acc = Account(15000)
-acc.balance = 20000
-print("Balance verified:", acc.balance)""", language="python")
-
-                with st.expander("3. Inheritance (Single, Multiple, Multilevel, MRO & super())", expanded=False):
-                    st.write("""
-                    * MRO uses C3 Linearization algorithm to resolve diamond problem in multiple inheritance.
-                    """)
-                    st.code("""class Person:
-    def __init__(self, name): self.name = name
-
-class Tech:
-    def __init__(self, stack): self.stack = stack
-
-class Developer(Person, Tech):
-    def __init__(self, name, stack, roll):
-        Person.__init__(self, name)
-        Tech.__init__(self, stack)
-        self.roll = roll
-
-dev = Developer("Raj", "Python & CSA", 101)
-print(f"Dev: {dev.name} | Stack: {dev.stack} | Roll: {dev.roll}")
-print("MRO:", Developer.__mro__)""", language="python")
-
-                with st.expander("4. Polymorphism, Overriding & Dunder Methods (__str__, __len__, __add__)", expanded=False):
-                    st.write("""
-                    * Magic/Dunder methods operator overloading provide karte hain.
-                    """)
-                    st.code("""class Module:
-    def __init__(self, title, hours):
-        self.title = title
-        self.hours = hours
-    def __str__(self): return f"'{self.title}' ({self.hours}h)"
-    def __len__(self): return self.hours
-    def __add__(self, other): return self.hours + other.hours
-
-m1 = Module("Python Core", 45)
-m2 = Module("CSA Architecture", 40)
-print(str(m1))
-print("Combined Hours:", m1 + m2)""", language="python")
-
-            # MODULE 6
             elif sel_mod == "Module 6: File Handling, Context Managers & JSON/CSV":
-                with st.expander("1. File Modes, seek(), tell() & with Context Manager", expanded=True):
-                    st.write("""
-                    * `with` automatically calls `__enter__()` and `__exit__()` to guarantee resource cleanup.
-                    """)
-                    st.code("""with open("sample.txt", "w+") as f:
-    f.write("BCA Semester 1 - Python\\nMLK PG College Balrampur")
-    print("Cursor at:", f.tell())
-    f.seek(0)
-    print("Read content:\\n" + f.read())""", language="python")
-
-                with st.expander("2. JSON Serialization & Deserialization", expanded=False):
+                with st.expander("1. File Modes, seek(), tell() & JSON", expanded=True):
                     st.code("""import json
-data = {"name": "Raj", "degree": "BCA", "verified": True}
+data = {"name": "Raj", "degree": "BCA", "sem": 1}
 json_str = json.dumps(data, indent=2)
-print("Serialized JSON:\\n", json_str)
-parsed = json.loads(json_str)
-print("Parsed Object Name:", parsed["name"])""", language="python")
+print("Serialized JSON:\\n", json_str)""", language="python")
 
-            # MODULE 7
             elif sel_mod == "Module 7: Exception Handling & Custom Errors":
                 with st.expander("1. try-except-else-finally & Custom Exceptions", expanded=True):
-                    st.write("""
-                    * `else` block runs only when no exception occurs. `finally` runs unconditionally.
-                    """)
-                    st.code("""class InvalidMarksError(Exception): pass
-
-def submit_score(score):
-    if score < 0 or score > 100:
-        raise InvalidMarksError(f"Marks {score} out of bounds (0-100)")
-    return f"Score {score}% accepted."
+                    st.code("""class MarksError(Exception): pass
+def verify(m):
+    if m < 0 or m > 100: raise MarksError("Invalid Marks Range")
+    return "Valid"
 
 try:
-    print(submit_score(92))
-    print(submit_score(115))
-except InvalidMarksError as e:
-    print("Caught:", e)
-finally:
-    print("Verification complete.")""", language="python")
+    print(verify(95))
+except MarksError as e:
+    print("Error:", e)""", language="python")
 
-            # MODULE 8
             elif sel_mod == "Module 8: Standard Libraries, Regex & Date-Time":
-                with st.expander("1. math, random, datetime & re (Regex Pattern Matching)", expanded=True):
-                    st.code("""import math, random, re
-from datetime import datetime
+                with st.expander("1. math, datetime, re Regex", expanded=True):
+                    st.code("""import re, math
+print("Square Root 144:", math.isqrt(144))
+sample = "Contact raj@example.com, Phone: +91-9876543210"
+print("Found Emails:", re.findall(r'[\w\.-]+@[\w\.-]+', sample))""", language="python")
 
-print("GCD(36, 60):", math.gcd(36, 60))
-print("Current Time:", datetime.now().strftime("%d-%m-%Y %H:%M:%S"))
-
-text = "Student Raj Shraff, Roll 101, Contact: raj@example.com, Phone: +91-9876543210"
-print("Email:", re.findall(r'[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+', text))
-print("Phone:", re.findall(r'\+91-\d{10}', text))""", language="python")
-
-        # ------------------- 2. COMPUTER ARCHITECTURE SYLLABUS -------------------
+        # ------------------- 2. COMPUTER ARCHITECTURE (CSA) SYLLABUS -------------------
         elif active_subj == "🖥️ Computer System Architecture":
             st.markdown("""
             <div class="hero-banner">
-                <div class="hero-title">Computer System Architecture (CSA)</div>
-                <div class="hero-sub">MLK PG College Balrampur • BCA University Syllabus (Digital Logic, ALU, Memory & CPU Design)</div>
+                <div class="hero-title">Computer System Architecture (CSA) Master</div>
+                <div class="hero-sub">MLK PG College Balrampur • Complete Digital Logic, Adders, Circuits, Memory & CPU with Solved Questions & Tricks</div>
             </div>
             """, unsafe_allow_html=True)
 
             csa_modules = [
-                "Unit 1: Data Representation, Number Systems & Logic Gates",
-                "Unit 2: Boolean Algebra, K-Maps & Combinational Circuits",
+                "Unit 1: Data Representation, Number Systems & 1's/2's Complements",
+                "Unit 2: Logic Gates, Half Adder, Full Adder, K-Maps & Combinational Circuits",
                 "Unit 3: Sequential Circuits, Flip-Flops, Registers & Counters",
-                "Unit 4: Basic Computer Organization, Instruction Cycles & Bus Architecture",
-                "Unit 5: Central Processing Unit (ALU, Stack, Addressing Modes & Pipeline)",
-                "Unit 6: Memory Hierarchy (Cache Mapping, RAM/ROM, Virtual Memory)",
+                "Unit 4: Basic Computer Organization, Instruction Cycle & Bus Architecture",
+                "Unit 5: Central Processing Unit (ALU, Addressing Modes & Pipeline)",
+                "Unit 6: Memory Hierarchy (Cache Mapping, RAM/ROM & Virtual Memory)",
                 "Unit 7: Input-Output Organization (Interrupts, DMA, Programmed I/O)"
             ]
             sel_mod = st.selectbox("📚 Select CSA Unit:", csa_modules)
 
-            if sel_mod == "Unit 1: Data Representation, Number Systems & Logic Gates":
-                with st.expander("1. Number Systems & Binary Complements", expanded=True):
+            # CSA UNIT 1
+            if sel_mod == "Unit 1: Data Representation, Number Systems & 1's/2's Complements":
+                with st.expander("1. Radix Conversions & 2's Complement Arithmetic", expanded=True):
                     st.write("""
-                    * **Radix Conversions:** Binary (Base 2), Octal (Base 8), Decimal (Base 10), Hexadecimal (Base 16).
-                    * **1's & 2's Complement:** Signed numbers representation. $2's\\text{ Complement} = (1's\\text{ Complement}) + 1$.
-                    * **Fixed & Floating Point (IEEE 754):** Sign bit (1 bit), Exponent (8 bits), Mantissa (23 bits).
+                    **Samjhein Seedhi Bhasha Mein:**
+                    * Computer data 4 number systems mein process karta hai: Binary (Base 2), Octal (Base 8), Decimal (Base 10), Hexadecimal (Base 16).
+                    * **1's Complement:** Har bit ko ulta kar do ($0 \\rightarrow 1, 1 \\rightarrow 0$).
+                    * **2's Complement:** $2's = (1's\\text{ Complement}) + 1$.
+                    * **Examiner Secret Trick (Direct 2's Complement):** Right side (LSB) se check karo, jab tak pehla `1` na mile waisa hi rehne do, us pehle `1` ke baad ke saare left bits ko invert kar do!
                     """)
-                    st.code("""# Number system conversion demonstration
-num = 45
-print("Binary:", bin(num))
-print("Octal:", oct(num))
-print("Hexadecimal:", hex(num))""", language="python")
+                    st.markdown("""
+                    <div class="solved-box">
+                        <b>📝 Solved Exam Question:</b> Represent -13 in 8-bit 2's Complement binary form. (5 Marks)<br>
+                        <b>Step 1:</b> +13 in 8-bit binary = <code>0000 1101</code><br>
+                        <b>Step 2 (1's Complement):</b> <code>1111 0010</code><br>
+                        <b>Step 3 (Add 1):</b> <code>1111 0010 + 1 = 1111 0011</code><br>
+                        <b>⚡ Quick Verification Trick:</b> Sign bit (leftmost) 1 hai, yaani number negative hai!
+                    </div>
+                    """, unsafe_allow_html=True)
+                    st.code("""# CSA Radix & 2's Complement Simulator
+def to_twos_comp(n, bits=8):
+    if n >= 0:
+        return bin(n)[2:].zfill(bits)
+    return bin((1 << bits) + n)[2:]
 
-            elif sel_mod == "Unit 2: Boolean Algebra, K-Maps & Combinational Circuits":
-                with st.expander("1. DeMorgan's Laws, K-Map Minimization & Adders", expanded=True):
+val = -13
+print(f"Decimal: {val}")
+print(f"8-Bit 2's Complement: {to_twos_comp(val, 8)}")""", language="python")
+
+            # CSA UNIT 2 (HALF ADDER & FULL ADDER THOROUGHLY EXPLAINED)
+            elif sel_mod == "Unit 2: Logic Gates, Half Adder, Full Adder, K-Maps & Combinational Circuits":
+                with st.expander("1. Half Adder & Full Adder Architecture (Complete Detailed Guide)", expanded=True):
                     st.write("""
-                    * **DeMorgan's Laws:** $(A + B)' = A' \\cdot B'$ aur $(A \\cdot B)' = A' + B'$.
-                    * **K-Map:** Gray code ordering ke sath Boolean function minimization.
-                    * **Half Adder:** Sum = $A \\oplus B$, Carry = $A \\cdot B$.
-                    * **Full Adder:** Sum = $A \\oplus B \\oplus C_{in}$, Carry = $A B + B C_{in} + A C_{in}$.
-                    * **Multiplexers (MUX) & Decoders:** Data selectors ($2^n \\times 1$).
-                    """)
+                    **Samjhein Seedhi Bhasha Mein:**
+                    * **Half Adder (HA):** Yeh do 1-bit binary inputs ($A$ aur $B$) ko add karta hai aur do outputs generate karta hai: **Sum ($S$)** aur **Carry ($C$)**.
+                      * **Truth Table:**
+                        * $A=0, B=0 \\implies Sum=0, Carry=0$
+                        * $A=0, B=1 \\implies Sum=1, Carry=0$
+                        * $A=1, B=0 \\implies Sum=1, Carry=0$
+                        * $A=1, B=1 \\implies Sum=0, Carry=1$ ($1+1 = 10_2$)
+                      * **Logic Formulas:**
+                        * $$Sum = A \\oplus B = A'B + AB'$$ (XOR Gate)
+                        * $$Carry = A \\cdot B$$ (AND Gate)
+                      * **Limitation:** Half adder pichle stage se aane wale carry ko add nahi kar sakta.
 
+                    ---
+                    * **Full Adder (FA):** Yeh teen 1-bit binary inputs ($A$, $B$, aur previous carry $C_{in}$) ko add karta hai.
+                      * **Logic Formulas:**
+                        * $$Sum = A \\oplus B \\oplus C_{in}$$ (3-input XOR Gate)
+                        * $$Carry_{out} = AB + BC_{in} + AC_{in} = AB + C_{in}(A \\oplus B)$$
+                    * **Master Design Trick:** Ek Full Adder ko **2 Half Adders aur 1 OR Gate** se banaya ja sakta hai!
+                    """)
+                    st.markdown("""
+                    <div class="solved-box">
+                        <b>📝 Solved Exam Question:</b> Design a Full Adder using two Half Adders and an OR gate. Draw the logic block diagram and verify for $A=1, B=1, C_{in}=1$. (10 Marks)<br>
+                        <b>Step 1 (First Half Adder):</b> Inputs $A, B$. Output $S_1 = A \\oplus B = 1 \\oplus 1 = 0$, $C_1 = A \\cdot B = 1 \\cdot 1 = 1$.<br>
+                        <b>Step 2 (Second Half Adder):</b> Inputs $S_1$ and $C_{in}$. Output $Sum = S_1 \\oplus C_{in} = 0 \\oplus 1 = \\mathbf{1}$. Second carry $C_2 = S_1 \\cdot C_{in} = 0 \\cdot 1 = 0$.<br>
+                        <b>Step 3 (OR Gate for Carry):</b> $C_{out} = C_1 + C_2 = 1 + 0 = \\mathbf{1}$.<br>
+                        <b>Final Output:</b> $Sum = 1, Carry = 1$ (Jo ki $1 + 1 + 1 = 3 = 11_2$ bilkul sahi hai!).
+                    </div>
+                    """, unsafe_allow_html=True)
+                    st.code("""# Interactive Full Adder Logic Simulator
+def half_adder(a, b):
+    sum_bit = a ^ b      # XOR gate
+    carry_bit = a & b    # AND gate
+    return sum_bit, carry_bit
+
+def full_adder_using_two_ha(a, b, cin):
+    s1, c1 = half_adder(a, b)
+    final_sum, c2 = half_adder(s1, cin)
+    final_carry = c1 | c2  # OR gate combines carries
+    return final_sum, final_carry
+
+print("Full Adder Verification Table:")
+print("A | B | Cin | Sum | Carry")
+print("-" * 27)
+for a in [0, 1]:
+    for b in [0, 1]:
+        for cin in [0, 1]:
+            s, c = full_adder_using_two_ha(a, b, cin)
+            print(f"{a} | {b} |  {cin}  |  {s}  |   {c}")""", language="python")
+
+                with st.expander("2. K-Map Minimization, Multiplexers (MUX) & Decoders", expanded=False):
+                    st.write("""
+                    * **K-Map (Karnaugh Map):** Gray code ordering (`00, 01, 11, 10`) par chalta hai taaki consecutive cells ke beech sirf 1 bit ka change ho.
+                    * **Grouping Priority Trick:** Hamesha sabse bada group dhundho: 16 (Octet) $\\rightarrow$ 8 $\\rightarrow$ 4 (Quad) $\\rightarrow$ 2 (Pair). Bada group = Kam variables ki simplified equation!
+                    * **Multiplexer (Data Selector):** $2^n$ inputs, $n$ select lines, 1 output.
+                    * **Decoder:** $n$ inputs, $2^n$ outputs.
+                    """)
+                    st.code("""# Multiplexer (4:1 MUX) Simulator
+def mux_4to1(i0, i1, i2, i3, s1, s0):
+    lines = [i0, i1, i2, i3]
+    select_index = (s1 << 1) | s0
+    return lines[select_index]
+
+print("MUX Output with S1=1, S0=0 selecting I2:", mux_4to1("D0", "D1", "Selected D2", "D3", 1, 0))""", language="python")
+
+            # CSA UNIT 3
             elif sel_mod == "Unit 3: Sequential Circuits, Flip-Flops, Registers & Counters":
-                with st.expander("1. Latches, Flip-Flops (SR, JK, D, T) & Master-Slave", expanded=True):
+                with st.expander("1. Flip-Flops & The Famous Race-Around Condition", expanded=True):
                     st.write("""
-                    * **Sequential Circuit:** Output current input aur past memory history dono par depend karta hai.
-                    * **SR Flip-Flop:** $S=1, R=1$ invalid/forbidden state.
-                    * **JK Flip-Flop & Race-Around:** $J=1, K=1$ par condition occur hoti hai jab pulse duration propagation delay se badi ho.
-                    * **Master-Slave Flip-Flop:** Race-around condition ko eliminate karta hai.
+                    * **Combinational vs Sequential:** Combinational ka output sirf current input par depend karta hai; Sequential mein **Memory (feedback loop)** hoti hai.
+                    * **JK Flip-Flop Race Around Condition:** Jab $J=1, K=1$ ho aur clock pulse width ($t_p$) flip-flop ke propagation delay ($t_{pd}$) se badi ho, toh output toggle hota rehta hai aur unstable ho jata hai.
+                    * **Solution Trick:** Use **Master-Slave JK Flip-Flop** ya **Edge-Triggering**!
                     """)
+                    st.markdown("""
+                    <div class="solved-box">
+                        <b>📝 Exam Question:</b> How Master-Slave JK Flip-Flop eliminates race-around condition? (5 Marks)<br>
+                        <b>Answer Shortcut:</b> Clock High par sirf Master active hota hai aur input save karta hai, jab Clock Low hoti hai tab Slave trigger hokar output deta hai. Dono ek saath active nahi hote!
+                    </div>
+                    """, unsafe_allow_html=True)
 
-            elif sel_mod == "Unit 4: Basic Computer Organization, Instruction Cycles & Bus Architecture":
-                with st.expander("1. Common Bus System, Control Unit & Instruction Cycle", expanded=True):
+            # CSA UNIT 4
+            elif sel_mod == "Unit 4: Basic Computer Organization, Instruction Cycle & Bus Architecture":
+                with st.expander("1. Instruction Cycle & Common Bus System", expanded=True):
                     st.write("""
-                    * **Registers:** PC, MAR, MDR, AC, IR.
-                    * **Instruction Cycle:** Fetch ($PC \\rightarrow MAR$, $M[MAR] \\rightarrow IR$), Decode, Read Effective Address, Execute.
+                    **Samjhein Seedhi Bhasha Mein:**
+                    * **Common Bus:** Bahut saare registers (PC, MAR, MDR, AC) ko ek common data highway provide karta hai multiplexers ke zariye.
+                    * **Instruction Cycle ke 4 Steps:**
+                      1. **Fetch:** Instruction memory se IR mein aati hai ($PC \\rightarrow MAR$, $M[MAR] \\rightarrow IR$, $PC + 1$).
+                      2. **Decode:** Opcode decoder check karta hai konsa task hai.
+                      3. **Effective Address:** Indirect addressing ho toh actual memory address read hota hai.
+                      4. **Execute:** ALU operation complete karta hai.
                     """)
+                    st.markdown("""
+                    <div class="solved-box">
+                        <b>📝 Solved Exam Question:</b> Write register transfer micro-operations for Fetch phase. (5 Marks)<br>
+                        <b>Step 1 ($T_0$):</b> $AR \\leftarrow PC$<br>
+                        <b>Step 2 ($T_1$):</b> $IR \\leftarrow M[AR], PC \\leftarrow PC + 1$<br>
+                        <b>Step 3 ($T_2$):</b> Decode $IR(12-14)$, $AR \\leftarrow IR(0-11)$, $I \\leftarrow IR(15)$
+                    </div>
+                    """, unsafe_allow_html=True)
 
-            elif sel_mod == "Unit 5: Central Processing Unit (ALU, Stack, Addressing Modes & Pipeline)":
-                with st.expander("1. Addressing Modes & Instruction Pipelining", expanded=True):
+            # CSA UNIT 5
+            elif sel_mod == "Unit 5: Central Processing Unit (ALU, Addressing Modes & Pipeline)":
+                with st.expander("1. Addressing Modes Shortcuts & Pipeline Hazards", expanded=True):
                     st.write("""
-                    * **Addressing Modes:** Immediate, Direct, Indirect, Register Indirect, Indexed, Relative.
-                    * **Instruction Pipeline:** IF, ID, OF, EX, WB stages.
-                    * **Hazards:** Structural, Data (RAW, WAR, WAW), Control/Branch hazards.
+                    **Addressing Modes Tricks:**
+                    * **Immediate:** Operand instruction ke andar hi hai (`MOV R1, #25`).
+                    * **Direct:** Address direct diya hai (`ADD 2000`).
+                    * **Indirect:** Address ke andar dusra address hai (`ADD @2000`).
+                    * **Pipeline Speedup Formula:** $Speedup = \\frac{n \\times k}{k + n - 1}$, jahan $k$ = pipeline stages, $n$ = instructions.
                     """)
+                    st.markdown("""
+                    <div class="solved-box">
+                        <b>📝 Solved Numerical:</b> Ek 5-stage pipeline mein 100 instructions execute karne par speedup ratio kya hoga? (7 Marks)<br>
+                        <b>Calculation:</b> $k = 5, n = 100$<br>
+                        Non-pipeline time = $n \\times k = 100 \\times 5 = 500$ cycles.<br>
+                        Pipeline time = $k + n - 1 = 5 + 100 - 1 = 104$ cycles.<br>
+                        <b>Speedup:</b> $500 / 104 = 4.807$ (Lagbhag 5x faster!).
+                    </div>
+                    """, unsafe_allow_html=True)
+                    st.code("""# Pipeline Speedup Calculator
+def calculate_speedup(k_stages, n_instructions):
+    non_pipe = k_stages * n_instructions
+    pipe = k_stages + n_instructions - 1
+    return non_pipe / pipe
 
-            elif sel_mod == "Unit 6: Memory Hierarchy (Cache Mapping, RAM/ROM, Virtual Memory)":
-                with st.expander("1. Cache Memory Mapping & Virtual Memory", expanded=True):
+print("Pipeline Speedup (k=5, n=100):", round(calculate_speedup(5, 100), 3))""", language="python")
+
+            # CSA UNIT 6
+            elif sel_mod == "Unit 6: Memory Hierarchy (Cache Mapping, RAM/ROM & Virtual Memory)":
+                with st.expander("1. Cache Mapping Formulas & Locality of Reference", expanded=True):
                     st.write("""
-                    * **Hierarchy:** Registers $\\rightarrow$ Cache (L1, L2) $\\rightarrow$ RAM $\\rightarrow$ Secondary SSD/HDD.
-                    * **Locality of Reference:** Temporal Locality aur Spatial Locality.
-                    * **Cache Mapping:** Direct Mapping, Associative Mapping, Set-Associative Mapping.
-                    * **Virtual Memory:** Paging, Page Faults, TLB (Translation Lookaside Buffer).
+                    **Locality of Reference:**
+                    * **Temporal Locality:** Jo data abhi use hua hai, wo jaldi hi dobara use hoga (Loops).
+                    * **Spatial Locality:** Jo data abhi use hua hai, uske bagal wala memory location agle cycle mein use hoga (Arrays).
+                    * **Direct Cache Mapping Trick:** Main memory address divides into: **[Tag | Index (Line) | Offset (Word)]**.
                     """)
+                    st.markdown("""
+                    <div class="solved-box">
+                        <b>📝 Solved Exam Question:</b> Agar Main Memory 64 KB aur Cache Memory 4 KB hai with 16-byte block size, toh Direct Mapping fields calculate karein. (7 Marks)<br>
+                        <b>Step 1 (Word Offset):</b> Block size 16 bytes = $2^4 \\implies$ <b>4 bits</b>.<br>
+                        <b>Step 2 (Cache Lines/Index):</b> $4\\text{ KB} / 16\\text{ B} = 4096 / 16 = 256 = 2^8 \\implies$ <b>8 bits</b>.<br>
+                        <b>Step 3 (Tag):</b> Total memory 64 KB = $2^{16} \\implies$ 16 bits total address.<br>
+                        $\\text{Tag Bits} = 16 - (8 + 4) =$ <b>4 bits</b>!
+                    </div>
+                    """, unsafe_allow_html=True)
 
+            # CSA UNIT 7
             elif sel_mod == "Unit 7: Input-Output Organization (Interrupts, DMA, Programmed I/O)":
-                with st.expander("1. I/O Modes & Direct Memory Access (DMA)", expanded=True):
+                with st.expander("1. DMA (Direct Memory Access) Data Transfer", expanded=True):
                     st.write("""
-                    * **Programmed I/O vs Interrupt-Initiated I/O.**
-                    * **DMA (Direct Memory Access):** CPU ko bypass karke high-speed data transfer: Bus Request (BR) aur Bus Grant (BG).
+                    * **Programmed I/O:** CPU baar-baar puchta rehta hai (Polling / Busy Waiting). CPU ka time waste hota hai.
+                    * **Interrupt I/O:** Jab data ready ho, device CPU ko interrupt bhejti hai.
+                    * **DMA (Master Trick):** CPU ko beech se hata do! Hard disk direct RAM se baat karegi. CPU sirf transfer shuru karta hai aur finish hone par interrupt leta hai.
                     """)
+                    st.markdown("""
+                    <div class="solved-box">
+                        <b>📝 Exam Question:</b> Differentiate between Cycle Stealing and Burst Mode DMA. (5 Marks)<br>
+                        <b>Shortcut:</b> <b>Cycle Stealing</b> mein DMA controller CPU se 1 bus cycle chheen kar 1 byte bhejta hai; <b>Burst Mode</b> mein poora block bhejne tak bus CPU ko nahi milti.
+                    </div>
+                    """, unsafe_allow_html=True)
 
         # ------------------- 3. MATHEMATICS SYLLABUS -------------------
         elif active_subj == "📐 Mathematics & Numerical Methods":
             st.markdown("""
             <div class="hero-banner">
-                <div class="hero-title">BCA Discrete Mathematics & Numerical Methods</div>
-                <div class="hero-sub">MLK PG College Balrampur • BCA University Syllabus (Sets, Logic, Matrices, Calculus & Numerical Algorithms)</div>
+                <div class="hero-title">Discrete Mathematics & Numerical Methods</div>
+                <div class="hero-sub">MLK PG College Balrampur • Sets, Relations, Logic, Matrices, Calculus & Numerical Solvers with Tricks</div>
             </div>
             """, unsafe_allow_html=True)
 
             math_modules = [
-                "Unit 1: Set Theory, Relations, Functions & Partially Ordered Sets (Posets)",
-                "Unit 2: Mathematical Logic, Propositional Calculus & Truth Tables",
+                "Unit 1: Set Theory, Relations, Functions & POSET",
+                "Unit 2: Mathematical Logic, Truth Tables & Propositional Calculus",
                 "Unit 3: Matrices, Determinants, Rank & System of Linear Equations",
-                "Unit 4: Combinatorics, Permutations & Graph Theory Basics",
-                "Unit 5: Differential & Integral Calculus (Limits, Continuity, Maxima/Minima)",
-                "Unit 6: Numerical Methods (Bisection, Newton-Raphson, Gauss Elimination)"
+                "Unit 4: Combinatorics, Pigeonhole Principle & Graph Theory",
+                "Unit 5: Differential Calculus, Leibnitz's Theorem & Maxima/Minima",
+                "Unit 6: Numerical Methods (Newton-Raphson, Bisection & Gauss Elimination)"
             ]
             sel_mod = st.selectbox("📚 Select Mathematics Unit:", math_modules)
 
-            if sel_mod == "Unit 1: Set Theory, Relations, Functions & Partially Ordered Sets (Posets)":
-                with st.expander("1. Relations, Equivalence Classes & POSET", expanded=True):
+            # MATH UNIT 1
+            if sel_mod == "Unit 1: Set Theory, Relations, Functions & POSET":
+                with st.expander("1. Equivalence Relations & Partial Order (POSET)", expanded=True):
                     st.write("""
-                    * **Equivalence Relation:** Reflexive, Symmetric aur Transitive relation.
-                    * **POSET (Partially Ordered Set):** Reflexive, Antisymmetric aur Transitive relation. Hasse Diagrams.
+                    **Samjhein Seedhi Bhasha Mein:**
+                    * **Reflexive:** Khud ka relation khud se ($a R a$).
+                    * **Symmetric:** Agar $a R b$ hai toh $b R a$ bhi hona chahiye.
+                    * **Transitive:** Agar $a R b$ aur $b R c$ hai toh $a R c$ hona zaroori hai.
+                    * **Equivalence Relation:** Jo relation Reflexive, Symmetric aur Transitive teeno ho.
+                    * **POSET (Partial Order Set):** Reflexive + **Antisymmetric** ($a R b$ aur $b R a \\implies a = b$) + Transitive.
                     """)
+                    st.markdown("""
+                    <div class="solved-box">
+                        <b>📝 Solved Exam Question:</b> Show that relation $R = \\{(a, b) : a - b \\text{ is divisible by 3}\\}$ on integers $\\mathbb{Z}$ is an Equivalence Relation. (7 Marks)<br>
+                        <b>1. Reflexive:</b> $a - a = 0 = 3 \\times 0$ (divisible by 3) $\\implies (a, a) \\in R$.<br>
+                        <b>2. Symmetric:</b> Agar $a - b = 3k$ toh $b - a = -3k = 3(-k)$ (divisible by 3) $\\implies (b, a) \\in R$.<br>
+                        <b>3. Transitive:</b> $a - b = 3k_1$ aur $b - c = 3k_2$. Add both: $(a - b) + (b - c) = a - c = 3(k_1 + k_2) \\implies (a, c) \\in R$.<br>
+                        <b>Verdict:</b> Hence, it is an Equivalence Relation!
+                    </div>
+                    """, unsafe_allow_html=True)
 
-            elif sel_mod == "Unit 2: Mathematical Logic, Propositional Calculus & Truth Tables":
-                with st.expander("1. Propositions, Tautology, Fallacy & Inference Rules", expanded=True):
+            # MATH UNIT 2
+            elif sel_mod == "Unit 2: Mathematical Logic, Truth Tables & Propositional Calculus":
+                with st.expander("1. Logic Connectives, Tautology & Modus Ponens", expanded=True):
                     st.write("""
-                    * Connectives: Negation ($\\neg$), Conjunction ($\\land$), Disjunction ($\\lor$), Implication ($\\rightarrow$).
-                    * Modus Ponens, Modus Tollens.
+                    * Conjunction $\\land$ (AND): Dono True honge tabhi True.
+                    * Disjunction $\\lor$ (OR): Ek bhi True hoga toh True.
+                    * Conditional $p \\rightarrow q$ (Implies): **Sirf tabhi False hota hai jab $p$ True ho aur $q$ False ho ($T \\rightarrow F = F$)**, baaki sabhi case mein True!
+                    * **Tautology:** Statement column mein saare values `True` hon.
                     """)
+                    st.markdown("""
+                    <div class="solved-box">
+                        <b>📝 Solved Exam Question:</b> Prove that $(p \\rightarrow q) \\equiv (\\neg p \\lor q)$ using Truth Table. (5 Marks)<br>
+                        <b>Shortcut:</b> Column values match: Dono columns mein truth values <code>[T, F, T, T]</code> aati hain, isliye mathematically logically equivalent hain!
+                    </div>
+                    """, unsafe_allow_html=True)
+                    st.code("""# Truth Table Generator in Python
+print("p  | q  | p -> q | ~p v q")
+print("------------------------")
+for p in [True, False]:
+    for q in [True, False]:
+        implies = (not p) or q
+        equiv = (not p) or q
+        print(f"{int(p)}  | {int(q)}  |   {int(implies)}    |   {int(equiv)}")""", language="python")
 
+            # MATH UNIT 3
             elif sel_mod == "Unit 3: Matrices, Determinants, Rank & System of Linear Equations":
-                with st.expander("1. Rank of Matrix, Consistency & Cayley-Hamilton Theorem", expanded=True):
+                with st.expander("1. Rank of Matrix, Rouche-Capelli Consistency & Cayley-Hamilton", expanded=True):
                     st.write("""
-                    * **Consistency Theorem (Rouche-Capelli):**
-                      * $Rank(A) = Rank(A|B) = n \\implies$ Unique Solution.
-                      * $Rank(A) = Rank(A|B) < n \\implies$ Infinite Solutions.
-                      * $Rank(A) \\neq Rank(A|B) \\implies$ Inconsistent.
-                    * **Eigenvalues:** $|A - \\lambda I| = 0$. Cayley-Hamilton theorem states every square matrix satisfies its own characteristic equation.
+                    **Consistency Trick (Rouche-Capelli Theorem):**
+                    * $AX = B$ mein Augmented Matrix $[A|B]$ banate hain aur Echelon form mein convert karte hain:
+                      1. $Rank(A) = Rank(A|B) = n$ (variables) $\\implies$ **Unique Solution**.
+                      2. $Rank(A) = Rank(A|B) < n \\implies$ **Infinitely Many Solutions**.
+                      3. $Rank(A) \\neq Rank(A|B) \\implies$ **Inconsistent (No Solution)**.
+                    * **Cayley-Hamilton Theorem Shortcut:** Har square matrix apni characteristic equation $|A - \\lambda I| = 0$ ko satisfy karti hai! Isse $A^{-1}$ bina adjoint calculate kiye 2 minute mein nikalta hai!
                     """)
+                    st.markdown("""
+                    <div class="solved-box">
+                        <b>📝 Solved Exam Question:</b> Find the eigenvalues of matrix $A = \\begin{pmatrix} 2 & 1 \\\\ 1 & 2 \\end{pmatrix}$. (5 Marks)<br>
+                        <b>Formula:</b> $|A - \\lambda I| = 0 \\implies (2 - \\lambda)(2 - \\lambda) - (1)(1) = 0$<br>
+                        $\\lambda^2 - 4\\lambda + 3 = 0 \\implies (\\lambda - 1)(\\lambda - 3) = 0$<br>
+                        <b>Eigenvalues:</b> $\\lambda = 1, 3$.<br>
+                        <b>⚡ Super Verification Trick:</b> Sum of eigenvalues ($1 + 3 = 4$) hamesha matrix ke trace (diagonal sum $2 + 2 = 4$) ke barabar hota hai!
+                    </div>
+                    """, unsafe_allow_html=True)
 
-            elif sel_mod == "Unit 4: Combinatorics, Permutations & Graph Theory Basics":
-                with st.expander("1. Pigeonhole Principle & Planar Graphs", expanded=True):
+            # MATH UNIT 4
+            elif sel_mod == "Unit 4: Combinatorics, Pigeonhole Principle & Graph Theory":
+                with st.expander("1. Handshaking Theorem & Euler Planar Formula", expanded=True):
                     st.write("""
-                    * Handshaking Theorem: $\\sum deg(v) = 2E$.
-                    * Euler's Formula for Planar Graphs: $V - E + R = 2$.
+                    * **Handshaking Theorem:** Graph ke saare vertices ki degree ka sum hamesha number of edges ke double ke barabar hota hai:
+                      $$\\sum_{v \\in V} deg(v) = 2E$$
+                    * **Euler's Planar Formula Trick:** Kisi bhi connected planar graph mein:
+                      $$V - E + R = 2$$
+                      (Vertices - Edges + Regions = 2).
                     """)
+                    st.markdown("""
+                    <div class="solved-box">
+                        <b>📝 Solved Exam Question:</b> Ek graph mein 12 edges hain aur har vertex ki degree 3 hai. Total kitne vertices honge? (5 Marks)<br>
+                        <b>Step:</b> Handshaking Theorem se $\\sum deg(v) = 2E = 2 \\times 12 = 24$.<br>
+                        Agar $n$ vertices hain: $3 \\times n = 24 \\implies n = 8$ vertices!
+                    </div>
+                    """, unsafe_allow_html=True)
 
-            elif sel_mod == "Unit 5: Differential & Integral Calculus (Limits, Continuity, Maxima/Minima)":
-                with st.expander("1. Successive Differentiation & Taylor / Maclaurin Series", expanded=True):
+            # MATH UNIT 5
+            elif sel_mod == "Unit 5: Differential Calculus, Leibnitz's Theorem & Maxima/Minima":
+                with st.expander("1. Leibnitz's Theorem for n-th Derivative", expanded=True):
                     st.write("""
-                    * Leibnitz's Theorem for $n$-th derivative. Maxima/Minima test: $rt - s^2 > 0$.
+                    * Agar do functions multiply ho rahe hon ($y = u \\cdot v$), toh $n$-th derivative ka formula:
+                      $$y_n = ^nC_0 u_n v + ^nC_1 u_{n-1} v_1 + ^nC_2 u_{n-2} v_2 + \\dots + ^nC_n u v_n$$
+                    * **Trick:** $v$ hamesha us function ko maano jo 2-3 baar differentiate hone par zero ho jaye (jaise $x^2$ ya $x^3$), taaki aage ke saare terms khatam ho jayein!
                     """)
+                    st.markdown("""
+                    <div class="solved-box">
+                        <b>📝 Solved Exam Question:</b> Find the $n$-th derivative of $y = x^2 e^{ax}$. (7 Marks)<br>
+                        <b>Choose:</b> $u = e^{ax}$ (infinite derivatives) aur $v = x^2$ ($v_1 = 2x, v_2 = 2, v_3 = 0$).<br>
+                        $y_n = a^n e^{ax} \\cdot x^2 + n a^{n-1} e^{ax} \\cdot (2x) + \\frac{n(n-1)}{2} a^{n-2} e^{ax} \\cdot 2$<br>
+                        $= a^{n-2} e^{ax} [a^2 x^2 + 2nax + n(n-1)]$.
+                    </div>
+                    """, unsafe_allow_html=True)
 
-            elif sel_mod == "Unit 6: Numerical Methods (Bisection, Newton-Raphson, Gauss Elimination)":
-                with st.expander("1. Newton-Raphson & Root Finding Algorithms", expanded=True):
+            # MATH UNIT 6
+            elif sel_mod == "Unit 6: Numerical Methods (Newton-Raphson, Bisection & Gauss Elimination)":
+                with st.expander("1. Newton-Raphson Method Formula & Code Solver", expanded=True):
                     st.write("""
-                    * Newton-Raphson Formula:
+                    **Samjhein Seedhi Bhasha Mein:**
+                    * Equations ka root (solution) nikalne ke liye tangent line use karta hai.
+                    * **Formula:**
                       $$x_{n+1} = x_n - \\frac{f(x_n)}{f'(x_n)}$$
-                      (Quadratic convergence, order = 2).
+                    * **Order of Convergence:** Quadratic (Order = 2), yaani har step mein decimal places double accuracy se aate hain!
                     """)
+                    st.markdown("""
+                    <div class="solved-box">
+                        <b>📝 Solved Numerical:</b> Find root of $x^3 - x - 2 = 0$ using Newton-Raphson starting with $x_0 = 1.5$. (7 Marks)<br>
+                        $f(x) = x^3 - x - 2 \\implies f'(x) = 3x^2 - 1$<br>
+                        $f(1.5) = 3.375 - 1.5 - 2 = -0.125$<br>
+                        $f'(1.5) = 3(2.25) - 1 = 5.75$<br>
+                        $x_1 = 1.5 - \\frac{-0.125}{5.75} = 1.5 + 0.02174 = \\mathbf{1.5217}$!
+                    </div>
+                    """, unsafe_allow_html=True)
+                    st.code("""# Complete Newton-Raphson Solver
+def newton_raphson(f, df, x0, tol=1e-5, max_iter=10):
+    x = x0
+    for i in range(max_iter):
+        fx = f(x)
+        dfx = df(x)
+        x_new = x - fx / dfx
+        print(f"Iteration {i+1}: x = {x_new:.6f}")
+        if abs(x_new - x) < tol:
+            return x_new
+        x = x_new
+    return x
+
+# Testing x^3 - x - 2 = 0
+f = lambda x: x**3 - x - 2
+df = lambda x: 3*x**2 - 1
+root = newton_raphson(f, df, 1.5)
+print("Converged Root:", round(root, 5))""", language="python")
 
         # Bottom AI Action Container
         st.markdown(f"""
         <div class="apple-glass-card">
             <h3 style="margin-top:0; font-size:20px; font-weight:700;">🎯 AI University Exam Preparation & Viva Master ({active_subj})</h3>
-            <p style="color:#94A3B8; font-size:13px; margin-bottom:14px;">MLK PG College / Maa Pateshwari University exam ke top expected questions aur viva points generate karein:</p>
+            <p style="color:#94A3B8; font-size:13px; margin-bottom:14px;">MLK PG College / Maa Pateshwari University exam ke top expected questions, viva points aur tricks generate karein:</p>
         </div>
         """, unsafe_allow_html=True)
 
@@ -962,9 +994,9 @@ print("Hexadecimal:", hex(num))""", language="python")
                 Subject: {active_subj}
                 Active Unit/Topic: {sel_mod}
                 
-                1. Provide the top 3 high-weightage theory examination questions (5-10 marks format) with complete model answers.
+                1. Provide the top 3 high-weightage theory examination questions (5-10 marks format) with complete step-by-step model answers and shortcut tricks.
                 2. Provide 3 tricky Viva-Voce questions with short, precise, examiner-winning answers.
-                3. Highlight 2 critical practical/numerical pitfalls students usually make in university exams and how to avoid them.
+                3. Highlight 2 critical practical/numerical pitfalls students usually make in university exams and how to avoid them easily.
                 Format cleanly using bolding and clear bullet points.
                 """
                 ai_output = get_ai_response(prompt, current_subject=active_subj)
@@ -984,7 +1016,7 @@ print("Hexadecimal:", hex(num))""", language="python")
         with col1:
             test_scope = st.text_input(
                 f"Enter Specific Topic / Chapter for {active_subj}:",
-                placeholder="e.g. Cache Mapping / Polymorphism / Eigenvalues / K-Maps"
+                placeholder="e.g. Cache Mapping / Full Adder / Eigenvalues / K-Maps"
             )
         with col2:
             test_lang = st.selectbox(
@@ -1065,11 +1097,11 @@ print("Hexadecimal:", hex(num))""", language="python")
             ]
         elif active_subj == "🖥️ Computer System Architecture":
             proj_list = [
+                "Half & Full Adder Simulator with Ripple Carry Circuit",
                 "4-Bit ALU Software Simulator (Logic Gates & Arithmetic)",
                 "Direct-Mapped vs Set-Associative Cache Memory Simulator",
                 "8-Bit Instruction Set Architecture (ISA) & CPU Emulator",
-                "Booth's Multiplication Algorithm Simulator with Step Tracing",
-                "Virtual Memory Page Replacement Simulator (FIFO, LRU, Optimal)"
+                "Booth's Multiplication Algorithm Simulator with Step Tracing"
             ]
         else:
             proj_list = [
@@ -1149,15 +1181,13 @@ def greet(name, college):
 print(greet("Raj", "MLK PG College Balrampur"))
 """
         elif active_subj == "🖥️ Computer System Architecture":
-            starter = """# CSA Binary & Bitwise Logic Simulator
-a = 0b1100  # 12 in binary
-b = 0b1010  # 10 in binary
+            starter = """# CSA Binary Half Adder & Bitwise Logic Simulator
+def test_half_adder(a, b):
+    sum_bit = a ^ b
+    carry_bit = a & b
+    return f"A={a}, B={b} -> Sum={sum_bit}, Carry={carry_bit}"
 
-print("A (Binary):", bin(a))
-print("B (Binary):", bin(b))
-print("Bitwise AND (A & B):", bin(a & b))
-print("Bitwise OR  (A | B):", bin(a | b))
-print("Bitwise XOR (A ^ B):", bin(a ^ b))
+print(test_half_adder(1, 1))
 """
         else:
             starter = """# Numerical Methods: Newton-Raphson Method
