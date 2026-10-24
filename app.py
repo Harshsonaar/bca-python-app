@@ -21,15 +21,19 @@ st.markdown("""
 st.sidebar.title("🎓 BCA Python AI Hub")
 st.sidebar.caption("Curriculum • Smart Tests • Real Projects • Gemini AI")
 
-# API Key Handling (Sidebar)
-with st.sidebar.expander("🔑 Gemini AI Setup", expanded=True):
-    gemini_key = st.text_input("Gemini API Key daalein:", type="password", help="aistudio.google.com se free key milti hai")
-    if gemini_key:
-        genai.configure(api_key=gemini_key)
-        st.success("Gemini Connected!")
-    else:
-        st.info("AI features ke liye API Key zaroori hai.")
-
+# API Key Handling (Secrets se automatic uthayega)
+if "GEMINI_API_KEY" in st.secrets:
+    gemini_key = st.secrets["GEMINI_API_KEY"]
+    genai.configure(api_key=gemini_key)
+    st.sidebar.success("⚡ AI Mentor Active")
+else:
+    with st.sidebar.expander("🔑 Gemini AI Setup", expanded=True):
+        gemini_key = st.text_input("Gemini API Key daalein:", type="password", help="aistudio.google.com se free key milti hai")
+        if gemini_key:
+            genai.configure(api_key=gemini_key)
+            st.success("Gemini Connected!")
+        else:
+            st.info("AI features ke liye API Key zaroori hai.")
 menu = st.sidebar.radio(
     "Navigation Menu",
     [
