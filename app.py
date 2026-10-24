@@ -6,13 +6,13 @@ import time
 from PIL import Image
 
 st.set_page_config(
-    page_title="BCA OS | MLK PG College Balrampur",
-    page_icon="🎓",
+    page_title="BCA Academic OS | Harsh Raj Soni",
+    page_icon="⚡",
     layout="wide",
-    initial_sidebar_state="expanded"
+    initial_sidebar_state="collapsed"
 )
 
-# Session state initialization
+# Initialize Essential Session States
 if "selected_subject" not in st.session_state:
     st.session_state.selected_subject = "🐍 Python Programming"
 
@@ -22,10 +22,10 @@ if "current_note_page" not in st.session_state:
 if "dynamic_pages_list" not in st.session_state:
     st.session_state.dynamic_pages_list = []
 
-# ================= NEXT-GEN LUXURY DASHBOARD UI CSS =================
+# ================= ULTRA-PREMIUM MODERN GLASSPHORIC OS CSS =================
 st.markdown("""
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Patrick+Hand&family=JetBrains+Mono:wght@400;500;600&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Patrick+Hand&display=swap');
 
     html, body, [class*="css"] {
         font-family: 'Plus Jakarta Sans', sans-serif;
@@ -34,9 +34,9 @@ st.markdown("""
         font-family: 'JetBrains Mono', monospace !important;
     }
 
-    /* Ambient Ultra-Dark Slate Canvas */
+    /* Ambient Ultra Dark Canvas */
     .stApp {
-        background: radial-gradient(circle at 20% -10%, #1e1b4b 0%, #0f172a 45%, #020617 100%);
+        background: radial-gradient(circle at 50% -10%, #1e1b4b 0%, #0f172a 45%, #030712 100%);
         color: #F8FAFC;
     }
 
@@ -58,48 +58,86 @@ st.markdown("""
     }
 
     .block-container {
-        padding-top: 1.5rem !important;
-        padding-bottom: 5rem !important;
-        max-width: 1100px !important;
+        padding-top: 1.2rem !important;
+        padding-bottom: 6rem !important;
+        max-width: 1150px !important;
     }
 
-    /* Custom Modern Sidebar */
-    section[data-testid="stSidebar"] {
-        background: rgba(15, 23, 42, 0.85) !important;
-        border-right: 1px solid rgba(255, 255, 255, 0.08) !important;
-        backdrop-filter: blur(24px) !important;
-    }
-    section[data-testid="stSidebar"] div.block-container {
-        padding-top: 1.5rem !important;
-    }
-
-    /* Header Brand Card */
-    .brand-banner {
-        background: rgba(255, 255, 255, 0.03);
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        border-radius: 16px;
-        padding: 16px 20px;
-        backdrop-filter: blur(20px);
-        margin-bottom: 24px;
+    /* Top Developer & College Showcase Banner */
+    .hero-glass-banner {
+        background: rgba(255, 255, 255, 0.035);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 20px;
+        padding: 18px 24px;
+        backdrop-filter: blur(28px);
+        margin-bottom: 18px;
         display: flex;
         justify-content: space-between;
         align-items: center;
+        box-shadow: 0 12px 35px rgba(0, 0, 0, 0.45);
     }
-    .brand-title {
-        font-size: 20px;
-        font-weight: 800;
-        background: linear-gradient(135deg, #FFFFFF 0%, #38BDF8 60%, #818CF8 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        letter-spacing: -0.5px;
+    .creator-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: linear-gradient(135deg, rgba(56, 189, 248, 0.15), rgba(168, 85, 247, 0.15));
+        border: 1px solid rgba(56, 189, 248, 0.4);
+        padding: 6px 16px;
+        border-radius: 30px;
+        font-size: 13px;
+        font-weight: 700;
+        color: #38BDF8;
+        letter-spacing: 0.5px;
+        box-shadow: 0 0 18px rgba(56, 189, 248, 0.25);
     }
 
-    /* ================= AUTHENTIC A4 REGISTER BINDER ================= */
+    /* Modern Top Navigation Bar (ZERO OVERLAP) */
+    div[data-testid="stRadio"] {
+        background: rgba(15, 23, 42, 0.8) !important;
+        border: 1px solid rgba(255, 255, 255, 0.12) !important;
+        padding: 6px 12px !important;
+        border-radius: 40px !important;
+        backdrop-filter: blur(24px) !important;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.5) !important;
+        margin: 0 auto 20px auto !important;
+        width: 100% !important;
+        max-width: 850px !important;
+    }
+    div[data-testid="stRadio"] > label {display: none !important;}
+    div[data-testid="stRadio"] > div {
+        display: flex !important;
+        flex-direction: row !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        flex-wrap: wrap !important;
+        gap: 6px !important;
+    }
+    div[data-testid="stRadio"] label {
+        background: rgba(255, 255, 255, 0.04) !important;
+        border: 1px solid rgba(255, 255, 255, 0.06) !important;
+        border-radius: 20px !important;
+        padding: 7px 16px !important;
+        font-size: 13px !important;
+        font-weight: 600 !important;
+        color: #CBD5E1 !important;
+        cursor: pointer !important;
+        transition: all 0.2s ease !important;
+        margin: 0 !important;
+    }
+    div[data-testid="stRadio"] label:hover {
+        background: rgba(255, 255, 255, 0.14) !important;
+        color: #FFFFFF !important;
+    }
+    div[data-testid="stRadio"] div[role="radiogroup"] > label > div:first-child {
+        display: none !important;
+    }
+
+    /* ================= REAL A4 REGISTER NOTEBOOK CONTAINER ================= */
     .binder-stage {
         display: flex;
         justify-content: center;
         align-items: center;
-        padding: 15px 0;
+        padding: 10px 0;
         width: 100%;
     }
     .notebook-paper-a4 {
@@ -109,11 +147,11 @@ st.markdown("""
             linear-gradient(#e2e8f0 1px, transparent 1px) !important;
         background-size: 100% 100%, 100% 26px !important;
         border-radius: 8px !important;
-        padding: 22px 24px 28px 56px !important;
+        padding: 22px 24px 30px 56px !important;
         border: 1px solid #cbd5e1 !important;
-        box-shadow: 0 16px 45px rgba(0, 0, 0, 0.7), 0 2px 8px rgba(0,0,0,0.15) !important;
+        box-shadow: 0 16px 45px rgba(0, 0, 0, 0.75), 0 2px 8px rgba(0,0,0,0.15) !important;
         width: 100% !important;
-        max-width: 530px !important;
+        max-width: 540px !important;
         min-height: 480px !important;
         height: auto !important;
         position: relative !important;
@@ -121,12 +159,12 @@ st.markdown("""
         color: #1e3a8a !important;
     }
 
-    /* Real Spiral Ring Binding */
+    /* Spiral Holes */
     .notebook-paper-a4::before {
         content: '' !important;
         position: absolute !important;
-        top: 16px !important;
-        left: 12px !important;
+        top: 14px !important;
+        left: 11px !important;
         width: 12px !important;
         height: 94% !important;
         background-image: radial-gradient(circle, #94a3b8 4px, transparent 5px) !important;
@@ -160,7 +198,7 @@ st.markdown("""
 
     .notebook-handwritten-text {
         font-family: 'Patrick Hand', cursive !important;
-        font-size: 17px !important;
+        font-size: 16.5px !important;
         line-height: 26px !important;
         color: #1e3a8a !important;
         word-break: break-word !important;
@@ -171,40 +209,47 @@ st.markdown("""
     .studio-panel {
         background: rgba(255, 255, 255, 0.03);
         border: 1px solid rgba(255, 255, 255, 0.08);
-        border-radius: 16px;
+        border-radius: 18px;
         padding: 24px;
         backdrop-filter: blur(20px);
         box-shadow: 0 12px 36px rgba(0, 0, 0, 0.35);
         margin-top: 15px;
     }
 
-    /* Buttons */
+    /* Premium Buttons */
     .stButton>button {
         background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%) !important;
         color: #FFFFFF !important;
         border: 1px solid rgba(255, 255, 255, 0.2) !important;
-        border-radius: 10px !important;
-        padding: 8px 18px !important;
+        border-radius: 12px !important;
+        padding: 8px 20px !important;
         font-weight: 600 !important;
         font-size: 14px !important;
         transition: all 0.2s ease !important;
-        box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3) !important;
+        box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3) !important;
     }
     .stButton>button:hover {
         transform: translateY(-2px);
-        box-shadow: 0 8px 22px rgba(124, 58, 237, 0.45) !important;
+        box-shadow: 0 8px 24px rgba(124, 58, 237, 0.45) !important;
     }
 
-    /* Mobile Responsive */
+    /* Mobile Responsive Adjustment */
     @media (max-width: 768px) {
         .notebook-paper-a4 {
-            padding: 16px 14px 20px 46px !important;
+            padding: 16px 14px 22px 46px !important;
             max-width: 95vw !important;
-            min-height: 420px !important;
+            min-height: 440px !important;
         }
         .notebook-handwritten-text {
             font-size: 15px !important;
             line-height: 24px !important;
+        }
+        div[data-testid="stRadio"] > div {
+            justify-content: center !important;
+        }
+        div[data-testid="stRadio"] label {
+            padding: 6px 12px !important;
+            font-size: 12px !important;
         }
     }
 </style>
@@ -217,34 +262,18 @@ if "GEMINI_API_KEY" in st.secrets:
     genai.configure(api_key=gemini_key)
 
 with st.sidebar:
-    st.markdown("### 🏛️ BCA Academic Portal")
-    st.caption("MLK PG College Balrampur • Maa Pateshwari State Univ")
-    
-    st.markdown("---")
-    nav_option = st.radio(
-        "Navigation Hub:",
-        [
-            "📝 Smart Register",
-            "📖 Syllabus Explorer",
-            "🎯 Exam Engine",
-            "🔬 Projects Lab",
-            "🤖 AI Mentor",
-            "💻 Terminal Sandbox"
-        ],
-        index=0
-    )
-    st.markdown("---")
-    
+    st.markdown("### ⚙️ Engine Settings")
     if gemini_key:
         st.success("● AI Engine & Vision Active")
     else:
-        with st.expander("🔑 API Setup", expanded=True):
+        with st.expander("🔑 Setup API Key", expanded=True):
             gemini_key = st.text_input("Gemini API Key:", type="password")
             if gemini_key:
                 genai.configure(api_key=gemini_key)
                 st.success("Connected!")
-    
-    st.caption("Crafted by Raj ⚡")
+    st.markdown("---")
+    st.caption("⚡ Developed by **Harsh Raj Soni**")
+    st.caption("🏛️ MLK PG College Balrampur")
 
 def get_ai_response(prompt, image_input=None, forced_language=None, current_subject="Python"):
     if not gemini_key:
@@ -309,16 +338,28 @@ def get_ai_response(prompt, image_input=None, forced_language=None, current_subj
 
     return f"⏳ AI Engine Temporary Busy: {last_error}"
 
-# ================= TOP BRAND BANNER WITH CLEAN SUBJECT SELECTOR =================
-b_col1, b_col2 = st.columns([1.8, 1.2])
-with b_col1:
-    st.markdown("""
-    <div style="padding-top: 5px;">
-        <div class="brand-title">BCA Academic OS</div>
-        <div style="font-size: 12px; color: #94A3B8;">Autonomous Learning Suite • MLK PG College Balrampur</div>
+# ================= TOP APP HEADER & HARSH RAJ SONI OFFICIAL SHOWCASE =================
+st.markdown("""
+<div class="hero-glass-banner">
+    <div>
+        <div style="font-size: 20px; font-weight: 800; color: #FFFFFF; letter-spacing: -0.5px;">
+            ⚡ MLK BCA Academic Portal
+        </div>
+        <div style="font-size: 12px; color: #94A3B8;">
+            Maa Pateshwari State University Curriculum • MLK PG College Balrampur
+        </div>
     </div>
-    """, unsafe_allow_html=True)
-with b_col2:
+    <div class="creator-pill">
+        ✨ Created by Harsh Raj Soni
+    </div>
+</div>
+""", unsafe_allow_html=True)
+
+# Clean Separated Subject Selector Row
+sub_col1, sub_col2 = st.columns([2, 1])
+with sub_col1:
+    st.caption("Active Study Stream:")
+with sub_col2:
     st.session_state.selected_subject = st.selectbox(
         "Current Stream:",
         [
@@ -332,8 +373,23 @@ with b_col2:
 
 active_subj = st.session_state.selected_subject
 
+# Modern Top Navigation Dock (Zero Overlap Guaranteed)
+selected_nav = st.radio(
+    label="Main Navigation",
+    options=[
+        "📝 Smart Register",
+        "📖 Syllabus Explorer",
+        "🎯 Exam Engine",
+        "🔬 Projects Lab",
+        "🤖 AI Mentor",
+        "💻 Code Sandbox"
+    ],
+    horizontal=True,
+    index=0
+)
+
 # ================= 1. SMART REGISTER NOTES =================
-if nav_option == "📝 Smart Register":
+if selected_nav == "📝 Smart Register":
     st.markdown(f"### 📖 Handwritten Register Notebook — {active_subj}")
 
     if active_subj == "🐍 Python Programming":
@@ -444,7 +500,7 @@ if nav_option == "📝 Smart Register":
                 st.rerun()
 
 # ================= 2. SYLLABUS EXPLORER =================
-elif nav_option == "📖 Syllabus Explorer":
+elif selected_nav == "📖 Syllabus Explorer":
     st.markdown(f"### 📚 University Syllabus Guide — {active_subj}")
     
     if active_subj == "🐍 Python Programming":
@@ -487,7 +543,7 @@ elif nav_option == "📖 Syllabus Explorer":
                     st.info(summary)
 
 # ================= 3. EXAM ENGINE =================
-elif nav_option == "🎯 Exam Engine":
+elif selected_nav == "🎯 Exam Engine":
     st.markdown(f"### 🎯 Examination Generator & Evaluator — {active_subj}")
 
     c1, c2 = st.columns([2, 1])
@@ -527,7 +583,7 @@ elif nav_option == "🎯 Exam Engine":
                     """, unsafe_allow_html=True)
 
 # ================= 4. PROJECTS LAB =================
-elif nav_option == "🔬 Projects Lab":
+elif selected_nav == "🔬 Projects Lab":
     st.markdown(f"### 🔬 Academic Capstone Projects — {active_subj}")
 
     if active_subj == "🐍 Python Programming":
@@ -548,7 +604,7 @@ elif nav_option == "🔬 Projects Lab":
             """, unsafe_allow_html=True)
 
 # ================= 5. AI MENTOR =================
-elif nav_option == "🤖 AI Mentor":
+elif selected_nav == "🤖 AI Mentor":
     st.markdown(f"### 🤖 24/7 AI Academic Mentor — {active_subj}")
     
     doubt_text = st.text_area("Type your question or error code:", height=120)
@@ -568,14 +624,14 @@ elif nav_option == "🤖 AI Mentor":
                 """, unsafe_allow_html=True)
 
 # ================= 6. TERMINAL SANDBOX =================
-elif nav_option == "💻 Terminal Sandbox":
+elif selected_nav == "💻 Code Sandbox":
     st.markdown(f"### 💻 Live Python Terminal")
     
     starter_code = """# Interactive Python Sandbox
 def greet(name, college):
     return f"Welcome {name} to {college} BCA Master Ecosystem!"
 
-print(greet("Raj", "MLK PG College Balrampur"))
+print(greet("Harsh Raj Soni", "MLK PG College Balrampur"))
 """
     user_code = st.text_area("Python Editor:", value=starter_code, height=180)
     c1, c2 = st.columns([1, 1])
