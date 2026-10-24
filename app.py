@@ -35,10 +35,9 @@ st.markdown("""
     .stApp {
         background: radial-gradient(circle at 50% 0%, rgba(30, 41, 69, 0.75) 0%, rgba(10, 13, 20, 0.98) 75%);
         color: #F1F5F9;
-        padding-bottom: 155px !important;
     }
 
-    /* Streamlit Host Header, Badges, Manage App & Floating Overlay Complete Elimination */
+    /* Streamlit Host Header, Badges & Footers Hide */
     header[data-testid="stHeader"] {display: none !important;}
     footer {display: none !important; visibility: hidden !important;}
     .viewerBadge_container__1QSob, 
@@ -55,9 +54,10 @@ st.markdown("""
         pointer-events: none !important;
     }
 
-    /* Extra Page Bottom Padding taaki aakhiri content dock se na dabe */
+    /* Extra Page Bottom Padding - No content will ever get cut off */
     .block-container {
-        padding-bottom: 170px !important;
+        padding-top: 20px !important;
+        padding-bottom: 180px !important;
     }
 
     /* Premium Splash Screen Container */
@@ -154,8 +154,8 @@ st.markdown("""
 
     /* AI Response Glass Box */
     .ai-box {
-        background: rgba(20, 24, 38, 0.85);
-        border: 1px solid rgba(139, 92, 246, 0.3);
+        background: rgba(20, 24, 38, 0.88);
+        border: 1px solid rgba(139, 92, 246, 0.35);
         border-left: 4px solid #8B5CF6;
         border-radius: 14px;
         padding: 22px;
@@ -164,6 +164,7 @@ st.markdown("""
         backdrop-filter: blur(20px);
         -webkit-backdrop-filter: blur(20px);
         line-height: 1.65;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.45);
     }
 
     /* Apple-style Gradient Buttons */
@@ -185,28 +186,26 @@ st.markdown("""
         border-color: rgba(255, 255, 255, 0.4) !important;
     }
 
-    /* Radio circular selection dot hide (clean pill look) */
+    /* Radio circular selection dot hide (clean button look) */
     div[data-testid="stRadio"] div[role="radiogroup"] > label > div:first-child {
         display: none !important;
     }
 
-    /* ================= ADAPTIVE AUTO-DETECTING FLOATING DOCK ================= */
-    /* DESKTOP / LAPTOP DISPLAY */
+    /* ================= ZERO-OVERLAP TOP STICKY NAVIGATION DOCK ================= */
     div[data-testid="stRadio"] {
-        position: fixed !important;
-        bottom: 24px !important;
-        left: 50% !important;
-        transform: translateX(-50%) !important;
-        z-index: 9999999 !important;
-        background: rgba(15, 23, 42, 0.88) !important;
+        position: sticky !important;
+        top: 12px !important;
+        z-index: 999999 !important;
+        background: rgba(18, 24, 38, 0.94) !important;
         border: 1px solid rgba(255, 255, 255, 0.18) !important;
         padding: 8px 16px !important;
         border-radius: 40px !important;
-        backdrop-filter: blur(30px) saturate(190%) !important;
-        -webkit-backdrop-filter: blur(30px) saturate(190%) !important;
-        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.75), inset 0 1px 1px rgba(255, 255, 255, 0.2) !important;
-        width: auto !important;
-        max-width: 90vw !important;
+        backdrop-filter: blur(28px) saturate(190%) !important;
+        -webkit-backdrop-filter: blur(28px) saturate(190%) !important;
+        box-shadow: 0 12px 35px rgba(0, 0, 0, 0.75), inset 0 1px 1px rgba(255, 255, 255, 0.2) !important;
+        margin: 12px auto 26px auto !important;
+        width: max-content !important;
+        max-width: 95vw !important;
     }
 
     div[data-testid="stRadio"] > label {
@@ -223,9 +222,10 @@ st.markdown("""
     }
 
     div[data-testid="stRadio"] label {
-        background: transparent !important;
+        background: rgba(255, 255, 255, 0.05) !important;
+        border: 1px solid rgba(255, 255, 255, 0.08) !important;
         border-radius: 20px !important;
-        padding: 7px 15px !important;
+        padding: 7px 16px !important;
         margin: 0 !important;
         font-size: 13px !important;
         font-weight: 600 !important;
@@ -236,7 +236,7 @@ st.markdown("""
     }
 
     div[data-testid="stRadio"] label:hover {
-        background: rgba(255, 255, 255, 0.12) !important;
+        background: rgba(255, 255, 255, 0.15) !important;
         color: #FFFFFF !important;
     }
 
@@ -255,18 +255,16 @@ st.markdown("""
             padding: 16px !important;
         }
 
-        /* Mobile Island Dock: Raised 32px to stay completely clear of bottom edges */
+        /* Top Sticky Navigation on Mobile - Smooth Horizontal Touch Scroll */
         div[data-testid="stRadio"] {
-            bottom: 32px !important;
+            top: 8px !important;
             padding: 6px 8px !important;
-            border-radius: 35px !important;
-            width: 92vw !important;
-            max-width: 92vw !important;
-            box-sizing: border-box !important;
+            width: 95vw !important;
+            max-width: 95vw !important;
             overflow-x: auto !important;
             -webkit-overflow-scrolling: touch !important;
             scrollbar-width: none !important;
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.9) !important;
+            margin-bottom: 18px !important;
         }
         div[data-testid="stRadio"]::-webkit-scrollbar {
             display: none !important;
@@ -281,12 +279,10 @@ st.markdown("""
             padding: 2px 4px !important;
         }
         div[data-testid="stRadio"] label {
-            padding: 7px 12px !important;
+            padding: 6px 12px !important;
             font-size: 12px !important;
-            border-radius: 20px !important;
+            border-radius: 18px !important;
             flex-shrink: 0 !important;
-            background: rgba(255, 255, 255, 0.06) !important;
-            border: 1px solid rgba(255, 255, 255, 0.08) !important;
         }
     }
 
@@ -427,11 +423,25 @@ else:
             index=0
         )
 
+    # ================= ZERO-OVERLAP TOP STICKY NAVIGATION DOCK =================
+    selected_tab = st.radio(
+        label="Top Navigation Bar",
+        options=[
+            "📖 Syllabus",
+            "📝 Exam Engine",
+            "🛠️ Projects",
+            "🤖 AI Mentor",
+            "🧪 Sandbox"
+        ],
+        horizontal=True,
+        index=0
+    )
+
     # ================= 1. MULTI-SUBJECT SYLLABUS HUB =================
     def render_syllabus():
         active_subj = st.session_state.selected_subject
 
-        # ------------------- 1. PYTHON SYLLABUS (FULL RESTORED) -------------------
+        # ------------------- 1. PYTHON SYLLABUS -------------------
         if active_subj == "🐍 Python Programming":
             st.markdown("""
             <div class="hero-banner">
@@ -1185,20 +1195,7 @@ for i in range(5):
             except Exception as ex:
                 st.error(f"Traceback Error: {ex}")
 
-    # ================= FLOATING APPLE DOCK NAVIGATION =================
-    selected_tab = st.radio(
-        label="Apple Dock Navigation",
-        options=[
-            "📖 Syllabus",
-            "📝 Exam Engine",
-            "🛠️ Projects",
-            "🤖 AI Mentor",
-            "🧪 Sandbox"
-        ],
-        horizontal=True,
-        index=0
-    )
-
+    # ================= TAB ROUTING =================
     if selected_tab == "📖 Syllabus":
         render_syllabus()
     elif selected_tab == "📝 Exam Engine":
