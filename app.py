@@ -1,4 +1,5 @@
 import streamlit as st
+import streamlit.components.v1 as components
 import google.generativeai as genai
 import io
 import contextlib
@@ -170,7 +171,7 @@ st.markdown("""
         justify-content: center;
         width: 100%;
         margin-top: 4px;
-        margin-bottom: 10px;
+        margin-bottom: 6px;
     }
     .notebook-paper-a4 {
         background-color: #ffffff !important;
@@ -191,6 +192,7 @@ st.markdown("""
         box-sizing: border-box !important;
         color: #1e3a8a !important;
         user-select: none !important;
+        touch-action: pan-y !important;
     }
     .notebook-paper-a4::before {
         content: '' !important;
@@ -235,37 +237,6 @@ st.markdown("""
         white-space: pre-wrap !important;
     }
 
-    /* SLEEK ARROW BUTTONS DOCK */
-    .arrow-dock-row {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 20px;
-        margin-top: 10px;
-        width: 100%;
-    }
-    div.arrow-dock-row button {
-        background: rgba(30, 41, 59, 0.7) !important;
-        border: 1px solid rgba(59, 130, 246, 0.4) !important;
-        color: #60A5FA !important;
-        font-size: 20px !important;
-        font-weight: 800 !important;
-        width: 44px !important;
-        height: 44px !important;
-        border-radius: 50% !important;
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        padding: 0 !important;
-        box-shadow: 0 4px 14px rgba(0,0,0,0.4) !important;
-    }
-    div.arrow-dock-row button:hover {
-        background: rgba(37, 99, 235, 0.3) !important;
-        border-color: #60A5FA !important;
-        color: #FFFFFF !important;
-        transform: scale(1.08) !important;
-    }
-
     /* Formal Card Panel */
     .formal-panel {
         background: rgba(30, 41, 59, 0.35);
@@ -292,7 +263,7 @@ st.markdown("""
         margin-bottom: 14px;
     }
 
-    /* Standard Buttons */
+    /* Primary Formal Buttons */
     .stButton>button {
         background: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%) !important;
         color: #FFFFFF !important;
@@ -307,6 +278,24 @@ st.markdown("""
     .stButton>button:hover {
         transform: translateY(-1px);
         box-shadow: 0 6px 20px rgba(37, 99, 235, 0.5) !important;
+    }
+
+    /* Compact Round Arrow Buttons in Dock */
+    div[data-testid="column"]:has(button[key="arrow_btn_prev"]),
+    div[data-testid="column"]:has(button[key="arrow_btn_next"]) {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    button[key="arrow_btn_prev"], button[key="arrow_btn_next"] {
+        width: 44px !important;
+        height: 44px !important;
+        border-radius: 50% !important;
+        font-size: 20px !important;
+        padding: 0 !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
     }
 
     /* Phone Constraints (< 768px) */
@@ -365,6 +354,7 @@ def get_ai_response(prompt, image_input=None, forced_language=None, current_subj
             "and match it with direct clarity."
         )
 
+    # STRICT FORMAL MODERATION GUARDRAILS (NO SLANG / NO INFORMAL / NO ABUSIVE WORDS)
     optimized_prompt = f"""
     You are an esteemed university professor for the Bachelor of Computer Applications (BCA) program at MLK PG College, Balrampur (affiliated with Maa Pateshwari State University).
     Subject Discipline: {current_subject}
@@ -496,7 +486,7 @@ else:
         index=0
     )
 
-    # ================= 1. SMART REGISTER NOTES (SWIPE + SLEEK ARROWS) =================
+    # ================= 1. SMART REGISTER NOTES (CLEAN SWIPE & SLEEK ARROWS) =================
     if selected_nav == "📝 Smart Register":
         st.markdown(f"#### 📖 Handwritten Register Notebook — {active_subj}")
 
@@ -566,7 +556,7 @@ else:
                 st.session_state.dynamic_pages_list = clean_pages
                 st.session_state.flip_notes_topic = final_topic
 
-        # DISPLAY COMPACT REGISTER SHEET WITH TOUCH SWIPE JS
+        # DISPLAY COMPACT REGISTER SHEET
         if st.session_state.dynamic_pages_list:
             pages = st.session_state.dynamic_pages_list
             total_pages = len(pages)
@@ -588,42 +578,46 @@ else:
                     </div>
                 </div>
             </div>
+            """
+            st.markdown(register_html, unsafe_allow_html=True)
 
+            # SILENT BACKGROUND JS LISTENER VIA COMPONENTS (ZERO RAW CODE ON SCREEN)
+            components.html(f"""
             <script>
                 (function() {{
-                    const card = window.parent.document.getElementById('academic_note_card') || document.getElementById('academic_note_card');
+                    const parentDoc = window.parent.document;
+                    const card = parentDoc.getElementById('academic_note_card');
                     if (!card) return;
 
-                    let touchStartX = 0;
-                    let touchStartY = 0;
+                    let startX = 0;
+                    let startY = 0;
 
-                    card.addEventListener('touchstart', (e) => {{
-                        touchStartX = e.changedTouches[0].screenX;
-                        touchStartY = e.changedTouches[0].screenY;
-                    }}, {{passive: true}});
+                    card.ontouchstart = function(e) {{
+                        startX = e.changedTouches[0].screenX;
+                        startY = e.changedTouches[0].screenY;
+                    }};
 
-                    card.addEventListener('touchend', (e) => {{
-                        let diffX = e.changedTouches[0].screenX - touchStartX;
-                        let diffY = e.changedTouches[0].screenY - touchStartY;
+                    card.ontouchend = function(e) {{
+                        let diffX = e.changedTouches[0].screenX - startX;
+                        let diffY = e.changedTouches[0].screenY - startY;
 
                         if (Math.abs(diffX) > 40 && Math.abs(diffY) < 65) {{
                             if (diffX < 0) {{
                                 // Swipe Left -> Next
-                                const nextBtn = window.parent.document.querySelector('button[key="arrow_btn_next"]') || Array.from(window.parent.document.querySelectorAll('button')).find(el => el.innerText.trim() === '›');
+                                const nextBtn = Array.from(parentDoc.querySelectorAll('button')).find(el => el.innerText.trim() === '›');
                                 if (nextBtn && !nextBtn.disabled) nextBtn.click();
                             }} else {{
                                 // Swipe Right -> Prev
-                                const prevBtn = window.parent.document.querySelector('button[key="arrow_btn_prev"]') || Array.from(window.parent.document.querySelectorAll('button')).find(el => el.innerText.trim() === '‹');
+                                const prevBtn = Array.from(parentDoc.querySelectorAll('button')).find(el => el.innerText.trim() === '‹');
                                 if (prevBtn && !prevBtn.disabled) prevBtn.click();
                             }}
                         }}
-                    }}, {{passive: true}});
+                    }};
                 }})();
             </script>
-            """
-            st.markdown(register_html, unsafe_allow_html=True)
+            """, height=0, width=0)
 
-            # SLEEK ARROW-ONLY DOCK (NO TEXT BUTTONS)
+            # SLEEK ARROW DOCK
             ctrl_c1, ctrl_c2, ctrl_c3 = st.columns([1, 2, 1])
             with ctrl_c1:
                 if st.button("‹", disabled=(curr_pg == 1), key="arrow_btn_prev", use_container_width=True, help="Previous Page"):
@@ -633,7 +627,7 @@ else:
                 st.markdown(f"""
                 <div style="text-align: center; color: #60A5FA; font-size: 13px; font-weight: 700; padding-top: 6px;">
                     Sheet {curr_pg} of {total_pages}
-                    <span style="display:block; color:#94A3B8; font-size:11px; font-weight:400;">Swipe left/right on sheet or tap arrows</span>
+                    <span style="display:block; color:#94A3B8; font-size:11px; font-weight:400;">Swipe on paper or tap arrows to flip</span>
                 </div>
                 """, unsafe_allow_html=True)
             with ctrl_c3:
