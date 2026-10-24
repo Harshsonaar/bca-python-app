@@ -285,32 +285,43 @@ with st.sidebar:
             if gemini_key:
                 genai.configure(api_key=gemini_key)
                 st.success("Connected!")
-    st.caption("Crafted with ❤️ by Raj • Gemini Autonomous Engine")
+    st.caption("Crafted with ❤️ by Raj • Dynamic Auto-Tokens Engine")
 
-# Auto-Fallback Resilient AI Caller (Eliminates 429 & 504 Errors completely)
+# Fully Dynamic Auto-Tokens Engine (Super Fast & Auto-Length without Hard Caps)
 def get_ai_response(prompt):
     if not gemini_key:
         return "⚠️ Pehle Gemini API Key configure karein."
     
-    # Priority Candidate Pool: Ek model 429 quota dega toh next available model turant handle karega
+    # Priority Pool: Ultra-fast lightweight models prioritized for rapid execution
     candidate_models = [
-        "models/gemini-3.8-flash",
         "models/gemini-3.5-flash-lite",
-        "models/gemini-3.1-flash-lite",
+        "models/gemini-3.8-flash",
         "models/gemini-2.0-flash"
     ]
+    
+    optimized_prompt = f"""
+    You are a distinguished computer science professor for university BCA curriculum.
+    Answer directly, professionally, and accurately. Complete all code blocks without cutting off.
+    Do not add conversational fluff or meta-announcements.
+    
+    Query:
+    {prompt}
+    """
     
     last_error = ""
     for model_name in candidate_models:
         for attempt in range(2):
             try:
+                # Dynamic model configuration without max_output_tokens restriction
                 model = genai.GenerativeModel(
                     model_name=model_name,
-                    generation_config={"temperature": 0.4, "max_output_tokens": 8192}
+                    generation_config={
+                        "temperature": 0.25
+                    }
                 )
                 response = model.generate_content(
-                    prompt,
-                    request_options={"timeout": 60.0}
+                    optimized_prompt,
+                    request_options={"timeout": 50.0}
                 )
                 if response and response.text:
                     return response.text
@@ -1082,7 +1093,7 @@ print("Extracted Indian Phone Numbers:", phones_found)""", language="python")
         """, unsafe_allow_html=True)
 
         if st.button("🔥 Generate Most Important Exam Questions & Viva Points", use_container_width=True):
-            with st.spinner("AI Professor analyzing syllabus & trends (Max 8192 Tokens Enabled)..."):
+            with st.spinner("AI Professor analyzing syllabus & trends (Dynamic Auto-Tokens Active)..."):
                 prompt = f"""
                 You are a senior computer science examiner for BCA university exams.
                 For the module: '{selected_module}':
