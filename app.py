@@ -35,14 +35,30 @@ st.markdown("""
     .stApp {
         background: radial-gradient(circle at 50% 0%, rgba(30, 41, 69, 0.75) 0%, rgba(10, 13, 20, 0.98) 75%);
         color: #F1F5F9;
-        padding-bottom: 140px !important;
+        padding-bottom: 155px !important;
     }
 
-    /* Streamlit Default Floating Badges / Footers Hide (Fixes Covered Dock) */
-    footer {visibility: hidden !important; display: none !important;}
-    .viewerBadge_container__1QSob, [data-testid="stStatusWidget"], .stDeployButton {display: none !important;}
-    div[data-testid="stToolbar"] {display: none !important;}
-    div[data-testid="stDecoration"] {display: none !important;}
+    /* Streamlit Host Header, Badges, Manage App & Floating Overlay Complete Elimination */
+    header[data-testid="stHeader"] {display: none !important;}
+    footer {display: none !important; visibility: hidden !important;}
+    .viewerBadge_container__1QSob, 
+    .viewerBadge_link__1QSob,
+    [data-testid="stStatusWidget"], 
+    .stDeployButton,
+    div[data-testid="stToolbar"],
+    div[data-testid="stDecoration"],
+    #MainMenu,
+    div[class*="viewerBadge"] {
+        display: none !important;
+        visibility: hidden !important;
+        opacity: 0 !important;
+        pointer-events: none !important;
+    }
+
+    /* Extra Page Bottom Padding taaki aakhiri content dock se na dabe */
+    .block-container {
+        padding-bottom: 170px !important;
+    }
 
     /* Premium Splash Screen Container */
     .splash-container {
@@ -175,21 +191,22 @@ st.markdown("""
     }
 
     /* ================= ADAPTIVE AUTO-DETECTING FLOATING DOCK ================= */
+    /* DESKTOP / LAPTOP DISPLAY */
     div[data-testid="stRadio"] {
         position: fixed !important;
-        bottom: 22px !important;
+        bottom: 24px !important;
         left: 50% !important;
         transform: translateX(-50%) !important;
-        z-index: 999999 !important;
-        background: rgba(18, 22, 34, 0.85) !important;
+        z-index: 9999999 !important;
+        background: rgba(15, 23, 42, 0.88) !important;
         border: 1px solid rgba(255, 255, 255, 0.18) !important;
-        padding: 8px 18px !important;
+        padding: 8px 16px !important;
         border-radius: 40px !important;
         backdrop-filter: blur(30px) saturate(190%) !important;
         -webkit-backdrop-filter: blur(30px) saturate(190%) !important;
-        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7), inset 0 1px 1px rgba(255, 255, 255, 0.2) !important;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.75), inset 0 1px 1px rgba(255, 255, 255, 0.2) !important;
         width: auto !important;
-        max-width: 92vw !important;
+        max-width: 90vw !important;
     }
 
     div[data-testid="stRadio"] > label {
@@ -238,17 +255,18 @@ st.markdown("""
             padding: 16px !important;
         }
 
-        /* Mobile Island Dock */
+        /* Mobile Island Dock: Raised 32px to stay completely clear of bottom edges */
         div[data-testid="stRadio"] {
-            bottom: 18px !important;
+            bottom: 32px !important;
             padding: 6px 8px !important;
-            border-radius: 30px !important;
-            width: calc(100vw - 28px) !important;
-            max-width: calc(100vw - 28px) !important;
+            border-radius: 35px !important;
+            width: 92vw !important;
+            max-width: 92vw !important;
             box-sizing: border-box !important;
             overflow-x: auto !important;
             -webkit-overflow-scrolling: touch !important;
             scrollbar-width: none !important;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.9) !important;
         }
         div[data-testid="stRadio"]::-webkit-scrollbar {
             display: none !important;
@@ -260,14 +278,15 @@ st.markdown("""
             gap: 6px !important;
             width: max-content !important;
             justify-content: flex-start !important;
-            padding: 0 4px !important;
+            padding: 2px 4px !important;
         }
         div[data-testid="stRadio"] label {
-            padding: 6px 12px !important;
+            padding: 7px 12px !important;
             font-size: 12px !important;
-            border-radius: 18px !important;
+            border-radius: 20px !important;
             flex-shrink: 0 !important;
-            background: rgba(255, 255, 255, 0.05) !important;
+            background: rgba(255, 255, 255, 0.06) !important;
+            border: 1px solid rgba(255, 255, 255, 0.08) !important;
         }
     }
 
@@ -302,14 +321,13 @@ with st.sidebar:
             if gemini_key:
                 genai.configure(api_key=gemini_key)
                 st.success("Connected!")
-    st.caption("Crafted with ❤️ by Raj • Vision Enabled Multimodal")
+    st.caption("Crafted with ❤️ by Raj • MLK PG College Balrampur")
 
 # Multimodal Dynamic Auto-Tokens Engine with Vision Support & Subject Context
 def get_ai_response(prompt, image_input=None, forced_language=None, current_subject="Python"):
     if not gemini_key:
         return "⚠️ Pehle Gemini API Key configure karein."
     
-    # Priority Pool with Vision capabilities
     candidate_models = [
         "models/gemini-3.5-flash-lite",
         "models/gemini-3.8-flash",
@@ -339,7 +357,6 @@ def get_ai_response(prompt, image_input=None, forced_language=None, current_subj
     {prompt}
     """
     
-    # Content payload structure
     content_payload = [optimized_prompt]
     if image_input:
         content_payload.append(image_input)
