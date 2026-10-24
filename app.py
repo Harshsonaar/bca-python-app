@@ -6,7 +6,7 @@ import time
 from PIL import Image
 
 st.set_page_config(
-    page_title="BCA Academic Suite | MLK PG College",
+    page_title="BCA Academic Suite | Harsh Raj Soni",
     page_icon="🎓",
     layout="wide",
     initial_sidebar_state="collapsed"
@@ -42,7 +42,7 @@ if "notebook_cells" not in st.session_state:
         }
     ]
 
-# ================= EXECUTIVE SLATE & DEEP SAPPHIRE CSS =================
+# ================= EXECUTIVE NAVY WITH SAPPHIRE HIGHLIGHT CSS =================
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Patrick+Hand&display=swap');
@@ -54,7 +54,7 @@ st.markdown("""
         font-family: 'JetBrains Mono', monospace !important;
     }
 
-    /* Executive Navy Dark Background */
+    /* Executive Navy Dark Canvas */
     .stApp {
         background: radial-gradient(circle at 50% 0%, #0F172A 0%, #080D1A 60%, #020617 100%) !important;
         color: #F8FAFC;
@@ -78,7 +78,7 @@ st.markdown("""
     }
 
     .block-container {
-        padding-top: 0.8rem !important;
+        padding-top: 1rem !important;
         padding-bottom: 5rem !important;
         max-width: 1140px !important;
     }
@@ -90,7 +90,7 @@ st.markdown("""
         border-radius: 14px;
         padding: 14px 22px;
         backdrop-filter: blur(20px);
-        margin-bottom: 14px;
+        margin-bottom: 16px;
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -101,28 +101,27 @@ st.markdown("""
         align-items: center;
         gap: 6px;
         background: rgba(37, 99, 235, 0.15);
-        border: 1px solid #3B82F6;
-        padding: 5px 14px;
+        border: 1px solid rgba(59, 130, 246, 0.5);
+        padding: 6px 16px;
         border-radius: 20px;
-        font-size: 12px;
+        font-size: 12.5px;
         font-weight: 700;
         color: #60A5FA;
-        box-shadow: 0 0 15px rgba(59, 130, 246, 0.25);
+        box-shadow: 0 0 16px rgba(37, 99, 235, 0.3);
     }
 
-    /* Highlighted Interactive Subject Tile Container */
-    div[data-testid="stExpander"]:has(summary:contains("Active Academic Stream")) {
-        background: rgba(15, 23, 42, 0.95) !important;
-        border: 2px solid #3B82F6 !important;
+    /* HIGHLIGHTED SUBJECT SELECTION TILE */
+    div[data-testid="stExpander"] {
+        background: rgba(15, 23, 42, 0.85) !important;
+        border: 1.5px solid #3B82F6 !important;
         border-radius: 14px !important;
-        box-shadow: 0 0 25px rgba(59, 130, 246, 0.35), inset 0 1px 1px rgba(255,255,255,0.15) !important;
-        margin-bottom: 16px !important;
+        box-shadow: 0 0 20px rgba(37, 99, 235, 0.35), 0 8px 24px rgba(0, 0, 0, 0.5) !important;
+        margin-bottom: 18px !important;
     }
-    div[data-testid="stExpander"]:has(summary:contains("Active Academic Stream")) summary {
-        font-weight: 800 !important;
+    div[data-testid="stExpander"] details summary {
+        font-weight: 700 !important;
         color: #60A5FA !important;
         font-size: 14px !important;
-        letter-spacing: 0.3px !important;
     }
 
     /* Formal Navigation Bar */
@@ -171,7 +170,7 @@ st.markdown("""
         justify-content: center;
         width: 100%;
         margin-top: 4px;
-        margin-bottom: 8px;
+        margin-bottom: 10px;
     }
     .notebook-paper-a4 {
         background-color: #ffffff !important;
@@ -191,6 +190,7 @@ st.markdown("""
         position: relative !important;
         box-sizing: border-box !important;
         color: #1e3a8a !important;
+        user-select: none !important;
     }
     .notebook-paper-a4::before {
         content: '' !important;
@@ -235,32 +235,35 @@ st.markdown("""
         white-space: pre-wrap !important;
     }
 
-    /* Arrow Buttons for Pagination */
-    div.arrow-dock > div > button {
-        background: rgba(30, 41, 59, 0.8) !important;
-        border: 1px solid #3B82F6 !important;
+    /* SLEEK ARROW BUTTONS DOCK */
+    .arrow-dock-row {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 20px;
+        margin-top: 10px;
+        width: 100%;
+    }
+    div.arrow-dock-row button {
+        background: rgba(30, 41, 59, 0.7) !important;
+        border: 1px solid rgba(59, 130, 246, 0.4) !important;
         color: #60A5FA !important;
         font-size: 20px !important;
         font-weight: 800 !important;
-        border-radius: 50% !important;
         width: 44px !important;
         height: 44px !important;
+        border-radius: 50% !important;
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
-        margin: auto !important;
-        box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3) !important;
-        transition: all 0.2s ease !important;
+        padding: 0 !important;
+        box-shadow: 0 4px 14px rgba(0,0,0,0.4) !important;
     }
-    div.arrow-dock > div > button:hover {
-        background: #3B82F6 !important;
+    div.arrow-dock-row button:hover {
+        background: rgba(37, 99, 235, 0.3) !important;
+        border-color: #60A5FA !important;
         color: #FFFFFF !important;
         transform: scale(1.08) !important;
-    }
-    div.arrow-dock > div > button:disabled {
-        border-color: rgba(255,255,255,0.1) !important;
-        color: rgba(255,255,255,0.2) !important;
-        background: transparent !important;
     }
 
     /* Formal Card Panel */
@@ -273,14 +276,6 @@ st.markdown("""
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
         margin-top: 12px;
     }
-    .unit-card {
-        background: rgba(255, 255, 255, 0.03);
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        border-left: 3px solid #3B82F6;
-        border-radius: 10px;
-        padding: 14px 18px;
-        margin-bottom: 12px;
-    }
     .unit-list {
         font-size: 13.5px;
         color: #CBD5E1;
@@ -288,8 +283,6 @@ st.markdown("""
         padding-left: 18px;
         margin: 0;
     }
-
-    /* Colab Cells (Formal Navy Edition) */
     .colab-cell-box {
         background: #0E1526;
         border: 1px solid #1E293B;
@@ -299,7 +292,7 @@ st.markdown("""
         margin-bottom: 14px;
     }
 
-    /* Primary Formal Buttons */
+    /* Standard Buttons */
     .stButton>button {
         background: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%) !important;
         color: #FFFFFF !important;
@@ -316,7 +309,7 @@ st.markdown("""
         box-shadow: 0 6px 20px rgba(37, 99, 235, 0.5) !important;
     }
 
-    /* Phone Constraint (< 768px) */
+    /* Phone Constraints (< 768px) */
     @media (max-width: 768px) {
         .notebook-paper-a4 {
             padding: 14px 12px 18px 42px !important;
@@ -372,7 +365,6 @@ def get_ai_response(prompt, image_input=None, forced_language=None, current_subj
             "and match it with direct clarity."
         )
 
-    # STRICT FORMAL MODERATION GUARDRAILS (NO SLANG / NO INFORMAL / NO ABUSIVE WORDS)
     optimized_prompt = f"""
     You are an esteemed university professor for the Bachelor of Computer Applications (BCA) program at MLK PG College, Balrampur (affiliated with Maa Pateshwari State University).
     Subject Discipline: {current_subject}
@@ -417,7 +409,7 @@ def get_ai_response(prompt, image_input=None, forced_language=None, current_subj
 
     return f"⏳ AI Engine Temporary Busy: {last_error}"
 
-# ================= 0. FORMAL ACADEMIC INTRO SCREEN =================
+# ================= 0. FORMAL INTRO SCREEN =================
 if not st.session_state.system_booted:
     st.markdown("""
     <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:72vh; text-align:center;">
@@ -463,10 +455,10 @@ else:
     </div>
     """, unsafe_allow_html=True)
 
-    # ================= HIGH-CONTRAST HIGHLIGHTED SUBJECT TILE =================
+    # ================= HIGHLIGHTED SINGLE SUBJECT TILE =================
     curr_sub = st.session_state.selected_subject
-    with st.expander(f"⚡ Active Academic Stream: {curr_sub}  [ Tap to Switch Subject ]", expanded=False):
-        st.markdown("<div style='font-size:12px; color:#94A3B8; margin-bottom:8px;'>Select subject stream from the list below:</div>", unsafe_allow_html=True)
+    with st.expander(f"⚡ ACTIVE STREAM: {curr_sub} (Tap here to Switch Subject)", expanded=False):
+        st.markdown("<span style='font-size:12.5px; color:#94A3B8;'>Select your syllabus discipline:</span>", unsafe_allow_html=True)
         sub_list = [
             "🐍 Python Programming",
             "🖥️ Computer System Architecture",
@@ -474,7 +466,7 @@ else:
         ]
         for s in sub_list:
             is_active = (s == curr_sub)
-            label = f"✔ {s} (CURRENT ACTIVE)" if is_active else f"➔ Switch to {s}"
+            label = f"✔ {s} [ACTIVE]" if is_active else f"➔ Switch to {s}"
             if st.button(label, key=f"switch_sub_{s}", use_container_width=True, type="primary" if is_active else "secondary"):
                 st.session_state.selected_subject = s
                 st.rerun()
@@ -490,7 +482,6 @@ else:
         "🤖 AI Academic Mentor"
     ]
     
-    # Strict Subject-Specific Add-ons
     if active_subj == "🐍 Python Programming":
         nav_options.append("💻 Colab Notebook & Sandbox")
     elif active_subj == "📐 Mathematics & Numerical Methods":
@@ -505,7 +496,7 @@ else:
         index=0
     )
 
-    # ================= 1. SMART REGISTER NOTES (CLEAN ARROWS ONLY) =================
+    # ================= 1. SMART REGISTER NOTES (SWIPE + SLEEK ARROWS) =================
     if selected_nav == "📝 Smart Register":
         st.markdown(f"#### 📖 Handwritten Register Notebook — {active_subj}")
 
@@ -575,16 +566,16 @@ else:
                 st.session_state.dynamic_pages_list = clean_pages
                 st.session_state.flip_notes_topic = final_topic
 
-        # DISPLAY COMPACT REGISTER SHEET WITH CLEAN COMPACT ARROW BUTTONS
+        # DISPLAY COMPACT REGISTER SHEET WITH TOUCH SWIPE JS
         if st.session_state.dynamic_pages_list:
             pages = st.session_state.dynamic_pages_list
             total_pages = len(pages)
             curr_pg = min(st.session_state.current_note_page, total_pages)
             page_text = pages[curr_pg - 1].replace("\n", "<br>")
 
-            st.markdown(f"""
+            register_html = f"""
             <div class="register-center-wrapper">
-                <div class="notebook-paper-a4">
+                <div class="notebook-paper-a4" id="academic_note_card">
                     <div class="notebook-title-row">
                         <span class="notebook-title-text">{st.session_state.get('flip_notes_topic')}</span>
                         <span class="notebook-badge">Sheet {curr_pg} / {total_pages}</span>
@@ -597,34 +588,62 @@ else:
                     </div>
                 </div>
             </div>
-            """, unsafe_allow_html=True)
 
-            # STRICT ARROWS-ONLY FLIPPER DOCK (NO TEXT BUTTONS)
-            ctrl_col1, ctrl_col2, ctrl_col3 = st.columns([1, 2, 1])
-            with ctrl_col1:
-                st.markdown('<div class="arrow-dock">', unsafe_allow_html=True)
+            <script>
+                (function() {{
+                    const card = window.parent.document.getElementById('academic_note_card') || document.getElementById('academic_note_card');
+                    if (!card) return;
+
+                    let touchStartX = 0;
+                    let touchStartY = 0;
+
+                    card.addEventListener('touchstart', (e) => {{
+                        touchStartX = e.changedTouches[0].screenX;
+                        touchStartY = e.changedTouches[0].screenY;
+                    }}, {{passive: true}});
+
+                    card.addEventListener('touchend', (e) => {{
+                        let diffX = e.changedTouches[0].screenX - touchStartX;
+                        let diffY = e.changedTouches[0].screenY - touchStartY;
+
+                        if (Math.abs(diffX) > 40 && Math.abs(diffY) < 65) {{
+                            if (diffX < 0) {{
+                                // Swipe Left -> Next
+                                const nextBtn = window.parent.document.querySelector('button[key="arrow_btn_next"]') || Array.from(window.parent.document.querySelectorAll('button')).find(el => el.innerText.trim() === '›');
+                                if (nextBtn && !nextBtn.disabled) nextBtn.click();
+                            }} else {{
+                                // Swipe Right -> Prev
+                                const prevBtn = window.parent.document.querySelector('button[key="arrow_btn_prev"]') || Array.from(window.parent.document.querySelectorAll('button')).find(el => el.innerText.trim() === '‹');
+                                if (prevBtn && !prevBtn.disabled) prevBtn.click();
+                            }}
+                        }}
+                    }}, {{passive: true}});
+                }})();
+            </script>
+            """
+            st.markdown(register_html, unsafe_allow_html=True)
+
+            # SLEEK ARROW-ONLY DOCK (NO TEXT BUTTONS)
+            ctrl_c1, ctrl_c2, ctrl_c3 = st.columns([1, 2, 1])
+            with ctrl_c1:
                 if st.button("‹", disabled=(curr_pg == 1), key="arrow_btn_prev", use_container_width=True, help="Previous Page"):
                     st.session_state.current_note_page = max(1, curr_pg - 1)
                     st.rerun()
-                st.markdown('</div>', unsafe_allow_html=True)
-            with ctrl_col2:
+            with ctrl_c2:
                 st.markdown(f"""
-                <div style="text-align: center; color: #60A5FA; font-size: 13px; font-weight: 700; padding-top: 10px;">
+                <div style="text-align: center; color: #60A5FA; font-size: 13px; font-weight: 700; padding-top: 6px;">
                     Sheet {curr_pg} of {total_pages}
+                    <span style="display:block; color:#94A3B8; font-size:11px; font-weight:400;">Swipe left/right on sheet or tap arrows</span>
                 </div>
                 """, unsafe_allow_html=True)
-            with ctrl_col3:
-                st.markdown('<div class="arrow-dock">', unsafe_allow_html=True)
+            with ctrl_c3:
                 if st.button("›", disabled=(curr_pg == total_pages), key="arrow_btn_next", use_container_width=True, help="Next Page"):
                     st.session_state.current_note_page = min(total_pages, curr_pg + 1)
                     st.rerun()
-                st.markdown('</div>', unsafe_allow_html=True)
 
-    # ================= 2. MATHS ENCYCLOPEDIA (STRICTLY MATHEMATICS ONLY) =================
+    # ================= 2. MATHS ENCYCLOPEDIA (MATHEMATICS ONLY) =================
     elif selected_nav == "📐 Maths Encyclopedia":
         st.markdown("#### 📐 Mathematics & Numerical Methods Reference Compendium")
-        st.caption("Standard differentiation rules, L'Hopital theorem, matrix consistency, and numerical methods.")
-
         math_tab1, math_tab2, math_tab3, math_tab4 = st.tabs([
             "⚡ Differentiation Rules",
             "🎯 L'Hopital & Limits",
@@ -672,15 +691,15 @@ else:
         with math_tab4:
             st.markdown("##### 🕸️ Discrete Mathematics & Numerical Methods")
             st.markdown("""
-            <div class="formula-card" style="background:rgba(255,255,255,0.03); border-left:3px solid #3B82F6; padding:10px 14px; margin-bottom:10px; border-radius:8px;">
+            <div style="background:rgba(255,255,255,0.03); border-left:3px solid #3B82F6; padding:10px 14px; border-radius:8px; margin-bottom:10px;">
                 <b>Handshaking Theorem:</b> $\sum_{v \in V} \deg(v) = 2E$ (Sum of degrees equals twice the edges).
             </div>
-            <div class="formula-card" style="background:rgba(255,255,255,0.03); border-left:3px solid #3B82F6; padding:10px 14px; margin-bottom:10px; border-radius:8px;">
+            <div style="background:rgba(255,255,255,0.03); border-left:3px solid #3B82F6; padding:10px 14px; border-radius:8px; margin-bottom:10px;">
                 <b>Newton-Raphson Method:</b> $x_{n+1} = x_n - \\frac{f(x_n)}{f'(x_n)}$ (Quadratic convergence, Order = 2).
             </div>
             """, unsafe_allow_html=True)
 
-    # ================= 2. CSA CIRCUIT MATRIX (STRICTLY CSA ONLY) =================
+    # ================= 2. CSA CIRCUIT MATRIX (CSA ONLY) =================
     elif selected_nav == "🖥️ CSA Circuit Matrix":
         st.markdown("#### 🖥️ CSA Digital Logic & Microprocessor Architecture")
         with st.expander("⚡ Half Adder & Full Adder Architecture"):
@@ -690,10 +709,9 @@ else:
             st.latex(r"Speedup = \frac{n \cdot k}{k + n - 1}")
             st.write("Address division: Tag | Line Index | Word Offset")
 
-    # ================= 3. SYLLABUS EXPLORER (STRUCTURED LIST-WISE CARDS) =================
+    # ================= 3. SYLLABUS EXPLORER (LIST-WISE) =================
     elif selected_nav == "📖 Syllabus Explorer":
         st.markdown(f"#### 📚 Official Curriculum Syllabus Breakdown — {active_subj}")
-        st.caption("Maa Pateshwari State University affiliated curriculum structure with topic-wise lists.")
 
         if active_subj == "🐍 Python Programming":
             syllabus_data = [
@@ -701,7 +719,7 @@ else:
                     "Python execution pipeline: Source code (.py) to Bytecode (.pyc) & Python Virtual Machine (PVM)",
                     "Dynamic typing vs Static typing, Garbage collection & Reference counting",
                     "Identifiers, Keywords, Literals, Data Types (int, float, complex, bool, str)",
-                    "Operators & Precedence: Arithmetic, Logical, Bitwise (&, |, ^, ~, <<, >>), Identity (is) & Membership (in)"
+                    "Operators & Precedence: Arithmetic, Logical, Bitwise, Identity (is) & Membership (in)"
                 ]),
                 ("Module 2: Control Flow & Iterative Constructs", [
                     "Conditional Statements: if, if-else, nested if-elif-else ladders",
@@ -726,7 +744,7 @@ else:
                     "Classes and Objects: Class attributes, instance attributes, self reference",
                     "Constructors: __init__() magic method and object lifecycle",
                     "Encapsulation: Public, protected (_var) and private (__var) name mangling",
-                    "Inheritance: Single, multiple, multilevel, hierarchical, and MRO (Method Resolution Order)",
+                    "Inheritance: Single, multiple, multilevel, hierarchical, and MRO",
                     "Polymorphism: Method overriding, duck typing, and Operator Overloading (dunder methods)"
                 ]),
                 ("Module 6: File Handling, Exceptions & Standard Modules", [
@@ -748,31 +766,31 @@ else:
                 ("Unit 2: Digital Logic & Combinational Circuits", [
                     "Boolean Algebra: DeMorgan's Laws, SOP and POS canonical forms",
                     "K-Map Minimization: 2, 3, and 4 variable K-Maps, Don't care conditions",
-                    "Logic Gates: AND, OR, NOT, NAND, NOR (Universal Gates), XOR, XNOR",
+                    "Logic Gates: AND, OR, NOT, NAND, NOR, XOR, XNOR",
                     "Arithmetic Circuits: Half Adder, Full Adder, Half Subtractor, Full Subtractor",
                     "MSI Components: Multiplexers, Demultiplexers, Decoders, Encoders"
                 ]),
                 ("Unit 3: Sequential Logic & Storage Elements", [
                     "Latches vs Flip-Flops: SR, D, JK, T Flip-Flops and characteristic tables",
-                    "Race-around condition in JK flip-flop and Master-Slave JK flip-flop architecture",
+                    "Race-around condition in JK flip-flop and Master-Slave JK architecture",
                     "Registers: Shift registers (SISO, SIPO, PISO, PIPO), Universal shift registers",
                     "Counters: Synchronous vs Asynchronous (Ripple) counters, Modulo-N counters"
                 ]),
                 ("Unit 4: Central Processing Unit & Instruction Cycle", [
                     "CPU Architecture: General Register Organization, Stack Organization",
-                    "Instruction formats: Three-address, Two-address, One-address (Accumulator), Zero-address",
+                    "Instruction formats: Three-address, Two-address, One-address, Zero-address",
                     "Addressing Modes: Immediate, Direct, Indirect, Register, Relative, Indexed",
-                    "Instruction Cycle phases: Fetch, Decode, Read Effective Address, Execute, Interrupt cycle"
+                    "Instruction Cycle phases: Fetch, Decode, Read Effective Address, Execute"
                 ]),
                 ("Unit 5: Memory Hierarchy & Pipelining", [
-                    "Memory hierarchy: Registers, Cache, Main Memory (RAM/ROM), Secondary Storage",
-                    "Cache Memory: Locality of Reference (Spatial & Temporal), Mapping techniques (Direct, Associative, Set-Associative)",
+                    "Memory hierarchy: Registers, Cache, Main Memory, Secondary Storage",
+                    "Cache Memory: Locality of Reference, Mapping (Direct, Associative, Set-Associative)",
                     "Virtual Memory: Paging, Segmentation, TLB, Page replacement algorithms",
-                    "Instruction Pipelining: Pipelining hazards (Structural, Data, Control), Speedup factor"
+                    "Instruction Pipelining: Pipelining hazards, Speedup factor"
                 ]),
                 ("Unit 6: Input-Output Organization", [
                     "Peripheral devices & I/O interface modules",
-                    "Data Transfer Modes: Programmed I/O, Interrupt-driven I/O, Direct Memory Access (DMA)",
+                    "Data Transfer Modes: Programmed I/O, Interrupt-driven I/O, DMA",
                     "DMA Controller architecture: Cycle stealing and Burst transfer modes",
                     "Interrupts: Daisy chaining, Priority encoder, Software vs Hardware interrupts"
                 ])
@@ -787,7 +805,7 @@ else:
                     "Partially Ordered Sets (POSET): Maximal, Minimal, LUB, GLB, Hasse Diagrams"
                 ]),
                 ("Unit 2: Mathematical Logic & Propositional Calculus", [
-                    "Propositions, Logical connectives: Conjunction, Disjunction, Negation, Conditional, Biconditional",
+                    "Propositions, Logical connectives: Conjunction, Disjunction, Conditional, Biconditional",
                     "Truth Tables, Tautology, Contradiction, Contingency",
                     "Logical Equivalence laws: DeMorgan's laws, Distributive laws",
                     "Rules of Inference: Modus Ponens, Modus Tollens, Syllogisms"
@@ -795,36 +813,35 @@ else:
                 ("Unit 3: Matrices & Systems of Linear Equations", [
                     "Matrices: Types of matrices, Symmetric, Skew-symmetric, Orthogonal matrices",
                     "Rank of a Matrix: Echelon form, Normal form (sweep-out process)",
-                    "Linear Systems ($AX = B$): Consistency criteria, Rouche-Capelli Theorem (Unique, Infinite, No solution)",
-                    "Eigenvalues & Eigenvectors: Characteristic equation, Cayley-Hamilton Theorem & Inverse calculation"
+                    "Linear Systems ($AX = B$): Consistency criteria, Rouche-Capelli Theorem",
+                    "Eigenvalues & Eigenvectors: Characteristic equation, Cayley-Hamilton Theorem"
                 ]),
                 ("Unit 4: Combinatorics & Graph Theory", [
                     "Counting Principles: Permutations and Combinations, Pigeonhole Principle",
                     "Graphs: Vertices, Edges, Degrees, Subgraphs, Bipartite graphs, Complete graphs",
-                    "Theorems: Handshaking Theorem ($\sum \deg(v) = 2E$), Euler's Planar Formula ($V - E + R = 2$)",
+                    "Theorems: Handshaking Theorem ($\sum \deg(v) = 2E$), Euler's Planar Formula",
                     "Graph Traversals: Eulerian graphs, Hamiltonian paths, Trees and Spanning trees"
                 ]),
                 ("Unit 5: Differential Calculus & Indeterminate Forms", [
                     "Successive Differentiation: Higher-order derivatives, Standard n-th derivatives",
                     "Leibnitz's Theorem: Product rule for n-th derivatives and verified proofs",
-                    "Limits: Evaluation of indeterminate forms ($0/0, \infty/\infty, 0 \cdot \infty, \infty - \infty$)",
+                    "Limits: Evaluation of indeterminate forms ($0/0, \infty/\infty, 0 \cdot \infty$)",
                     "L'Hopital's Rule: Rigorous application and multi-step evaluation"
                 ]),
                 ("Unit 6: Numerical Methods", [
                     "Roots of Equations: Bisection Method, Regula-Falsi Method",
                     "Newton-Raphson Method: Derivation, Quadratic convergence (Order = 2)",
-                    "Linear System Solvers: Gauss Elimination Method, Gauss-Seidel Iterative Method",
+                    "Linear System Solvers: Gauss Elimination Method, Gauss-Seidel Method",
                     "Interpolation: Newton's Forward and Backward difference interpolation"
                 ])
             ]
 
-        # Render Clean List-Wise Units
         for unit_title, topic_items in syllabus_data:
             with st.expander(f"📌 {unit_title}", expanded=False):
                 st.markdown("<ul class='unit-list'>" + "".join([f"<li>{item}</li>" for item in topic_items]) + "</ul>", unsafe_allow_html=True)
                 if st.button(f"✨ Deep Dive AI Analysis: {unit_title[:24]}...", key=f"deep_{unit_title[:15]}"):
                     with st.spinner(f"Formulating academic summary for {unit_title}..."):
-                        analysis = get_ai_response(f"Provide a structured academic summary and 2 high-frequency university exam questions for '{unit_title}' in {active_subj}.", current_subject=active_subj)
+                        analysis = get_ai_response(f"Provide a structured academic summary and 2 high-frequency exam questions for '{unit_title}' in {active_subj}.", current_subject=active_subj)
                         st.info(analysis)
 
     # ================= 4. EXAM ENGINE =================
@@ -897,11 +914,10 @@ else:
                     sol = get_ai_response(doubt_text, image_input=doubt_img, current_subject=active_subj)
                     st.markdown(f'<div class="formal-panel" style="border-left: 4px solid #3B82F6;">{sol}</div>', unsafe_allow_html=True)
 
-    # ================= 7. COLAB NOTEBOOK SANDBOX (STRICTLY PYTHON ONLY) =================
+    # ================= 7. COLAB NOTEBOOK SANDBOX (PYTHON ONLY) =================
     elif selected_nav == "💻 Colab Notebook & Sandbox" and active_subj == "🐍 Python Programming":
         st.markdown("#### 💻 Interactive Colab Notebook & Sandbox Environment // Python Only")
         
-        # Colab Action Toolbar
         tb_col1, tb_col2, tb_col3 = st.columns([1.2, 1.2, 2])
         with tb_col1:
             if st.button("➕ Add Code Cell", use_container_width=True):
@@ -924,7 +940,6 @@ else:
 
         st.markdown("---")
 
-        # RENDER NOTEBOOK CELLS (INTERACTIVE INPUT WORKING)
         for idx, cell in enumerate(st.session_state.notebook_cells):
             cell_id = cell["id"]
             
@@ -952,7 +967,6 @@ else:
                 run_cell = st.button("▶ Run", key=f"run_btn_{cell_id}", use_container_width=True)
                 copilot_cell = st.button("⚡ Assist", key=f"copilot_{cell_id}", use_container_width=True)
 
-            # Execution Logic
             if run_cell:
                 buf = io.StringIO()
                 try:
@@ -964,14 +978,12 @@ else:
                     cell["output"] = ""
                     cell["error"] = str(ex)
 
-            # AI Assist Logic
             if copilot_cell:
                 with st.spinner("AI evaluating cell code..."):
                     assist_prompt = f"Analyze this Python code cell and suggest 1-line optimization or fix without slang:\n```python\n{cell['code']}\n```"
                     cell["output"] = "[Faculty Suggestion]:\n" + get_ai_response(assist_prompt, current_subject="Python")
                     cell["error"] = ""
 
-            # Output Render
             if cell["output"]:
                 st.markdown(f"""
                 <div style="background:#070C18; border-left:3px solid #10B981; padding:10px 14px; border-radius:4px; font-family:'JetBrains Mono'; font-size:13px; color:#F8FAFC; margin-bottom:12px;">
