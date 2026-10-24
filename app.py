@@ -28,7 +28,7 @@ if "dynamic_pages_list" not in st.session_state:
 # ================= ULTRA-PREMIUM APPLE FROSTED GLASS & STRICT A4 REGISTER CSS =================
 st.markdown("""
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Architects+Daughter&family=Patrick+Hand&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Patrick+Hand&family=Shantell+Sans:wght@500;600;700&display=swap');
 
     html, body, [class*="css"] {
         font-family: -apple-system, BlinkMacSystemFont, "Plus Jakarta Sans", "SF Pro Display", sans-serif;
@@ -158,7 +158,7 @@ st.markdown("""
         margin-top: 24px;
     }
 
-    /* ================= CRISP GLITCH-FREE REGISTER CONTAINER ================= */
+    /* ================= REGISTER PAGE SHEET CONTAINER ================= */
     .register-flip-container {
         display: flex;
         justify-content: center;
@@ -180,7 +180,8 @@ st.markdown("""
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6) !important;
         width: 100% !important;
         max-width: 520px !important;
-        aspect-ratio: 1 / 1.38 !important;
+        min-height: 480px !important;
+        max-height: 520px !important;
         overflow: hidden !important;
         box-sizing: border-box !important;
         position: relative !important;
@@ -201,37 +202,12 @@ st.markdown("""
 
     /* High Clarity Student Ink Styling */
     .register-inner-content {
-        font-family: 'Patrick Hand', 'Architects Daughter', cursive, sans-serif !important;
+        font-family: 'Patrick Hand', cursive, sans-serif !important;
         color: #1e3a8a !important;
-        font-size: 15.5px !important;
+        font-size: 16px !important;
         line-height: 26px !important;
         word-break: break-word !important;
-    }
-
-    .register-inner-content h1, .register-inner-content h2, .register-inner-content h3 {
-        font-family: 'Plus Jakarta Sans', sans-serif !important;
-        color: #0f172a !important;
-        font-size: 16px !important;
-        font-weight: 700 !important;
-        margin-top: 4px !important;
-        margin-bottom: 6px !important;
-        border-bottom: 1.5px solid #ef4444 !important;
-        padding-bottom: 2px !important;
-        line-height: 22px !important;
-    }
-
-    .register-inner-content p, .register-inner-content li {
-        font-family: 'Patrick Hand', cursive !important;
-        color: #1e293b !important;
-        font-size: 15.5px !important;
-        line-height: 26px !important;
-        margin-bottom: 4px !important;
-        letter-spacing: 0.2px !important;
-    }
-
-    .register-inner-content strong, .register-inner-content b {
-        color: #0f172a !important;
-        font-weight: 700 !important;
+        white-space: pre-wrap !important;
     }
 
     .page-turn-pill {
@@ -374,10 +350,11 @@ st.markdown("""
         .register-outer-card {
             padding: 16px 12px 16px 44px !important;
             max-width: 92vw !important;
-            aspect-ratio: 1 / 1.38 !important;
+            min-height: 440px !important;
+            max-height: 480px !important;
         }
-        .register-inner-content p, .register-inner-content li {
-            font-size: 14px !important;
+        .register-inner-content {
+            font-size: 14.5px !important;
             line-height: 24px !important;
         }
     }
@@ -426,10 +403,10 @@ def get_ai_response(prompt, image_input=None, forced_language=None, current_subj
     {lang_instruction}
 
     TEACHING RULES (STRICT CLEANLINESS):
-    1. Write in natural, clean student notebook register style.
-    2. NEVER output raw markdown hashes like '###' or raw unformatted LaTeX with broken dollar signs. Write formulas simply (e.g. 0/0 form, limit x -> a).
-    3. DO NOT write meta lines like '**Subject:** ...' or '**Author:** ...' or '**Instructor:** ...'. Jump straight to the point.
-    4. Keep content tightly limited to 60-80 words per page to ensure zero vertical scrolling on a fixed A4 sheet.
+    1. Write in clean, natural student notebook register style.
+    2. NEVER output raw markdown hashes like '###' or raw unformatted LaTeX with broken dollar signs. Write simple readable formulas (e.g. lim (x -> a) [f'(x) / g'(x)]).
+    3. DO NOT write meta lines like '**Subject:** ...' or '**Author:** ...' or '**Instructor:** ...'. Jump directly to the core study points.
+    4. Keep content strictly to 50-70 words per page to ensure zero vertical scrolling on a fixed A4 sheet.
     5. Separate every single page using the exact delimiter token '[PAGE_BREAK]'.
 
     Query:
@@ -691,7 +668,7 @@ for i in range(3):
                 ai_output = get_ai_response(prompt, current_subject=active_subj)
                 st.markdown(f'<div class="ai-box">{ai_output}</div>', unsafe_allow_html=True)
 
-    # ================= 2. CRISP GLITCH-FREE REGISTER NOTES =================
+    # ================= 2. CRISP GLITCH-FREE REGISTER NOTES (PERFECT IN-CARD EMBED) =================
     def render_handwritten_notes():
         active_subj = st.session_state.selected_subject
         st.markdown(f"""
@@ -756,7 +733,7 @@ for i in range(3):
                 STRICT GUIDELINES:
                 1. DO NOT output raw markdown tags like '###' or raw LaTeX backslashes that glitch.
                 2. DO NOT write meta intro like 'Subject:', 'Instructor:', 'Author:' etc.
-                3. Keep each page strictly between 50-70 words so that it fits completely on the A4 sheet without scrolling.
+                3. Keep each page strictly between 45-65 words so that it fits completely on the A4 sheet without scrolling.
                 4. Insert '[PAGE_BREAK]' between pages.
                 5. Structure across pages:
                    - Page 1: Core Meaning & When to use (in 3 simple points).
@@ -778,46 +755,45 @@ for i in range(3):
                     cleaned_lines = []
                     for line in pg.splitlines():
                         if line.startswith("### "):
-                            line = f"**{line.replace('### ', '')}**"
+                            line = line.replace("### ", "")
                         elif line.startswith("## "):
-                            line = f"**{line.replace('## ', '')}**"
+                            line = line.replace("## ", "")
                         elif line.startswith("# "):
-                            line = f"**{line.replace('# ', '')}**"
+                            line = line.replace("# ", "")
                         cleaned_lines.append(line)
-                    clean_pages.append("\n\n".join(cleaned_lines))
+                    clean_pages.append("\n".join(cleaned_lines))
 
                 st.session_state.dynamic_pages_list = clean_pages
                 st.session_state.flip_notes_topic = final_topic
 
-        # RENDER CRISP GLITCH-FREE REGISTER CARD
+        # RENDER CRISP GLITCH-FREE REGISTER CARD (SINGLE CONTAINER)
         if st.session_state.dynamic_pages_list:
             pages = st.session_state.dynamic_pages_list
             total_pages = len(pages)
             curr_pg = min(st.session_state.current_note_page, total_pages)
 
             current_page_text = pages[curr_pg - 1]
+            
+            # Format text cleanly with linebreaks inside the div
+            safe_text = current_page_text.replace("\n", "<br>")
 
-            st.markdown(f"""
+            register_html = f"""
             <div class="register-flip-container">
                 <div class="register-outer-card">
                     <span class="page-turn-pill">A4 SHEET {curr_pg} OF {total_pages}</span>
-                    <div style="font-family:'Plus Jakarta Sans', sans-serif; font-size:18px; font-weight:700; color:#0f172a; margin-bottom:2px; border-bottom:1.5px solid #ef4444; padding-bottom:2px;">
+                    <div style="font-family:'Plus Jakarta Sans', sans-serif; font-size:17px; font-weight:700; color:#0f172a; margin-bottom:2px; border-bottom:1.5px solid #ef4444; padding-bottom:2px;">
                         {st.session_state.get('flip_notes_topic')}
                     </div>
                     <div style="font-size:11px; color:#64748b; margin-bottom:8px; font-family:'Plus Jakarta Sans', sans-serif;">
                         <b>Subject:</b> {active_subj} | <b>MLK PG College Balrampur</b>
                     </div>
                     <div class="register-inner-content">
-            """, unsafe_allow_html=True)
-
-            # Native Streamlit rendering for crisp LaTeX & markdown without glitches
-            st.markdown(current_page_text)
-
-            st.markdown("""
+                        {safe_text}
                     </div>
                 </div>
             </div>
-            """, unsafe_allow_html=True)
+            """
+            st.markdown(register_html, unsafe_allow_html=True)
 
             # SINGLE CLEAN PAGINATION CONTROLS
             c1, c2, c3 = st.columns([1.2, 1.6, 1.2])
