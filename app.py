@@ -28,7 +28,7 @@ if "dynamic_pages_list" not in st.session_state:
 # ================= ULTRA-PREMIUM APPLE FROSTED GLASS & STRICT A4 REGISTER CSS =================
 st.markdown("""
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Patrick+Hand&family=Shantell+Sans:wght@400;500;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Gochi+Hand&family=Patrick+Hand&family=Shantell+Sans:wght@500;600;700&display=swap');
 
     html, body, [class*="css"] {
         font-family: -apple-system, BlinkMacSystemFont, "Plus Jakarta Sans", "SF Pro Display", sans-serif;
@@ -158,68 +158,69 @@ st.markdown("""
         margin-top: 24px;
     }
 
-    /* ================= STRICT A4 REGISTER SHEET (NO SCROLL, EXACT RATIO) ================= */
+    /* ================= STRICT A4 REGISTER SHEET (NEAT PEN HANDWRITING) ================= */
     .register-flip-container {
         display: flex;
         justify-content: center;
         align-items: center;
-        margin-top: 10px;
-        margin-bottom: 15px;
+        margin-top: 8px;
+        margin-bottom: 12px;
     }
     .register-sheet-bounded {
-        background-color: #fefefd !important;
-        /* Ruled lines pattern + Clean Red Margin Line on Left */
+        background-color: #ffffff !important;
+        /* Red Margin on Left + Clean Horizontal Ruled Blue Lines */
         background-image: 
-            linear-gradient(90deg, transparent 36px, #f43f5e 36px, #f43f5e 37.5px, transparent 37.5px),
+            linear-gradient(90deg, transparent 38px, #ef4444 38px, #ef4444 39.5px, transparent 39.5px),
             linear-gradient(#e2e8f0 1px, transparent 1px) !important;
-        background-size: 100% 100%, 100% 22px !important;
+        background-size: 100% 100%, 100% 24px !important;
         border-radius: 6px !important;
-        padding: 16px 16px 16px 48px !important;
-        color: #1e3a8a !important;
-        font-family: 'Patrick Hand', cursive, sans-serif !important;
-        font-size: 14px !important;
-        line-height: 22px !important;
+        padding: 18px 20px 18px 50px !important;
+        color: #1e3a8a !important; /* Real Ballpen Ink */
+        font-family: 'Patrick Hand', 'Gochi Hand', cursive, sans-serif !important;
+        font-size: 15px !important;
+        line-height: 24px !important;
         border: 1px solid #cbd5e1 !important;
-        box-shadow: 0 8px 26px rgba(0, 0, 0, 0.5) !important;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.55), 0 1px 3px rgba(0, 0, 0, 0.2) !important;
         width: 100% !important;
-        max-width: 460px !important; /* Perfect standard A4 card width */
-        aspect-ratio: 1 / 1.38 !important; /* Authentic A4 Paper Ratio */
+        max-width: 500px !important;
+        aspect-ratio: 1 / 1.38 !important;
         height: auto !important;
-        overflow: hidden !important; /* NO SCROLL AT ALL */
+        overflow: hidden !important;
         box-sizing: border-box !important;
         position: relative !important;
     }
 
-    /* Spiral binding holes */
+    /* Left Spiral Hole Punches */
     .register-sheet-bounded::before {
         content: '' !important;
         position: absolute !important;
-        top: 10px !important;
-        left: 10px !important;
+        top: 12px !important;
+        left: 11px !important;
         width: 10px !important;
-        height: 95% !important;
+        height: 94% !important;
         background-image: radial-gradient(circle, #cbd5e1 3.5px, transparent 4.5px) !important;
-        background-size: 10px 22px !important;
+        background-size: 10px 24px !important;
         background-repeat: repeat-y !important;
     }
 
     .register-sheet-bounded h1, .register-sheet-bounded h2, .register-sheet-bounded h3 {
         font-family: 'Shantell Sans', cursive !important;
         color: #0f172a !important;
-        font-size: 15px !important;
+        font-size: 16px !important;
         margin-top: 2px !important;
-        margin-bottom: 4px !important;
+        margin-bottom: 6px !important;
         border-bottom: 1.5px solid #ef4444 !important;
         padding-bottom: 2px !important;
-        line-height: 20px !important;
+        line-height: 22px !important;
     }
 
     .register-sheet-bounded p, .register-sheet-bounded li {
         font-family: 'Patrick Hand', cursive !important;
         color: #1e293b !important;
-        font-size: 13.5px !important;
-        line-height: 22px !important;
-        margin-bottom: 2px !important;
+        font-size: 15px !important;
+        line-height: 24px !important;
+        margin-bottom: 3px !important;
+        letter-spacing: 0.2px !important;
     }
 
     .register-sheet-bounded pre, .register-sheet-bounded code {
@@ -228,22 +229,31 @@ st.markdown("""
         color: #0284c7 !important;
         border: 1px dashed #cbd5e1 !important;
         border-radius: 4px !important;
-        padding: 2px 4px !important;
-        font-size: 11px !important;
-        line-height: 16px !important;
+        padding: 2px 6px !important;
+        font-size: 12px !important;
+        line-height: 18px !important;
     }
 
     .page-turn-pill {
         display: inline-block;
         background: #ef4444;
         color: #ffffff;
-        font-size: 10px;
+        font-size: 10.5px;
         font-weight: 700;
-        padding: 1px 7px;
+        padding: 1px 8px;
         border-radius: 8px;
         margin-bottom: 4px;
         font-family: 'Plus Jakarta Sans', sans-serif !important;
         letter-spacing: 0.5px;
+    }
+
+    /* Single Clean Pagination Control Box Below Register */
+    .pagination-bar-wrapper {
+        max-width: 500px;
+        margin: 10px auto 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
     }
 
     /* AI Response Glass Box */
@@ -267,7 +277,7 @@ st.markdown("""
         color: #FFFFFF !important;
         border: 1px solid rgba(255, 255, 255, 0.2) !important;
         border-radius: 12px !important;
-        padding: 7px 16px !important;
+        padding: 7px 18px !important;
         font-weight: 600 !important;
         font-size: 13px !important;
         letter-spacing: 0.3px !important;
@@ -371,12 +381,12 @@ st.markdown("""
             flex-shrink: 0 !important;
         }
         .register-sheet-bounded {
-            padding: 14px 10px 14px 40px !important;
-            font-size: 12.5px !important;
-            line-height: 20px !important;
-            background-size: 100% 100%, 100% 20px !important;
-            max-width: 90vw !important;
-            aspect-ratio: 1 / 1.4 !important;
+            padding: 14px 12px 14px 42px !important;
+            font-size: 13.5px !important;
+            line-height: 22px !important;
+            background-size: 100% 100%, 100% 22px !important;
+            max-width: 92vw !important;
+            aspect-ratio: 1 / 1.38 !important;
         }
     }
 </style>
@@ -425,10 +435,10 @@ def get_ai_response(prompt, image_input=None, forced_language=None, current_subj
 
     TEACHING RULES:
     1. Teach in clean, natural student notebook register language (NOT decorative cursive).
-    2. Format handwritten style notes strictly for a single A4 page per section.
-    3. Strictly restrict each page to ONLY 80-100 WORDS so that it fits the A4 page without any scrolling.
+    2. DO NOT write meta introductory titles like '**Subject:** ...' or '**Author:** ...'. Start directly with the core study points.
+    3. Strictly restrict each page to ONLY 70-90 WORDS so that it fits the single A4 sheet without vertical scrolling.
     4. You MUST separate every individual page using the exact delimiter token '[PAGE_BREAK]'.
-    5. No unnecessary fluff. Point-to-point only.
+    5. Be crisp, concise, and point-to-point only.
 
     Query:
     {prompt}
@@ -695,7 +705,7 @@ for i in range(3):
         st.markdown(f"""
         <div class="hero-banner">
             <div class="hero-title">📝 Authentic A4 Register Sheets (Zero Scroll)</div>
-            <div class="hero-sub">Subject Context: {active_subj} • Exact A4 card dimensions with natural handwriting. Turn pages with Next/Prev buttons.</div>
+            <div class="hero-sub">Subject Context: {active_subj} • Single page view with clean student handwriting. Turn pages with the buttons below.</div>
         </div>
         """, unsafe_allow_html=True)
 
@@ -752,9 +762,10 @@ for i in range(3):
 
                 STRICT A4 FORMATTING CONSTRAINTS:
                 1. Write in concise, clean student pen handwriting.
-                2. IMPORTANT: Each page MUST contain NO MORE than 70 to 90 words so it fits perfectly on an A4 card without ANY vertical scrolling.
-                3. You MUST insert the delimiter '[PAGE_BREAK]' between pages.
-                4. Automatically create 2 to 4 dynamic pages as needed:
+                2. DO NOT write header meta lines like '**Subject:** ...' or '**Author:** ...'. Start directly with the first section heading.
+                3. IMPORTANT: Each page MUST contain NO MORE than 70 to 90 words so it fits perfectly on an A4 card without ANY vertical scrolling.
+                4. You MUST insert the delimiter '[PAGE_BREAK]' between pages.
+                5. Automatically create 2 to 4 dynamic pages as needed:
                    - Page 1: Core Concept (3-4 crisp points).
                    - Page 2: Formula / Trick Box / Diagram (short text summary).
                    - Page 3: Solved Exam Numerical or Problem.
@@ -771,29 +782,11 @@ for i in range(3):
                 st.session_state.dynamic_pages_list = pages
                 st.session_state.flip_notes_topic = final_topic
 
-        # RENDER STRICT A4 NON-SCROLLING PAGE
+        # RENDER STRICT A4 REGISTER CARD & SINGLE BOTTOM CONTROLS
         if st.session_state.dynamic_pages_list:
             pages = st.session_state.dynamic_pages_list
             total_pages = len(pages)
             curr_pg = min(st.session_state.current_note_page, total_pages)
-
-            # Top Navigation Controls
-            nav_col1, nav_col2, nav_col3 = st.columns([1, 2, 1])
-            with nav_col1:
-                if st.button("◀ Previous Page", disabled=(curr_pg == 1), use_container_width=True):
-                    st.session_state.current_note_page = max(1, curr_pg - 1)
-                    st.rerun()
-            with nav_col2:
-                st.markdown(f"""
-                <div style="text-align:center; padding-top:4px;">
-                    <span style="font-weight:700; color:#38BDF8; font-size:14px;">📖 {st.session_state.get('flip_notes_topic')}</span><br>
-                    <span style="color:#94A3B8; font-size:11px;">A4 Sheet {curr_pg} of {total_pages}</span>
-                </div>
-                """, unsafe_allow_html=True)
-            with nav_col3:
-                if st.button("Next Page ▶", disabled=(curr_pg == total_pages), use_container_width=True):
-                    st.session_state.current_note_page = min(total_pages, curr_pg + 1)
-                    st.rerun()
 
             # Active Page Content (Pure A4 Container - Zero Scroll)
             current_page_text = pages[curr_pg - 1]
@@ -811,16 +804,20 @@ for i in range(3):
             </div>
             """, unsafe_allow_html=True)
 
-            # Bottom Quick Turner Buttons
-            b_nav1, b_nav2, b_nav3 = st.columns([1, 2, 1])
-            with b_nav1:
-                if st.button("◀ Back", disabled=(curr_pg == 1), key="b_prev", use_container_width=True):
+            # SINGLE CLEAN PAGINATION CONTROLS (DIRECTLY BELOW SHEET)
+            c1, c2, c3 = st.columns([1.2, 1.6, 1.2])
+            with c1:
+                if st.button("◀ Previous Page", disabled=(curr_pg == 1), key="btn_prev", use_container_width=True):
                     st.session_state.current_note_page = max(1, curr_pg - 1)
                     st.rerun()
-            with b_nav2:
-                st.markdown(f"<div style='text-align:center; color:#94A3B8; font-size:11px;'>Flip sheets to read full topic</div>", unsafe_allow_html=True)
-            with b_nav3:
-                if st.button("Next ▶", disabled=(curr_pg == total_pages), key="b_next", use_container_width=True):
+            with c2:
+                st.markdown(f"""
+                <div style="text-align:center; padding-top:6px;">
+                    <span style="color:#94A3B8; font-size:12px; font-weight:600;">Sheet {curr_pg} of {total_pages}</span>
+                </div>
+                """, unsafe_allow_html=True)
+            with c3:
+                if st.button("Next Page ▶", disabled=(curr_pg == total_pages), key="btn_next", use_container_width=True):
                     st.session_state.current_note_page = min(total_pages, curr_pg + 1)
                     st.rerun()
 
