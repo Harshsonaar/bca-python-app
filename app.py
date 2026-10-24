@@ -3,11 +3,10 @@ import google.generativeai as genai
 import io
 import contextlib
 import time
-import re
 from PIL import Image
 
 st.set_page_config(
-    page_title="BCA OS | Harsh Raj Soni",
+    page_title="Colab BCA OS | Harsh Raj Soni",
     page_icon="⚡",
     layout="wide",
     initial_sidebar_state="collapsed"
@@ -26,47 +25,49 @@ if "current_note_page" not in st.session_state:
 if "dynamic_pages_list" not in st.session_state:
     st.session_state.dynamic_pages_list = []
 
-# Virtual File System for Sandbox (Google Colab like storage)
-if "saved_scripts" not in st.session_state:
-    st.session_state.saved_scripts = {
-        "welcome.py": "# Default Starter Script\nname = 'Harsh Raj Soni'\ncollege = 'MLK PG College Balrampur'\nprint(f'⚡ BCA OS Initialized by {name} [{college}]')",
-        "prime_checker.py": "# Prime Number Logic (Strict 4-Space PEP 8)\ndef is_prime(n):\n    if n <= 1:\n        return False\n    for i in range(2, int(n**0.5) + 1):\n        if n % i == 0:\n            return False\n    return True\n\nnum = 29\nprint(f'{num} is prime:', is_prime(num))"
+# Colab Notebook Multi-Cell Storage
+if "notebook_cells" not in st.session_state:
+    st.session_state.notebook_cells = [
+        {
+            "id": 1,
+            "code": "# Cell 1: System Boot & Verification\nname = 'Harsh Raj Soni'\ncollege = 'MLK PG College Balrampur'\nprint(f'⚡ Colab Engine Connected | Dev: {name} [{college}]')",
+            "output": "",
+            "error": ""
+        },
+        {
+            "id": 2,
+            "code": "# Cell 2: Quick Algorithm Test\ndef fibonacci(n):\n    a, b = 0, 1\n    series = []\n    for _ in range(n):\n        series.append(a)\n        a, b = b, a + b\n    return series\n\nprint('Fibonacci (8 terms):', fibonacci(8))",
+            "output": "",
+            "error": ""
+        }
+    ]
+
+# Virtual File System for Colab
+if "saved_notebooks" not in st.session_state:
+    st.session_state.saved_notebooks = {
+        "welcome_colab.ipynb": st.session_state.notebook_cells
     }
 
-if "active_code" not in st.session_state:
-    st.session_state.active_code = st.session_state.saved_scripts["welcome.py"]
-
-if "last_error" not in st.session_state:
-    st.session_state.last_error = ""
-
-# Editor Preferences
-if "editor_rows" not in st.session_state:
-    st.session_state.editor_rows = 240
-
-if "editor_font_size" not in st.session_state:
-    st.session_state.editor_font_size = "14px"
-
-# ================= CYBER CODER BLACK & ELECTRIC YELLOW CSS =================
-st.markdown(f"""
+# ================= GOOGLE COLAB DARK + ELECTRIC YELLOW CSS =================
+st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Patrick+Hand&display=swap');
 
-    html, body, [class*="css"] {{
+    html, body, [class*="css"] {
         font-family: 'Plus Jakarta Sans', sans-serif;
-    }}
-    code, pre {{
+    }
+    code, pre {
         font-family: 'JetBrains Mono', monospace !important;
-    }}
+    }
 
-    /* Ambient Obsidian & Electric Gold Canvas */
-    .stApp {{
-        background: radial-gradient(circle at 50% -20%, rgba(255, 230, 0, 0.16) 0%, rgba(18, 16, 5, 0.6) 40%, #08080A 100%) !important;
+    .stApp {
+        background-color: #0b0c10 !important;
         color: #F8FAFC;
-    }}
+    }
 
     /* Streamlit Host Overrides */
-    header[data-testid="stHeader"] {{display: none !important;}}
-    footer {{display: none !important; visibility: hidden !important;}}
+    header[data-testid="stHeader"] {display: none !important;}
+    footer {display: none !important; visibility: hidden !important;}
     .viewerBadge_container__1QSob, 
     .viewerBadge_link__1QSob,
     [data-testid="stStatusWidget"], 
@@ -74,126 +75,132 @@ st.markdown(f"""
     div[data-testid="stToolbar"],
     div[data-testid="stDecoration"],
     #MainMenu,
-    div[class*="viewerBadge"] {{
+    div[class*="viewerBadge"] {
         display: none !important;
         visibility: hidden !important;
         opacity: 0 !important;
         pointer-events: none !important;
-    }}
+    }
 
-    .block-container {{
-        padding-top: 0.8rem !important;
+    .block-container {
+        padding-top: 0.6rem !important;
         padding-bottom: 5rem !important;
-        max-width: 1180px !important;
-    }}
+        max-width: 1200px !important;
+    }
 
-    /* ================= OPENING DEVELOPER BOOT SCREEN ================= */
-    .splash-box {{
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        min-height: 75vh;
-        text-align: center;
-        position: relative;
-    }}
-    .system-status-badge {{
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        background: rgba(255, 230, 0, 0.1);
-        border: 1px solid #FFE600;
-        padding: 6px 20px;
-        border-radius: 30px;
-        font-size: 13px;
-        font-weight: 800;
-        color: #FFE600;
-        letter-spacing: 2px;
-        box-shadow: 0 0 25px rgba(255, 230, 0, 0.35);
-        margin-bottom: 16px;
-        font-family: 'JetBrains Mono', monospace;
-    }}
-    .splash-author {{
-        font-size: 38px;
-        font-weight: 800;
-        background: linear-gradient(135deg, #FFFFFF 0%, #FFE600 50%, #FFAA00 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        letter-spacing: -0.5px;
-        margin-bottom: 8px;
-    }}
-    .splash-sub {{
-        font-size: 14px;
-        color: #94A3B8;
-        font-family: 'JetBrains Mono', monospace;
-        margin-bottom: 24px;
-    }}
-    .coder-terminal-box {{
-        background: #0D0E12;
-        border: 1px solid rgba(255, 230, 0, 0.3);
-        border-left: 4px solid #FFE600;
-        border-radius: 12px;
-        padding: 16px 22px;
-        max-width: 580px;
-        width: 100%;
-        text-align: left;
-        font-family: 'JetBrains Mono', monospace;
-        font-size: 13px;
-        color: #FFE600;
-        box-shadow: 0 10px 35px rgba(0,0,0,0.8);
-        margin-bottom: 24px;
-        line-height: 1.6;
-    }}
-
-    /* Cyber Coder Top Banner */
-    .cyber-top-banner {{
-        background: rgba(13, 14, 18, 0.85);
+    /* Colab App Bar */
+    .colab-menubar {
+        background: #15181f;
         border: 1px solid rgba(255, 230, 0, 0.25);
-        border-radius: 16px;
-        padding: 14px 22px;
-        backdrop-filter: blur(20px);
-        margin-bottom: 14px;
+        border-radius: 12px;
+        padding: 10px 18px;
         display: flex;
         justify-content: space-between;
         align-items: center;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
-    }}
-    .author-glow-pill {{
+        margin-bottom: 14px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    }
+    .colab-brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    .colab-logo {
+        background: #FFE600;
+        color: #000;
+        font-weight: 900;
+        padding: 3px 8px;
+        border-radius: 6px;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 13px;
+    }
+    .colab-status-box {
         display: inline-flex;
         align-items: center;
-        gap: 6px;
-        background: rgba(255, 230, 0, 0.12);
-        border: 1px solid #FFE600;
-        padding: 5px 14px;
-        border-radius: 20px;
-        font-size: 12px;
-        font-weight: 700;
-        color: #FFE600;
+        gap: 12px;
         font-family: 'JetBrains Mono', monospace;
-        box-shadow: 0 0 15px rgba(255, 230, 0, 0.25);
-    }}
+        font-size: 11px;
+        color: #A3E635;
+        background: rgba(0,0,0,0.4);
+        padding: 4px 12px;
+        border-radius: 20px;
+        border: 1px solid rgba(163, 230, 53, 0.3);
+    }
 
-    /* Top Navigation Dock */
-    div[data-testid="stRadio"] {{
-        background: rgba(13, 14, 18, 0.9) !important;
+    /* Colab Cell Container */
+    .colab-cell-container {
+        background: #111318;
+        border: 1px solid #1f2430;
+        border-left: 3px solid #FFE600;
+        border-radius: 8px;
+        padding: 12px 16px;
+        margin-bottom: 16px;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+        transition: border-color 0.2s ease;
+    }
+    .colab-cell-container:hover {
+        border-color: rgba(255, 230, 0, 0.45);
+    }
+    .colab-cell-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 8px;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 12px;
+        color: #94A3B8;
+    }
+
+    /* Output Console Area */
+    .colab-output-box {
+        background: #060709;
+        border-top: 1px solid #1f2430;
+        padding: 10px 14px;
+        margin-top: 8px;
+        border-radius: 4px;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 13px;
+        color: #E2E8F0;
+        white-space: pre-wrap;
+    }
+
+    /* Colab Code Area Override */
+    textarea[aria-label*="Code Cell"] {
+        font-family: 'JetBrains Mono', monospace !important;
+        font-size: 14px !important;
+        background-color: #0d0f14 !important;
+        color: #F8FAFC !important;
+        border: 1px solid #232836 !important;
+        line-height: 22px !important;
+        tab-size: 4 !important;
+        padding-left: 10px !important;
+        border-radius: 6px !important;
+    }
+    textarea[aria-label*="Code Cell"]:focus {
+        border-color: #FFE600 !important;
+    }
+
+    /* Navigation Dock */
+    div[data-testid="stRadio"] {
+        background: #15181f !important;
         border: 1px solid rgba(255, 230, 0, 0.25) !important;
         padding: 6px 10px !important;
         border-radius: 35px !important;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7) !important;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6) !important;
         margin: 0 auto 16px auto !important;
         width: 100% !important;
         max-width: 960px !important;
-    }}
-    div[data-testid="stRadio"] > label {{display: none !important;}}
-    div[data-testid="stRadio"] > div {{
+    }
+    div[data-testid="stRadio"] > label {display: none !important;}
+    div[data-testid="stRadio"] > div {
         display: flex !important;
         flex-direction: row !important;
         justify-content: space-between !important;
         align-items: center !important;
         flex-wrap: wrap !important;
         gap: 4px !important;
-    }}
-    div[data-testid="stRadio"] label {{
+    }
+    div[data-testid="stRadio"] label {
         background: transparent !important;
         border-radius: 20px !important;
         padding: 6px 12px !important;
@@ -201,19 +208,18 @@ st.markdown(f"""
         font-weight: 700 !important;
         color: #94A3B8 !important;
         font-family: 'JetBrains Mono', monospace !important;
-        transition: all 0.2s ease !important;
         margin: 0 !important;
-    }}
-    div[data-testid="stRadio"] label:hover {{
+    }
+    div[data-testid="stRadio"] label:hover {
         background: rgba(255, 230, 0, 0.15) !important;
         color: #FFE600 !important;
-    }}
-    div[data-testid="stRadio"] div[role="radiogroup"] > label > div:first-child {{
+    }
+    div[data-testid="stRadio"] div[role="radiogroup"] > label > div:first-child {
         display: none !important;
-    }}
+    }
 
-    /* ================= STRICT A4 REGISTER NOTEBOOK ================= */
-    .register-center-wrapper {{
+    /* Notebook Register Paper */
+    .register-center-wrapper {
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -221,8 +227,8 @@ st.markdown(f"""
         width: 100%;
         margin-top: 4px;
         margin-bottom: 10px;
-    }}
-    .notebook-paper-a4 {{
+    }
+    .notebook-paper-a4 {
         background-color: #ffffff !important;
         background-image: 
             linear-gradient(90deg, transparent 40px, #f43f5e 40px, #f43f5e 41.5px, transparent 41.5px),
@@ -240,10 +246,8 @@ st.markdown(f"""
         position: relative !important;
         box-sizing: border-box !important;
         color: #1e3a8a !important;
-    }}
-
-    /* Left Ring Binder */
-    .notebook-paper-a4::before {{
+    }
+    .notebook-paper-a4::before {
         content: '' !important;
         position: absolute !important;
         top: 12px !important;
@@ -253,23 +257,22 @@ st.markdown(f"""
         background-image: radial-gradient(circle, #94a3b8 3.5px, transparent 4.5px) !important;
         background-size: 10px 24px !important;
         background-repeat: repeat-y !important;
-    }}
-
-    .notebook-title-row {{
+    }
+    .notebook-title-row {
         display: flex;
         justify-content: space-between;
         align-items: center;
         border-bottom: 2px solid #ef4444;
         padding-bottom: 2px;
         margin-bottom: 6px;
-    }}
-    .notebook-title-text {{
+    }
+    .notebook-title-text {
         font-family: 'Plus Jakarta Sans', sans-serif !important;
         font-weight: 700 !important;
         font-size: 15px !important;
         color: #0f172a !important;
-    }}
-    .notebook-badge {{
+    }
+    .notebook-badge {
         font-family: 'JetBrains Mono', monospace !important;
         font-size: 10.5px !important;
         font-weight: 700 !important;
@@ -278,98 +281,47 @@ st.markdown(f"""
         border: 1px solid rgba(255, 230, 0, 0.4) !important;
         padding: 2px 7px !important;
         border-radius: 6px !important;
-    }}
-
-    .notebook-handwritten-text {{
+    }
+    .notebook-handwritten-text {
         font-family: 'Patrick Hand', cursive !important;
         font-size: 15px !important;
         line-height: 24px !important;
         color: #1e3a8a !important;
         word-break: break-word !important;
         white-space: pre-wrap !important;
-    }}
+    }
 
-    /* Cyber Panels & Formula Display */
-    .cyber-panel {{
-        background: rgba(13, 14, 18, 0.88);
-        border: 1px solid rgba(255, 230, 0, 0.25);
-        border-radius: 14px;
-        padding: 18px;
-        backdrop-filter: blur(20px);
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
-        margin-top: 14px;
-    }}
-
-    .formula-card {{
-        background: rgba(255, 255, 255, 0.03);
-        border: 1px solid rgba(255, 230, 0, 0.18);
-        border-left: 3px solid #FFE600;
-        border-radius: 8px;
-        padding: 10px 14px;
-        margin-bottom: 10px;
-    }}
-
-    /* Live Indentation Visualizer Card */
-    .indent-tracer-box {{
-        background: #090a0d;
-        border: 1px solid rgba(255, 230, 0, 0.25);
-        border-radius: 8px;
-        padding: 10px 14px;
-        font-family: 'JetBrains Mono', monospace;
-        font-size: 12px;
-        color: #94A3B8;
-        margin-top: 8px;
-    }}
-
-    /* Code Editor Styling */
-    textarea[aria-label="Python Code Editor:"] {{
-        font-size: {st.session_state.editor_font_size} !important;
-        font-family: 'JetBrains Mono', monospace !important;
-        background-color: #060709 !important;
-        color: #F8FAFC !important;
-        border: 1px solid rgba(255, 230, 0, 0.35) !important;
-        line-height: 24px !important;
-        tab-size: 4 !important;
-        padding-left: 14px !important;
-    }}
-
-    /* Electric Yellow Buttons */
-    .stButton>button {{
+    /* Buttons */
+    .stButton>button {
         background: linear-gradient(135deg, #FFE600 0%, #EAB308 100%) !important;
         color: #0A0A0C !important;
         border: 1px solid #FFE600 !important;
-        border-radius: 10px !important;
-        padding: 7px 16px !important;
+        border-radius: 8px !important;
+        padding: 6px 14px !important;
         font-weight: 800 !important;
         font-family: 'JetBrains Mono', monospace !important;
-        font-size: 13px !important;
-        letter-spacing: 0.5px !important;
+        font-size: 12.5px !important;
         transition: all 0.2s ease !important;
-        box-shadow: 0 4px 15px rgba(255, 230, 0, 0.3) !important;
-    }}
-    .stButton>button:hover {{
-        transform: translateY(-2px);
-        box-shadow: 0 8px 25px rgba(255, 230, 0, 0.6) !important;
-    }}
+    }
+    .stButton>button:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 15px rgba(255, 230, 0, 0.4) !important;
+    }
 
-    /* STRICT COMPACT PHONE SCREEN LOCK (< 768px) */
-    @media (max-width: 768px) {{
-        .notebook-paper-a4 {{
+    @media (max-width: 768px) {
+        .notebook-paper-a4 {
             padding: 14px 12px 18px 42px !important;
             max-width: 90vw !important;
             height: 380px !important;
             max-height: 380px !important;
             overflow: hidden !important;
-            background-size: 100% 100%, 100% 21px !important;
-        }}
-        .notebook-handwritten-text {{
-            font-size: 13.5px !important;
-            line-height: 21px !important;
-        }}
-        .notebook-title-text {{
-            font-size: 14px !important;
-        }}
-    }}
+        }
+        .colab-menubar {
+            flex-direction: column;
+            gap: 8px;
+            align-items: flex-start;
+        }
+    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -380,9 +332,9 @@ if "GEMINI_API_KEY" in st.secrets:
     genai.configure(api_key=gemini_key)
 
 with st.sidebar:
-    st.markdown("### ⚡ SYSTEM TERMINAL")
+    st.markdown("### ⚡ COLAB RUNTIME")
     if gemini_key:
-        st.markdown('<span style="color:#FFE600; font-family:\'JetBrains Mono\'; font-weight:700;">● CORE STATUS: ACTIVE</span>', unsafe_allow_html=True)
+        st.markdown('<span style="color:#A3E635; font-family:\'JetBrains Mono\'; font-weight:700;">● GPU: T4 Connected</span>', unsafe_allow_html=True)
     else:
         with st.expander("🔑 Setup API Key", expanded=True):
             gemini_key = st.text_input("Gemini API Key:", type="password")
@@ -459,80 +411,83 @@ def get_ai_response(prompt, image_input=None, forced_language=None, current_subj
 # ================= 0. CODER BOOT & LOADING SCREEN =================
 if not st.session_state.system_booted:
     st.markdown("""
-    <div class="splash-box">
-        <div class="system-status-badge">⚡ BCA ACADEMIC SYSTEM v2.6</div>
-        <div class="splash-author">CREATED & DESIGNED BY HARSH RAJ SONI</div>
-        <div class="splash-sub">MLK PG COLLEGE BALRAMPUR • MAA PATESHWARI STATE UNIVERSITY</div>
-        <div class="coder-terminal-box">
-            <div><span style="color:#38BDF8;">root@harshraj-os:~$</span> initialize_environment</div>
-            <div style="color:#A3E635;">✔ Initializing Neural Kernel & LLM Gateway...</div>
-            <div style="color:#A3E635;">✔ Live Indentation Tracer & Auto-Intent Detection: Active</div>
-            <div style="color:#A3E635;">✔ Standard Library Matrix & Keywords Suite: Mounted</div>
-            <div style="color:#FFE600;">⚡ Status: Environment Ready. High-Performance Mode Engaged.</div>
+    <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:75vh; text-align:center;">
+        <div style="display:inline-flex; align-items:center; gap:8px; background:rgba(255,230,0,0.1); border:1px solid #FFE600; padding:6px 20px; border-radius:30px; font-size:13px; font-weight:800; color:#FFE600; font-family:'JetBrains Mono'; margin-bottom:16px;">
+            ⚡ GOOGLE COLAB ENGINE v2.6
+        </div>
+        <div style="font-size:36px; font-weight:800; background:linear-gradient(135deg, #FFFFFF 0%, #FFE600 50%, #FFAA00 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; margin-bottom:8px;">
+            CREATED & DESIGNED BY HARSH RAJ SONI
+        </div>
+        <div style="font-size:14px; color:#94A3B8; font-family:'JetBrains Mono'; margin-bottom:24px;">
+            MLK PG COLLEGE BALRAMPUR • MAA PATESHWARI STATE UNIVERSITY
+        </div>
+        <div style="background:#0D0E12; border:1px solid rgba(255,230,0,0.3); border-left:4px solid #FFE600; border-radius:12px; padding:16px 22px; max-width:580px; width:100%; text-align:left; font-family:'JetBrains Mono'; font-size:13px; color:#FFE600; line-height:1.6; margin-bottom:24px;">
+            <div><span style="color:#38BDF8;">root@colab-node:~$</span> colab --connect-runtime</div>
+            <div style="color:#A3E635;">✔ Initializing Python 3.10 Kernel & Cells Engine...</div>
+            <div style="color:#A3E635;">✔ Allocated Virtual Memory: 12.7 GB / 100 GB Disk</div>
+            <div style="color:#A3E635;">✔ Mounting Cell Execution Context & AI Copilot</div>
+            <div style="color:#FFE600;">⚡ Status: Connected to Google Colab Notebook Runtime.</div>
         </div>
     </div>
     """, unsafe_allow_html=True)
 
     c1, c2, c3 = st.columns([1, 1.2, 1])
     with c2:
-        if st.button("⚡ LAUNCH & ENTER SYSTEM", use_container_width=True):
+        if st.button("⚡ OPEN NOTEBOOK WORKSPACE", use_container_width=True):
             st.session_state.system_booted = True
             st.rerun()
 
 else:
-    # ================= TOP APP HEADER =================
+    # ================= GOOGLE COLAB NOTEBOOK MENU BAR =================
     st.markdown("""
-    <div class="cyber-top-banner">
-        <div>
-            <div style="font-size: 19px; font-weight: 800; color: #FFE600; letter-spacing: -0.5px; font-family:'JetBrains Mono';">
-                ⚡ BCA ACADEMIC OS
-            </div>
-            <div style="font-size: 11px; color: #94A3B8; font-family:'JetBrains Mono';">
-                MLK PG College Balrampur • Maa Pateshwari State Univ
-            </div>
+    <div class="colab-menubar">
+        <div class="colab-brand">
+            <span class="colab-logo">CO</span>
+            <span style="font-size:15px; font-weight:700; color:#F8FAFC; font-family:'JetBrains Mono';">BCA_Notebook.ipynb</span>
+            <span style="font-size:11px; color:#94A3B8; font-family:'JetBrains Mono';">• MLK PG College</span>
         </div>
-        <div class="author-glow-pill">
-            ⚡ Dev: Harsh Raj Soni
+        <div class="colab-status-box">
+            <span>● Connected (Python 3)</span>
+            <span style="color:#64748b;">|</span>
+            <span>RAM: 1.8/12.7 GB</span>
+            <span style="color:#64748b;">|</span>
+            <span style="color:#FFE600;">Dev: Harsh Raj Soni</span>
         </div>
     </div>
     """, unsafe_allow_html=True)
 
-    # ================= PROPER TACTILE SUBJECT SELECTION BUTTONS =================
-    st.markdown("<span style='font-size:12px; color:#FFE600; font-family:JetBrains Mono; font-weight:700;'>[SELECT ACTIVE STREAM]</span>", unsafe_allow_html=True)
-    
-    sub_btn_col1, sub_btn_col2, sub_btn_col3 = st.columns(3)
-    with sub_btn_col1:
+    # Subject Selector Buttons
+    st.markdown("<span style='font-size:11px; color:#FFE600; font-family:JetBrains Mono; font-weight:700;'>[SELECT STREAM]</span>", unsafe_allow_html=True)
+    sub_col1, sub_col2, sub_col3 = st.columns(3)
+    with sub_col1:
         if st.button("🐍 Python Programming", use_container_width=True):
             st.session_state.selected_subject = "🐍 Python Programming"
             st.rerun()
-    with sub_btn_col2:
+    with sub_col2:
         if st.button("🖥️ Computer System Architecture", use_container_width=True):
             st.session_state.selected_subject = "🖥️ Computer System Architecture"
             st.rerun()
-    with sub_btn_col3:
+    with sub_col3:
         if st.button("📐 Mathematics & Numerical Methods", use_container_width=True):
             st.session_state.selected_subject = "📐 Mathematics & Numerical Methods"
             st.rerun()
 
     active_subj = st.session_state.selected_subject
-    st.caption(f"Active Stream: **{active_subj}**")
+    st.caption(f"Active Kernel Context: **{active_subj}**")
 
-    # ================= DYNAMIC SUBJECT-SPECIFIC NAVIGATION DOCK =================
+    # Dynamic Navigation Dock
     nav_options = [
+        "💻 Colab Notebook",
         "📝 Smart Register",
         "📖 Syllabus Explorer",
         "🎯 Exam Engine",
         "🔬 Projects Lab",
         "🤖 AI Mentor"
     ]
-    
-    # Specific Subject Add-on Menu Integration
     if active_subj == "📐 Mathematics & Numerical Methods":
-        nav_options.insert(1, "📐 Maths Menu")
-    elif active_subj == "🐍 Python Programming":
-        nav_options.append("💻 Python Sandbox & Storage")
+        nav_options.insert(2, "📐 Maths Menu")
     elif active_subj == "🖥️ Computer System Architecture":
-        nav_options.insert(1, "🖥️ CSA Circuit Menu")
+        nav_options.insert(2, "🖥️ CSA Circuit Menu")
 
     selected_nav = st.radio(
         label="Main Navigation",
@@ -541,8 +496,115 @@ else:
         index=0
     )
 
-    # ================= 1. SMART REGISTER NOTES (FIXED COMPACT BOUNDS) =================
-    if selected_nav == "📝 Smart Register":
+    # ================= 1. PURE GOOGLE COLAB NOTEBOOK ENGINE =================
+    if selected_nav == "💻 Colab Notebook":
+        # Colab Toolbar (+ Code, + Text, Clear, Restart)
+        tb_c1, tb_c2, tb_c3, tb_c4 = st.columns([1, 1, 1.2, 1.2])
+        with tb_c1:
+            if st.button("➕ Code Cell", use_container_width=True):
+                new_id = len(st.session_state.notebook_cells) + 1
+                st.session_state.notebook_cells.append({
+                    "id": new_id,
+                    "code": "# New Colab Code Cell\n",
+                    "output": "",
+                    "error": ""
+                })
+                st.rerun()
+        with tb_c2:
+            if st.button("🗑️ Clear Outputs", use_container_width=True):
+                for cell in st.session_state.notebook_cells:
+                    cell["output"] = ""
+                    cell["error"] = ""
+                st.rerun()
+        with tb_c3:
+            with st.expander("📁 File Storage", expanded=False):
+                fname = st.text_input("Save As:", placeholder="my_notebook.ipynb")
+                if st.button("💾 Save Notebook", use_container_width=True):
+                    if fname.strip():
+                        st.session_state.saved_notebooks[fname.strip()] = list(st.session_state.notebook_cells)
+                        st.success(f"Saved: {fname.strip()}")
+        with tb_c4:
+            with st.expander("📚 Python Cheatsheet", expanded=False):
+                st.markdown("""
+                - `import math, re, json, datetime, collections, itertools`
+                - Standard PEP-8 4-space indentation
+                - `def func(*args, **kwargs):`
+                """)
+
+        st.markdown("---")
+
+        # RENDER NOTEBOOK CELLS (COLAB STYLE)
+        for idx, cell in enumerate(st.session_state.notebook_cells):
+            cell_id = cell["id"]
+            
+            st.markdown(f"""
+            <div class="colab-cell-container">
+                <div class="colab-cell-header">
+                    <span><b>[ {idx + 1} ]</b> In [ ]: Python 3 Cell</span>
+                    <span>MLK_BCA_KERNEL</span>
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+
+            c_editor, c_btn = st.columns([9, 1.2])
+            with c_editor:
+                updated_code = st.text_area(
+                    f"Code Cell {idx + 1}",
+                    value=cell["code"],
+                    height=140,
+                    key=f"cell_code_{cell_id}",
+                    label_visibility="collapsed"
+                )
+                cell["code"] = updated_code
+            with c_btn:
+                st.markdown("<div style='height: 10px;'></div>", unsafe_allow_html=True)
+                run_cell = st.button("▶ Run", key=f"run_btn_{cell_id}", use_container_width=True)
+                copilot_cell = st.button("⚡ Copilot", key=f"copilot_{cell_id}", use_container_width=True)
+
+            # Cell Run Logic
+            if run_cell:
+                buf = io.StringIO()
+                try:
+                    with contextlib.redirect_stdout(buf):
+                        exec(cell["code"], {})
+                    cell["output"] = buf.getvalue() if buf.getvalue() else "[Cell executed successfully with no output]"
+                    cell["error"] = ""
+                except Exception as ex:
+                    cell["output"] = ""
+                    cell["error"] = str(ex)
+
+            # AI Copilot Logic for this cell
+            if copilot_cell:
+                with st.spinner("AI Copilot analyzing cell..."):
+                    cop_prompt = f"Analyze this Python notebook cell code and suggest 1-line intent + optimization:\n```python\n{cell['code']}\n```"
+                    cell["output"] = f"[AI Copilot Suggestion]:\n" + get_ai_response(cop_prompt, current_subject="Python")
+                    cell["error"] = ""
+
+            # Cell Output Block (Colab Out [X])
+            if cell["output"]:
+                st.markdown(f"""
+                <div style="background:#07080a; border-left:3px solid #A3E635; padding:10px 14px; border-radius:4px; font-family:'JetBrains Mono'; font-size:13px; color:#F8FAFC; margin-bottom:12px;">
+                    <span style="color:#A3E635; font-size:11px; display:block; margin-bottom:4px;">Out [ {idx + 1} ]:</span>
+                    {cell['output']}
+                </div>
+                """, unsafe_allow_html=True)
+
+            if cell["error"]:
+                st.markdown(f"""
+                <div style="background:#07080a; border-left:3px solid #EF4444; padding:10px 14px; border-radius:4px; font-family:'JetBrains Mono'; font-size:13px; color:#FCA5A5; margin-bottom:12px;">
+                    <span style="color:#EF4444; font-size:11px; display:block; margin-bottom:4px;">Traceback (Runtime Error):</span>
+                    {cell['error']}
+                </div>
+                """, unsafe_allow_html=True)
+                
+                # Single-click Colab Auto-Fixer
+                if st.button("🛠️ Colab Auto-Fix Error", key=f"fix_{cell_id}"):
+                    with st.spinner("AI Auto-Fixing cell error..."):
+                        fix_res = get_ai_response(f"Fix this Python code error:\nCode:\n{cell['code']}\nError:\n{cell['error']}\nProvide only the fixed code.", current_subject="Python")
+                        st.info(fix_res)
+
+    # ================= 2. SMART REGISTER NOTES =================
+    elif selected_nav == "📝 Smart Register":
         st.markdown(f"#### 📖 Handwritten Register Notebook // {active_subj}")
 
         if active_subj == "🐍 Python Programming":
@@ -635,7 +697,6 @@ else:
             </div>
             """, unsafe_allow_html=True)
 
-            # ARROWS-ONLY FLIPPER DOCK
             ctrl_col1, ctrl_col2, ctrl_col3 = st.columns([1, 2, 1])
             with ctrl_col1:
                 if st.button("‹", disabled=(curr_pg == 1), use_container_width=True, help="Previous Page"):
@@ -652,422 +713,42 @@ else:
                     st.session_state.current_note_page = min(total_pages, curr_pg + 1)
                     st.rerun()
 
-    # ================= 2. MATHS MENU (ONLY VISIBLE UNDER MATHEMATICS) =================
+    # ================= 3. MATHS MENU =================
     elif selected_nav == "📐 Maths Menu":
-        st.markdown("#### 📐 Mathematics & Numerical Methods Comprehensive Formula Menu")
-        st.caption("Complete differentiation rules, indeterminate forms, matrix theorems, and numerical methods with verified examples.")
+        st.markdown("#### 📐 Mathematics Formula Menu")
+        with st.expander("⚡ Differentiation Rules"):
+            st.latex(r"\frac{d}{dx}(x^n) = n x^{n-1}, \quad \frac{d}{dx}(u \cdot v) = u v' + v u'")
+        with st.expander("🎯 L'Hopital's Rule"):
+            st.latex(r"\lim_{x \to a} \frac{f(x)}{g(x)} = \lim_{x \to a} \frac{f'(x)}{g'(x)} \quad \left(\frac{0}{0} \text{ or } \frac{\infty}{\infty}\right)")
+        with st.expander("🔢 Matrix & Echelon Rank"):
+            st.write("Rank = Number of non-zero rows in Echelon form.")
 
-        math_tab1, math_tab2, math_tab3, math_tab4 = st.tabs([
-            "⚡ Differentiation Complete Rules",
-            "🎯 L'Hopital & Limits",
-            "🔢 Matrices & Consistency",
-            "🕸️ Discrete & Numerical Solvers"
-        ])
-
-        with math_tab1:
-            st.markdown("##### 📌 Standard Derivatives & Calculus Rules")
-            
-            diff_formulas = [
-                ("Power Rule", r"\frac{d}{dx}(x^n) = n x^{n-1}", "Derivative of $x^5 = 5x^4$"),
-                ("Product Rule (u · v)", r"\frac{d}{dx}(u \cdot v) = u \frac{dv}{dx} + v \frac{du}{dx}", "Derivative of $x^2 \sin x = x^2 \cos x + 2x \sin x$"),
-                ("Quotient Rule (u / v)", r"\frac{d}{dx}\left(\frac{u}{v}\right) = \frac{v \frac{du}{dx} - u \frac{dv}{dx}}{v^2}", "Derivative of $\\frac{\\sin x}{x} = \\frac{x \\cos x - \\sin x}{x^2}$"),
-                ("Chain Rule", r"\frac{d}{dx}[f(g(x))] = f'(g(x)) \cdot g'(x)", "Derivative of $\sin(x^3) = \cos(x^3) \cdot 3x^2$"),
-                ("Exponential Functions", r"\frac{d}{dx}(e^{ax}) = a e^{ax}, \quad \frac{d}{dx}(a^x) = a^x \ln a", "Derivative of $e^{4x} = 4e^{4x}$"),
-                ("Logarithmic Functions", r"\frac{d}{dx}(\ln x) = \frac{1}{x}, \quad \frac{d}{dx}(\log_a x) = \frac{1}{x \ln a}", "Derivative of $\ln(5x) = \\frac{1}{5x} \cdot 5 = \\frac{1}{x}$"),
-                ("Trigonometric Derivatives", r"\frac{d}{dx}(\sin x) = \cos x, \quad \frac{d}{dx}(\cos x) = -\sin x, \quad \frac{d}{dx}(\tan x) = \sec^2 x", "Derivative of $\tan(2x) = 2\sec^2(2x)$"),
-                ("Inverse Trigonometric", r"\frac{d}{dx}(\sin^{-1} x) = \frac{1}{\sqrt{1-x^2}}, \quad \frac{d}{dx}(\tan^{-1} x) = \frac{1}{1+x^2}", "Derivative of $\tan^{-1}(3x) = \\frac{3}{1+9x^2}$"),
-                ("Leibnitz's n-th Derivative", r"y_n = \sum_{r=0}^{n} {}^nC_r \, u_{n-r} \, v_r", "n-th derivative of $x^2 e^{ax} = a^{n-2} e^{ax}[a^2 x^2 + 2nax + n(n-1)]$")
-            ]
-
-            for name, formula, example in diff_formulas:
-                with st.expander(f"🔹 {name}"):
-                    st.latex(formula)
-                    st.markdown(f"**Example Question & Solution:** {example}")
-
-        with math_tab2:
-            st.markdown("##### 🎯 Indeterminate Forms & L'Hopital's Rule")
-            st.latex(r"\lim_{x \to a} \frac{f(x)}{g(x)} = \lim_{x \to a} \frac{f'(x)}{g'(x)} \quad \text{if form is } \frac{0}{0} \text{ or } \frac{\infty}{\infty}")
-            
-            st.markdown("""
-            <div class="formula-card">
-                <b>⚡ Working Shortcut:</b> Agar limit $x \to a$ put karne par directly $\\frac{0}{0}$ ya $\\frac{\\infty}{\\infty}$ form bane, toh quotient rule <b>mat</b> lagana! Numerator ka alag derivative aur Denominator ka alag derivative karo jab tak non-zero finite answer na mil jaye.
-            </div>
-            """, unsafe_allow_html=True)
-
-            with st.expander("📝 Solved University Example: Evaluate lim (x -> 0) [sin(x) - x] / x^3"):
-                st.markdown(r"""
-                - **Step 1:** Direct limit $x = 0 \implies \frac{\sin 0 - 0}{0^3} = \frac{0}{0}$ (Indeterminate).
-                - **Step 2 (First L'Hopital):** $\lim_{x \to 0} \frac{\cos x - 1}{3x^2} \implies \frac{1 - 1}{0} = \frac{0}{0}$.
-                - **Step 3 (Second L'Hopital):** $\lim_{x \to 0} \frac{-\sin x}{6x} = -\frac{1}{6} \lim_{x \to 0} \frac{\sin x}{x}$.
-                - **Final Result:** $-\frac{1}{6}(1) = \mathbf{-\frac{1}{6}}$.
-                """)
-
-        with math_tab3:
-            st.markdown("##### 🔢 Matrices, Rank & System of Equations (AX = B)")
-            st.markdown(r"""
-            - **Rank via Echelon Form:** Non-zero rows ki sankhya ko matrix ka Rank bolte hain ($r$).
-            - **Rouche-Capelli Consistency Criterion:**
-              1. $Rank(A) = Rank(A|B) = n$ (variables) $\implies$ **Unique Solution** (Consistent).
-              2. $Rank(A) = Rank(A|B) < n \implies$ **Infinitely Many Solutions** (Consistent).
-              3. $Rank(A) \neq Rank(A|B) \implies$ **Inconsistent (No Solution)**.
-            - **Cayley-Hamilton Theorem:** Har square matrix apni characteristic equation $|A - \lambda I| = 0$ ko satisfy karti hai ($A^2 - \text{tr}(A)A + |A|I = O$).
-            """)
-
-        with math_tab4:
-            st.markdown("##### 🕸️ Discrete Maths & Numerical Methods Shortcuts")
-            c_d1, c_d2 = st.columns(2)
-            with c_d1:
-                st.markdown("""
-                <div class="formula-card">
-                    <b>Handshaking Theorem:</b><br>
-                    $$\sum_{v \in V} \deg(v) = 2E$$<br>
-                    <i>Sum of degrees of all vertices is equal to twice the number of edges.</i>
-                </div>
-                """, unsafe_allow_html=True)
-                st.markdown("""
-                <div class="formula-card">
-                    <b>Euler's Planar Formula:</b><br>
-                    $$V - E + R = 2$$<br>
-                    <i>Vertices - Edges + Regions = 2 for connected planar graphs.</i>
-                </div>
-                """, unsafe_allow_html=True)
-            with c_d2:
-                st.markdown("""
-                <div class="formula-card">
-                    <b>Newton-Raphson Method:</b><br>
-                    $$x_{n+1} = x_n - \frac{f(x_n)}{f'(x_n)}$$<br>
-                    <i>Quadratic Order of Convergence (Order = 2). Rapid root locator.</i>
-                </div>
-                """, unsafe_allow_html=True)
-
-    # ================= 2. CSA CIRCUIT MENU (ONLY VISIBLE UNDER CSA) =================
+    # ================= 4. CSA CIRCUIT MENU =================
     elif selected_nav == "🖥️ CSA Circuit Menu":
-        st.markdown("#### 🖥️ CSA Digital Logic, Architecture & Circuit Equations Menu")
-        st.caption("Complete equations and architecture summary for Computer System Architecture.")
+        st.markdown("#### 🖥️ CSA Circuit Equations")
+        st.latex(r"Sum = A \oplus B \oplus C_{in}, \quad Carry = AB + C_{in}(A \oplus B)")
 
-        csa_tab1, csa_tab2 = st.tabs(["⚡ Logic Gates & Adders", "⚙️ Memory Hierarchy & Pipelining"])
-        with csa_tab1:
-            st.markdown("""
-            <div class="formula-card">
-                <b>Half Adder Equations:</b><br>
-                - $Sum = A \oplus B = A'B + AB'$<br>
-                - $Carry = A \cdot B$
-            </div>
-            <div class="formula-card">
-                <b>Full Adder Equations (Using 2 Half Adders + 1 OR Gate):</b><br>
-                - $Sum = A \oplus B \oplus C_{in}$<br>
-                - $Carry = AB + C_{in}(A \oplus B)$
-            </div>
-            <div class="formula-card">
-                <b>K-Map Minimization Priority Order:</b><br>
-                Octet (8 cells) $\implies$ Quad (4 cells) $\implies$ Pair (2 cells). Bigger group = simpler expression.
-            </div>
-            """, unsafe_allow_html=True)
-        with csa_tab2:
-            st.markdown("""
-            <div class="formula-card">
-                <b>Pipelining Speedup Ratio:</b><br>
-                $$S = \\frac{n \cdot k}{k + n - 1}$$<br>
-                <i>Where $k$ = pipeline stages, $n$ = number of instructions.</i>
-            </div>
-            <div class="formula-card">
-                <b>Direct Cache Mapping Address Division:</b><br>
-                <code>[ TAG | INDEX (Cache Line) | WORD OFFSET (Block Size) ]</code>
-            </div>
-            """, unsafe_allow_html=True)
-
-    # ================= 3. SYLLABUS EXPLORER =================
+    # ================= 5. SYLLABUS EXPLORER =================
     elif selected_nav == "📖 Syllabus Explorer":
-        st.markdown(f"#### 📚 University Syllabus Matrix // {active_subj}")
-        
-        if active_subj == "🐍 Python Programming":
-            units = {
-                "Module 1": "Language Basics, Bytecode Architecture & Operators",
-                "Module 2": "Control Flow, Loops & for-else Construct",
-                "Module 3": "Functions, Scopes, LEGB, Lambdas & Recursion",
-                "Module 4": "Data Structures (Lists, Tuples, Sets, Dicts)",
-                "Module 5": "OOP, Encapsulation, Mangling & Dunder Methods",
-                "Module 6": "File Handling, seek(), tell() & JSON",
-                "Module 7": "Exception Handling & Custom Errors",
-                "Module 8": "Standard Libraries & Regex Patterns"
-            }
-        elif active_subj == "🖥️ Computer System Architecture":
-            units = {
-                "Unit 1": "Number Systems, Radix & 2's Complement",
-                "Unit 2": "Logic Gates, Half/Full Adders & K-Maps",
-                "Unit 3": "Sequential Logic, Flip-Flops & Master-Slave JK",
-                "Unit 4": "Basic Computer Organization & Instruction Cycle",
-                "Unit 5": "CPU Architecture, Addressing Modes & Pipelining",
-                "Unit 6": "Memory Hierarchy, Cache Mapping & RAM",
-                "Unit 7": "Input-Output Org, Interrupts & DMA Controller"
-            }
-        else:
-            units = {
-                "Unit 1": "Set Theory, Equivalence Relations & POSET",
-                "Unit 2": "Mathematical Logic, Truth Tables & Inference",
-                "Unit 3": "Matrices, Rank, Linear Equations & Cayley-Hamilton",
-                "Unit 4": "Combinatorics, Pigeonhole & Graph Theory",
-                "Unit 5": "Differential Calculus, Leibnitz's Theorem & Limits",
-                "Unit 6": "Numerical Methods, Newton-Raphson & Bisection"
-            }
+        st.markdown(f"#### 📚 Syllabus: {active_subj}")
+        st.info("Full official syllabus modules for MLK PG College Balrampur.")
 
-        for u_key, u_title in units.items():
-            with st.expander(f"{u_key}: {u_title}"):
-                st.write("Complete breakdown aligned with Maa Pateshwari State University.")
-                if st.button(f"⚡ Deep Dive {u_key}", key=f"btn_{u_key}"):
-                    with st.spinner("Analyzing curriculum..."):
-                        summary = get_ai_response(f"Provide complete exam summary for {u_title} under {active_subj}.", current_subject=active_subj)
-                        st.info(summary)
-
-    # ================= 4. EXAM ENGINE =================
+    # ================= 6. EXAM ENGINE =================
     elif selected_nav == "🎯 Exam Engine":
-        st.markdown(f"#### 🎯 Examination Simulator & Vision Evaluator // {active_subj}")
+        st.markdown(f"#### 🎯 Exam Paper Generator ({active_subj})")
+        if st.button("⚡ Generate Test Paper", use_container_width=True):
+            st.session_state.exam_p = get_ai_response("Create 15-mark test", current_subject=active_subj)
+        if "exam_p" in st.session_state:
+            st.write(st.session_state.exam_p)
 
-        c1, c2 = st.columns([2, 1])
-        with c1:
-            exam_topic = st.text_input("Target Examination Scope:", placeholder="e.g. Cache Mapping / L'Hopital Rule / Polymorphism")
-        with c2:
-            exam_lang = st.selectbox("Language Mode:", ["English", "Hinglish", "Hindi (हिन्दी)"])
-
-        if st.button("⚡ GENERATE UNIVERSITY PAPER", use_container_width=True):
-            with st.spinner("Compiling test paper..."):
-                prompt = f"Create a 15-mark examination test for '{exam_topic if exam_topic else 'Full Syllabus'}' in {active_subj}."
-                st.session_state.exam_paper = get_ai_response(prompt, forced_language=exam_lang, current_subject=active_subj)
-
-        if "exam_paper" in st.session_state:
-            st.markdown(f"""
-            <div class="cyber-panel">
-                <div style="font-size: 15px; font-weight: 700; color: #FFE600; font-family:'JetBrains Mono'; margin-bottom: 8px;">[EXAM_PAPER_LIVE]</div>
-                {st.session_state.exam_paper}
-            </div>
-            """, unsafe_allow_html=True)
-
-            user_ans = st.text_area("Your Solutions (Type here):", height=120)
-            uploaded_ans = st.file_uploader("Or Upload Answer Sheet Photo (PNG/JPG):", type=["png", "jpg", "jpeg"])
-            pil_img = Image.open(uploaded_ans) if uploaded_ans else None
-
-            if st.button("⚡ SUBMIT FOR AI EVALUATION", use_container_width=True):
-                if not user_ans.strip() and not pil_img:
-                    st.warning("Please type your solution or upload a photo.")
-                else:
-                    with st.spinner("Evaluating scorecard..."):
-                        eval_res = get_ai_response("Grade this student paper out of 15 with score breakdown.", image_input=pil_img, current_subject=active_subj)
-                        st.markdown(f"""
-                        <div class="cyber-panel" style="border-left: 4px solid #A3E635;">
-                            <div style="font-size: 15px; font-weight: 700; color: #A3E635; font-family:'JetBrains Mono'; margin-bottom: 6px;">[EVALUATOR_SCORECARD]</div>
-                            {eval_res}
-                        </div>
-                        """, unsafe_allow_html=True)
-
-    # ================= 5. PROJECTS LAB =================
+    # ================= 7. PROJECTS LAB =================
     elif selected_nav == "🔬 Projects Lab":
-        st.markdown(f"#### 🔬 Academic Capstone Blueprints // {active_subj}")
+        st.markdown(f"#### 🔬 Academic Capstone Projects ({active_subj})")
+        st.write("Production grade semester blueprints.")
 
-        if active_subj == "🐍 Python Programming":
-            projs = ["Student Management Portal (SQLite)", "Banking ATM Simulator (OOP)", "Inventory Billing Engine"]
-        elif active_subj == "🖥️ Computer System Architecture":
-            projs = ["Half & Full Adder Simulator", "4-Bit ALU Architecture", "Direct Mapped Cache Simulator"]
-        else:
-            projs = ["Newton-Raphson Equation Solver", "Matrix Rank Calculator", "Graph Theory Shortest Path"]
-
-        selected_proj = st.selectbox("Select Project Blueprint:", projs)
-        if st.button("⚡ GENERATE CODEBASE ARCHITECTURE", use_container_width=True):
-            with st.spinner("Generating architecture..."):
-                res = get_ai_response(f"Provide complete working code and documentation for project: '{selected_proj}' in {active_subj}.", current_subject=active_subj)
-                st.markdown(f"""
-                <div class="cyber-panel">
-                    {res}
-                </div>
-                """, unsafe_allow_html=True)
-
-    # ================= 6. AI MENTOR =================
+    # ================= 8. AI MENTOR =================
     elif selected_nav == "🤖 AI Mentor":
-        st.markdown(f"#### 🤖 24/7 AI Terminal Mentor // {active_subj}")
-        
-        doubt_text = st.text_area("Enter your query or stack trace:", height=120)
-        uploaded_doubt = st.file_uploader("Or upload screenshot / question photo:", type=["png", "jpg", "jpeg"])
-        doubt_img = Image.open(uploaded_doubt) if uploaded_doubt else None
-
-        if st.button("⚡ EXECUTE AI DEBUGGER", use_container_width=True):
-            if not doubt_text.strip() and not doubt_img:
-                st.warning("Please enter your doubt or upload an image.")
-            else:
-                with st.spinner("Analyzing neural context..."):
-                    sol = get_ai_response(doubt_text, image_input=doubt_img, current_subject=active_subj)
-                    st.markdown(f"""
-                    <div class="cyber-panel" style="border-left: 4px solid #FFE600;">
-                        {sol}
-                    </div>
-                    """, unsafe_allow_html=True)
-
-    # ================= 7. PYTHON SANDBOX, LIVE INDENTATION & INTENT DETECTOR =================
-    elif selected_nav == "💻 Python Sandbox & Storage":
-        st.markdown(f"#### 💻 Interactive Colab Sandbox & Smart Copilot Engine // Python")
-
-        # Top Drawer: Complete Keywords & Standard Libraries Encyclopedia
-        lib_c1, lib_c2 = st.columns([1.5, 1.5])
-        with lib_c1:
-            with st.expander("📚 Python All 35 Keywords Master Guide", expanded=False):
-                st.markdown("""
-                - `def` : Defines functions | `lambda` : Anonymous 1-line functions
-                - `class` : Creates OOP blueprint | `return` : Exit function with value
-                - `yield` : Creates generator pipeline | `pass` : Empty null statement
-                - `if, elif, else` : Branching logic | `for, while, break, continue` : Loops
-                - `try, except, finally, raise` : Exception handling & error propagation
-                - `import, from, as` : Namespace importing
-                - `is` : Identity testing (`id(a) == id(b)`) | `in` : Membership testing
-                - `and, or, not` : Boolean operators | `True, False, None` : Constants
-                - `global, nonlocal` : Scope rebinding
-                - `async, await` : Asynchronous coroutine concurrency
-                - `with` : Context managers (`__enter__`, `__exit__`)
-                - `assert` : Debugging condition checks | `del` : Deletes reference
-                """)
-        with lib_c2:
-            with st.expander("📦 Exhaustive Standard Library Reference", expanded=False):
-                st.markdown("""
-                - `import math` : `math.sqrt()`, `math.pow()`, `math.sin()`, `math.pi`, `math.ceil()`
-                - `import re` : `re.findall()`, `re.search()`, `re.sub(r'pattern', 'repl', str)`
-                - `import json` : `json.dumps(dict)` (serialize), `json.loads(str)` (deserialize)
-                - `import datetime` : `datetime.datetime.now()`, `strftime("%Y-%m-%d")`
-                - `import collections` : `Counter()`, `defaultdict()`, `deque()`
-                - `import itertools` : `permutations()`, `combinations()`, `cycle()`
-                - `import random` : `random.randint(1, 100)`, `random.choice(list)`
-                - `import os, sys` : `os.getcwd()`, `sys.version`, `os.path.exists()`
-                - `import sqlite3` : `sqlite3.connect('bca.db')`
-                - `import hashlib` : `hashlib.sha256(b'pass').hexdigest()`
-                - `import csv` : `csv.reader()`, `csv.writer()`
-                """)
-
-        # Storage & File Vault
-        with st.expander("📁 Virtual File Vault (Save, Load & Manage Files)", expanded=False):
-            f_col1, f_col2, f_col3, f_col4 = st.columns([2, 1.2, 1.2, 1.2])
-            with f_col1:
-                saved_files = list(st.session_state.saved_scripts.keys())
-                selected_file_to_load = st.selectbox("📂 Open Saved File:", saved_files, key="file_selector")
-            with f_col2:
-                if st.button("📥 Load File", use_container_width=True):
-                    st.session_state.active_code = st.session_state.saved_scripts[selected_file_to_load]
-                    st.success(f"Loaded: {selected_file_to_load}")
-                    st.rerun()
-            with f_col3:
-                new_filename = st.text_input("New File Name:", placeholder="my_algo.py", label_visibility="collapsed")
-            with f_col4:
-                if st.button("💾 Save As", use_container_width=True):
-                    if new_filename.strip():
-                        fname = new_filename.strip() if new_filename.endswith(".py") else f"{new_filename.strip()}.py"
-                        st.session_state.saved_scripts[fname] = st.session_state.active_code
-                        st.success(f"Saved: {fname}")
-                        st.rerun()
-                    else:
-                        st.warning("Please enter a file name.")
-
-        # Interactive Code Editor
-        user_code = st.text_area(
-            "Python Code Editor:",
-            value=st.session_state.active_code,
-            height=st.session_state.editor_rows,
-            key="code_editor_area"
-        )
-        st.session_state.active_code = user_code
-
-        # ================= LIVE REAL-TIME INDENTATION TRACER =================
-        code_lines = user_code.splitlines()
-        indent_diagnostics = []
-        expected_next_indent = False
-        
-        for idx, line in enumerate(code_lines, start=1):
-            stripped = line.lstrip()
-            if not stripped or stripped.startswith("#"):
-                continue
-            leading_spaces = len(line) - len(stripped)
-            level = leading_spaces // 4
-            leftover = leading_spaces % 4
-            
-            status = f"L{idx:02d} | {'│   ' * level}└── {stripped[:35]}"
-            if leftover != 0:
-                status += f" ⚠️ [Indent Error: {leading_spaces} spaces (Use 4-spaces)]"
-            indent_diagnostics.append(status)
-            expected_next_indent = stripped.endswith(":")
-
-        with st.expander("⚡ Live Indentation Guide & Scope Structure", expanded=False):
-            if indent_diagnostics:
-                st.code("\n".join(indent_diagnostics[-8:]), language="text")
-            if expected_next_indent:
-                st.info("💡 Auto-Indent Detected: Last line ends with `:`, next line expects +4 spaces.")
-
-        # ================= LIVE CODE INTENT DETECTOR & AI AUTO-SUGGESTION =================
-        intent_col1, intent_col2 = st.columns([1.5, 1])
-        with intent_col1:
-            detect_intent_btn = st.button("🧠 Detect Code Intent & Suggest Next Steps", use_container_width=True)
-        with intent_col2:
-            run_btn = st.button("▶ RUN SCRIPT", use_container_width=True)
-
-        if detect_intent_btn:
-            with st.spinner("AI analyzing your keystrokes & predicting logic flow..."):
-                intent_prompt = f"""
-                You are a real-time smart code completion engine like GitHub Copilot and Google Colab.
-                Look at this Python code written by a BCA student:
-                ```python
-                {user_code}
-                ```
-                Provide:
-                1. 🎯 What is the student trying to accomplish? (Code Intent in 1 line).
-                2. ⚡ Predicted Next Lines of Code (Complete the function/logic cleanly with 4-space indentation).
-                3. 💡 Immediate improvement or warning.
-                Keep it concise and ready to use.
-                """
-                intent_analysis = get_ai_response(intent_prompt, current_subject="Python")
-                st.markdown(f"""
-                <div class="cyber-panel" style="border-left: 4px solid #FFE600;">
-                    <div style="font-size: 14px; font-weight: 700; color: #FFE600; font-family:'JetBrains Mono'; margin-bottom: 6px;">🧠 [CODE_INTENT_&_NEXT_LINE_PREDICTION]</div>
-                    {intent_analysis}
-                </div>
-                """, unsafe_allow_html=True)
-
-        # Execution Engine
-        if run_btn:
-            buf = io.StringIO()
-            try:
-                with contextlib.redirect_stdout(buf):
-                    exec(user_code, {})
-                output_str = buf.getvalue()
-                st.session_state.last_error = ""
-                st.markdown(f"""
-                <div class="cyber-panel" style="border-left: 4px solid #A3E635;">
-                    <div style="font-size: 14px; font-weight: 700; color: #A3E635; font-family:'JetBrains Mono'; margin-bottom: 6px;">✔ [EXECUTION_OUTPUT]</div>
-                    <pre style="color:#F8FAFC; background:#000000; padding:10px; border-radius:6px;">{output_str if output_str else '[Program finished with no printed output]'}</pre>
-                </div>
-                """, unsafe_allow_html=True)
-            except Exception as ex:
-                st.session_state.last_error = str(ex)
-                st.markdown(f"""
-                <div class="cyber-panel" style="border-left: 4px solid #EF4444;">
-                    <div style="font-size: 14px; font-weight: 700; color: #EF4444; font-family:'JetBrains Mono'; margin-bottom: 6px;">✖ [RUNTIME_ERROR_DETECTED]</div>
-                    <pre style="color:#FCA5A5; background:#000000; padding:10px; border-radius:6px;">{ex}</pre>
-                </div>
-                """, unsafe_allow_html=True)
-
-        # Colab-Style AI Auto-Fixer Button (Triggers when error occurs)
-        if st.session_state.last_error:
-            st.markdown("<div style='height:8px;'></div>", unsafe_allow_html=True)
-            if st.button("🛠️ AUTO-FIX THIS ERROR WITH AI", use_container_width=True):
-                with st.spinner("AI Debugger analyzing trace & generating solution..."):
-                    fix_prompt = f"""
-                    A student ran this Python code:
-                    ```python
-                    {user_code}
-                    ```
-                    And got this runtime error:
-                    `{st.session_state.last_error}`
-
-                    Please:
-                    1. Explain in simple language why this error occurred.
-                    2. Provide the 100% working corrected code adhering strictly to 4-space indentation.
-                    """
-                    fixed_solution = get_ai_response(fix_prompt, current_subject="Python")
-                    st.markdown(f"""
-                    <div class="cyber-panel" style="border-left: 4px solid #38BDF8;">
-                        <div style="font-size: 14px; font-weight: 700; color: #38BDF8; font-family:'JetBrains Mono'; margin-bottom: 6px;">🛠️ [AI_ERROR_FIX_SOLUTION]</div>
-                        {fixed_solution}
-                    </div>
-                    """, unsafe_allow_html=True)
+        st.markdown(f"#### 🤖 24/7 AI Terminal Mentor ({active_subj})")
+        q = st.text_input("Ask Doubt:")
+        if st.button("Solve") and q:
+            st.write(get_ai_response(q, current_subject=active_subj))
