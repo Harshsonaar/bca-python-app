@@ -78,7 +78,7 @@ st.markdown("""
     }
 
     .block-container {
-        padding-top: 1rem !important;
+        padding-top: 0.8rem !important;
         padding-bottom: 5rem !important;
         max-width: 1140px !important;
     }
@@ -90,7 +90,7 @@ st.markdown("""
         border-radius: 14px;
         padding: 14px 22px;
         backdrop-filter: blur(20px);
-        margin-bottom: 16px;
+        margin-bottom: 14px;
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -100,13 +100,29 @@ st.markdown("""
         display: inline-flex;
         align-items: center;
         gap: 6px;
-        background: rgba(37, 99, 235, 0.12);
-        border: 1px solid rgba(37, 99, 235, 0.35);
+        background: rgba(37, 99, 235, 0.15);
+        border: 1px solid #3B82F6;
         padding: 5px 14px;
         border-radius: 20px;
         font-size: 12px;
         font-weight: 700;
         color: #60A5FA;
+        box-shadow: 0 0 15px rgba(59, 130, 246, 0.25);
+    }
+
+    /* Highlighted Interactive Subject Tile Container */
+    div[data-testid="stExpander"]:has(summary:contains("Active Academic Stream")) {
+        background: rgba(15, 23, 42, 0.95) !important;
+        border: 2px solid #3B82F6 !important;
+        border-radius: 14px !important;
+        box-shadow: 0 0 25px rgba(59, 130, 246, 0.35), inset 0 1px 1px rgba(255,255,255,0.15) !important;
+        margin-bottom: 16px !important;
+    }
+    div[data-testid="stExpander"]:has(summary:contains("Active Academic Stream")) summary {
+        font-weight: 800 !important;
+        color: #60A5FA !important;
+        font-size: 14px !important;
+        letter-spacing: 0.3px !important;
     }
 
     /* Formal Navigation Bar */
@@ -155,7 +171,7 @@ st.markdown("""
         justify-content: center;
         width: 100%;
         margin-top: 4px;
-        margin-bottom: 10px;
+        margin-bottom: 8px;
     }
     .notebook-paper-a4 {
         background-color: #ffffff !important;
@@ -217,6 +233,34 @@ st.markdown("""
         color: #1e3a8a !important;
         word-break: break-word !important;
         white-space: pre-wrap !important;
+    }
+
+    /* Arrow Buttons for Pagination */
+    div.arrow-dock > div > button {
+        background: rgba(30, 41, 59, 0.8) !important;
+        border: 1px solid #3B82F6 !important;
+        color: #60A5FA !important;
+        font-size: 20px !important;
+        font-weight: 800 !important;
+        border-radius: 50% !important;
+        width: 44px !important;
+        height: 44px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        margin: auto !important;
+        box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3) !important;
+        transition: all 0.2s ease !important;
+    }
+    div.arrow-dock > div > button:hover {
+        background: #3B82F6 !important;
+        color: #FFFFFF !important;
+        transform: scale(1.08) !important;
+    }
+    div.arrow-dock > div > button:disabled {
+        border-color: rgba(255,255,255,0.1) !important;
+        color: rgba(255,255,255,0.2) !important;
+        background: transparent !important;
     }
 
     /* Formal Card Panel */
@@ -419,10 +463,10 @@ else:
     </div>
     """, unsafe_allow_html=True)
 
-    # ================= SINGLE INTERACTIVE TILE (TAP TO SWITCH SUBJECT LIST-WISE) =================
+    # ================= HIGH-CONTRAST HIGHLIGHTED SUBJECT TILE =================
     curr_sub = st.session_state.selected_subject
-    with st.expander(f"📚 Active Stream: {curr_sub} (Tap here to Switch Subject)", expanded=False):
-        st.markdown("<span style='font-size:12px; color:#94A3B8;'>Choose curriculum subject from list:</span>", unsafe_allow_html=True)
+    with st.expander(f"⚡ Active Academic Stream: {curr_sub}  [ Tap to Switch Subject ]", expanded=False):
+        st.markdown("<div style='font-size:12px; color:#94A3B8; margin-bottom:8px;'>Select subject stream from the list below:</div>", unsafe_allow_html=True)
         sub_list = [
             "🐍 Python Programming",
             "🖥️ Computer System Architecture",
@@ -430,7 +474,7 @@ else:
         ]
         for s in sub_list:
             is_active = (s == curr_sub)
-            label = f"✔ {s} [ACTIVE]" if is_active else f"➔ Switch to {s}"
+            label = f"✔ {s} (CURRENT ACTIVE)" if is_active else f"➔ Switch to {s}"
             if st.button(label, key=f"switch_sub_{s}", use_container_width=True, type="primary" if is_active else "secondary"):
                 st.session_state.selected_subject = s
                 st.rerun()
@@ -461,7 +505,7 @@ else:
         index=0
     )
 
-    # ================= 1. SMART REGISTER NOTES =================
+    # ================= 1. SMART REGISTER NOTES (CLEAN ARROWS ONLY) =================
     if selected_nav == "📝 Smart Register":
         st.markdown(f"#### 📖 Handwritten Register Notebook — {active_subj}")
 
@@ -531,7 +575,7 @@ else:
                 st.session_state.dynamic_pages_list = clean_pages
                 st.session_state.flip_notes_topic = final_topic
 
-        # DISPLAY COMPACT REGISTER SHEET
+        # DISPLAY COMPACT REGISTER SHEET WITH CLEAN COMPACT ARROW BUTTONS
         if st.session_state.dynamic_pages_list:
             pages = st.session_state.dynamic_pages_list
             total_pages = len(pages)
@@ -555,22 +599,26 @@ else:
             </div>
             """, unsafe_allow_html=True)
 
-            # ARROW CONTROLS
+            # STRICT ARROWS-ONLY FLIPPER DOCK (NO TEXT BUTTONS)
             ctrl_col1, ctrl_col2, ctrl_col3 = st.columns([1, 2, 1])
             with ctrl_col1:
-                if st.button("‹ Prev", disabled=(curr_pg == 1), use_container_width=True):
+                st.markdown('<div class="arrow-dock">', unsafe_allow_html=True)
+                if st.button("‹", disabled=(curr_pg == 1), key="arrow_btn_prev", use_container_width=True, help="Previous Page"):
                     st.session_state.current_note_page = max(1, curr_pg - 1)
                     st.rerun()
+                st.markdown('</div>', unsafe_allow_html=True)
             with ctrl_col2:
                 st.markdown(f"""
-                <div style="text-align: center; color: #94A3B8; font-size: 13px; font-weight: 600; padding-top: 8px;">
+                <div style="text-align: center; color: #60A5FA; font-size: 13px; font-weight: 700; padding-top: 10px;">
                     Sheet {curr_pg} of {total_pages}
                 </div>
                 """, unsafe_allow_html=True)
             with ctrl_col3:
-                if st.button("Next ›", disabled=(curr_pg == total_pages), use_container_width=True):
+                st.markdown('<div class="arrow-dock">', unsafe_allow_html=True)
+                if st.button("›", disabled=(curr_pg == total_pages), key="arrow_btn_next", use_container_width=True, help="Next Page"):
                     st.session_state.current_note_page = min(total_pages, curr_pg + 1)
                     st.rerun()
+                st.markdown('</div>', unsafe_allow_html=True)
 
     # ================= 2. MATHS ENCYCLOPEDIA (STRICTLY MATHEMATICS ONLY) =================
     elif selected_nav == "📐 Maths Encyclopedia":
@@ -624,10 +672,10 @@ else:
         with math_tab4:
             st.markdown("##### 🕸️ Discrete Mathematics & Numerical Methods")
             st.markdown("""
-            <div class="formula-card">
+            <div class="formula-card" style="background:rgba(255,255,255,0.03); border-left:3px solid #3B82F6; padding:10px 14px; margin-bottom:10px; border-radius:8px;">
                 <b>Handshaking Theorem:</b> $\sum_{v \in V} \deg(v) = 2E$ (Sum of degrees equals twice the edges).
             </div>
-            <div class="formula-card">
+            <div class="formula-card" style="background:rgba(255,255,255,0.03); border-left:3px solid #3B82F6; padding:10px 14px; margin-bottom:10px; border-radius:8px;">
                 <b>Newton-Raphson Method:</b> $x_{n+1} = x_n - \\frac{f(x_n)}{f'(x_n)}$ (Quadratic convergence, Order = 2).
             </div>
             """, unsafe_allow_html=True)
