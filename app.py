@@ -6,7 +6,7 @@ import time
 from PIL import Image
 
 st.set_page_config(
-    page_title="BCA Master Ecosystem | MLK PG College Balrampur",
+    page_title="BCA OS | MLK PG College Balrampur",
     page_icon="⚡",
     layout="wide",
     initial_sidebar_state="collapsed"
@@ -25,22 +25,22 @@ if "current_note_page" not in st.session_state:
 if "dynamic_pages_list" not in st.session_state:
     st.session_state.dynamic_pages_list = []
 
-# ================= ULTRA-ADDICTIVE APPLE GLASS & REAL REGISTER CSS =================
+# ================= NEXT-GEN MINIMALIST LUXURY STUDIO UI CSS =================
 st.markdown("""
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Patrick+Hand&family=Shantell+Sans:wght@500;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Caveat:wght@600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
     html, body, [class*="css"] {
-        font-family: -apple-system, BlinkMacSystemFont, "Plus Jakarta Sans", "SF Pro Display", sans-serif;
+        font-family: 'Space Grotesk', -apple-system, sans-serif;
     }
     code, pre {
         font-family: 'JetBrains Mono', monospace !important;
     }
 
-    /* Ambient Apple Dark Aura Background */
+    /* Ambient Obsidian Charcoal Canvas */
     .stApp {
-        background: radial-gradient(circle at 50% -20%, rgba(59, 130, 246, 0.18) 0%, rgba(139, 92, 246, 0.08) 35%, rgba(10, 13, 20, 0.98) 75%);
-        color: #F1F5F9;
+        background: radial-gradient(circle at 10% 0%, #171923 0%, #0d0f17 50%, #05070a 100%);
+        color: #E2E8F0;
     }
 
     /* Streamlit Host Header, Badges & Footers Elimination */
@@ -60,333 +60,199 @@ st.markdown("""
         pointer-events: none !important;
     }
 
-    /* Page Bottom Padding */
     .block-container {
-        padding-top: 15px !important;
-        padding-bottom: 180px !important;
+        padding-top: 10px !important;
+        padding-bottom: 160px !important;
+        max-width: 1200px !important;
     }
 
-    /* Splash Screen */
-    .splash-container {
+    /* Top Utility Pill Header */
+    .top-app-bar {
         display: flex;
-        flex-direction: column;
+        justify-content: space-between;
         align-items: center;
-        justify-content: center;
-        min-height: 65vh;
-        text-align: center;
-        margin-top: 30px;
-    }
-    .creator-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        background: rgba(139, 92, 246, 0.15);
-        border: 1px solid rgba(168, 85, 247, 0.4);
-        padding: 8px 24px;
-        border-radius: 40px;
-        font-size: 13px;
-        font-weight: 700;
-        letter-spacing: 2px;
-        text-transform: uppercase;
-        color: #C084FC;
-        box-shadow: 0 0 25px rgba(168, 85, 247, 0.35);
-        margin-bottom: 18px;
-    }
-    .splash-title {
-        font-size: 52px;
-        font-weight: 800;
-        background: linear-gradient(135deg, #FFFFFF 0%, #A5B4FC 35%, #38BDF8 70%, #C084FC 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        margin-bottom: 12px;
-        letter-spacing: -1.5px;
-    }
-    .splash-subtitle {
-        font-size: 16px;
-        color: #94A3B8;
-        max-width: 680px;
-        line-height: 1.6;
-        margin-bottom: 24px;
-    }
-    .creator-signature {
-        font-size: 22px;
-        font-weight: 700;
-        color: #38BDF8;
-        background: rgba(255, 255, 255, 0.04);
-        padding: 10px 28px;
-        border-radius: 30px;
-        border: 1px solid rgba(255, 255, 255, 0.12);
-        backdrop-filter: blur(16px);
-        margin-bottom: 30px;
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
-    }
-
-    /* Hero Banner */
-    .hero-banner {
-        background: rgba(255, 255, 255, 0.035);
-        border: 1px solid rgba(255, 255, 255, 0.12);
-        padding: 18px 24px;
-        border-radius: 20px;
-        backdrop-filter: blur(24px);
-        -webkit-backdrop-filter: blur(24px);
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.45);
-        margin-bottom: 16px;
-    }
-    .hero-title {
-        font-size: 24px;
-        font-weight: 800;
-        background: linear-gradient(135deg, #FFFFFF 0%, #A5B4FC 50%, #38BDF8 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        margin-bottom: 4px;
-    }
-    .hero-sub {
-        font-size: 13px;
-        color: #94A3B8;
-        letter-spacing: 0.2px;
-    }
-
-    /* Apple Glass Card */
-    .apple-glass-card {
-        background: rgba(255, 255, 255, 0.035);
-        border: 1px solid rgba(255, 255, 255, 0.1);
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.08);
         border-radius: 18px;
-        padding: 24px;
-        backdrop-filter: blur(30px);
-        -webkit-backdrop-filter: blur(30px);
-        box-shadow: 0 16px 36px rgba(0, 0, 0, 0.35);
-        margin-top: 24px;
-    }
-
-    /* ================= REGISTER PAGE CONTAINER (ZERO CUTOFF & NO SCROLL) ================= */
-    .register-flip-container {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        margin-top: 10px;
-        margin-bottom: 14px;
-        position: relative;
-    }
-    
-    .register-outer-card {
-        background-color: #ffffff !important;
-        /* Ruled Red Vertical Margin + Precise 26px Blue Horizontal Lines */
-        background-image: 
-            linear-gradient(90deg, transparent 40px, #ef4444 40px, #ef4444 41.5px, transparent 41.5px),
-            linear-gradient(#e2e8f0 1px, transparent 1px) !important;
-        background-size: 100% 100%, 100% 26px !important;
-        border-radius: 8px !important;
-        padding: 22px 22px 30px 52px !important;
-        border: 1px solid #cbd5e1 !important;
-        box-shadow: 0 12px 36px rgba(0, 0, 0, 0.65), inset 0 0 15px rgba(0,0,0,0.02) !important;
-        width: 100% !important;
-        max-width: 530px !important;
-        min-height: 480px !important;
-        height: auto !important;
-        box-sizing: border-box !important;
-        position: relative !important;
-        user-select: none !important;
-        transition: transform 0.25s ease-out;
-    }
-
-    /* Spiral Holes */
-    .register-outer-card::before {
-        content: '' !important;
-        position: absolute !important;
-        top: 14px !important;
-        left: 11px !important;
-        width: 10px !important;
-        height: 94% !important;
-        background-image: radial-gradient(circle, #cbd5e1 3.5px, transparent 4.5px) !important;
-        background-size: 10px 26px !important;
-        background-repeat: repeat-y !important;
-    }
-
-    /* High Clarity Student Ink Styling */
-    .register-inner-content {
-        font-family: 'Patrick Hand', cursive, sans-serif !important;
-        color: #1e3a8a !important;
-        font-size: 16px !important;
-        line-height: 26px !important;
-        word-break: break-word !important;
-        white-space: pre-wrap !important;
-    }
-
-    .page-turn-pill {
-        display: inline-block;
-        background: #ef4444;
-        color: #ffffff;
-        font-size: 11px;
-        font-weight: 700;
-        padding: 2px 8px;
-        border-radius: 8px;
-        margin-bottom: 6px;
-        font-family: 'Plus Jakarta Sans', sans-serif !important;
-        letter-spacing: 0.5px;
-    }
-
-    /* Sleek Small Arrow Buttons Styling */
-    div.arrow-btn-wrapper > div > button {
-        background: rgba(255, 255, 255, 0.08) !important;
-        border: 1px solid rgba(255, 255, 255, 0.18) !important;
-        color: #38BDF8 !important;
-        font-size: 22px !important;
-        font-weight: 800 !important;
-        padding: 8px 12px !important;
-        border-radius: 50% !important;
-        width: 48px !important;
-        height: 48px !important;
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        backdrop-filter: blur(16px) !important;
-        box-shadow: 0 8px 20px rgba(0,0,0,0.4) !important;
-        margin: auto !important;
-        transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
-    }
-    div.arrow-btn-wrapper > div > button:hover {
-        background: rgba(56, 189, 248, 0.25) !important;
-        border-color: #38BDF8 !important;
-        color: #FFFFFF !important;
-        transform: scale(1.1) !important;
-    }
-    div.arrow-btn-wrapper > div > button:disabled {
-        opacity: 0.2 !important;
-        cursor: not-allowed !important;
-        border-color: rgba(255, 255, 255, 0.05) !important;
-    }
-
-    /* AI Response Glass Box */
-    .ai-box {
-        background: rgba(20, 24, 38, 0.88);
-        border: 1px solid rgba(139, 92, 246, 0.35);
-        border-left: 4px solid #8B5CF6;
-        border-radius: 14px;
-        padding: 20px;
-        margin-top: 14px;
-        color: #F8FAFC;
+        padding: 10px 20px;
         backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
-        line-height: 1.65;
-        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.45);
+        margin-bottom: 20px;
+    }
+    .app-brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    .brand-icon {
+        background: linear-gradient(135deg, #38BDF8, #818CF8);
+        color: #0F172A;
+        font-weight: 800;
+        font-size: 16px;
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .brand-text {
+        font-size: 15px;
+        font-weight: 700;
+        color: #F8FAFC;
+        letter-spacing: -0.3px;
     }
 
-    /* Apple-style Gradient Buttons */
-    .stButton>button {
-        background: linear-gradient(135deg, rgba(59, 130, 246, 0.9) 0%, rgba(147, 51, 234, 0.9) 100%) !important;
-        color: #FFFFFF !important;
-        border: 1px solid rgba(255, 255, 255, 0.2) !important;
-        border-radius: 12px !important;
-        padding: 8px 20px !important;
-        font-weight: 600 !important;
-        font-size: 13.5px !important;
-        letter-spacing: 0.3px !important;
-        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
-        box-shadow: 0 8px 20px rgba(59, 130, 246, 0.25) !important;
-    }
-    .stButton>button:hover {
-        transform: translateY(-2px) scale(1.01);
-        box-shadow: 0 12px 28px rgba(147, 51, 234, 0.4) !important;
-        border-color: rgba(255, 255, 255, 0.4) !important;
-    }
-
-    /* Radio circular selection dot hide */
-    div[data-testid="stRadio"] div[role="radiogroup"] > label > div:first-child {
-        display: none !important;
-    }
-
-    /* ZERO-OVERLAP TOP STICKY NAVIGATION DOCK */
+    /* Tab Control Hub */
     div[data-testid="stRadio"] {
-        position: sticky !important;
-        top: 10px !important;
-        z-index: 999999 !important;
-        background: rgba(18, 24, 38, 0.94) !important;
-        border: 1px solid rgba(255, 255, 255, 0.18) !important;
-        padding: 6px 14px !important;
-        border-radius: 40px !important;
-        backdrop-filter: blur(28px) saturate(190%) !important;
-        -webkit-backdrop-filter: blur(28px) saturate(190%) !important;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.75), inset 0 1px 1px rgba(255, 255, 255, 0.2) !important;
-        margin: 8px auto 18px auto !important;
+        background: rgba(255, 255, 255, 0.02) !important;
+        border: 1px solid rgba(255, 255, 255, 0.08) !important;
+        padding: 4px 6px !important;
+        border-radius: 30px !important;
+        margin: 0 auto 24px auto !important;
         width: max-content !important;
         max-width: 95vw !important;
+        backdrop-filter: blur(20px) !important;
     }
-
-    div[data-testid="stRadio"] > label {
-        display: none !important;
-    }
-
+    div[data-testid="stRadio"] > label {display: none !important;}
     div[data-testid="stRadio"] > div {
         display: flex !important;
         flex-direction: row !important;
-        flex-wrap: nowrap !important;
         gap: 6px !important;
         align-items: center !important;
-        justify-content: center !important;
     }
-
     div[data-testid="stRadio"] label {
-        background: rgba(255, 255, 255, 0.05) !important;
-        border: 1px solid rgba(255, 255, 255, 0.08) !important;
-        border-radius: 18px !important;
-        padding: 6px 14px !important;
-        margin: 0 !important;
+        background: transparent !important;
+        border-radius: 20px !important;
+        padding: 6px 16px !important;
         font-size: 13px !important;
         font-weight: 600 !important;
-        color: #CBD5E1 !important;
-        white-space: nowrap !important;
-        cursor: pointer !important;
+        color: #94A3B8 !important;
         transition: all 0.2s ease !important;
+        margin: 0 !important;
     }
-
     div[data-testid="stRadio"] label:hover {
-        background: rgba(255, 255, 255, 0.15) !important;
         color: #FFFFFF !important;
+        background: rgba(255, 255, 255, 0.06) !important;
     }
 
-    /* MOBILE SCREEN SPECIFICS (< 768px) */
+    /* ================= REAL HARDCOVER REGISTER WORKSPACE ================= */
+    .binder-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 10px 0;
+        perspective: 1200px;
+    }
+
+    .notebook-binder {
+        background: #FDFBF7 !important;
+        background-image: 
+            linear-gradient(90deg, transparent 48px, #F87171 48px, #F87171 50px, transparent 50px),
+            linear-gradient(#E2E8F0 1px, transparent 1px) !important;
+        background-size: 100% 100%, 100% 26px !important;
+        width: 100% !important;
+        max-width: 560px !important;
+        min-height: 520px !important;
+        border-radius: 6px 16px 16px 6px !important;
+        border: 1px solid #CBD5E1 !important;
+        padding: 24px 24px 30px 64px !important;
+        position: relative !important;
+        box-shadow: 
+            -15px 0 25px -10px rgba(0, 0, 0, 0.6), 
+            15px 20px 40px rgba(0, 0, 0, 0.4),
+            inset 8px 0 12px -6px rgba(0, 0, 0, 0.15) !important;
+        color: #1E3A8A !important;
+    }
+
+    /* Left Ring Binder Rings */
+    .notebook-binder::before {
+        content: '' !important;
+        position: absolute !important;
+        top: 20px !important;
+        left: 14px !important;
+        width: 16px !important;
+        height: 92% !important;
+        background-image: radial-gradient(circle, #94A3B8 5px, transparent 6px) !important;
+        background-size: 16px 32px !important;
+        background-repeat: repeat-y !important;
+    }
+
+    .notebook-header-band {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 2px solid #EF4444;
+        padding-bottom: 4px;
+        margin-bottom: 12px;
+    }
+    .notebook-topic-title {
+        font-family: 'Space Grotesk', sans-serif !important;
+        font-weight: 700 !important;
+        font-size: 16px !important;
+        color: #0F172A !important;
+    }
+    .notebook-page-chip {
+        font-size: 11px !important;
+        font-weight: 700 !important;
+        background: #EF4444 !important;
+        color: #FFFFFF !important;
+        padding: 2px 8px !important;
+        border-radius: 10px !important;
+    }
+
+    .notebook-body {
+        font-family: 'Caveat', cursive !important;
+        font-size: 20px !important;
+        line-height: 26px !important;
+        color: #1E3A8A !important;
+        white-space: pre-wrap !important;
+        word-break: break-word !important;
+    }
+
+    /* Studio Card Panels */
+    .studio-panel {
+        background: rgba(255, 255, 255, 0.025);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 16px;
+        padding: 20px;
+        backdrop-filter: blur(20px);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Streamlit Default Buttons Customization */
+    .stButton>button {
+        background: linear-gradient(135deg, #2563EB 0%, #7C3AED 100%) !important;
+        color: #FFFFFF !important;
+        border: 1px solid rgba(255, 255, 255, 0.15) !important;
+        border-radius: 10px !important;
+        padding: 8px 18px !important;
+        font-weight: 600 !important;
+        font-size: 13.5px !important;
+        transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+        box-shadow: 0 6px 18px rgba(37, 99, 235, 0.3) !important;
+    }
+    .stButton>button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 24px rgba(124, 58, 237, 0.4) !important;
+    }
+
+    /* Compact Arrow Controls Row */
+    div.flip-dock {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 16px;
+        margin-top: 12px;
+    }
+
     @media (max-width: 768px) {
-        .splash-title {
-            font-size: 32px !important;
-        }
-        .hero-title {
-            font-size: 19px !important;
-        }
-        div[data-testid="stRadio"] {
-            top: 6px !important;
-            padding: 5px 6px !important;
-            width: 95vw !important;
-            max-width: 95vw !important;
-            overflow-x: auto !important;
-            -webkit-overflow-scrolling: touch !important;
-            scrollbar-width: none !important;
-            margin-bottom: 14px !important;
-        }
-        div[data-testid="stRadio"]::-webkit-scrollbar {
-            display: none !important;
-        }
-        div[data-testid="stRadio"] > div {
-            display: inline-flex !important;
-            flex-direction: row !important;
-            flex-wrap: nowrap !important;
-            gap: 5px !important;
-            width: max-content !important;
-            justify-content: flex-start !important;
-            padding: 2px 4px !important;
-        }
-        div[data-testid="stRadio"] label {
-            padding: 5px 10px !important;
-            font-size: 12px !important;
-            border-radius: 16px !important;
-            flex-shrink: 0 !important;
-        }
-        .register-outer-card {
-            padding: 16px 12px 24px 44px !important;
-            max-width: 94vw !important;
+        .notebook-binder {
+            padding: 18px 16px 24px 50px !important;
             min-height: 440px !important;
+            background-size: 100% 100%, 100% 24px !important;
         }
-        .register-inner-content {
-            font-size: 14.5px !important;
+        .notebook-body {
+            font-size: 18px !important;
             line-height: 24px !important;
         }
     }
@@ -402,14 +268,14 @@ if "GEMINI_API_KEY" in st.secrets:
 with st.sidebar:
     st.markdown("### ⚙️ Engine Settings")
     if gemini_key:
-        st.markdown('<div class="badge-status">● Vision & Notes Active</div>', unsafe_allow_html=True)
+        st.success("● AI Engine & Vision Connected")
     else:
         with st.expander("🔑 Setup API Key", expanded=True):
             gemini_key = st.text_input("Gemini API Key:", type="password")
             if gemini_key:
                 genai.configure(api_key=gemini_key)
                 st.success("Connected!")
-    st.caption("Crafted with ❤️ by Raj • MLK PG College Balrampur")
+    st.caption("Crafted by Raj • MLK PG College Balrampur")
 
 def get_ai_response(prompt, image_input=None, forced_language=None, current_subject="Python"):
     if not gemini_key:
@@ -430,16 +296,16 @@ def get_ai_response(prompt, image_input=None, forced_language=None, current_subj
         )
 
     optimized_prompt = f"""
-    You are a senior computer science professor for BCA at MLK PG College, Balrampur (affiliated with Maa Pateshwari State University).
-    Subject: {current_subject}
+    You are a distinguished university professor for BCA curriculum at MLK PG College, Balrampur (affiliated with Maa Pateshwari State University).
+    Current Subject Context: {current_subject}
     {lang_instruction}
 
-    TEACHING RULES (STRICT CLEANLINESS):
-    1. Write in clean, natural student notebook register style.
-    2. NEVER output raw markdown hashes like '###' or raw unformatted LaTeX with broken dollar signs. Write simple readable formulas (e.g. lim (x -> a) [f'(x) / g'(x)]).
-    3. DO NOT write meta lines like '**Subject:** ...' or '**Author:** ...' or '**Instructor:** ...'. Jump directly to the core study points.
-    4. Keep content concise to fit a single A4 sheet without clipping words.
-    5. Separate every single page using the exact delimiter token '[PAGE_BREAK]'.
+    RULES FOR REGISTER NOTES:
+    1. Write in natural, clean, readable student register notes format.
+    2. No markdown hashes like '###' or raw LaTeX dollars like '$0/0$'. Use clean readable expressions like '0/0 form' or 'lim x->a [f(x)/g(x)]'.
+    3. Strictly restrict each page to 50-70 words so that it fits completely on the notebook sheet without scrolling or cutoffs.
+    4. Separate every page strictly with '[PAGE_BREAK]'.
+    5. No metadata boilerplate (no 'Subject:', 'Instructor:', etc.). Start directly with point 1.
 
     Query:
     {prompt}
@@ -474,647 +340,306 @@ def get_ai_response(prompt, image_input=None, forced_language=None, current_subj
 
     return f"⏳ AI Engine Temporary Busy: {last_error}"
 
-# ================= 0. OPENING SCREEN =================
-if not st.session_state.app_entered:
-    st.markdown("""
-    <div class="splash-container">
-        <div class="creator-badge">✨ Next-Gen BCA Ecosystem</div>
-        <div class="splash-title">MLK BCA Academic Portal</div>
-        <div class="creator-signature">Crafted & Created by Raj ⚡</div>
-        <div class="splash-subtitle">
-            Autonomous curriculum for MLK PG College, Balrampur (Maa Pateshwari State University).
-            Complete syllabus coverage for Python Programming, CSA & Discrete Mathematics with Dynamic A4 Register Notes and Multimodal Vision.
+# ================= TOP APPLICATION BAR =================
+st.markdown("""
+<div class="top-app-bar">
+    <div class="app-brand">
+        <div class="brand-icon">⚡</div>
+        <div>
+            <div class="brand-text">BCA Academic Studio</div>
+            <div style="font-size: 11px; color: #94A3B8;">MLK PG College Balrampur • Maa Pateshwari Univ</div>
         </div>
     </div>
-    """, unsafe_allow_html=True)
+    <div style="font-size: 12px; color: #38BDF8; font-weight: 600;">
+        Created by Raj
+    </div>
+</div>
+""", unsafe_allow_html=True)
 
-    col1, col2, col3 = st.columns([1, 1.2, 1])
-    with col2:
-        if st.button("🚀 Launch Portal & Start Studying", use_container_width=True):
-            st.session_state.app_entered = True
-            st.rerun()
-
-else:
-    # Top Bar Header
-    top_col1, top_col2 = st.columns([1.6, 1.4])
-    with top_col1:
-        st.markdown("""
-        <div style="padding-top: 10px;">
-            <span style="font-size: 13px; color: #94A3B8;">🏛️ MLK PG College Balrampur (Maa Pateshwari Univ)</span><br>
-            <span style="font-size: 14px; font-weight: 700; color: #38BDF8;">⚡ Created by Raj</span>
-        </div>
-        """, unsafe_allow_html=True)
-    with top_col2:
-        st.session_state.selected_subject = st.selectbox(
-            "Select Subject Slot:",
-            [
-                "🐍 Python Programming",
-                "🖥️ Computer System Architecture",
-                "📐 Mathematics & Numerical Methods"
-            ],
-            index=0
-        )
-
-    # ================= TOP STICKY NAVIGATION BAR =================
+# Subject Slot Bar
+sub_col1, sub_col2 = st.columns([2, 1.2])
+with sub_col1:
     selected_tab = st.radio(
-        label="Top Navigation Bar",
+        label="Navigation Menu",
         options=[
-            "📖 Syllabus",
             "📝 Handwritten Notes",
+            "📖 Syllabus Explorer",
             "📝 Exam Engine",
-            "🛠️ Projects",
+            "🛠️ Projects Lab",
             "🤖 AI Mentor",
-            "🧪 Sandbox"
+            "🧪 Code Sandbox"
         ],
         horizontal=True,
-        index=1
+        index=0
+    )
+with sub_col2:
+    st.session_state.selected_subject = st.selectbox(
+        "Active Stream Subject:",
+        [
+            "🐍 Python Programming",
+            "🖥️ Computer System Architecture",
+            "📐 Mathematics & Numerical Methods"
+        ],
+        index=0
     )
 
-    # ================= 1. MULTI-SUBJECT SYLLABUS HUB =================
-    def render_syllabus():
-        active_subj = st.session_state.selected_subject
+active_subj = st.session_state.selected_subject
 
-        if active_subj == "🐍 Python Programming":
-            st.markdown("""
-            <div class="hero-banner">
-                <div class="hero-title">Python Programming Encyclopedia</div>
-                <div class="hero-sub">MLK PG College Balrampur • Full Theory, Solved Exam Questions & Practical Labs</div>
-            </div>
-            """, unsafe_allow_html=True)
+# ================= 1. DYNAMIC HANDWRITTEN REGISTER FLIPPER =================
+if selected_tab == "📝 Handwritten Notes":
+    st.markdown(f"#### 📖 Real Notebook Register ({active_subj})")
 
-            py_modules = [
-                "Module 1: Language Basics, Operators & Bitwise",
-                "Module 2: Control Flow & Iteration (Branches & Loops)",
-                "Module 3: Functions, Scopes, Lambdas & Recursion",
-                "Module 4: In-Depth Data Structures (Lists, Tuples, Dicts, Sets)",
-                "Module 5: Object-Oriented Programming (OOP Architecture)",
-                "Module 6: File Handling, Context Managers & JSON/CSV",
-                "Module 7: Exception Handling & Custom Errors",
-                "Module 8: Standard Libraries, Regex & Date-Time"
-            ]
-            sel_mod = st.selectbox("📚 Select Python Module:", py_modules)
+    if active_subj == "🐍 Python Programming":
+        suggested_topics = [
+            "Python Bytecode & Dynamic Typing vs Static Typing",
+            "Operators Hierarchy & Bitwise Left/Right Shift Tricks",
+            "Loop-Else Construct & Prime Number Logic",
+            "*args, **kwargs & LEGB Scope Resolution Rules",
+            "List vs Tuple Memory Architecture & Dict Hash Tables",
+            "OOP Encapsulation, Mangling & Dunder Magic Methods",
+            "File Handling seek(), tell() & Context Managers",
+            "Regex Pattern Matching with re module"
+        ]
+    elif active_subj == "🖥️ Computer System Architecture":
+        suggested_topics = [
+            "Truth Table Chart of Full Adder & Circuit with 2 HA",
+            "2's Complement Direct Trick & Overflow Detection",
+            "Half Adder & Full Adder Design using 2 HA and 1 OR Gate",
+            "K-Map 4-Variable Minimization & Grouping Strategy",
+            "JK Flip-Flop Race-Around Condition & Master-Slave Solution",
+            "Instruction Cycle Phases (T0-T4 Micro-operations)",
+            "Addressing Modes Comparison with Real Examples",
+            "Cache Memory Mapping (Direct vs Associative vs Set-Associative)",
+            "DMA Controller Working: Cycle Stealing vs Burst Mode"
+        ]
+    else:
+        suggested_topics = [
+            "L'Hopital's Rule for Indeterminate Forms (0/0 and inf/inf)",
+            "Equivalence Relations Proof (Reflexive, Symmetric, Transitive)",
+            "POSET & Hasse Diagram Construction Rules",
+            "Truth Table Proof of Conditional Equivalence (~p v q)",
+            "Rank of Matrix using Echelon Form & Consistency of AX=B",
+            "Cayley-Hamilton Theorem & Fast Inverse A^-1 Calculation",
+            "Handshaking Theorem & Euler Planar Formula (V - E + R = 2)",
+            "Leibnitz's Theorem for n-th Derivative with Product Trick",
+            "Newton-Raphson Method with Step-by-Step Numerical Root"
+        ]
 
-            if sel_mod == "Module 1: Language Basics, Operators & Bitwise":
-                with st.expander("1. Python Architecture, Bytecode Compilation & Dynamic Typing", expanded=True):
-                    st.write("""
-                    * Source code (`.py`) compile hokar **Bytecode (`.pyc`)** banta hai, aur fir **PVM** ise line-by-line run karti hai.
-                    * **Dynamic Typing:** Variables runtime par value ke mutabik type acquire karte hain.
-                    """)
-                    st.code("""x = 101           # int
-x = "Raj Shraff"  # dynamically becomes string
-print(x, type(x))""", language="python")
+    c1, c2 = st.columns([2.5, 1.2])
+    with c1:
+        chosen_topic = st.selectbox("Pick Topic to Write:", suggested_topics)
+        custom_topic = st.text_input("Or enter syllabus query:", placeholder="e.g. DeMorgan's laws derivation")
+    with c2:
+        notes_lang = st.selectbox("Register Script Register:", ["Hinglish (Natural Notes)", "English", "Hindi (हिन्दी)"])
 
-            elif sel_mod == "Module 2: Control Flow & Iteration (Branches & Loops)":
-                with st.expander("1. Decisions & for-else Loop Trick", expanded=True):
-                    st.write("Loop ka `else` block tabhi run hota hai jab loop bina `break` statement ke naturally complete ho.")
-                    st.code("""num = 29
-for factor in range(2, int(num**0.5) + 1):
-    if num % factor == 0:
-        print(f"{num} is composite")
-        break
-else:
-    print(f"{num} is Prime!")""", language="python")
+    final_topic = custom_topic.strip() if custom_topic.strip() else chosen_topic
 
-            elif sel_mod == "Module 3: Functions, Scopes, Lambdas & Recursion":
-                with st.expander("1. *args, **kwargs & Scopes", expanded=True):
-                    st.code("""def register_student(name, *subjects, **stats):
-    print(f"Student: {name} | Subjects: {subjects} | Stats: {stats}")
+    if st.button("✍️ Write on Register Pages", use_container_width=True):
+        st.session_state.current_note_page = 1
+        with st.spinner(f"AI Student Topper writing notes for {final_topic}..."):
+            raw_output = get_ai_response(
+                f"Write concise register notes for '{final_topic}' in {active_subj}.",
+                forced_language=notes_lang,
+                current_subject=active_subj
+            )
 
-register_student("Raj", "Python", "CSA", sem=1)""", language="python")
+            pages = [p.strip() for p in raw_output.split("[PAGE_BREAK]") if p.strip()]
+            if not pages:
+                pages = [raw_output]
 
-            elif sel_mod == "Module 4: In-Depth Data Structures (Lists, Tuples, Dicts, Sets)":
-                with st.expander("1. List Comprehensions & Dictionaries", expanded=True):
-                    st.code("""scores = {"Python": 95, "CSA": 88, "Maths": 92}
-high = {k: v for k, v in scores.items() if v >= 90}
-print("High Scorers:", high)""", language="python")
+            clean_pages = []
+            for pg in pages:
+                lines = [line.replace("### ", "").replace("## ", "").replace("# ", "") for line in pg.splitlines()]
+                clean_pages.append("\n".join(lines))
 
-            elif sel_mod == "Module 5: Object-Oriented Programming (OOP Architecture)":
-                with st.expander("1. Classes, Encapsulation & Magic Methods", expanded=True):
-                    st.code("""class BCAStudent:
-    def __init__(self, name, roll):
-        self.name = name
-        self.__roll = roll
-    def get_roll(self): return self.__roll
+            st.session_state.dynamic_pages_list = clean_pages
+            st.session_state.flip_notes_topic = final_topic
 
-s = BCAStudent("Raj", 101)
-print(s.name, s.get_roll())""", language="python")
-
-            elif sel_mod == "Module 6: File Handling, Context Managers & JSON/CSV":
-                with st.expander("1. File Modes & JSON", expanded=True):
-                    st.code("""import json
-data = {"name": "Raj", "degree": "BCA"}
-print(json.dumps(data, indent=2))""", language="python")
-
-            elif sel_mod == "Module 7: Exception Handling & Custom Errors":
-                with st.expander("1. try-except-else-finally", expanded=True):
-                    st.code("""try:
-    val = 10 / 2
-except ZeroDivisionError:
-    print("Cannot divide by zero")
-else:
-    print("Success:", val)""", language="python")
-
-            elif sel_mod == "Module 8: Standard Libraries, Regex & Date-Time":
-                with st.expander("1. Regex Pattern Matching", expanded=True):
-                    st.code("""import re
-text = "Student Raj, Email: raj@example.com"
-print(re.findall(r'[\w\.-]+@[\w\.-]+', text))""", language="python")
-
-        elif active_subj == "🖥️ Computer System Architecture":
-            st.markdown("""
-            <div class="hero-banner">
-                <div class="hero-title">Computer System Architecture (CSA) Master</div>
-                <div class="hero-sub">MLK PG College Balrampur • Digital Logic, Adders, Memory & CPU Architecture</div>
-            </div>
-            """, unsafe_allow_html=True)
-
-            csa_modules = [
-                "Unit 1: Data Representation, Number Systems & 1's/2's Complements",
-                "Unit 2: Logic Gates, Half Adder, Full Adder, K-Maps & Combinational Circuits",
-                "Unit 3: Sequential Circuits, Flip-Flops, Registers & Counters",
-                "Unit 4: Basic Computer Organization, Instruction Cycle & Bus Architecture",
-                "Unit 5: Central Processing Unit (ALU, Addressing Modes & Pipeline)",
-                "Unit 6: Memory Hierarchy (Cache Mapping, RAM/ROM & Virtual Memory)",
-                "Unit 7: Input-Output Organization (Interrupts, DMA, Programmed I/O)"
-            ]
-            sel_mod = st.selectbox("📚 Select CSA Unit:", csa_modules)
-
-            if sel_mod == "Unit 2: Logic Gates, Half Adder, Full Adder, K-Maps & Combinational Circuits":
-                with st.expander("1. Half Adder & Full Adder Architecture", expanded=True):
-                    st.write("""
-                    * **Half Adder:** Sum = $A \\oplus B$, Carry = $A \\cdot B$.
-                    * **Full Adder:** Sum = $A \\oplus B \\oplus C_{in}$, Carry = $AB + C_{in}(A \\oplus B)$.
-                    * **Trick:** Ek Full Adder ko **2 Half Adders aur 1 OR gate** se banaya ja sakta hai!
-                    """)
-                    st.code("""def full_adder(a, b, cin):
-    sum_bit = a ^ b ^ cin
-    carry_bit = (a & b) | (cin & (a ^ b))
-    return sum_bit, carry_bit
-
-print("Full Adder (1, 1, 1):", full_adder(1, 1, 1))""", language="python")
-
-        elif active_subj == "📐 Mathematics & Numerical Methods":
-            st.markdown("""
-            <div class="hero-banner">
-                <div class="hero-title">Discrete Mathematics & Numerical Methods</div>
-                <div class="hero-sub">MLK PG College Balrampur • Sets, Relations, Logic, Matrices, Calculus & Numerical Solvers</div>
-            </div>
-            """, unsafe_allow_html=True)
-
-            math_modules = [
-                "Unit 1: Set Theory, Relations, Functions & POSET",
-                "Unit 2: Mathematical Logic, Truth Tables & Propositional Calculus",
-                "Unit 3: Matrices, Determinants, Rank & System of Linear Equations",
-                "Unit 4: Combinatorics, Pigeonhole Principle & Graph Theory",
-                "Unit 5: Differential Calculus, Leibnitz's Theorem & Maxima/Minima",
-                "Unit 6: Numerical Methods (Newton-Raphson, Bisection & Gauss Elimination)"
-            ]
-            sel_mod = st.selectbox("📚 Select Mathematics Unit:", math_modules)
-
-            if sel_mod == "Unit 6: Numerical Methods (Newton-Raphson, Bisection & Gauss Elimination)":
-                with st.expander("1. Newton-Raphson Method Formula & Code Solver", expanded=True):
-                    st.write("""
-                    * Formula: $x_{n+1} = x_n - \\frac{f(x_n)}{f'(x_n)}$ (Quadratic convergence, Order = 2).
-                    """)
-                    st.code("""f = lambda x: x**3 - x - 2
-df = lambda x: 3*x**2 - 1
-x = 1.5
-for i in range(3):
-    x = x - f(x)/df(x)
-    print(f"Iter {i+1}: x = {x:.5f}")""", language="python")
+    # DISPLAY REAL NOTEBOOK PAGE
+    if st.session_state.dynamic_pages_list:
+        pages = st.session_state.dynamic_pages_list
+        total_pages = len(pages)
+        curr_pg = min(st.session_state.current_note_page, total_pages)
+        page_text = pages[curr_pg - 1].replace("\n", "<br>")
 
         st.markdown(f"""
-        <div class="apple-glass-card">
-            <h3 style="margin-top:0; font-size:20px; font-weight:700;">🎯 AI University Exam Preparation & Viva Master ({active_subj})</h3>
-            <p style="color:#94A3B8; font-size:13px; margin-bottom:14px;">MLK PG College exam questions aur viva points generate karein:</p>
-        </div>
-        """, unsafe_allow_html=True)
-
-        if st.button("🔥 Generate Most Important Exam Questions & Viva Points", use_container_width=True):
-            with st.spinner(f"AI Professor analyzing {active_subj}..."):
-                prompt = f"""
-                You are a senior BCA university examiner for MLK PG College, Balrampur.
-                Subject: {active_subj}
-                Provide top 3 high-weightage questions with step-by-step model answers and shortcut tricks.
-                """
-                ai_output = get_ai_response(prompt, current_subject=active_subj)
-                st.markdown(f'<div class="ai-box">{ai_output}</div>', unsafe_allow_html=True)
-
-    # ================= 2. CRISP GLITCH-FREE REGISTER NOTES (SWIPE + COMPACT ARROWS) =================
-    def render_handwritten_notes():
-        active_subj = st.session_state.selected_subject
-        st.markdown(f"""
-        <div class="hero-banner">
-            <div class="hero-title">📝 Authentic A4 Register Sheets (Interactive Flip)</div>
-            <div class="hero-sub">Subject Context: {active_subj} • Touch screen par left/right swipe karein ya side ke arrows dabakar page paltein.</div>
-        </div>
-        """, unsafe_allow_html=True)
-
-        if active_subj == "🐍 Python Programming":
-            suggested_topics = [
-                "Python Bytecode & Dynamic Typing vs Static Typing",
-                "Operators Hierarchy & Bitwise Left/Right Shift Tricks",
-                "Loop-Else Construct & Prime Number Logic",
-                "*args, **kwargs & LEGB Scope Resolution Rules",
-                "List vs Tuple Memory Architecture & Dict Hash Tables",
-                "OOP Encapsulation, Mangling & Dunder Magic Methods",
-                "File Handling seek(), tell() & Context Managers",
-                "Regex Pattern Matching with re module"
-            ]
-        elif active_subj == "🖥️ Computer System Architecture":
-            suggested_topics = [
-                "Truth Table Chart of Full Adder & Circuit with 2 HA",
-                "2's Complement Direct Trick & Overflow Detection",
-                "Half Adder & Full Adder Design using 2 HA and 1 OR Gate",
-                "K-Map 4-Variable Minimization & Grouping Strategy",
-                "JK Flip-Flop Race-Around Condition & Master-Slave Solution",
-                "Instruction Cycle Phases (T0-T4 Micro-operations)",
-                "Addressing Modes Comparison with Real Examples",
-                "Cache Memory Mapping (Direct vs Associative vs Set-Associative)",
-                "DMA Controller Working: Cycle Stealing vs Burst Mode"
-            ]
-        else:
-            suggested_topics = [
-                "L'Hopital's Rule for Indeterminate Forms (0/0 and inf/inf)",
-                "Equivalence Relations Proof (Reflexive, Symmetric, Transitive)",
-                "POSET & Hasse Diagram Construction Rules",
-                "Truth Table Proof of Conditional Equivalence (~p v q)",
-                "Rank of Matrix using Echelon Form & Consistency of AX=B",
-                "Cayley-Hamilton Theorem & Fast Inverse A^-1 Calculation",
-                "Handshaking Theorem & Euler Planar Formula (V - E + R = 2)",
-                "Leibnitz's Theorem for n-th Derivative with Product Trick",
-                "Newton-Raphson Method with Step-by-Step Numerical Root"
-            ]
-
-        col1, col2 = st.columns([2, 1])
-        with col1:
-            chosen_topic = st.selectbox("Select Topic for Notes:", suggested_topics)
-            custom_topic = st.text_input("Or enter custom topic from syllabus (Optional):", placeholder="e.g. L'Hopital's rule / Multiplexer cascading")
-        with col2:
-            notes_lang = st.selectbox("Notes Language:", ["Hinglish (Simple Student Language)", "English", "Hindi (हिन्दी)"])
-
-        final_topic = custom_topic.strip() if custom_topic.strip() else chosen_topic
-
-        if st.button("✍️ Write on A4 Register Sheets", use_container_width=True):
-            st.session_state.current_note_page = 1
-            with st.spinner(f"Creating glitch-free A4 register notes for {final_topic}..."):
-                master_prompt = f"""
-                You are a university topper writing authentic A4 register notes for '{final_topic}' in {active_subj}.
-                Language: {notes_lang}.
-
-                STRICT GUIDELINES:
-                1. DO NOT output raw markdown tags like '###' or raw LaTeX backslashes that glitch.
-                2. DO NOT write meta intro like 'Subject:', 'Instructor:', 'Author:' etc.
-                3. Keep each page strictly between 45-65 words so that it fits completely on the A4 sheet without scrolling.
-                4. Insert '[PAGE_BREAK]' between pages.
-                5. Structure across pages:
-                   - Page 1: Core Meaning & When to use (in 3 simple points).
-                   - Page 2: Key Formula / Working Rule & Memory Trick.
-                   - Page 3: Solved Exam Numerical / Question with steps.
-                   - Page 4: Pitfalls to avoid in exams.
-                """
-
-                raw_notes = get_ai_response(master_prompt, forced_language=notes_lang, current_subject=active_subj)
-                
-                # Dynamic page split
-                pages = [p.strip() for p in raw_notes.split("[PAGE_BREAK]") if p.strip()]
-                if not pages:
-                    pages = [raw_notes]
-
-                # Clean any stray raw markdown hashes from start of lines
-                clean_pages = []
-                for pg in pages:
-                    cleaned_lines = []
-                    for line in pg.splitlines():
-                        if line.startswith("### "):
-                            line = line.replace("### ", "")
-                        elif line.startswith("## "):
-                            line = line.replace("## ", "")
-                        elif line.startswith("# "):
-                            line = line.replace("# ", "")
-                        cleaned_lines.append(line)
-                    clean_pages.append("\n".join(cleaned_lines))
-
-                st.session_state.dynamic_pages_list = clean_pages
-                st.session_state.flip_notes_topic = final_topic
-
-        # RENDER CRISP GLITCH-FREE REGISTER CARD WITH SIDE-ARROWS & SWIPE GESTURE
-        if st.session_state.dynamic_pages_list:
-            pages = st.session_state.dynamic_pages_list
-            total_pages = len(pages)
-            curr_pg = min(st.session_state.current_note_page, total_pages)
-
-            current_page_text = pages[curr_pg - 1]
-            safe_text = current_page_text.replace("\n", "<br>")
-
-            # Register Presentation Layout with Compact Floating Side-Arrows
-            sheet_layout_cols = st.columns([0.8, 8.4, 0.8], gap="small")
-            
-            # LEFT ARROW BUTTON
-            with sheet_layout_cols[0]:
-                st.markdown("<div style='height: 200px;'></div>", unsafe_allow_html=True)
-                st.markdown('<div class="arrow-btn-wrapper">', unsafe_allow_html=True)
-                if st.button("‹", disabled=(curr_pg == 1), key="arrow_left", use_container_width=True, help="Previous Page"):
-                    st.session_state.current_note_page = max(1, curr_pg - 1)
-                    st.rerun()
-                st.markdown('</div>', unsafe_allow_html=True)
-
-            # NOTEBOOK SHEET CONTAINER WITH TOUCH/MOUSE SWIPE JAVASCRIPT
-            with sheet_layout_cols[1]:
-                register_html = f"""
-                <div class="register-flip-container" id="notebook_touch_area">
-                    <div class="register-outer-card" id="notebook_page_card">
-                        <span class="page-turn-pill">A4 SHEET {curr_pg} OF {total_pages}</span>
-                        <div style="font-family:'Plus Jakarta Sans', sans-serif; font-size:17px; font-weight:700; color:#0f172a; margin-bottom:2px; border-bottom:1.5px solid #ef4444; padding-bottom:2px;">
-                            {st.session_state.get('flip_notes_topic')}
-                        </div>
-                        <div style="font-size:11px; color:#64748b; margin-bottom:8px; font-family:'Plus Jakarta Sans', sans-serif;">
-                            <b>Subject:</b> {active_subj} | <b>MLK PG College Balrampur</b>
-                        </div>
-                        <div class="register-inner-content">
-                            {safe_text}
-                        </div>
-                    </div>
+        <div class="binder-container">
+            <div class="notebook-binder">
+                <div class="notebook-header-band">
+                    <span class="notebook-topic-title">{st.session_state.get('flip_notes_topic')}</span>
+                    <span class="notebook-page-chip">Page {curr_pg} of {total_pages}</span>
                 </div>
-
-                <script>
-                    (function() {{
-                        const target = window.parent.document.getElementById('notebook_touch_area') || document.getElementById('notebook_touch_area');
-                        if (!target) return;
-
-                        let startX = 0;
-                        let startY = 0;
-
-                        target.addEventListener('touchstart', (e) => {{
-                            startX = e.changedTouches[0].screenX;
-                            startY = e.changedTouches[0].screenY;
-                        }}, {{passive: true}});
-
-                        target.addEventListener('touchend', (e) => {{
-                            let diffX = e.changedTouches[0].screenX - startX;
-                            let diffY = e.changedTouches[0].screenY - startY;
-
-                            // Horizontal Swipe Detection
-                            if (Math.abs(diffX) > 45 && Math.abs(diffY) < 60) {{
-                                if (diffX < 0) {{
-                                    // Swipe Left -> Next Page
-                                    const nextBtn = window.parent.document.querySelector('button[aria-label="arrow_right"]') || Array.from(window.parent.document.querySelectorAll('button')).find(el => el.innerText.trim() === '›');
-                                    if (nextBtn && !nextBtn.disabled) nextBtn.click();
-                                }} else {{
-                                    // Swipe Right -> Previous Page
-                                    const prevBtn = window.parent.document.querySelector('button[aria-label="arrow_left"]') || Array.from(window.parent.document.querySelectorAll('button')).find(el => el.innerText.trim() === '‹');
-                                    if (prevBtn && !prevBtn.disabled) prevBtn.click();
-                                }}
-                            }}
-                        }}, {{passive: true}});
-                    }})();
-                </script>
-                """
-                st.markdown(register_html, unsafe_allow_html=True)
-                st.markdown(f"<div style='text-align:center; color:#94A3B8; font-size:12px; margin-top:-6px;'>👉 <b>Swipe Left/Right</b> or tap arrows to flip pages • Sheet {curr_pg} of {total_pages}</div>", unsafe_allow_html=True)
-
-            # RIGHT ARROW BUTTON
-            with sheet_layout_cols[2]:
-                st.markdown("<div style='height: 200px;'></div>", unsafe_allow_html=True)
-                st.markdown('<div class="arrow-btn-wrapper">', unsafe_allow_html=True)
-                if st.button("›", disabled=(curr_pg == total_pages), key="arrow_right", use_container_width=True, help="Next Page"):
-                    st.session_state.current_note_page = min(total_pages, curr_pg + 1)
-                    st.rerun()
-                st.markdown('</div>', unsafe_allow_html=True)
-
-    # ================= 3. EXAM ENGINE (WITH PHOTO ANSWER UPLOAD) =================
-    def render_exam_engine():
-        active_subj = st.session_state.selected_subject
-        st.markdown(f"""
-        <div class="hero-banner">
-            <div class="hero-title">Automated Exam Engine ({active_subj})</div>
-            <div class="hero-sub">MLK PG College Balrampur Paper Generator • Instant AI Checking with Text or Handwritten Answer Sheet Photo</div>
+                <div class="notebook-body">
+{page_text}
+                </div>
+            </div>
         </div>
         """, unsafe_allow_html=True)
 
-        col1, col2 = st.columns([1.5, 1])
-        with col1:
-            test_scope = st.text_input(
-                f"Enter Specific Topic / Chapter for {active_subj}:",
-                placeholder="e.g. Cache Mapping / Full Adder / Eigenvalues / K-Maps"
-            )
-        with col2:
-            test_lang = st.selectbox(
-                "Paper Language:",
-                ["English", "Hinglish (Hindi in Latin Script)", "Hindi (हिन्दी - देवनागरी)"]
-            )
-        
-        if st.button("⚡ Generate University Test Paper", use_container_width=True):
-            with st.spinner(f"Drafting fresh exam questions for {active_subj} in {test_lang}..."):
-                topic_focus = test_scope if test_scope.strip() else "Entire University Syllabus"
-                test_prompt = f"""
-                Create a 15-mark university-standard BCA examination paper on '{active_subj}' focusing on '{topic_focus}'.
-                Curriculum: MLK PG College, Balrampur (Maa Pateshwari State University).
-                
-                Paper Structure:
-                - Section A (3 Marks): Short conceptual definition.
-                - Section B (5 Marks): Output prediction, difference table, or conceptual diagram/derivation.
-                - Section C (7 Marks): Comprehensive problem (Practical code for Python / Circuit-Tracing for CSA / Numerical for Maths).
-                
-                Strictly in {test_lang}. Do NOT give answers yet.
-                """
-                st.session_state.current_test = get_ai_response(test_prompt, forced_language=test_lang, current_subject=active_subj)
-                st.session_state.test_lang_selected = test_lang
-                st.session_state.test_subject_selected = active_subj
+        # UNIFIED FLIP CONTROLS
+        ctrl_col1, ctrl_col2, ctrl_col3 = st.columns([1.5, 3, 1.5])
+        with ctrl_col1:
+            if st.button("‹ Prev Page", disabled=(curr_pg == 1), use_container_width=True):
+                st.session_state.current_note_page = max(1, curr_pg - 1)
+                st.rerun()
+        with ctrl_col2:
+            st.markdown(f"""
+            <div style="text-align: center; color: #94A3B8; font-size: 13px; padding-top: 6px;">
+                Sheet {curr_pg} of {total_pages} • MLK PG College Balrampur
+            </div>
+            """, unsafe_allow_html=True)
+        with ctrl_col3:
+            if st.button("Next Page ›", disabled=(curr_pg == total_pages), use_container_width=True):
+                st.session_state.current_note_page = min(total_pages, curr_pg + 1)
+                st.rerun()
 
-        if "current_test" in st.session_state:
-            st.markdown(f'<div class="apple-glass-card"><h4>📄 Question Paper: {st.session_state.get("test_subject_selected")} ({st.session_state.get("test_lang_selected")})</h4>{st.session_state.current_test}</div>', unsafe_allow_html=True)
+# ================= 2. SYLLABUS EXPLORER =================
+elif selected_tab == "📖 Syllabus Explorer":
+    st.markdown(f"#### 📚 Syllabus Blueprint: {active_subj}")
+    
+    if active_subj == "🐍 Python Programming":
+        units = {
+            "Module 1": "Language Basics, Bytecode & Operators",
+            "Module 2": "Control Flow, Loops & for-else Construct",
+            "Module 3": "Functions, Scopes, LEGB, Lambdas & Recursion",
+            "Module 4": "Data Structures (Lists, Tuples, Sets, Dicts)",
+            "Module 5": "OOP, Encapsulation, Mangling & Dunder Methods",
+            "Module 6": "File Handling, seek(), tell() & JSON",
+            "Module 7": "Exception Handling & Custom Errors",
+            "Module 8": "Standard Libraries & Regex Patterns"
+        }
+    elif active_subj == "🖥️ Computer System Architecture":
+        units = {
+            "Unit 1": "Number Systems, Radix & 2's Complement",
+            "Unit 2": "Logic Gates, Half/Full Adders & K-Maps",
+            "Unit 3": "Sequential Logic, Flip-Flops & Master-Slave JK",
+            "Unit 4": "Basic Computer Organization & Instruction Cycle",
+            "Unit 5": "CPU Architecture, Addressing Modes & Pipelining",
+            "Unit 6": "Memory Hierarchy, Cache Mapping & RAM",
+            "Unit 7": "Input-Output Org, Interrupts & DMA Controller"
+        }
+    else:
+        units = {
+            "Unit 1": "Set Theory, Equivalence Relations & POSET",
+            "Unit 2": "Mathematical Logic, Truth Tables & Inference",
+            "Unit 3": "Matrices, Rank, Linear Equations & Cayley-Hamilton",
+            "Unit 4": "Combinatorics, Pigeonhole & Graph Theory",
+            "Unit 5": "Differential Calculus, Leibnitz's Theorem & Limits",
+            "Unit 6": "Numerical Methods, Newton-Raphson & Bisection"
+        }
 
-            st.markdown("#### ✍️ Submit Answers (Text or Upload Photo)")
-            user_sol = st.text_area("Option A: Yahan apne answers type karein:", height=150, placeholder="Ans 1: ...\nAns 2: ...\nAns 3: ...")
-            
-            uploaded_answer_img = st.file_uploader("Option B: Ya fir Handwritten Answer Sheet ki Photo Upload Karein (JPG/PNG):", type=["png", "jpg", "jpeg"], key="exam_upload")
-            pil_ans_img = None
-            if uploaded_answer_img:
-                pil_ans_img = Image.open(uploaded_answer_img)
-                st.image(pil_ans_img, caption="Uploaded Answer Sheet Preview", width=250)
+    for u_key, u_title in units.items():
+        with st.expander(f"{u_key}: {u_title}"):
+            st.write(f"Comprehensive breakdown aligned with Maa Pateshwari State University syllabus.")
+            if st.button(f"✨ Deep Dive {u_key}", key=f"btn_{u_key}"):
+                with st.spinner("AI Professor summarizing core points..."):
+                    summary = get_ai_response(f"Provide complete exam summary for {u_title} under {active_subj}.", current_subject=active_subj)
+                    st.info(summary)
 
-            if st.button("🚀 Submit Sheet For AI Checking", use_container_width=True):
-                if not user_sol.strip() and not pil_ans_img:
-                    st.warning("Please type your answer or upload a photo of your sheet.")
-                else:
-                    with st.spinner("AI Professor checking answer sheet (Vision Analysis Active)..."):
-                        target_eval_lang = st.session_state.get("test_lang_selected", "English")
-                        eval_prompt = f"""
-                        You are a strict BCA university examiner at MLK PG College, Balrampur grading this answer sheet.
-                        Subject: {st.session_state.get('test_subject_selected')}
-                        Paper:
-                        {st.session_state.current_test}
+# ================= 3. EXAM ENGINE =================
+elif selected_tab == "📝 Exam Engine":
+    st.markdown(f"#### 📝 University Examination Simulator ({active_subj})")
 
-                        Student Text Answer (if any):
-                        {user_sol}
+    c1, c2 = st.columns([2, 1])
+    with c1:
+        exam_topic = st.text_input("Examination Focus Topic:", placeholder="e.g. Cache Mapping / L'Hopital Rule / Polymorphism")
+    with c2:
+        exam_lang = st.selectbox("Paper Language:", ["English", "Hinglish", "Hindi (हिन्दी)"])
 
-                        Evaluate thoroughly in {target_eval_lang}:
-                        1. Score out of 15 with section-wise marks breakdown.
-                        2. Strengths and missing conceptual elements.
-                        3. Complete university model answers.
-                        """
-                        scorecard = get_ai_response(eval_prompt, image_input=pil_ans_img, forced_language=target_eval_lang, current_subject=st.session_state.get('test_subject_selected'))
-                        st.markdown(f'<div class="ai-box"><h3>📊 University Scorecard</h3>{scorecard}</div>', unsafe_allow_html=True)
+    if st.button("⚡ Generate University Paper", use_container_width=True):
+        with st.spinner("Preparing official MLK PG College question paper..."):
+            prompt = f"Create a 15-mark examination test for '{exam_topic if exam_topic else 'Full Syllabus'}' in {active_subj}."
+            st.session_state.exam_paper = get_ai_response(prompt, forced_language=exam_lang, current_subject=active_subj)
 
-    # ================= 4. GUIDED PROJECTS LAB =================
-    def render_projects():
-        active_subj = st.session_state.selected_subject
+    if "exam_paper" in st.session_state:
         st.markdown(f"""
-        <div class="hero-banner">
-            <div class="hero-title">Academic Capstone Projects & Lab Blueprints</div>
-            <div class="hero-sub">Subject Context: {active_subj} • Production-grade architecture with verified logic and viva preparation.</div>
+        <div class="studio-panel" style="margin-top: 15px;">
+            <div style="font-size: 16px; font-weight: 700; color: #38BDF8; margin-bottom: 8px;">Official Question Paper</div>
+            {st.session_state.exam_paper}
         </div>
         """, unsafe_allow_html=True)
 
-        if active_subj == "🐍 Python Programming":
-            proj_list = [
-                "Student Management System (Console + File / SQLite)",
-                "Banking Operations & ATM Simulator (OOPs Based)",
-                "Supermarket Inventory & Automated Billing Engine",
-                "Hospital Management & Patient Appointment Scheduler",
-                "Library Book Circulation & Fine Calculation Engine"
-            ]
-        elif active_subj == "🖥️ Computer System Architecture":
-            proj_list = [
-                "Half & Full Adder Simulator with Ripple Carry Circuit",
-                "4-Bit ALU Software Simulator (Logic Gates & Arithmetic)",
-                "Direct-Mapped vs Set-Associative Cache Memory Simulator",
-                "8-Bit Instruction Set Architecture (ISA) & CPU Emulator",
-                "Booth's Multiplication Algorithm Simulator with Step Tracing"
-            ]
-        else:
-            proj_list = [
-                "Numerical Equation Solver (Newton-Raphson & Bisection Method)",
-                "Matrix Linear System Solver & Eigenvalues Calculator",
-                "Graph Theory Analyzer (Shortest Path Dijkstra & Euler Circuit)",
-                "Boolean Truth Table & Logic Minimization Engine",
-                "Statistical Curve Fitting & Regression Analysis Calculator"
-            ]
+        user_ans = st.text_area("Your Solutions (Type here):", height=120)
+        uploaded_ans = st.file_uploader("Or Upload Answer Sheet Photo (PNG/JPG):", type=["png", "jpg", "jpeg"])
+        pil_img = Image.open(uploaded_ans) if uploaded_ans else None
 
-        proj = st.selectbox(f"Choose Project for {active_subj}:", proj_list)
-
-        st.markdown(f"""
-        <div class="apple-glass-card">
-            <h4 style="margin-top:0;">🏗️ Project Architecture: {proj}</h4>
-            <p>Complete design pattern aligned with BCA Semester academic requirements and university practical viva.</p>
-        </div>
-        """, unsafe_allow_html=True)
-
-        if st.button("🚀 Get Starter Architecture & Complete Code / Proof", use_container_width=True):
-            with st.spinner("AI Architect designing codebase..."):
-                blueprint_prompt = f"""
-                Provide a complete, production-grade, well-commented implementation for: '{proj}' under the subject '{active_subj}'.
-                Include design architecture, error checking, runnable implementation, and 3 expected examiner viva questions.
-                """
-                st.markdown(f'<div class="ai-box">{get_ai_response(blueprint_prompt, current_subject=active_subj)}</div>', unsafe_allow_html=True)
-
-    # ================= 5. 24/7 AI CODE & SUBJECT MENTOR (WITH PHOTO UPLOAD) =================
-    def render_mentor():
-        active_subj = st.session_state.selected_subject
-        st.markdown(f"""
-        <div class="hero-banner">
-            <div class="hero-title">24/7 AI Technical Mentor ({active_subj})</div>
-            <div class="hero-sub">Resolve doubts, code logic errors, numerical proofs, or circuit diagrams. Type or upload a photo!</div>
-        </div>
-        """, unsafe_allow_html=True)
-
-        user_q = st.text_area(
-            f"Poochhein apna doubt for {active_subj} (Hindi, English, ya Hinglish mein):",
-            height=120,
-            placeholder=f"e.g. Is problem ko solve karo ya error explain karo for {active_subj}..."
-        )
-        
-        uploaded_mentor_file = st.file_uploader(
-            "📷 Question / Error / Circuit / Book Page ki Photo Upload Karein (Optional):",
-            type=["png", "jpg", "jpeg"],
-            key="mentor_upload"
-        )
-        pil_mentor_img = None
-        if uploaded_mentor_file:
-            pil_mentor_img = Image.open(uploaded_mentor_file)
-            st.image(pil_mentor_img, caption="Uploaded Image Preview", width=280)
-
-        if st.button("⚡ Ask AI Mentor", use_container_width=True):
-            if not user_q.strip() and not pil_mentor_img:
-                st.warning("Pehle apna sawal enter karein ya photo upload karein.")
+        if st.button("🚀 Submit For AI Evaluation", use_container_width=True):
+            if not user_ans.strip() and not pil_img:
+                st.warning("Please type or upload your answer sheet.")
             else:
-                with st.spinner(f"AI Mentor analyzing query & image for {active_subj}..."):
-                    ans = get_ai_response(user_q, image_input=pil_mentor_img, current_subject=active_subj)
-                    st.markdown(f'<div class="ai-box">{ans}</div>', unsafe_allow_html=True)
+                with st.spinner("AI University Examiner evaluating answer sheet..."):
+                    eval_res = get_ai_response("Grade this student paper out of 15 with score breakdown.", image_input=pil_img, current_subject=active_subj)
+                    st.markdown(f"""
+                    <div class="studio-panel" style="border-left: 4px solid #34D399; margin-top: 15px;">
+                        <div style="font-size: 16px; font-weight: 700; color: #34D399; margin-bottom: 6px;">Evaluator Scorecard</div>
+                        {eval_res}
+                    </div>
+                    """, unsafe_allow_html=True)
 
-    # ================= 6. LIVE RUNNER SANDBOX =================
-    def render_runner():
-        active_subj = st.session_state.selected_subject
-        st.markdown(f"""
-        <div class="hero-banner">
-            <div class="hero-title">Interactive Python & Algorithm Sandbox</div>
-            <div class="hero-sub">Test Python programs, numerical algorithms, or CSA binary logic simulations directly in your browser.</div>
-        </div>
-        """, unsafe_allow_html=True)
+# ================= 4. PROJECTS LAB =================
+elif selected_tab == "🛠️ Projects Lab":
+    st.markdown(f"#### 🛠️ Academic Capstone Blueprints ({active_subj})")
 
-        if active_subj == "🐍 Python Programming":
-            starter = """# BCA Python Interactive Sandbox
+    if active_subj == "🐍 Python Programming":
+        projs = ["Student Management Portal (SQLite)", "Banking ATM Simulator (OOP)", "Inventory Billing Engine"]
+    elif active_subj == "🖥️ Computer System Architecture":
+        projs = ["Half & Full Adder Simulator", "4-Bit ALU Architecture", "Direct Mapped Cache Simulator"]
+    else:
+        projs = ["Newton-Raphson Equation Solver", "Matrix Rank Calculator", "Graph Theory Shortest Path"]
+
+    selected_proj = st.selectbox("Select Project Blueprint:", projs)
+    if st.button("🏗️ Generate Architecture & Code", use_container_width=True):
+        with st.spinner("Architecting full codebase..."):
+            res = get_ai_response(f"Provide complete working code and documentation for project: '{selected_proj}' in {active_subj}.", current_subject=active_subj)
+            st.markdown(f"""
+            <div class="studio-panel" style="margin-top: 15px;">
+                {res}
+            </div>
+            """, unsafe_allow_html=True)
+
+# ================= 5. AI TECHNICAL MENTOR =================
+elif selected_tab == "🤖 AI Mentor":
+    st.markdown(f"#### 🤖 24/7 AI Academic Mentor ({active_subj})")
+    
+    doubt_text = st.text_area("Type your question or error code:", height=120)
+    uploaded_doubt = st.file_uploader("Or upload screenshot / question photo:", type=["png", "jpg", "jpeg"])
+    doubt_img = Image.open(uploaded_doubt) if uploaded_doubt else None
+
+    if st.button("⚡ Solve With AI", use_container_width=True):
+        if not doubt_text.strip() and not doubt_img:
+            st.warning("Please enter your doubt or upload a picture.")
+        else:
+            with st.spinner("AI Mentor solving step-by-step..."):
+                sol = get_ai_response(doubt_text, image_input=doubt_img, current_subject=active_subj)
+                st.markdown(f"""
+                <div class="studio-panel" style="border-left: 4px solid #8B5CF6; margin-top: 15px;">
+                    {sol}
+                </div>
+                """, unsafe_allow_html=True)
+
+# ================= 6. LIVE CODE SANDBOX =================
+elif selected_tab == "🧪 Code Sandbox":
+    st.markdown(f"#### 🧪 Live Interactive Python Sandbox")
+    
+    starter_code = """# Interactive Python Sandbox
 def greet(name, college):
-    return f"Hello {name}, Welcome to {college} BCA Portal!"
+    return f"Welcome {name} to {college} BCA Master Ecosystem!"
 
 print(greet("Raj", "MLK PG College Balrampur"))
 """
-        elif active_subj == "🖥️ Computer System Architecture":
-            starter = """# CSA Binary Half Adder & Bitwise Logic Simulator
-def test_half_adder(a, b):
-    sum_bit = a ^ b
-    carry_bit = a & b
-    return f"A={a}, B={b} -> Sum={sum_bit}, Carry={carry_bit}"
+    user_code = st.text_area("Python Editor:", value=starter_code, height=180)
+    c1, c2 = st.columns([1, 1])
+    with c1:
+        run_code = st.button("▶ Run Script", use_container_width=True)
+    with c2:
+        st.download_button("💾 Export .py", data=user_code, file_name="bca_code.py", use_container_width=True)
 
-print(test_half_adder(1, 1))
-"""
-        else:
-            starter = """# Numerical Methods: Newton-Raphson Method
-# Solve f(x) = x^2 - 25 = 0
-def f(x): return x**2 - 25
-def df(x): return 2*x
-
-x0 = 10.0
-for i in range(5):
-    x0 = x0 - f(x0)/df(x0)
-    print(f"Iteration {i+1}: Approximation = {x0:.6f}")
-"""
-        code_input = st.text_area("Code Editor:", value=starter, height=200)
-        
-        c1, c2 = st.columns([1, 1])
-        with c1:
-            run_btn = st.button("▶ Run Script", use_container_width=True)
-        with c2:
-            st.download_button(
-                label="💾 Download Code (.py)",
-                data=code_input,
-                file_name="bca_code.py",
-                mime="text/plain",
-                use_container_width=True
-            )
-
-        if run_btn:
-            buf = io.StringIO()
-            try:
-                with contextlib.redirect_stdout(buf):
-                    exec(code_input, {})
-                output_str = buf.getvalue()
-                st.success("Execution Successful")
-                st.text_area("Console Output:", output_str if output_str else "[Program finished with no output]", height=120)
-            except Exception as ex:
-                st.error(f"Traceback Error: {ex}")
-
-    # ================= TAB ROUTING =================
-    if selected_tab == "📖 Syllabus":
-        render_syllabus()
-    elif selected_tab == "📝 Handwritten Notes":
-        render_handwritten_notes()
-    elif selected_tab == "📝 Exam Engine":
-        render_exam_engine()
-    elif selected_tab == "🛠️ Projects":
-        render_projects()
-    elif selected_tab == "🤖 AI Mentor":
-        render_mentor()
-    elif selected_tab == "🧪 Sandbox":
-        render_runner()
+    if run_code:
+        buf = io.StringIO()
+        try:
+            with contextlib.redirect_stdout(buf):
+                exec(user_code, {})
+            st.success("Execution Successful")
+            st.code(buf.getvalue() if buf.getvalue() else "[Program executed with no terminal output]")
+        except Exception as err:
+            st.error(f"Runtime Traceback: {err}")
