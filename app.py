@@ -29,7 +29,7 @@ if "dynamic_pages_list" not in st.session_state:
 if "saved_scripts" not in st.session_state:
     st.session_state.saved_scripts = {
         "welcome.py": "# Default Starter Script\nname = 'Harsh Raj Soni'\ncollege = 'MLK PG College Balrampur'\nprint(f'⚡ BCA OS Initialized by {name} [{college}]')",
-        "prime_checker.py": "# Prime Number Logic\ndef is_prime(n):\n    if n <= 1: return False\n    for i in range(2, int(n**0.5) + 1):\n        if n % i == 0: return False\n    return True\n\nnum = 29\nprint(f'{num} is prime:', is_prime(num))"
+        "prime_checker.py": "# Prime Number Logic (Strict 4-Space PEP 8)\ndef is_prime(n):\n    if n <= 1:\n        return False\n    for i in range(2, int(n**0.5) + 1):\n        if n % i == 0:\n            return False\n    return True\n\nnum = 29\nprint(f'{num} is prime:', is_prime(num))"
     }
 
 if "active_code" not in st.session_state:
@@ -40,13 +40,10 @@ if "last_error" not in st.session_state:
 
 # Editor Preferences
 if "editor_rows" not in st.session_state:
-    st.session_state.editor_rows = 240
+    st.session_state.editor_rows = 250
 
 if "editor_font_size" not in st.session_state:
     st.session_state.editor_font_size = "14px"
-
-if "indent_spaces" not in st.session_state:
-    st.session_state.indent_spaces = 4
 
 # ================= CYBER CODER BLACK & ELECTRIC YELLOW CSS =================
 st.markdown(f"""
@@ -173,6 +170,14 @@ st.markdown(f"""
         color: #FFE600;
         font-family: 'JetBrains Mono', monospace;
         box-shadow: 0 0 15px rgba(255, 230, 0, 0.25);
+    }}
+
+    /* Subject Switcher Row */
+    .subject-button-dock {{
+        display: flex;
+        gap: 10px;
+        margin-bottom: 16px;
+        width: 100%;
     }}
 
     /* Top Navigation Dock */
@@ -310,14 +315,19 @@ st.markdown(f"""
         margin-bottom: 12px;
     }}
 
-    /* Dynamic Editor Area Styling */
+    /* ================= PEP-8 4-SPACE INDENTATION LINES GUIDE ================= */
     textarea[aria-label="Python Code Editor:"] {{
         font-size: {st.session_state.editor_font_size} !important;
         font-family: 'JetBrains Mono', monospace !important;
-        background-color: #07080a !important;
+        background-color: #060709 !important;
         color: #F8FAFC !important;
-        border: 1px solid rgba(255, 230, 0, 0.3) !important;
-        line-height: 1.5 !important;
+        border: 1px solid rgba(255, 230, 0, 0.35) !important;
+        line-height: 24px !important;
+        tab-size: 4 !important;
+        /* Visual Vertical Indentation Guides every 4 spaces */
+        background-image: linear-gradient(90deg, rgba(255, 230, 0, 0.07) 1px, transparent 1px) !important;
+        background-size: 33.6px 100% !important; /* Calibrated to 4 character monospace pitch */
+        padding-left: 14px !important;
     }}
 
     /* Electric Yellow Buttons */
@@ -392,13 +402,13 @@ def get_ai_response(prompt, image_input=None, forced_language=None, current_subj
         )
 
     optimized_prompt = f"""
-    You are a distinguished computer science and mathematics professor for the BCA curriculum at MLK PG College, Balrampur (affiliated with Maa Pateshwari State University).
+    You are a distinguished professor for the BCA curriculum at MLK PG College, Balrampur (affiliated with Maa Pateshwari State University).
     Subject Context: {current_subject}
     {lang_instruction}
 
     TEACHING RULES:
     1. Write in clean, concise student register notes or clean runnable Python scripts.
-    2. When analyzing code or fixing errors, explain step-by-step in simple language and provide fully working optimized code.
+    2. When analyzing code or fixing errors, explain step-by-step in simple language and follow strict PEP 8 4-space indentation.
     3. Separate individual pages with the exact token '[PAGE_BREAK]' if asked for notes.
     4. Write mathematical derivations with crystal clear steps and memory shortcuts.
 
@@ -445,9 +455,8 @@ if not st.session_state.system_booted:
         <div class="coder-terminal-box">
             <div><span style="color:#38BDF8;">root@harshraj-os:~$</span> initialize_environment</div>
             <div style="color:#A3E635;">✔ Initializing Neural Kernel & LLM Gateway...</div>
-            <div style="color:#A3E635;">✔ Loading Syllabus Matrix: [Python, CSA, Discrete Maths]</div>
-            <div style="color:#A3E635;">✔ Virtual File Storage & AI Code Copilot: Ready</div>
-            <div style="color:#A3E635;">✔ Mathematics Encyclopedia & Formula Engine: Mounted</div>
+            <div style="color:#A3E635;">✔ Mounting Tactile Subject Selector Buttons...</div>
+            <div style="color:#A3E635;">✔ Strict PEP-8 Indent Guide Lines Active</div>
             <div style="color:#FFE600;">⚡ Status: Environment Ready. High-Performance Mode Engaged.</div>
         </div>
     </div>
@@ -477,36 +486,46 @@ else:
     </div>
     """, unsafe_allow_html=True)
 
-    # Subject Selector Bar
-    sub_col1, sub_col2 = st.columns([2, 1])
-    with sub_col1:
-        st.markdown("<span style='font-size:12px; color:#FFE600; font-family:JetBrains Mono;'>[ACTIVE_STREAM]</span>", unsafe_allow_html=True)
-    with sub_col2:
-        st.session_state.selected_subject = st.selectbox(
-            "Current Stream:",
-            [
-                "🐍 Python Programming",
-                "🖥️ Computer System Architecture",
-                "📐 Mathematics & Numerical Methods"
-            ],
-            index=0,
-            label_visibility="collapsed"
-        )
+    # ================= PROPER TACTILE SUBJECT SELECTION BUTTONS =================
+    st.markdown("<span style='font-size:12px; color:#FFE600; font-family:JetBrains Mono; font-weight:700;'>[SELECT ACTIVE STREAM]</span>", unsafe_allow_html=True)
+    
+    sub_btn_col1, sub_btn_col2, sub_btn_col3 = st.columns(3)
+    with sub_btn_col1:
+        if st.button("🐍 Python Programming", use_container_width=True):
+            st.session_state.selected_subject = "🐍 Python Programming"
+            st.rerun()
+    with sub_btn_col2:
+        if st.button("🖥️ Computer System Architecture", use_container_width=True):
+            st.session_state.selected_subject = "🖥️ Computer System Architecture"
+            st.rerun()
+    with sub_btn_col3:
+        if st.button("📐 Mathematics & Numerical Methods", use_container_width=True):
+            st.session_state.selected_subject = "📐 Mathematics & Numerical Methods"
+            st.rerun()
 
     active_subj = st.session_state.selected_subject
+    st.caption(f"Active Stream: **{active_subj}**")
 
-    # Top Navigation Dock
+    # ================= DYNAMIC SUBJECT-SPECIFIC NAVIGATION DOCK =================
+    nav_options = [
+        "📝 Smart Register",
+        "📖 Syllabus Explorer",
+        "🎯 Exam Engine",
+        "🔬 Projects Lab",
+        "🤖 AI Mentor"
+    ]
+    
+    # Specific Subject Add-on Menu Integration
+    if active_subj == "📐 Mathematics & Numerical Methods":
+        nav_options.insert(1, "📐 Maths Menu")
+    elif active_subj == "🐍 Python Programming":
+        nav_options.append("💻 Python Sandbox & Storage")
+    elif active_subj == "🖥️ Computer System Architecture":
+        nav_options.insert(1, "🖥️ CSA Circuit Menu")
+
     selected_nav = st.radio(
         label="Main Navigation",
-        options=[
-            "📝 Smart Register",
-            "📐 Maths Encyclopedia",
-            "📖 Syllabus Explorer",
-            "🎯 Exam Engine",
-            "🔬 Projects Lab",
-            "🤖 AI Mentor",
-            "💻 Code Sandbox & Storage"
-        ],
+        options=nav_options,
         horizontal=True,
         index=0
     )
@@ -622,13 +641,13 @@ else:
                     st.session_state.current_note_page = min(total_pages, curr_pg + 1)
                     st.rerun()
 
-    # ================= 2. MATHS ENCYCLOPEDIA (NEW SPECIALIZED MENU) =================
-    elif selected_nav == "📐 Maths Encyclopedia":
-        st.markdown("#### 📐 Mathematics & Numerical Methods Formula Engine")
-        st.caption("Complete differentiation table, limits, indeterminate forms, matrix theorems, and discrete math shortcuts with worked exam questions.")
+    # ================= 2. MATHS MENU (ONLY VISIBLE UNDER MATHEMATICS) =================
+    elif selected_nav == "📐 Maths Menu":
+        st.markdown("#### 📐 Mathematics & Numerical Methods Comprehensive Formula Menu")
+        st.caption("Complete differentiation rules, indeterminate forms, matrix theorems, and numerical methods with verified examples.")
 
         math_tab1, math_tab2, math_tab3, math_tab4 = st.tabs([
-            "⚡ Differentiation Master Rules",
+            "⚡ Differentiation Complete Rules",
             "🎯 L'Hopital & Limits",
             "🔢 Matrices & Consistency",
             "🕸️ Discrete & Numerical Solvers"
@@ -683,13 +702,6 @@ else:
             - **Cayley-Hamilton Theorem:** Har square matrix apni characteristic equation $|A - \lambda I| = 0$ ko satisfy karti hai ($A^2 - \text{tr}(A)A + |A|I = O$).
             """)
 
-            with st.expander("📝 Fast Eigenvalues Trick: 2x2 Matrix"):
-                st.markdown(r"""
-                For matrix $A = \begin{pmatrix} a & b \\ c & d \end{pmatrix}$:
-                $$\lambda^2 - \text{Trace}(A)\lambda + \det(A) = 0$$
-                - **Verification Rule:** Sum of Eigenvalues = $\text{Trace}(A) = a + d$, Product of Eigenvalues = $\det(A)$.
-                """)
-
         with math_tab4:
             st.markdown("##### 🕸️ Discrete Maths & Numerical Methods Shortcuts")
             c_d1, c_d2 = st.columns(2)
@@ -716,13 +728,42 @@ else:
                     <i>Quadratic Order of Convergence (Order = 2). Rapid root locator.</i>
                 </div>
                 """, unsafe_allow_html=True)
-                st.markdown("""
-                <div class="formula-card">
-                    <b>Bisection Method Formula:</b><br>
-                    $$c = \frac{a + b}{2} \quad \text{where } f(a) \cdot f(b) < 0$$<br>
-                    <i>Linear Order of Convergence (Order = 1). Always guaranteed convergence.</i>
-                </div>
-                """, unsafe_allow_html=True)
+
+    # ================= 2. CSA CIRCUIT MENU (ONLY VISIBLE UNDER CSA) =================
+    elif selected_nav == "🖥️ CSA Circuit Menu":
+        st.markdown("#### 🖥️ CSA Digital Logic, Architecture & Circuit Equations Menu")
+        st.caption("Complete equations and architecture summary for Computer System Architecture.")
+
+        csa_tab1, csa_tab2 = st.tabs(["⚡ Logic Gates & Adders", "⚙️ Memory Hierarchy & Pipelining"])
+        with csa_tab1:
+            st.markdown("""
+            <div class="formula-card">
+                <b>Half Adder Equations:</b><br>
+                - $Sum = A \oplus B = A'B + AB'$<br>
+                - $Carry = A \cdot B$
+            </div>
+            <div class="formula-card">
+                <b>Full Adder Equations (Using 2 Half Adders + 1 OR Gate):</b><br>
+                - $Sum = A \oplus B \oplus C_{in}$<br>
+                - $Carry = AB + C_{in}(A \oplus B)$
+            </div>
+            <div class="formula-card">
+                <b>K-Map Minimization Priority Order:</b><br>
+                Octet (8 cells) $\implies$ Quad (4 cells) $\implies$ Pair (2 cells). Bigger group = simpler expression.
+            </div>
+            """, unsafe_allow_html=True)
+        with csa_tab2:
+            st.markdown("""
+            <div class="formula-card">
+                <b>Pipelining Speedup Ratio:</b><br>
+                $$S = \\frac{n \cdot k}{k + n - 1}$$<br>
+                <i>Where $k$ = pipeline stages, $n$ = number of instructions.</i>
+            </div>
+            <div class="formula-card">
+                <b>Direct Cache Mapping Address Division:</b><br>
+                <code>[ TAG | INDEX (Cache Line) | WORD OFFSET (Block Size) ]</code>
+            </div>
+            """, unsafe_allow_html=True)
 
     # ================= 3. SYLLABUS EXPLORER =================
     elif selected_nav == "📖 Syllabus Explorer":
@@ -848,19 +889,21 @@ else:
                     </div>
                     """, unsafe_allow_html=True)
 
-    # ================= 7. GOOGLE COLAB-STYLE CODE SANDBOX & VIRTUAL STORAGE =================
-    elif selected_nav == "💻 Code Sandbox & Storage":
-        st.markdown(f"#### 💻 Interactive Colab Sandbox, Settings & CheatSheet // {active_subj}")
+    # ================= 7. PYTHON SANDBOX, 4-SPACE INDENTATION & STORAGE (ONLY UNDER PYTHON) =================
+    elif selected_nav == "💻 Python Sandbox & Storage":
+        st.markdown(f"#### 💻 Interactive Colab Sandbox & PEP-8 Storage // Python Only")
 
         # Top Drawer: Settings & Documentation CheatSheet
         drawer_col1, drawer_col2, drawer_col3 = st.columns([1.5, 1.5, 1.2])
         
         with drawer_col1:
-            with st.expander("⚙️ Editor & Indentation Settings", expanded=False):
-                st.session_state.editor_rows = st.slider("Editor Row Height (px):", min_value=150, max_value=500, value=st.session_state.editor_rows, step=25)
+            with st.expander("⚙️ PEP-8 Indentation & Editor Settings", expanded=False):
+                st.session_state.editor_rows = st.slider("Editor Height (px):", min_value=150, max_value=500, value=st.session_state.editor_rows, step=25)
                 st.session_state.editor_font_size = st.selectbox("Editor Font Size:", ["12px", "14px", "16px", "18px"], index=1)
-                st.session_state.indent_spaces = st.selectbox("Indentation Assist Tab Width:", [2, 4], index=1)
-                st.caption(f"Configured: {st.session_state.indent_spaces} spaces indentation • Font: {st.session_state.editor_font_size}")
+                st.markdown("""
+                - **PEP-8 Indentation Assist:** Strictly Locked to **4 Spaces**.
+                - **Indentation Guide Lines:** Active (Subtle vertical guidelines rendered in editor).
+                """)
 
         with drawer_col2:
             with st.expander("📚 Python Keywords & Syntax Guide", expanded=False):
@@ -907,7 +950,7 @@ else:
                     else:
                         st.warning("Please enter a file name.")
 
-        # Interactive Code Editor
+        # Interactive Code Editor with Visual 4-Space Indent Lines
         user_code = st.text_area(
             "Python Code Editor:",
             value=st.session_state.active_code,
@@ -986,7 +1029,7 @@ else:
 
                     Please:
                     1. Explain in simple language why this error occurred.
-                    2. Provide the 100% working corrected code.
+                    2. Provide the 100% working corrected code adhering strictly to 4-space indentation.
                     """
                     fixed_solution = get_ai_response(fix_prompt, current_subject="Python")
                     st.markdown(f"""
