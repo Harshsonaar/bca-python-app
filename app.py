@@ -19,10 +19,10 @@ if "app_entered" not in st.session_state:
 if "selected_subject" not in st.session_state:
     st.session_state.selected_subject = "🐍 Python Programming"
 
-# ================= ULTRA-PREMIUM APPLE FROSTED GLASS & MODERN UI CSS =================
+# ================= ULTRA-PREMIUM APPLE FROSTED GLASS & REGISTER CSS =================
 st.markdown("""
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Kalam:wght@400;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Patrick+Hand&family=Shantell+Sans:wght@400;500;600;700&display=swap');
 
     html, body, [class*="css"] {
         font-family: -apple-system, BlinkMacSystemFont, "Plus Jakarta Sans", "SF Pro Display", sans-serif;
@@ -37,7 +37,7 @@ st.markdown("""
         color: #F1F5F9;
     }
 
-    /* Streamlit Host Header, Badges & Footers Hide */
+    /* Streamlit Host Header, Badges & Footers Complete Elimination */
     header[data-testid="stHeader"] {display: none !important;}
     footer {display: none !important; visibility: hidden !important;}
     .viewerBadge_container__1QSob, 
@@ -56,7 +56,7 @@ st.markdown("""
 
     /* Extra Page Bottom Padding */
     .block-container {
-        padding-top: 20px !important;
+        padding-top: 15px !important;
         padding-bottom: 180px !important;
     }
 
@@ -119,20 +119,20 @@ st.markdown("""
     .hero-banner {
         background: rgba(255, 255, 255, 0.04);
         border: 1px solid rgba(255, 255, 255, 0.12);
-        padding: 24px 30px;
+        padding: 22px 28px;
         border-radius: 20px;
         backdrop-filter: blur(24px);
         -webkit-backdrop-filter: blur(24px);
         box-shadow: 0 20px 40px rgba(0, 0, 0, 0.45);
-        margin-bottom: 24px;
+        margin-bottom: 20px;
     }
     .hero-title {
-        font-size: 30px;
+        font-size: 28px;
         font-weight: 800;
         background: linear-gradient(135deg, #FFFFFF 0%, #A5B4FC 50%, #38BDF8 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
-        margin-bottom: 6px;
+        margin-bottom: 4px;
     }
     .hero-sub {
         font-size: 14px;
@@ -152,41 +152,41 @@ st.markdown("""
         margin-top: 24px;
     }
 
-    /* ================= MINI DUAL-PAGE NOTEBOOK DESIGN ================= */
+    /* ================= GENUINE STUDENT REGISTER PAGE DESIGN ================= */
     .notebook-mini-page {
-        background-color: #fcfcfb !important;
+        background-color: #fefefd !important;
+        /* Ruled lines pattern + Clean Red Margin line */
         background-image: 
-            linear-gradient(90deg, transparent 32px, #f43f5e 32px, #f43f5e 33px, transparent 33px),
+            linear-gradient(90deg, transparent 40px, #f43f5e 40px, #f43f5e 42px, transparent 42px),
             linear-gradient(#e2e8f0 1px, transparent 1px) !important;
-        background-size: 100% 100%, 100% 24px !important;
-        border-radius: 8px !important;
-        padding: 16px 14px 16px 42px !important;
-        color: #1e293b !important;
-        font-family: 'Kalam', cursive, sans-serif !important;
-        font-size: 14px !important;
-        line-height: 24px !important;
+        background-size: 100% 100%, 100% 26px !important;
+        border-radius: 6px !important;
+        padding: 16px 14px 16px 52px !important; /* Safe padding away from red margin */
+        color: #1e3a8a !important; /* Clean Blue Pen Ink */
+        font-family: 'Patrick Hand', cursive, sans-serif !important;
+        font-size: 15px !important;
+        line-height: 26px !important;
         border: 1px solid #cbd5e1 !important;
-        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3) !important;
-        max-height: 380px !important;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35) !important;
+        height: 380px !important;
         overflow-y: hidden !important;
         position: relative !important;
-        cursor: pointer !important;
-        transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+        box-sizing: border-box !important;
+        transition: transform 0.2s ease, border-color 0.2s ease !important;
     }
     .notebook-mini-page:hover {
-        transform: translateY(-3px) scale(1.01);
-        box-shadow: 0 8px 22px rgba(56, 189, 248, 0.25) !important;
+        transform: translateY(-2px);
         border-color: #38bdf8 !important;
     }
     .notebook-mini-page::before {
         content: '' !important;
         position: absolute !important;
-        top: 10px !important;
-        left: 10px !important;
-        width: 10px !important;
+        top: 12px !important;
+        left: 12px !important;
+        width: 12px !important;
         height: 90% !important;
         background-image: radial-gradient(circle, #cbd5e1 4px, transparent 5px) !important;
-        background-size: 10px 24px !important;
+        background-size: 12px 26px !important;
         background-repeat: repeat-y !important;
     }
 
@@ -196,32 +196,51 @@ st.markdown("""
         color: #ffffff;
         font-size: 11px;
         font-weight: 700;
-        padding: 2px 8px;
-        border-radius: 12px;
-        margin-bottom: 8px;
-        font-family: -apple-system, sans-serif;
+        padding: 1px 8px;
+        border-radius: 10px;
+        margin-bottom: 6px;
+        font-family: 'Plus Jakarta Sans', sans-serif !important;
     }
 
     /* FULL EXPANDED NOTEBOOK MODAL / READER */
     .notebook-full-page {
-        background-color: #fcfcfb !important;
+        background-color: #fefefd !important;
         background-image: 
-            linear-gradient(90deg, transparent 48px, #f43f5e 48px, #f43f5e 50px, transparent 50px),
+            linear-gradient(90deg, transparent 46px, #f43f5e 46px, #f43f5e 48px, transparent 48px),
             linear-gradient(#e0e7ff 1px, transparent 1px) !important;
-        background-size: 100% 100%, 100% 30px !important;
-        border-radius: 12px !important;
-        padding: 30px 24px 30px 65px !important;
-        color: #0f172a !important;
-        font-family: 'Kalam', cursive, sans-serif !important;
-        font-size: 18px !important;
-        line-height: 30px !important;
+        background-size: 100% 100%, 100% 28px !important;
+        border-radius: 8px !important;
+        padding: 24px 20px 28px 60px !important; /* Proper text margin spacing */
+        color: #1e3a8a !important; /* Real Blue Ink */
+        font-family: 'Patrick Hand', cursive, sans-serif !important;
+        font-size: 17px !important;
+        line-height: 28px !important;
         border: 1px solid #cbd5e1 !important;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45) !important;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5) !important;
+        word-break: break-word !important;
+        box-sizing: border-box !important;
     }
     .notebook-full-page h1, .notebook-full-page h2, .notebook-full-page h3 {
-        color: #1e3a8a !important;
-        font-family: 'Kalam', cursive !important;
-        margin-top: 14px !important;
+        color: #0f172a !important;
+        font-family: 'Shantell Sans', cursive !important;
+        margin-top: 12px !important;
+        margin-bottom: 6px !important;
+        font-size: 20px !important;
+        border-bottom: 1.5px solid #ef4444 !important;
+        padding-bottom: 3px !important;
+    }
+    .notebook-full-page p, .notebook-full-page li {
+        font-family: 'Patrick Hand', cursive !important;
+        color: #1e293b !important;
+        margin-bottom: 4px !important;
+    }
+    .notebook-full-page code {
+        font-family: 'JetBrains Mono', monospace !important;
+        background: #f1f5f9 !important;
+        color: #0369a1 !important;
+        padding: 1px 6px !important;
+        border-radius: 4px !important;
+        font-size: 13px !important;
     }
 
     /* AI Response Glass Box */
@@ -239,24 +258,13 @@ st.markdown("""
         box-shadow: 0 15px 35px rgba(0, 0, 0, 0.45);
     }
 
-    /* Exam Question Callout Box */
-    .solved-box {
-        background: rgba(30, 41, 59, 0.7);
-        border: 1px solid rgba(56, 189, 248, 0.4);
-        border-left: 4px solid #38BDF8;
-        padding: 16px 20px;
-        border-radius: 12px;
-        margin-top: 14px;
-        margin-bottom: 14px;
-    }
-
     /* Apple-style Gradient Buttons */
     .stButton>button {
         background: linear-gradient(135deg, rgba(59, 130, 246, 0.9) 0%, rgba(147, 51, 234, 0.9) 100%) !important;
         color: #FFFFFF !important;
         border: 1px solid rgba(255, 255, 255, 0.2) !important;
         border-radius: 12px !important;
-        padding: 10px 24px !important;
+        padding: 9px 22px !important;
         font-weight: 600 !important;
         font-size: 14px !important;
         letter-spacing: 0.3px !important;
@@ -286,7 +294,7 @@ st.markdown("""
         backdrop-filter: blur(28px) saturate(190%) !important;
         -webkit-backdrop-filter: blur(28px) saturate(190%) !important;
         box-shadow: 0 12px 35px rgba(0, 0, 0, 0.75), inset 0 1px 1px rgba(255, 255, 255, 0.2) !important;
-        margin: 12px auto 26px auto !important;
+        margin: 10px auto 24px auto !important;
         width: max-content !important;
         max-width: 95vw !important;
     }
@@ -339,7 +347,7 @@ st.markdown("""
             overflow-x: auto !important;
             -webkit-overflow-scrolling: touch !important;
             scrollbar-width: none !important;
-            margin-bottom: 18px !important;
+            margin-bottom: 16px !important;
         }
         div[data-testid="stRadio"]::-webkit-scrollbar {
             display: none !important;
@@ -360,16 +368,17 @@ st.markdown("""
             flex-shrink: 0 !important;
         }
         .notebook-mini-page {
-            padding: 12px 10px 12px 30px !important;
-            font-size: 12px !important;
-            line-height: 20px !important;
-            background-size: 100% 100%, 100% 20px !important;
-            max-height: 280px !important;
+            padding: 14px 10px 14px 44px !important;
+            font-size: 13px !important;
+            line-height: 22px !important;
+            background-size: 100% 100%, 100% 22px !important;
+            height: 280px !important;
         }
         .notebook-full-page {
-            padding: 20px 14px 20px 42px !important;
-            font-size: 16px !important;
-            line-height: 26px !important;
+            padding: 18px 12px 20px 48px !important;
+            font-size: 15px !important;
+            line-height: 24px !important;
+            background-size: 100% 100%, 100% 24px !important;
         }
     }
 
@@ -431,8 +440,8 @@ def get_ai_response(prompt, image_input=None, forced_language=None, current_subj
     {lang_instruction}
 
     TEACHING RULES:
-    1. Teach in the most intuitive, easy, and memorable language.
-    2. Format handwritten style notes with clean points, bullet summaries, key formula boxes, and mandatory example-based university exam questions with step-by-step solutions.
+    1. Teach in clean, natural student notebook register language (NOT decorative cursive).
+    2. Format handwritten style notes with short clean points, bullet summaries, key formula boxes, and mandatory example-based university exam questions with step-by-step solutions.
     3. If an image is uploaded, analyze handwritten queries, code or circuits thoroughly.
     4. Provide completed code and proofs without truncation.
 
@@ -478,7 +487,7 @@ if not st.session_state.app_entered:
         <div class="creator-signature">Crafted & Created by Raj ⚡</div>
         <div class="splash-subtitle">
             Autonomous curriculum for MLK PG College, Balrampur (Maa Pateshwari State University).
-            Complete syllabus coverage for Python Programming, CSA & Discrete Mathematics with Handwritten Notes, Solved Questions, and Multimodal Vision.
+            Complete syllabus coverage for Python Programming, CSA & Discrete Mathematics with Genuine Register Notes, Solved Questions, and Multimodal Vision.
         </div>
     </div>
     """, unsafe_allow_html=True)
@@ -552,8 +561,8 @@ else:
             if sel_mod == "Module 1: Language Basics, Operators & Bitwise":
                 with st.expander("1. Python Architecture, Bytecode Compilation & Dynamic Typing", expanded=True):
                     st.write("""
-                    * Source code (`.py`) compile hokar **Bytecode (`.pyc`)** banta hai, aur fir **Python Virtual Machine (PVM)** is bytecode ko line-by-line machine code mein run karti hai.
-                    * **Dynamic Typing:** Variables runtime par value ke anusaar data type acquire karte hain.
+                    * Source code (`.py`) compile hokar **Bytecode (`.pyc`)** banta hai, aur fir **Python Virtual Machine (PVM)** is bytecode ko execute karti hai.
+                    * **Dynamic Typing:** Variables runtime par value ke mutabik type acquire karte hain.
                     """)
                     st.code("""x = 101           # int
 x = "Raj Shraff"  # dynamically becomes string
@@ -646,7 +655,7 @@ print(re.findall(r'[\w\.-]+@[\w\.-]+', text))""", language="python")
     carry_bit = (a & b) | (cin & (a ^ b))
     return sum_bit, carry_bit
 
-print("Full Adder (1, 1, 1):", full_adder(1, 1, 1)) # (1, 1)""", language="python")
+print("Full Adder (1, 1, 1):", full_adder(1, 1, 1))""", language="python")
 
         elif active_subj == "📐 Mathematics & Numerical Methods":
             st.markdown("""
@@ -695,13 +704,13 @@ for i in range(3):
                 ai_output = get_ai_response(prompt, current_subject=active_subj)
                 st.markdown(f'<div class="ai-box">{ai_output}</div>', unsafe_allow_html=True)
 
-    # ================= 2. DUAL SIDE-BY-SIDE PAGES (PAGE 1 & PAGE 2) WITH TAP-TO-EXPAND =================
+    # ================= 2. GENUINE REGISTER SIZE DUAL-PAGE HANDWRITTEN NOTES =================
     def render_handwritten_notes():
         active_subj = st.session_state.selected_subject
         st.markdown(f"""
         <div class="hero-banner">
-            <div class="hero-title">📝 Real Notebook Pages (Side-by-Side Dual View)</div>
-            <div class="hero-sub">Subject Context: {active_subj} • Chhote copy ke do pages agal-bagal dikhenge. Tap karke fullscreen reader mein kholein.</div>
+            <div class="hero-title">📝 Real Student Register Pages (Side-by-Side)</div>
+            <div class="hero-sub">Subject Context: {active_subj} • Normal student handwriting style notes with clean margin alignment. Tap to open full page view.</div>
         </div>
         """, unsafe_allow_html=True)
 
@@ -749,28 +758,28 @@ for i in range(3):
 
         final_topic = custom_topic.strip() if custom_topic.strip() else chosen_topic
 
-        if st.button("✍️ Write on Side-by-Side Dual Pages", use_container_width=True):
-            with st.spinner(f"Writing Page 1 and Page 2 in student register style for {final_topic}..."):
-                # Page 1 Prompt (Theory, Core Points, Formulas & Diagram)
+        if st.button("✍️ Write on Register Pages", use_container_width=True):
+            with st.spinner(f"Writing Page 1 and Page 2 in clean student register format for {final_topic}..."):
+                # Page 1 Prompt (Normal neat handwriting points, no giant cursive headers)
                 prompt_p1 = f"""
-                You are writing 'Page 1' of a neat student handwritten register notebook for BCA student at MLK PG College Balrampur.
-                Topic: '{final_topic}' in {active_subj}. Language: {notes_lang}.
+                You are a top BCA student writing clean register notes for: '{final_topic}' in {active_subj}.
+                Language: {notes_lang}.
 
-                Format as PAGE 1:
-                - 📌 Core Concept (Asli Matlab Kya Hai?) in concise bullet points.
-                - ⚡ Memory Trick & Formula Box (Direct formula to remember for exam).
-                - 📊 Flowchart, Truth Table, or Diagram Representation in clean text format.
-                Keep it concise so it fits a single notebook page.
+                Write in clean, simple handwritten student notes format (NOT fancy or decorative cursive):
+                - 📌 Core Concept (Seedhe 3-4 simple bullet points mein).
+                - ⚡ Formula / Shortcut Trick Box (Exam ke liye direct shortcut).
+                - 📊 Clean ASCII Flow, Truth Table or Diagram representation.
+                Do not use overly large header titles or fancy formatting. Keep it concise to fit a single notebook page.
                 """
                 
-                # Page 2 Prompt (Solved Question & Examiner Warnings)
+                # Page 2 Prompt (Solved Question & Warning)
                 prompt_p2 = f"""
-                You are writing 'Page 2' of the same student register notebook for BCA student at MLK PG College Balrampur.
-                Topic: '{final_topic}' in {active_subj}. Language: {notes_lang}.
+                You are writing 'Page 2' of the student register notes for: '{final_topic}' in {active_subj}.
+                Language: {notes_lang}.
 
-                Format as PAGE 2:
-                - 📝 Solved University Exam Question (High probability 5-10 Marks format with step-by-step verified solution).
-                - ⚠️ 2 Examiner Warnings (Where students make silly mistakes and how to score full marks).
+                Write in clean, simple handwritten student notes format:
+                - 📝 Solved University Exam Question (5-10 Marks format with step-by-step verified solution).
+                - ⚠️ 2 Examiner Warnings (Where students make silly mistakes and lose marks).
                 Keep it clear, concise and step-by-step.
                 """
 
@@ -780,8 +789,8 @@ for i in range(3):
 
         # RENDER DUAL PAGES (SIDE-BY-SIDE)
         if "notes_p1" in st.session_state and "notes_p2" in st.session_state:
-            st.markdown(f"#### 📖 Notebook Pages: {st.session_state.get('notes_topic')} ({active_subj})")
-            st.caption("👇 Dono pages agal-bagal hain. Kisi bhi page ke neeche **'🔍 Open Full Page'** click karke bade size mein kholein:")
+            st.markdown(f"#### 📖 Register Pages: {st.session_state.get('notes_topic')} ({active_subj})")
+            st.caption("👇 Dono pages agal-bagal hain. Kisi bhi page ke neeche **'🔍 Open Full Page'** click karke reader view mein kholein:")
 
             col_p1, col_p2 = st.columns(2)
 
@@ -789,18 +798,18 @@ for i in range(3):
                 st.markdown(f"""
                 <div class="notebook-mini-page">
                     <span class="page-tag-badge">PAGE 1</span>
-                    <div style="font-weight:700; font-size:18px; color:#1e3a8a; border-bottom:1px solid #ef4444; margin-bottom:6px;">
+                    <div style="font-weight:700; font-size:16px; color:#0f172a; border-bottom:1px solid #ef4444; margin-bottom:6px; font-family:'Shantell Sans', cursive;">
                         📌 Concept & Formulas
                     </div>
-                    {st.session_state.notes_p1[:400]}...
-                    <div style="color:#ef4444; font-size:12px; margin-top:8px;">[Click button below to read full page]</div>
+                    {st.session_state.notes_p1[:350]}...
+                    <div style="color:#ef4444; font-size:12px; margin-top:8px; font-weight:bold;">[Click below for full readable page]</div>
                 </div>
                 """, unsafe_allow_html=True)
                 with st.expander("🔍 Open Page 1 (Fullscreen Reader)", expanded=False):
                     st.markdown(f"""
                     <div class="notebook-full-page">
                         <span class="page-tag-badge">PAGE 1 : FULL VIEW</span>
-                        <h2 style="font-family:'Kalam', cursive; color:#1e3a8a; margin-top:8px;">{st.session_state.get('notes_topic')}</h2>
+                        <h3>{st.session_state.get('notes_topic')}</h3>
                         {st.session_state.notes_p1}
                     </div>
                     """, unsafe_allow_html=True)
@@ -809,23 +818,23 @@ for i in range(3):
                 st.markdown(f"""
                 <div class="notebook-mini-page">
                     <span class="page-tag-badge">PAGE 2</span>
-                    <div style="font-weight:700; font-size:18px; color:#1e3a8a; border-bottom:1px solid #ef4444; margin-bottom:6px;">
+                    <div style="font-weight:700; font-size:16px; color:#0f172a; border-bottom:1px solid #ef4444; margin-bottom:6px; font-family:'Shantell Sans', cursive;">
                         📝 Solved Questions & Tips
                     </div>
-                    {st.session_state.notes_p2[:400]}...
-                    <div style="color:#ef4444; font-size:12px; margin-top:8px;">[Click button below to read full page]</div>
+                    {st.session_state.notes_p2[:350]}...
+                    <div style="color:#ef4444; font-size:12px; margin-top:8px; font-weight:bold;">[Click below for full readable page]</div>
                 </div>
                 """, unsafe_allow_html=True)
                 with st.expander("🔍 Open Page 2 (Fullscreen Reader)", expanded=False):
                     st.markdown(f"""
                     <div class="notebook-full-page">
                         <span class="page-tag-badge">PAGE 2 : FULL VIEW</span>
-                        <h2 style="font-family:'Kalam', cursive; color:#1e3a8a; margin-top:8px;">{st.session_state.get('notes_topic')} - Solved Exam Practice</h2>
+                        <h3>{st.session_state.get('notes_topic')} - Solved Exam Practice</h3>
                         {st.session_state.notes_p2}
                     </div>
                     """, unsafe_allow_html=True)
 
-    # ================= 3. EXAM ENGINE =================
+    # ================= 3. EXAM ENGINE (WITH PHOTO ANSWER UPLOAD) =================
     def render_exam_engine():
         active_subj = st.session_state.selected_subject
         st.markdown(f"""
