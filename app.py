@@ -25,7 +25,7 @@ if "current_note_page" not in st.session_state:
 if "dynamic_pages_list" not in st.session_state:
     st.session_state.dynamic_pages_list = []
 
-# ================= ULTRA-PREMIUM APPLE FROSTED GLASS & COMPACT REGISTER CSS =================
+# ================= ULTRA-PREMIUM APPLE FROSTED GLASS & STRICT A4 REGISTER CSS =================
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Patrick+Hand&family=Shantell+Sans:wght@400;500;600;700&display=swap');
@@ -125,7 +125,7 @@ st.markdown("""
     .hero-banner {
         background: rgba(255, 255, 255, 0.04);
         border: 1px solid rgba(255, 255, 255, 0.12);
-        padding: 20px 24px;
+        padding: 18px 24px;
         border-radius: 18px;
         backdrop-filter: blur(24px);
         -webkit-backdrop-filter: blur(24px);
@@ -133,7 +133,7 @@ st.markdown("""
         margin-bottom: 16px;
     }
     .hero-title {
-        font-size: 26px;
+        font-size: 24px;
         font-weight: 800;
         background: linear-gradient(135deg, #FFFFFF 0%, #A5B4FC 50%, #38BDF8 100%);
         -webkit-background-clip: text;
@@ -158,32 +158,34 @@ st.markdown("""
         margin-top: 24px;
     }
 
-    /* ================= COMPACT NATURAL REGISTER PAGE DESIGN ================= */
+    /* ================= STRICT A4 REGISTER SHEET (NO SCROLL, EXACT RATIO) ================= */
     .register-flip-container {
         display: flex;
         justify-content: center;
+        align-items: center;
         margin-top: 10px;
         margin-bottom: 15px;
     }
     .register-sheet-bounded {
         background-color: #fefefd !important;
+        /* Ruled lines pattern + Clean Red Margin Line on Left */
         background-image: 
-            linear-gradient(90deg, transparent 38px, #f43f5e 38px, #f43f5e 40px, transparent 40px),
+            linear-gradient(90deg, transparent 36px, #f43f5e 36px, #f43f5e 37.5px, transparent 37.5px),
             linear-gradient(#e2e8f0 1px, transparent 1px) !important;
-        background-size: 100% 100%, 100% 26px !important;
-        border-radius: 8px !important;
-        padding: 20px 20px 20px 54px !important;
+        background-size: 100% 100%, 100% 22px !important;
+        border-radius: 6px !important;
+        padding: 16px 16px 16px 48px !important;
         color: #1e3a8a !important;
         font-family: 'Patrick Hand', cursive, sans-serif !important;
-        font-size: 16px !important;
-        line-height: 26px !important;
+        font-size: 14px !important;
+        line-height: 22px !important;
         border: 1px solid #cbd5e1 !important;
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45) !important;
+        box-shadow: 0 8px 26px rgba(0, 0, 0, 0.5) !important;
         width: 100% !important;
-        max-width: 650px !important;
-        min-height: 380px !important;
-        max-height: 440px !important;
-        overflow-y: auto !important;
+        max-width: 460px !important; /* Perfect standard A4 card width */
+        aspect-ratio: 1 / 1.38 !important; /* Authentic A4 Paper Ratio */
+        height: auto !important;
+        overflow: hidden !important; /* NO SCROLL AT ALL */
         box-sizing: border-box !important;
         position: relative !important;
     }
@@ -192,31 +194,32 @@ st.markdown("""
     .register-sheet-bounded::before {
         content: '' !important;
         position: absolute !important;
-        top: 12px !important;
-        left: 12px !important;
-        width: 12px !important;
-        height: 94% !important;
-        background-image: radial-gradient(circle, #cbd5e1 4px, transparent 5px) !important;
-        background-size: 12px 26px !important;
+        top: 10px !important;
+        left: 10px !important;
+        width: 10px !important;
+        height: 95% !important;
+        background-image: radial-gradient(circle, #cbd5e1 3.5px, transparent 4.5px) !important;
+        background-size: 10px 22px !important;
         background-repeat: repeat-y !important;
     }
 
     .register-sheet-bounded h1, .register-sheet-bounded h2, .register-sheet-bounded h3 {
         font-family: 'Shantell Sans', cursive !important;
         color: #0f172a !important;
-        font-size: 18px !important;
-        margin-top: 4px !important;
+        font-size: 15px !important;
+        margin-top: 2px !important;
         margin-bottom: 4px !important;
         border-bottom: 1.5px solid #ef4444 !important;
         padding-bottom: 2px !important;
+        line-height: 20px !important;
     }
 
     .register-sheet-bounded p, .register-sheet-bounded li {
         font-family: 'Patrick Hand', cursive !important;
         color: #1e293b !important;
-        font-size: 16px !important;
-        line-height: 26px !important;
-        margin-bottom: 4px !important;
+        font-size: 13.5px !important;
+        line-height: 22px !important;
+        margin-bottom: 2px !important;
     }
 
     .register-sheet-bounded pre, .register-sheet-bounded code {
@@ -225,21 +228,20 @@ st.markdown("""
         color: #0284c7 !important;
         border: 1px dashed #cbd5e1 !important;
         border-radius: 4px !important;
-        padding: 2px 6px !important;
-        font-size: 12px !important;
-        line-height: 18px !important;
+        padding: 2px 4px !important;
+        font-size: 11px !important;
+        line-height: 16px !important;
     }
 
     .page-turn-pill {
-        display: inline-flex;
-        align-items: center;
+        display: inline-block;
         background: #ef4444;
         color: #ffffff;
-        font-size: 11px;
+        font-size: 10px;
         font-weight: 700;
-        padding: 2px 8px;
-        border-radius: 10px;
-        margin-bottom: 6px;
+        padding: 1px 7px;
+        border-radius: 8px;
+        margin-bottom: 4px;
         font-family: 'Plus Jakarta Sans', sans-serif !important;
         letter-spacing: 0.5px;
     }
@@ -265,7 +267,7 @@ st.markdown("""
         color: #FFFFFF !important;
         border: 1px solid rgba(255, 255, 255, 0.2) !important;
         border-radius: 12px !important;
-        padding: 8px 18px !important;
+        padding: 7px 16px !important;
         font-weight: 600 !important;
         font-size: 13px !important;
         letter-spacing: 0.3px !important;
@@ -369,13 +371,12 @@ st.markdown("""
             flex-shrink: 0 !important;
         }
         .register-sheet-bounded {
-            padding: 16px 10px 16px 44px !important;
-            font-size: 14px !important;
-            line-height: 24px !important;
-            background-size: 100% 100%, 100% 24px !important;
-            min-height: 350px !important;
-            max-height: 400px !important;
-            max-width: 95vw !important;
+            padding: 14px 10px 14px 40px !important;
+            font-size: 12.5px !important;
+            line-height: 20px !important;
+            background-size: 100% 100%, 100% 20px !important;
+            max-width: 90vw !important;
+            aspect-ratio: 1 / 1.4 !important;
         }
     }
 </style>
@@ -424,9 +425,10 @@ def get_ai_response(prompt, image_input=None, forced_language=None, current_subj
 
     TEACHING RULES:
     1. Teach in clean, natural student notebook register language (NOT decorative cursive).
-    2. Format handwritten style notes concisely to fit real copy pages.
-    3. If content has multiple sections, separate them with the exact token '[PAGE_BREAK]' so it fits on dynamic pages.
-    4. Include mandatory exam questions with step-by-step solutions.
+    2. Format handwritten style notes strictly for a single A4 page per section.
+    3. Strictly restrict each page to ONLY 80-100 WORDS so that it fits the A4 page without any scrolling.
+    4. You MUST separate every individual page using the exact delimiter token '[PAGE_BREAK]'.
+    5. No unnecessary fluff. Point-to-point only.
 
     Query:
     {prompt}
@@ -470,7 +472,7 @@ if not st.session_state.app_entered:
         <div class="creator-signature">Crafted & Created by Raj ⚡</div>
         <div class="splash-subtitle">
             Autonomous curriculum for MLK PG College, Balrampur (Maa Pateshwari State University).
-            Complete syllabus coverage for Python Programming, CSA & Discrete Mathematics with Dynamic Register Notes and Multimodal Vision.
+            Complete syllabus coverage for Python Programming, CSA & Discrete Mathematics with Dynamic A4 Register Notes and Multimodal Vision.
         </div>
     </div>
     """, unsafe_allow_html=True)
@@ -687,13 +689,13 @@ for i in range(3):
                 ai_output = get_ai_response(prompt, current_subject=active_subj)
                 st.markdown(f'<div class="ai-box">{ai_output}</div>', unsafe_allow_html=True)
 
-    # ================= 2. DYNAMIC AUTO-PAGINATED HANDWRITTEN NOTES =================
+    # ================= 2. REAL A4 NON-SCROLLING DYNAMIC REGISTER NOTES =================
     def render_handwritten_notes():
         active_subj = st.session_state.selected_subject
         st.markdown(f"""
         <div class="hero-banner">
-            <div class="hero-title">📝 Real Student Register Notebook (Dynamic Pages)</div>
-            <div class="hero-sub">Subject Context: {active_subj} • Ek page mein jitna content aayega utna dikhega, baaki agle page par shift hoga!</div>
+            <div class="hero-title">📝 Authentic A4 Register Sheets (Zero Scroll)</div>
+            <div class="hero-sub">Subject Context: {active_subj} • Exact A4 card dimensions with natural handwriting. Turn pages with Next/Prev buttons.</div>
         </div>
         """, unsafe_allow_html=True)
 
@@ -741,30 +743,27 @@ for i in range(3):
 
         final_topic = custom_topic.strip() if custom_topic.strip() else chosen_topic
 
-        if st.button("✍️ Write on Register Pages", use_container_width=True):
+        if st.button("✍️ Write on A4 Register Sheets", use_container_width=True):
             st.session_state.current_note_page = 1
-            with st.spinner(f"Generating dynamic notebook pages for {final_topic}..."):
+            with st.spinner(f"Creating authentic A4 non-scroll register sheets for {final_topic}..."):
                 master_prompt = f"""
-                You are a top BCA student writing natural, clean notebook register notes for: '{final_topic}' in {active_subj}.
+                You are a university topper creating genuine A4 register notes for '{final_topic}' in {active_subj}.
                 Language: {notes_lang}.
 
-                PAGINATION INSTRUCTIONS:
-                - Write notes in natural, neat student handwriting style (NOT fancy decorative cursive).
-                - A single notebook page can only hold about 120-150 words cleanly.
-                - After every 120-150 words or complete section, you MUST insert the exact token: [PAGE_BREAK]
-                - Do NOT force 3 pages. If the topic is short, 1 or 2 pages is fine. If long, use 3 or 4 pages.
-
-                Content Structure to distribute across pages:
-                Section 1: 📌 Core Concept (Asli matlab kya hai? in simple 3-4 bullet points).
-                [PAGE_BREAK]
-                Section 2: ⚡ Memory Trick & Formula Box + Clean Flowchart/Truth table if applicable.
-                [PAGE_BREAK]
-                Section 3: 📝 Solved University Exam Question (Step-by-step solution) & ⚠️ Examiner Warning.
+                STRICT A4 FORMATTING CONSTRAINTS:
+                1. Write in concise, clean student pen handwriting.
+                2. IMPORTANT: Each page MUST contain NO MORE than 70 to 90 words so it fits perfectly on an A4 card without ANY vertical scrolling.
+                3. You MUST insert the delimiter '[PAGE_BREAK]' between pages.
+                4. Automatically create 2 to 4 dynamic pages as needed:
+                   - Page 1: Core Concept (3-4 crisp points).
+                   - Page 2: Formula / Trick Box / Diagram (short text summary).
+                   - Page 3: Solved Exam Numerical or Problem.
+                   - Page 4 (if needed): Examiner Warning & Tips.
                 """
 
                 raw_notes = get_ai_response(master_prompt, forced_language=notes_lang, current_subject=active_subj)
                 
-                # Dynamic page split logic
+                # Dynamic page split
                 pages = [p.strip() for p in raw_notes.split("[PAGE_BREAK]") if p.strip()]
                 if not pages:
                     pages = [raw_notes]
@@ -772,7 +771,7 @@ for i in range(3):
                 st.session_state.dynamic_pages_list = pages
                 st.session_state.flip_notes_topic = final_topic
 
-        # RENDER DYNAMIC PAGES
+        # RENDER STRICT A4 NON-SCROLLING PAGE
         if st.session_state.dynamic_pages_list:
             pages = st.session_state.dynamic_pages_list
             total_pages = len(pages)
@@ -786,9 +785,9 @@ for i in range(3):
                     st.rerun()
             with nav_col2:
                 st.markdown(f"""
-                <div style="text-align:center; padding-top:6px;">
-                    <span style="font-weight:700; color:#38BDF8; font-size:15px;">📖 {st.session_state.get('flip_notes_topic')}</span><br>
-                    <span style="color:#94A3B8; font-size:12px;">Page {curr_pg} of {total_pages}</span>
+                <div style="text-align:center; padding-top:4px;">
+                    <span style="font-weight:700; color:#38BDF8; font-size:14px;">📖 {st.session_state.get('flip_notes_topic')}</span><br>
+                    <span style="color:#94A3B8; font-size:11px;">A4 Sheet {curr_pg} of {total_pages}</span>
                 </div>
                 """, unsafe_allow_html=True)
             with nav_col3:
@@ -796,16 +795,16 @@ for i in range(3):
                     st.session_state.current_note_page = min(total_pages, curr_pg + 1)
                     st.rerun()
 
-            # Active Page Content
+            # Active Page Content (Pure A4 Container - Zero Scroll)
             current_page_text = pages[curr_pg - 1]
 
             st.markdown(f"""
             <div class="register-flip-container">
                 <div class="register-sheet-bounded">
-                    <span class="page-turn-pill">PAGE {curr_pg} OF {total_pages}</span>
-                    <h3 style="margin-top:4px;">{st.session_state.get('flip_notes_topic')}</h3>
-                    <div style="font-size:12px; color:#64748b; margin-bottom:8px; font-family:'Plus Jakarta Sans', sans-serif;">
-                        <b>Subject:</b> {active_subj} | <b>Institution:</b> MLK PG College Balrampur
+                    <span class="page-turn-pill">A4 SHEET {curr_pg} OF {total_pages}</span>
+                    <h3 style="margin-top:2px;">{st.session_state.get('flip_notes_topic')}</h3>
+                    <div style="font-size:11px; color:#64748b; margin-bottom:6px; font-family:'Plus Jakarta Sans', sans-serif;">
+                        <b>Subject:</b> {active_subj} | <b>MLK PG College Balrampur</b>
                     </div>
                     {current_page_text}
                 </div>
@@ -819,7 +818,7 @@ for i in range(3):
                     st.session_state.current_note_page = max(1, curr_pg - 1)
                     st.rerun()
             with b_nav2:
-                st.markdown(f"<div style='text-align:center; color:#94A3B8; font-size:11px;'>Flip through pages smoothly</div>", unsafe_allow_html=True)
+                st.markdown(f"<div style='text-align:center; color:#94A3B8; font-size:11px;'>Flip sheets to read full topic</div>", unsafe_allow_html=True)
             with b_nav3:
                 if st.button("Next ▶", disabled=(curr_pg == total_pages), key="b_next", use_container_width=True):
                     st.session_state.current_note_page = min(total_pages, curr_pg + 1)
