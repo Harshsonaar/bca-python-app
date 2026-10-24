@@ -6,15 +6,15 @@ import time
 from PIL import Image
 
 st.set_page_config(
-    page_title="MR X OS | BCA Academic Ecosystem",
+    page_title="BCA OS | Harsh Raj Soni",
     page_icon="⚡",
     layout="wide",
     initial_sidebar_state="collapsed"
 )
 
 # Initialize Session States
-if "zenitsu_loaded" not in st.session_state:
-    st.session_state.zenitsu_loaded = False
+if "system_booted" not in st.session_state:
+    st.session_state.system_booted = False
 
 if "selected_subject" not in st.session_state:
     st.session_state.selected_subject = "🐍 Python Programming"
@@ -25,7 +25,7 @@ if "current_note_page" not in st.session_state:
 if "dynamic_pages_list" not in st.session_state:
     st.session_state.dynamic_pages_list = []
 
-# ================= ZENITSU THUNDERCLAP BLACK & GOLD CYBER CSS =================
+# ================= CYBER CODER BLACK & ELECTRIC YELLOW CSS =================
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Patrick+Hand&display=swap');
@@ -37,9 +37,9 @@ st.markdown("""
         font-family: 'JetBrains Mono', monospace !important;
     }
 
-    /* Ambient Zenitsu Obsidian Canvas */
+    /* Ambient Obsidian & Electric Gold Canvas */
     .stApp {
-        background: radial-gradient(circle at 50% -20%, rgba(255, 230, 0, 0.18) 0%, rgba(20, 16, 0, 0.6) 40%, #08080A 100%) !important;
+        background: radial-gradient(circle at 50% -20%, rgba(255, 230, 0, 0.16) 0%, rgba(18, 16, 5, 0.6) 40%, #08080A 100%) !important;
         color: #F8FAFC;
     }
 
@@ -66,7 +66,7 @@ st.markdown("""
         max-width: 1180px !important;
     }
 
-    /* ================= OPENING ZENITSU LOADING SCREEN ================= */
+    /* ================= OPENING DEVELOPER BOOT SCREEN ================= */
     .splash-box {
         display: flex;
         flex-direction: column;
@@ -76,7 +76,7 @@ st.markdown("""
         text-align: center;
         position: relative;
     }
-    .thunder-badge {
+    .system-status-badge {
         display: inline-flex;
         align-items: center;
         gap: 8px;
@@ -102,7 +102,7 @@ st.markdown("""
         margin-bottom: 8px;
     }
     .splash-sub {
-        font-size: 15px;
+        font-size: 14px;
         color: #94A3B8;
         font-family: 'JetBrains Mono', monospace;
         margin-bottom: 24px;
@@ -125,7 +125,7 @@ st.markdown("""
     }
 
     /* Cyber Coder Top Banner */
-    .zenitsu-top-banner {
+    .cyber-top-banner {
         background: rgba(13, 14, 18, 0.85);
         border: 1px solid rgba(255, 230, 0, 0.25);
         border-radius: 16px;
@@ -267,15 +267,6 @@ st.markdown("""
         white-space: pre-wrap !important;
     }
 
-    /* Single-Row Arrow Controller */
-    .zenitsu-arrow-row {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 16px;
-        margin-top: 10px;
-    }
-
     /* Cyber Panels */
     .cyber-panel {
         background: rgba(13, 14, 18, 0.85);
@@ -327,9 +318,9 @@ if "GEMINI_API_KEY" in st.secrets:
     genai.configure(api_key=gemini_key)
 
 with st.sidebar:
-    st.markdown("### ⚡ ZENITSU CORE ENGINE")
+    st.markdown("### ⚡ SYSTEM TERMINAL")
     if gemini_key:
-        st.markdown('<span style="color:#FFE600; font-family:\'JetBrains Mono\'; font-weight:700;">● SYSTEM ACTIVE: THUNDERCLAP</span>', unsafe_allow_html=True)
+        st.markdown('<span style="color:#FFE600; font-family:\'JetBrains Mono\'; font-weight:700;">● CORE STATUS: ACTIVE</span>', unsafe_allow_html=True)
     else:
         with st.expander("🔑 Setup API Key", expanded=True):
             gemini_key = st.text_input("Gemini API Key:", type="password")
@@ -359,7 +350,7 @@ def get_ai_response(prompt, image_input=None, forced_language=None, current_subj
         )
 
     optimized_prompt = f"""
-    You are a distinguished university professor for BCA curriculum at MLK PG College, Balrampur (affiliated with Maa Pateshwari State University).
+    You are a distinguished computer science professor for the BCA curriculum at MLK PG College, Balrampur (affiliated with Maa Pateshwari State University).
     Subject: {current_subject}
     {lang_instruction}
 
@@ -403,36 +394,36 @@ def get_ai_response(prompt, image_input=None, forced_language=None, current_subj
 
     return f"⏳ AI Engine Temporary Busy: {last_error}"
 
-# ================= 0. ZENITSU LOADING & BOOT SCREEN =================
-if not st.session_state.zenitsu_loaded:
+# ================= 0. CODER BOOT & LOADING SCREEN =================
+if not st.session_state.system_booted:
     st.markdown("""
     <div class="splash-box">
-        <div class="thunder-badge">⚡ THUNDER BREATHING : FIRST FORM</div>
+        <div class="system-status-badge">⚡ BCA ACADEMIC SYSTEM v2.6</div>
         <div class="splash-author">CREATED & DESIGNED BY HARSH RAJ SONI</div>
-        <div class="splash-sub">MLK PG COLLEGE BALRAMPUR • BCA MASTER ECOSYSTEM</div>
+        <div class="splash-sub">MLK PG COLLEGE BALRAMPUR • MAA PATESHWARI STATE UNIVERSITY</div>
         <div class="coder-terminal-box">
-            <div><span style="color:#38BDF8;">root@harshraj-os:~$</span> boot_system --zenitsu-mode</div>
-            <div style="color:#A3E635;">✔ Initializing Thunder Neural Core v2.6...</div>
-            <div style="color:#A3E635;">✔ Mounting Syllabus Architecture: [Python, CSA, Discrete Maths]</div>
+            <div><span style="color:#38BDF8;">root@harshraj-os:~$</span> initialize_environment</div>
+            <div style="color:#A3E635;">✔ Initializing Neural Kernel & LLM Gateway...</div>
+            <div style="color:#A3E635;">✔ Loading Syllabus Modules: [Python, CSA, Discrete Maths]</div>
             <div style="color:#A3E635;">✔ Vision Multimodal Pipeline: Online</div>
-            <div style="color:#FFE600;">⚡ Status: Ready for High-Performance Coding & Academics.</div>
+            <div style="color:#FFE600;">⚡ Status: Environment Ready. High-Performance Mode Engaged.</div>
         </div>
     </div>
     """, unsafe_allow_html=True)
 
     c1, c2, c3 = st.columns([1, 1.2, 1])
     with c2:
-        if st.button("⚡ EXECUTE & ENTER PORTAL", use_container_width=True):
-            st.session_state.zenitsu_loaded = True
+        if st.button("⚡ LAUNCH & ENTER SYSTEM", use_container_width=True):
+            st.session_state.system_booted = True
             st.rerun()
 
 else:
     # ================= TOP APP HEADER =================
     st.markdown("""
-    <div class="zenitsu-top-banner">
+    <div class="cyber-top-banner">
         <div>
-            <div style="font-size: 20px; font-weight: 800; color: #FFE600; letter-spacing: -0.5px; font-family:'JetBrains Mono';">
-                ⚡ ZENITSU CORE // BCA OS
+            <div style="font-size: 19px; font-weight: 800; color: #FFE600; letter-spacing: -0.5px; font-family:'JetBrains Mono';">
+                ⚡ BCA ACADEMIC OS
             </div>
             <div style="font-size: 11px; color: #94A3B8; font-family:'JetBrains Mono';">
                 MLK PG College Balrampur • Maa Pateshwari State Univ
@@ -716,13 +707,13 @@ else:
     elif selected_nav == "💻 Code Sandbox":
         st.markdown(f"#### 💻 Interactive Python Terminal Engine")
         
-        starter_code = """# Interactive Python Sandbox - Zenitsu Edition
-def thunder_execution():
+        starter_code = """# Interactive Python Sandbox
+def system_execution():
     developer = "Harsh Raj Soni"
     college = "MLK PG College Balrampur"
     return f"⚡ [SUCCESS] Portal built by {developer} ({college})"
 
-print(thunder_execution())
+print(system_execution())
 """
         user_code = st.text_area("Terminal Editor:", value=starter_code, height=180)
         c1, c2 = st.columns([1, 1])
