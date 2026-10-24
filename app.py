@@ -50,7 +50,7 @@ def get_ai_response(prompt):
     if not gemini_key:
         return "⚠️ Pehle sidebar mein apni Gemini API Key paste karein."
     try:
-        model = genai.GenerativeModel("gemini-1.5-flash-latest")
+        model = genai.GenerativeModel("gemini-pro")
         response = model.generate_content(prompt)
         return response.text
     except Exception as e:
