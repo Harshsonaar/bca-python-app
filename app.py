@@ -245,33 +245,30 @@ except IOError as err:
     selected_unit = st.selectbox("Select Study Module:", list(units_data.keys()))
     cur = units_data[selected_unit]
 
-    c1, c2 = st.columns([1, 1], gap="medium")
+   c1, c2 = st.columns([1, 1], gap="medium")
     with c1:
-        st.markdown('<div class="glass-card">', unsafe_allow_html=True)
-        st.markdown("#### 📌 Key Exam Concepts")
-        st.write(cur["desc"])
-        st.markdown("#### 💻 Standard Lab Reference Code")
-        st.code(cur["code"], language="python")
-        st.markdown('</div>', unsafe_allow_html=True)
+        with st.container(border=True):
+            st.markdown("#### 📌 Key Exam Concepts")
+            st.write(cur["desc"])
+            st.markdown("#### 💻 Standard Lab Reference Code")
+            st.code(cur["code"], language="python")
 
     with c2:
-        st.markdown('<div class="glass-card">', unsafe_allow_html=True)
-        st.markdown("#### 🎯 AI Exam Preparation Assistant")
-        st.write("Generate University semester test paper questions & external viva questions for this unit:")
-        if st.button("🔥 Generate Most Important Exam Questions"):
-            with st.spinner("AI Professor analyzing syllabus & trends..."):
-                prompt = f"""
-                You are a senior computer science examiner for BCA students.
-                For the unit: '{selected_unit}' with concepts: '{cur['desc']}':
-                1. Provide the top 3 high-weightage theory examination questions.
-                2. Provide 2 tricky Viva-Voce questions with short, precise answers.
-                3. Highlight 1 critical coding pitfall students make in lab exams.
-                Format cleanly using bolding and clear bullet points.
-                """
-                out = get_ai_response(prompt)
-                st.markdown(f'<div class="ai-box">{out}</div>', unsafe_allow_html=True)
-        st.markdown('</div>', unsafe_allow_html=True)
-
+        with st.container(border=True):
+            st.markdown("#### 🎯 AI Exam Preparation Assistant")
+            st.write("Generate University semester test paper questions & external viva questions for this unit:")
+            if st.button("🔥 Generate Most Important Exam Questions"):
+                with st.spinner("AI Professor analyzing syllabus & trends..."):
+                    prompt = f"""
+                    You are a senior computer science examiner for BCA students.
+                    For the unit: '{selected_unit}' with concepts: '{cur['desc']}':
+                    1. Provide the top 3 high-weightage theory examination questions.
+                    2. Provide 2 tricky Viva-Voce questions with short, precise answers.
+                    3. Highlight 1 critical coding pitfall students make in lab exams.
+                    Format cleanly using bolding and clear bullet points.
+                    """
+                    out = get_ai_response(prompt)
+                    st.markdown(f'<div class="ai-box">{out}</div>', unsafe_allow_html=True)
 # ================= 2. AI SMART EXAM ENGINE =================
 elif menu == "📝 AI Smart Exam Engine":
     st.markdown("""
