@@ -160,7 +160,6 @@ st.markdown("""
     }
 
     /* ================= ADAPTIVE AUTO-DETECTING FLOATING DOCK ================= */
-    /* DESKTOP / LAPTOP DISPLAY */
     div[data-testid="stRadio"] {
         position: fixed !important;
         bottom: 20px !important;
@@ -224,7 +223,6 @@ st.markdown("""
             padding: 16px !important;
         }
 
-        /* Mobile Island Dock: Horizontal pill, no vertical wrapping */
         div[data-testid="stRadio"] {
             bottom: 12px !important;
             padding: 6px 10px !important;
@@ -285,22 +283,31 @@ with st.sidebar:
             if gemini_key:
                 genai.configure(api_key=gemini_key)
                 st.success("Connected!")
-    st.caption("Crafted with ❤️ by Raj • Dynamic Auto-Tokens Engine")
+    st.caption("Crafted with ❤️ by Raj • Dynamic Auto-Tokens & Multi-Lingual")
 
-# Fully Dynamic Auto-Tokens Engine (Super Fast & Auto-Length without Hard Caps)
-def get_ai_response(prompt):
+# Dynamic Auto-Tokens Engine with Auto Language Mirroring
+def get_ai_response(prompt, forced_language=None):
     if not gemini_key:
         return "⚠️ Pehle Gemini API Key configure karein."
     
-    # Priority Pool: Ultra-fast lightweight models prioritized for rapid execution
     candidate_models = [
         "models/gemini-3.5-flash-lite",
         "models/gemini-3.8-flash",
         "models/gemini-2.0-flash"
     ]
     
+    # Auto-detection instruction
+    if forced_language:
+        lang_instruction = f"Strictly generate the output in {forced_language}."
+    else:
+        lang_instruction = (
+            "Detect the user's input language automatically (English, Hinglish, Hindi in Devanagari, etc.) "
+            "and respond in the exact same language and script naturally."
+        )
+
     optimized_prompt = f"""
     You are a distinguished computer science professor for university BCA curriculum.
+    {lang_instruction}
     Answer directly, professionally, and accurately. Complete all code blocks without cutting off.
     Do not add conversational fluff or meta-announcements.
     
@@ -312,12 +319,9 @@ def get_ai_response(prompt):
     for model_name in candidate_models:
         for attempt in range(2):
             try:
-                # Dynamic model configuration without max_output_tokens restriction
                 model = genai.GenerativeModel(
                     model_name=model_name,
-                    generation_config={
-                        "temperature": 0.25
-                    }
+                    generation_config={"temperature": 0.25}
                 )
                 response = model.generate_content(
                     optimized_prompt,
@@ -329,7 +333,7 @@ def get_ai_response(prompt):
                 last_error = str(e)
                 if "429" in last_error:
                     time.sleep(1.0)
-                    break # Switch to next candidate model immediately
+                    break
                 elif "504" in last_error or "deadline" in last_error.lower():
                     time.sleep(1.0)
                     continue
@@ -1088,12 +1092,12 @@ print("Extracted Indian Phone Numbers:", phones_found)""", language="python")
         st.markdown("""
         <div class="apple-glass-card">
             <h3 style="margin-top:0; font-size:20px; font-weight:700;">🎯 AI University Exam Preparation & Viva Master</h3>
-            <p style="color:#94A3B8; font-size:13px; margin-bottom:14px;">Iss module ke expected university exam questions aur viva points generate karein:</p>
+            <p style="color:#94A3B8; font-size:13px; margin-bottom:14px;">Iss module ke expected university exam questions aur viva points generate karein (Auto Language Detection Active):</p>
         </div>
         """, unsafe_allow_html=True)
 
         if st.button("🔥 Generate Most Important Exam Questions & Viva Points", use_container_width=True):
-            with st.spinner("AI Professor analyzing syllabus & trends (Dynamic Auto-Tokens Active)..."):
+            with st.spinner("AI Professor analyzing syllabus & trends..."):
                 prompt = f"""
                 You are a senior computer science examiner for BCA university exams.
                 For the module: '{selected_module}':
@@ -1105,46 +1109,56 @@ print("Extracted Indian Phone Numbers:", phones_found)""", language="python")
                 ai_output = get_ai_response(prompt)
                 st.markdown(f'<div class="ai-box">{ai_output}</div>', unsafe_allow_html=True)
 
+    # ================= 2. EXAM ENGINE WITH LANGUAGE SELECTOR =================
     def render_exam_engine():
         st.markdown("""
         <div class="hero-banner">
             <div class="hero-title">Automated Exam & Evaluation Suite</div>
-            <div class="hero-sub">Generate unique semester exam papers on the fly and get instant grading with line-by-line feedback.</div>
+            <div class="hero-sub">Generate unique semester exam papers in your preferred language and get instant grading with line-by-line feedback.</div>
         </div>
         """, unsafe_allow_html=True)
 
-        t_unit = st.selectbox("Exam Module:", [
-            "Module 1: Language Basics, Operators & Bitwise",
-            "Module 2: Control Flow & Iteration (Branches & Loops)",
-            "Module 3: Functions, Scopes, Lambdas & Recursion",
-            "Module 4: In-Depth Data Structures (Lists, Tuples, Dicts, Sets)",
-            "Module 5: Object-Oriented Programming (OOP Architecture)",
-            "Module 6: File Handling, Context Managers & JSON/CSV",
-            "Module 7: Exception Handling & Custom Errors",
-            "Module 8: Standard Libraries, Regex & Date-Time"
-        ])
+        col1, col2 = st.columns([1.5, 1])
+        with col1:
+            t_unit = st.selectbox("Exam Module:", [
+                "Module 1: Language Basics, Operators & Bitwise",
+                "Module 2: Control Flow & Iteration (Branches & Loops)",
+                "Module 3: Functions, Scopes, Lambdas & Recursion",
+                "Module 4: In-Depth Data Structures (Lists, Tuples, Dicts, Sets)",
+                "Module 5: Object-Oriented Programming (OOP Architecture)",
+                "Module 6: File Handling, Context Managers & JSON/CSV",
+                "Module 7: Exception Handling & Custom Errors",
+                "Module 8: Standard Libraries, Regex & Date-Time"
+            ])
+        with col2:
+            test_lang = st.selectbox(
+                "Paper Language:",
+                ["English", "Hinglish (Hindi in Latin Script)", "Hindi (हिन्दी - देवनागरी)"]
+            )
         
         if st.button("⚡ Generate New Test Paper", use_container_width=True):
-            with st.spinner("Drafting fresh exam questions..."):
+            with st.spinner(f"Drafting fresh exam questions in {test_lang}..."):
                 test_prompt = f"""
                 Create a 10-mark mini examination paper for BCA students on '{t_unit}'.
                 - Question 1 (2 Marks): Conceptual definition.
                 - Question 2 (3 Marks): Output prediction or short difference.
                 - Question 3 (5 Marks): Real-world coding question.
-                Keep questions strict and university-grade. Do NOT give solutions.
+                Keep questions strict, university-grade, and strictly in {test_lang}. Do NOT provide solutions yet.
                 """
-                st.session_state.current_test = get_ai_response(test_prompt)
+                st.session_state.current_test = get_ai_response(test_prompt, forced_language=test_lang)
+                st.session_state.test_lang_selected = test_lang
 
         if "current_test" in st.session_state:
-            st.markdown(f'<div class="apple-glass-card"><h4>📄 Current Question Paper</h4>{st.session_state.current_test}</div>', unsafe_allow_html=True)
+            st.markdown(f'<div class="apple-glass-card"><h4>📄 Current Question Paper ({st.session_state.get("test_lang_selected", "English")})</h4>{st.session_state.current_test}</div>', unsafe_allow_html=True)
 
             st.markdown("#### ✍️ Write & Submit Answers")
-            user_sol = st.text_area("Yahan apne answers aur codes type karein:", height=200, placeholder="Q1: ...\nQ2: ...\nQ3 (Code): ...")
+            user_sol = st.text_area("Yahan apne answers aur codes type karein (Any language accepted):", height=200, placeholder="Q1: ...\nQ2: ...\nQ3 (Code): ...")
             if st.button("🚀 Submit Sheet For AI Checking", use_container_width=True):
                 if not user_sol.strip():
                     st.warning("Please type your answer before submission.")
                 else:
                     with st.spinner("AI checking answers..."):
+                        target_eval_lang = st.session_state.get("test_lang_selected", "English")
                         eval_prompt = f"""
                         You are a strict BCA university examiner grading a student's answer sheet.
                         Paper:
@@ -1153,12 +1167,12 @@ print("Extracted Indian Phone Numbers:", phones_found)""", language="python")
                         Student Answer:
                         {user_sol}
 
-                        Evaluate thoroughly:
+                        Evaluate thoroughly in {target_eval_lang}:
                         1. Score out of 10 with clear breakdown.
                         2. Detailed remarks: strengths and missing elements.
                         3. Perfect model answer and corrected code.
                         """
-                        scorecard = get_ai_response(eval_prompt)
+                        scorecard = get_ai_response(eval_prompt, forced_language=target_eval_lang)
                         st.markdown(f'<div class="ai-box"><h3>📊 Examination Scorecard</h3>{scorecard}</div>', unsafe_allow_html=True)
 
     def render_projects():
@@ -1195,21 +1209,26 @@ print("Extracted Indian Phone Numbers:", phones_found)""", language="python")
                 """
                 st.markdown(f'<div class="ai-box">{get_ai_response(blueprint_prompt)}</div>', unsafe_allow_html=True)
 
+    # ================= 4. 24/7 AI CODE MENTOR (AUTO-DETECT LANGUAGE) =================
     def render_mentor():
         st.markdown("""
         <div class="hero-banner">
             <div class="hero-title">24/7 BCA Technical Mentor</div>
-            <div class="hero-sub">Resolve coding doubts, syntax comparisons with C language, or logic errors in seconds.</div>
+            <div class="hero-sub">Resolve coding doubts, syntax comparisons with C language, or logic errors in seconds. Auto-detects Hindi, Hinglish, or English.</div>
         </div>
         """, unsafe_allow_html=True)
 
-        user_q = st.text_area("Poochhein apna doubt ya code paste karein:", height=140, placeholder="e.g. C Pointers ka alternative Python mein kya hota hai?")
+        user_q = st.text_area(
+            "Poochhein apna doubt ya code paste karein (Hindi, English, ya Hinglish mein type karein):",
+            height=140,
+            placeholder="e.g. C Pointers ka alternative Python mein kya hota hai? ya Explain recursion in simple Hindi"
+        )
         if st.button("⚡ Ask AI Mentor", use_container_width=True):
             if not user_q.strip():
                 st.warning("Pehle sawal enter karein.")
             else:
                 with st.spinner("AI Mentor analyzing..."):
-                    ans = get_ai_response(f"You are a BCA Computer Science professor. Answer clearly with clean code examples:\n\n{user_q}")
+                    ans = get_ai_response(user_q)
                     st.markdown(f'<div class="ai-box">{ans}</div>', unsafe_allow_html=True)
 
     def render_runner():
