@@ -25,6 +25,19 @@ if "current_note_page" not in st.session_state:
 if "dynamic_pages_list" not in st.session_state:
     st.session_state.dynamic_pages_list = []
 
+# Virtual File System for Sandbox (Google Colab like storage)
+if "saved_scripts" not in st.session_state:
+    st.session_state.saved_scripts = {
+        "welcome.py": "# Default Starter Script\nname = 'Harsh Raj Soni'\ncollege = 'MLK PG College Balrampur'\nprint(f'⚡ BCA OS Initialized by {name} [{college}]')",
+        "prime_checker.py": "# Prime Number Logic\ndef is_prime(n):\n    if n <= 1: return False\n    for i in range(2, int(n**0.5) + 1):\n        if n % i == 0: return False\n    return True\n\nnum = 29\nprint(f'{num} is prime:', is_prime(num))"
+    }
+
+if "active_code" not in st.session_state:
+    st.session_state.active_code = st.session_state.saved_scripts["welcome.py"]
+
+if "last_error" not in st.session_state:
+    st.session_state.last_error = ""
+
 # ================= CYBER CODER BLACK & ELECTRIC YELLOW CSS =================
 st.markdown("""
 <style>
@@ -161,7 +174,7 @@ st.markdown("""
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7) !important;
         margin: 0 auto 16px auto !important;
         width: 100% !important;
-        max-width: 820px !important;
+        max-width: 860px !important;
     }
     div[data-testid="stRadio"] > label {display: none !important;}
     div[data-testid="stRadio"] > div {
@@ -272,7 +285,7 @@ st.markdown("""
         background: rgba(13, 14, 18, 0.85);
         border: 1px solid rgba(255, 230, 0, 0.2);
         border-radius: 14px;
-        padding: 22px;
+        padding: 20px;
         backdrop-filter: blur(20px);
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
         margin-top: 14px;
@@ -284,10 +297,10 @@ st.markdown("""
         color: #0A0A0C !important;
         border: 1px solid #FFE600 !important;
         border-radius: 10px !important;
-        padding: 8px 20px !important;
+        padding: 8px 18px !important;
         font-weight: 800 !important;
         font-family: 'JetBrains Mono', monospace !important;
-        font-size: 13.5px !important;
+        font-size: 13px !important;
         letter-spacing: 0.5px !important;
         transition: all 0.2s ease !important;
         box-shadow: 0 4px 15px rgba(255, 230, 0, 0.3) !important;
@@ -297,16 +310,18 @@ st.markdown("""
         box-shadow: 0 8px 25px rgba(255, 230, 0, 0.6) !important;
     }
 
-    @media (max-width: 768px) {
-        .notebook-paper-a4 {
-            padding: 16px 14px 22px 46px !important;
-            max-width: 95vw !important;
-            min-height: 440px !important;
-        }
-        .notebook-handwritten-text {
-            font-size: 15px !important;
-            line-height: 24px !important;
-        }
+    /* File Drawer Tabs */
+    .file-tab {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 230, 0, 0.2);
+        border-radius: 8px;
+        padding: 6px 12px;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 12px;
+        color: #FFE600;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -350,16 +365,14 @@ def get_ai_response(prompt, image_input=None, forced_language=None, current_subj
         )
 
     optimized_prompt = f"""
-    You are a distinguished computer science professor for the BCA curriculum at MLK PG College, Balrampur (affiliated with Maa Pateshwari State University).
+    You are a distinguished computer science professor and AI Copilot for the BCA curriculum at MLK PG College, Balrampur (affiliated with Maa Pateshwari State University).
     Subject: {current_subject}
     {lang_instruction}
 
-    TEACHING RULES:
-    1. Write in clean, concise student register notes.
-    2. NEVER output raw markdown hashes like '###' or raw unparsed LaTeX with broken dollar signs ($0/0$). Write clean readable formulas (e.g. 0/0 form, lim (x -> a) [f'(x) / g'(x)]).
-    3. DO NOT output metadata boilerplate ('Subject:', 'Author:', 'Instructor:'). Start straight with the study points.
-    4. Keep content to 50-65 words per page so it fits completely without scrolling or cutting off.
-    5. Separate individual pages with the exact token '[PAGE_BREAK]'.
+    TEACHING & CODE RULES:
+    1. Write in clean, concise student register notes or clean runnable Python scripts.
+    2. When analyzing code or fixing errors, explain step-by-step in simple language and provide fully working optimized code.
+    3. Separate individual pages with the exact token '[PAGE_BREAK]' if asked for notes.
 
     Query:
     {prompt}
@@ -405,7 +418,7 @@ if not st.session_state.system_booted:
             <div><span style="color:#38BDF8;">root@harshraj-os:~$</span> initialize_environment</div>
             <div style="color:#A3E635;">✔ Initializing Neural Kernel & LLM Gateway...</div>
             <div style="color:#A3E635;">✔ Loading Syllabus Modules: [Python, CSA, Discrete Maths]</div>
-            <div style="color:#A3E635;">✔ Vision Multimodal Pipeline: Online</div>
+            <div style="color:#A3E635;">✔ Virtual File Storage & AI Code Copilot: Ready</div>
             <div style="color:#FFE600;">⚡ Status: Environment Ready. High-Performance Mode Engaged.</div>
         </div>
     </div>
@@ -462,7 +475,7 @@ else:
             "🎯 Exam Engine",
             "🔬 Projects Lab",
             "🤖 AI Mentor",
-            "💻 Code Sandbox"
+            "💻 Code Sandbox & Storage"
         ],
         horizontal=True,
         index=0
@@ -703,31 +716,118 @@ else:
                     </div>
                     """, unsafe_allow_html=True)
 
-    # ================= 6. TERMINAL SANDBOX =================
-    elif selected_nav == "💻 Code Sandbox":
-        st.markdown(f"#### 💻 Interactive Python Terminal Engine")
-        
-        starter_code = """# Interactive Python Sandbox
-def system_execution():
-    developer = "Harsh Raj Soni"
-    college = "MLK PG College Balrampur"
-    return f"⚡ [SUCCESS] Portal built by {developer} ({college})"
+    # ================= 6. GOOGLE COLAB-STYLE CODE SANDBOX & VIRTUAL STORAGE =================
+    elif selected_nav == "💻 Code Sandbox & Storage":
+        st.markdown(f"#### 💻 Interactive Colab Sandbox & File Vault // {active_subj}")
 
-print(system_execution())
-"""
-        user_code = st.text_area("Terminal Editor:", value=starter_code, height=180)
-        c1, c2 = st.columns([1, 1])
-        with c1:
-            run_code = st.button("▶ EXECUTE SCRIPT", use_container_width=True)
-        with c2:
-            st.download_button("💾 EXPORT (.PY)", data=user_code, file_name="bca_code.py", use_container_width=True)
+        # Storage & File Management Toolbar
+        with st.expander("📁 Virtual File Vault (Save, Load & Manage Files)", expanded=True):
+            f_col1, f_col2, f_col3, f_col4 = st.columns([2, 1.2, 1.2, 1.2])
+            with f_col1:
+                saved_files = list(st.session_state.saved_scripts.keys())
+                selected_file_to_load = st.selectbox("📂 Open Saved File:", saved_files, key="file_selector")
+            with f_col2:
+                if st.button("📥 Load File", use_container_width=True):
+                    st.session_state.active_code = st.session_state.saved_scripts[selected_file_to_load]
+                    st.success(f"Loaded: {selected_file_to_load}")
+                    st.rerun()
+            with f_col3:
+                new_filename = st.text_input("New File Name:", placeholder="my_algo.py", label_visibility="collapsed")
+            with f_col4:
+                if st.button("💾 Save As", use_container_width=True):
+                    if new_filename.strip():
+                        fname = new_filename.strip() if new_filename.endswith(".py") else f"{new_filename.strip()}.py"
+                        st.session_state.saved_scripts[fname] = st.session_state.active_code
+                        st.success(f"Saved: {fname}")
+                        st.rerun()
+                    else:
+                        st.warning("Please enter a file name.")
 
-        if run_code:
+        # Interactive Code Editor
+        user_code = st.text_area(
+            "Python Code Editor:",
+            value=st.session_state.active_code,
+            height=220,
+            key="code_editor_area"
+        )
+        st.session_state.active_code = user_code
+
+        # Action Toolbar (Run, Suggest, Export)
+        act_col1, act_col2, act_col3 = st.columns([1.2, 1.5, 1])
+        with act_col1:
+            run_btn = st.button("▶ RUN SCRIPT", use_container_width=True)
+        with act_col2:
+            suggest_btn = st.button("⚡ AI COPILOT SUGGESTION", use_container_width=True)
+        with act_col3:
+            st.download_button("💾 EXPORT (.PY)", data=user_code, file_name="script.py", use_container_width=True)
+
+        # AI Suggestion Box
+        if suggest_btn:
+            with st.spinner("AI analyzing your code structure & logic..."):
+                copilot_prompt = f"""
+                You are a senior python engineer like GitHub Copilot and Google Colab AI.
+                Analyze this Python code:
+                ```python
+                {user_code}
+                ```
+                Provide:
+                1. ⚡ Best-practice suggestion / code optimization (how to make it cleaner or faster).
+                2. Potential logical bugs or edge-case warnings.
+                3. Improved code snippet if applicable.
+                Keep it concise and practical.
+                """
+                suggestion = get_ai_response(copilot_prompt, current_subject="Python")
+                st.markdown(f"""
+                <div class="cyber-panel" style="border-left: 4px solid #FFE600;">
+                    <div style="font-size: 14px; font-weight: 700; color: #FFE600; font-family:'JetBrains Mono'; margin-bottom: 6px;">⚡ [AI_COPILOT_SUGGESTION]</div>
+                    {suggestion}
+                </div>
+                """, unsafe_allow_html=True)
+
+        # Execution Engine
+        if run_btn:
             buf = io.StringIO()
             try:
                 with contextlib.redirect_stdout(buf):
                     exec(user_code, {})
-                st.success("Execution Successful")
-                st.code(buf.getvalue() if buf.getvalue() else "[Program executed with no terminal output]")
-            except Exception as err:
-                st.error(f"Runtime Traceback: {err}")
+                output_str = buf.getvalue()
+                st.session_state.last_error = ""
+                st.markdown(f"""
+                <div class="cyber-panel" style="border-left: 4px solid #A3E635;">
+                    <div style="font-size: 14px; font-weight: 700; color: #A3E635; font-family:'JetBrains Mono'; margin-bottom: 6px;">✔ [EXECUTION_OUTPUT]</div>
+                    <pre style="color:#F8FAFC; background:#000000; padding:10px; border-radius:6px;">{output_str if output_str else '[Program finished with no printed output]'}</pre>
+                </div>
+                """, unsafe_allow_html=True)
+            except Exception as ex:
+                st.session_state.last_error = str(ex)
+                st.markdown(f"""
+                <div class="cyber-panel" style="border-left: 4px solid #EF4444;">
+                    <div style="font-size: 14px; font-weight: 700; color: #EF4444; font-family:'JetBrains Mono'; margin-bottom: 6px;">✖ [RUNTIME_ERROR_DETECTED]</div>
+                    <pre style="color:#FCA5A5; background:#000000; padding:10px; border-radius:6px;">{ex}</pre>
+                </div>
+                """, unsafe_allow_html=True)
+
+        # Colab-Style AI Auto-Fixer Button (Triggers when error occurs)
+        if st.session_state.last_error:
+            st.markdown("<div style='height:8px;'></div>", unsafe_allow_html=True)
+            if st.button("🛠️ AUTO-FIX THIS ERROR WITH AI", use_container_width=True):
+                with st.spinner("AI Debugger analyzing trace & generating solution..."):
+                    fix_prompt = f"""
+                    A student ran this Python code:
+                    ```python
+                    {user_code}
+                    ```
+                    And got this runtime error:
+                    `{st.session_state.last_error}`
+
+                    Please:
+                    1. Explain in simple language why this error occurred.
+                    2. Provide the 100% working corrected code.
+                    """
+                    fixed_solution = get_ai_response(fix_prompt, current_subject="Python")
+                    st.markdown(f"""
+                    <div class="cyber-panel" style="border-left: 4px solid #38BDF8;">
+                        <div style="font-size: 14px; font-weight: 700; color: #38BDF8; font-family:'JetBrains Mono'; margin-bottom: 6px;">🛠️ [AI_ERROR_FIX_SOLUTION]</div>
+                        {fixed_solution}
+                    </div>
+                    """, unsafe_allow_html=True)
