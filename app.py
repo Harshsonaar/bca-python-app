@@ -3,6 +3,7 @@ import google.generativeai as genai
 import io
 import contextlib
 import time
+from PIL import Image
 
 st.set_page_config(
     page_title="BCA Master Ecosystem | MLK PG College Balrampur",
@@ -174,7 +175,6 @@ st.markdown("""
     }
 
     /* ================= ADAPTIVE AUTO-DETECTING FLOATING DOCK ================= */
-    /* DESKTOP / LAPTOP DISPLAY */
     div[data-testid="stRadio"] {
         position: fixed !important;
         bottom: 22px !important;
@@ -238,7 +238,7 @@ st.markdown("""
             padding: 16px !important;
         }
 
-        /* Mobile Island Dock - Lifted up with smooth scroll & no cutoff */
+        /* Mobile Island Dock */
         div[data-testid="stRadio"] {
             bottom: 18px !important;
             padding: 6px 8px !important;
@@ -295,20 +295,21 @@ if "GEMINI_API_KEY" in st.secrets:
 with st.sidebar:
     st.markdown("### ⚙️ Engine Settings")
     if gemini_key:
-        st.markdown('<div class="badge-status">● AI Mentor Active</div>', unsafe_allow_html=True)
+        st.markdown('<div class="badge-status">● Vision & AI Mentor Active</div>', unsafe_allow_html=True)
     else:
         with st.expander("🔑 Setup API Key", expanded=True):
             gemini_key = st.text_input("Gemini API Key:", type="password")
             if gemini_key:
                 genai.configure(api_key=gemini_key)
                 st.success("Connected!")
-    st.caption("Crafted with ❤️ by Raj • MLK PG College Balrampur")
+    st.caption("Crafted with ❤️ by Raj • Vision Enabled Multimodal")
 
-# Dynamic Auto-Tokens Engine with Subject Context & Language Detection
-def get_ai_response(prompt, forced_language=None, current_subject="Python"):
+# Multimodal Dynamic Auto-Tokens Engine with Vision Support & Subject Context
+def get_ai_response(prompt, image_input=None, forced_language=None, current_subject="Python"):
     if not gemini_key:
         return "⚠️ Pehle Gemini API Key configure karein."
     
+    # Priority Pool with Vision capabilities
     candidate_models = [
         "models/gemini-3.5-flash-lite",
         "models/gemini-3.8-flash",
@@ -329,14 +330,19 @@ def get_ai_response(prompt, forced_language=None, current_subject="Python"):
     {lang_instruction}
     
     IMPORTANT RULES:
-    1. Focus all questions, viva queries, and explanations strictly on the currently active subject ({current_subject}).
-    2. Provide direct, high-scoring university examination answers.
+    1. If an image is provided, carefully examine the handwritten question, code snippet, error screenshot, circuit diagram, or mathematical formula in the image and provide a thorough, accurate solution.
+    2. Focus all solutions, viva queries, and explanations strictly on the currently active subject ({current_subject}).
     3. Complete all diagrams, code blocks, or mathematical proofs without cutting off.
     4. Do not add conversational fluff or meta-announcements.
     
     Query:
     {prompt}
     """
+    
+    # Content payload structure
+    content_payload = [optimized_prompt]
+    if image_input:
+        content_payload.append(image_input)
     
     last_error = ""
     for model_name in candidate_models:
@@ -347,8 +353,8 @@ def get_ai_response(prompt, forced_language=None, current_subject="Python"):
                     generation_config={"temperature": 0.25}
                 )
                 response = model.generate_content(
-                    optimized_prompt,
-                    request_options={"timeout": 50.0}
+                    content_payload,
+                    request_options={"timeout": 60.0}
                 )
                 if response and response.text:
                     return response.text
@@ -372,7 +378,7 @@ if not st.session_state.app_entered:
         <div class="creator-signature">Crafted & Created by Raj ⚡</div>
         <div class="splash-subtitle">
             Autonomous curriculum for MLK PG College, Balrampur (Maa Pateshwari State University).
-            Complete syllabus coverage for Python Programming, Computer System Architecture & Discrete Mathematics.
+            Complete syllabus coverage for Python Programming, Computer System Architecture & Discrete Mathematics with Multimodal Vision Intelligence.
         </div>
     </div>
     """, unsafe_allow_html=True)
@@ -541,7 +547,7 @@ for divisor in range(2, int(test_number**0.5) + 1):
 else:
     print(f"{test_number} is a VERIFIED PRIME NUMBER (Loop completed without break)!")""", language="python")
 
-            # MODULE 3 (RESTORED)
+            # MODULE 3
             elif sel_mod == "Module 3: Functions, Scopes, Lambdas & Recursion":
                 with st.expander("1. Function Architecture, Positional, Keyword, *args & **kwargs", expanded=True):
                     st.write("""
@@ -601,7 +607,7 @@ print("Aggregate:", total_sum)""", language="python")
 
 print("GCD of 48 and 18:", compute_gcd(48, 18))""", language="python")
 
-            # MODULE 4 (RESTORED)
+            # MODULE 4
             elif sel_mod == "Module 4: In-Depth Data Structures (Lists, Tuples, Dicts, Sets)":
                 with st.expander("1. Lists (Memory Architecture, Slicing, List Comprehensions)", expanded=True):
                     st.write("""
@@ -638,7 +644,7 @@ csa_std = {"Aman", "Khushi", "Raj"}
 print("Both Courses (Intersection):", python_std & csa_std)
 print("Only in Python (Difference):", python_std - csa_std)""", language="python")
 
-            # MODULE 5 (RESTORED)
+            # MODULE 5
             elif sel_mod == "Module 5: Object-Oriented Programming (OOP Architecture)":
                 with st.expander("1. Classes, Objects, __init__ Constructor & self", expanded=True):
                     st.write("""
@@ -713,7 +719,7 @@ m2 = Module("CSA Architecture", 40)
 print(str(m1))
 print("Combined Hours:", m1 + m2)""", language="python")
 
-            # MODULE 6 (RESTORED)
+            # MODULE 6
             elif sel_mod == "Module 6: File Handling, Context Managers & JSON/CSV":
                 with st.expander("1. File Modes, seek(), tell() & with Context Manager", expanded=True):
                     st.write("""
@@ -733,7 +739,7 @@ print("Serialized JSON:\\n", json_str)
 parsed = json.loads(json_str)
 print("Parsed Object Name:", parsed["name"])""", language="python")
 
-            # MODULE 7 (RESTORED)
+            # MODULE 7
             elif sel_mod == "Module 7: Exception Handling & Custom Errors":
                 with st.expander("1. try-except-else-finally & Custom Exceptions", expanded=True):
                     st.write("""
@@ -754,7 +760,7 @@ except InvalidMarksError as e:
 finally:
     print("Verification complete.")""", language="python")
 
-            # MODULE 8 (RESTORED)
+            # MODULE 8
             elif sel_mod == "Module 8: Standard Libraries, Regex & Date-Time":
                 with st.expander("1. math, random, datetime & re (Regex Pattern Matching)", expanded=True):
                     st.code("""import math, random, re
@@ -937,13 +943,13 @@ print("Hexadecimal:", hex(num))""", language="python")
                 ai_output = get_ai_response(prompt, current_subject=active_subj)
                 st.markdown(f'<div class="ai-box">{ai_output}</div>', unsafe_allow_html=True)
 
-    # ================= 2. EXAM ENGINE =================
+    # ================= 2. EXAM ENGINE (WITH PHOTO ANSWER UPLOAD) =================
     def render_exam_engine():
         active_subj = st.session_state.selected_subject
         st.markdown(f"""
         <div class="hero-banner">
             <div class="hero-title">Automated Exam Engine ({active_subj})</div>
-            <div class="hero-sub">MLK PG College Balrampur Paper Generator • Instant AI Checking & Scorecards</div>
+            <div class="hero-sub">MLK PG College Balrampur Paper Generator • Instant AI Checking with Text or Handwritten Answer Sheet Photo</div>
         </div>
         """, unsafe_allow_html=True)
 
@@ -980,13 +986,20 @@ print("Hexadecimal:", hex(num))""", language="python")
         if "current_test" in st.session_state:
             st.markdown(f'<div class="apple-glass-card"><h4>📄 Question Paper: {st.session_state.get("test_subject_selected")} ({st.session_state.get("test_lang_selected")})</h4>{st.session_state.current_test}</div>', unsafe_allow_html=True)
 
-            st.markdown("#### ✍️ Write & Submit Answers")
-            user_sol = st.text_area("Yahan apne answers aur step-by-step solutions type karein:", height=200, placeholder="Ans 1: ...\nAns 2: ...\nAns 3: ...")
+            st.markdown("#### ✍️ Submit Answers (Text or Upload Photo)")
+            user_sol = st.text_area("Option A: Yahan apne answers type karein:", height=150, placeholder="Ans 1: ...\nAns 2: ...\nAns 3: ...")
+            
+            uploaded_answer_img = st.file_uploader("Option B: Ya fir Handwritten Answer Sheet ki Photo Upload Karein (JPG/PNG):", type=["png", "jpg", "jpeg"], key="exam_upload")
+            pil_ans_img = None
+            if uploaded_answer_img:
+                pil_ans_img = Image.open(uploaded_answer_img)
+                st.image(pil_ans_img, caption="Uploaded Answer Sheet Preview", width=250)
+
             if st.button("🚀 Submit Sheet For AI Checking", use_container_width=True):
-                if not user_sol.strip():
-                    st.warning("Please type your answer before submission.")
+                if not user_sol.strip() and not pil_ans_img:
+                    st.warning("Please type your answer or upload a photo of your sheet.")
                 else:
-                    with st.spinner("AI Professor checking answer sheet..."):
+                    with st.spinner("AI Professor checking answer sheet (Vision Analysis Active)..."):
                         target_eval_lang = st.session_state.get("test_lang_selected", "English")
                         eval_prompt = f"""
                         You are a strict BCA university examiner at MLK PG College, Balrampur grading this answer sheet.
@@ -994,7 +1007,7 @@ print("Hexadecimal:", hex(num))""", language="python")
                         Paper:
                         {st.session_state.current_test}
 
-                        Student Answer:
+                        Student Text Answer (if any):
                         {user_sol}
 
                         Evaluate thoroughly in {target_eval_lang}:
@@ -1002,7 +1015,7 @@ print("Hexadecimal:", hex(num))""", language="python")
                         2. Strengths and missing conceptual elements.
                         3. Complete university model answers.
                         """
-                        scorecard = get_ai_response(eval_prompt, forced_language=target_eval_lang, current_subject=st.session_state.get('test_subject_selected'))
+                        scorecard = get_ai_response(eval_prompt, image_input=pil_ans_img, forced_language=target_eval_lang, current_subject=st.session_state.get('test_subject_selected'))
                         st.markdown(f'<div class="ai-box"><h3>📊 University Scorecard</h3>{scorecard}</div>', unsafe_allow_html=True)
 
     # ================= 3. GUIDED PROJECTS LAB =================
@@ -1057,27 +1070,38 @@ print("Hexadecimal:", hex(num))""", language="python")
                 """
                 st.markdown(f'<div class="ai-box">{get_ai_response(blueprint_prompt, current_subject=active_subj)}</div>', unsafe_allow_html=True)
 
-    # ================= 4. 24/7 AI CODE & SUBJECT MENTOR =================
+    # ================= 4. 24/7 AI CODE & SUBJECT MENTOR (WITH PHOTO UPLOAD) =================
     def render_mentor():
         active_subj = st.session_state.selected_subject
         st.markdown(f"""
         <div class="hero-banner">
             <div class="hero-title">24/7 AI Technical Mentor ({active_subj})</div>
-            <div class="hero-sub">Resolve doubts, code logic errors, numerical proofs, or computer organization diagrams. Auto language detection enabled.</div>
+            <div class="hero-sub">Resolve doubts, code logic errors, numerical proofs, or circuit diagrams. Type or upload a photo!</div>
         </div>
         """, unsafe_allow_html=True)
 
         user_q = st.text_area(
             f"Poochhein apna doubt for {active_subj} (Hindi, English, ya Hinglish mein):",
-            height=140,
-            placeholder=f"e.g. Is topic ko simple Hindi mein samjhao for {active_subj}..."
+            height=120,
+            placeholder=f"e.g. Is problem ko solve karo ya error explain karo for {active_subj}..."
         )
+        
+        uploaded_mentor_file = st.file_uploader(
+            "📷 Question / Error / Circuit / Book Page ki Photo Upload Karein (Optional):",
+            type=["png", "jpg", "jpeg"],
+            key="mentor_upload"
+        )
+        pil_mentor_img = None
+        if uploaded_mentor_file:
+            pil_mentor_img = Image.open(uploaded_mentor_file)
+            st.image(pil_mentor_img, caption="Uploaded Image Preview", width=280)
+
         if st.button("⚡ Ask AI Mentor", use_container_width=True):
-            if not user_q.strip():
-                st.warning("Pehle apna sawal enter karein.")
+            if not user_q.strip() and not pil_mentor_img:
+                st.warning("Pehle apna sawal enter karein ya photo upload karein.")
             else:
-                with st.spinner(f"AI Mentor analyzing query for {active_subj}..."):
-                    ans = get_ai_response(user_q, current_subject=active_subj)
+                with st.spinner(f"AI Mentor analyzing query & image for {active_subj}..."):
+                    ans = get_ai_response(user_q, image_input=pil_mentor_img, current_subject=active_subj)
                     st.markdown(f'<div class="ai-box">{ans}</div>', unsafe_allow_html=True)
 
     # ================= 5. LIVE RUNNER SANDBOX =================
