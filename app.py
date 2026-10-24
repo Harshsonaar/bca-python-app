@@ -158,7 +158,7 @@ st.markdown("""
         margin-top: 24px;
     }
 
-    /* ================= REGISTER PAGE SHEET CONTAINER ================= */
+    /* ================= REGISTER PAGE CONTAINER (ZERO CUTOFF & AUTO FIT) ================= */
     .register-flip-container {
         display: flex;
         justify-content: center;
@@ -174,15 +174,14 @@ st.markdown("""
             linear-gradient(90deg, transparent 40px, #ef4444 40px, #ef4444 41.5px, transparent 41.5px),
             linear-gradient(#e2e8f0 1px, transparent 1px) !important;
         background-size: 100% 100%, 100% 26px !important;
-        border-radius: 6px !important;
-        padding: 20px 22px 20px 52px !important;
+        border-radius: 8px !important;
+        padding: 20px 22px 30px 52px !important;
         border: 1px solid #cbd5e1 !important;
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6) !important;
         width: 100% !important;
-        max-width: 520px !important;
+        max-width: 530px !important;
         min-height: 480px !important;
-        max-height: 520px !important;
-        overflow: hidden !important;
+        height: auto !important;
         box-sizing: border-box !important;
         position: relative !important;
     }
@@ -191,7 +190,7 @@ st.markdown("""
     .register-outer-card::before {
         content: '' !important;
         position: absolute !important;
-        top: 12px !important;
+        top: 14px !important;
         left: 11px !important;
         width: 10px !important;
         height: 94% !important;
@@ -216,7 +215,7 @@ st.markdown("""
         color: #ffffff;
         font-size: 11px;
         font-weight: 700;
-        padding: 1px 8px;
+        padding: 2px 8px;
         border-radius: 8px;
         margin-bottom: 6px;
         font-family: 'Plus Jakarta Sans', sans-serif !important;
@@ -348,10 +347,9 @@ st.markdown("""
             flex-shrink: 0 !important;
         }
         .register-outer-card {
-            padding: 16px 12px 16px 44px !important;
-            max-width: 92vw !important;
+            padding: 16px 12px 24px 44px !important;
+            max-width: 94vw !important;
             min-height: 440px !important;
-            max-height: 480px !important;
         }
         .register-inner-content {
             font-size: 14.5px !important;
@@ -403,10 +401,10 @@ def get_ai_response(prompt, image_input=None, forced_language=None, current_subj
     {lang_instruction}
 
     TEACHING RULES (STRICT CLEANLINESS):
-    1. Write in clean, natural student notebook register style.
+    1. Write in natural, clean student notebook register style.
     2. NEVER output raw markdown hashes like '###' or raw unformatted LaTeX with broken dollar signs. Write simple readable formulas (e.g. lim (x -> a) [f'(x) / g'(x)]).
     3. DO NOT write meta lines like '**Subject:** ...' or '**Author:** ...' or '**Instructor:** ...'. Jump directly to the core study points.
-    4. Keep content strictly to 50-70 words per page to ensure zero vertical scrolling on a fixed A4 sheet.
+    4. Keep content concise to fit a single A4 sheet without clipping words.
     5. Separate every single page using the exact delimiter token '[PAGE_BREAK]'.
 
     Query:
@@ -668,13 +666,13 @@ for i in range(3):
                 ai_output = get_ai_response(prompt, current_subject=active_subj)
                 st.markdown(f'<div class="ai-box">{ai_output}</div>', unsafe_allow_html=True)
 
-    # ================= 2. CRISP GLITCH-FREE REGISTER NOTES (PERFECT IN-CARD EMBED) =================
+    # ================= 2. CRISP GLITCH-FREE REGISTER NOTES =================
     def render_handwritten_notes():
         active_subj = st.session_state.selected_subject
         st.markdown(f"""
         <div class="hero-banner">
             <div class="hero-title">📝 Authentic A4 Register Sheets (Zero Glitch)</div>
-            <div class="hero-sub">Subject Context: {active_subj} • Clean natural student ink notes on exact A4 sheets with zero scroll.</div>
+            <div class="hero-sub">Subject Context: {active_subj} • Clean natural student ink notes on exact A4 sheets with zero cutoff.</div>
         </div>
         """, unsafe_allow_html=True)
 
