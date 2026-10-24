@@ -54,7 +54,7 @@ st.markdown("""
         pointer-events: none !important;
     }
 
-    /* Extra Page Bottom Padding - No content will ever get cut off */
+    /* Extra Page Bottom Padding */
     .block-container {
         padding-top: 20px !important;
         padding-bottom: 180px !important;
@@ -152,6 +152,26 @@ st.markdown("""
         margin-top: 24px;
     }
 
+    /* Handwritten Styled Paper Card */
+    .handwritten-card {
+        background: rgba(18, 24, 38, 0.95);
+        border: 2px dashed rgba(56, 189, 248, 0.4);
+        border-radius: 16px;
+        padding: 24px 28px;
+        margin-top: 18px;
+        color: #F8FAFC;
+        line-height: 1.7;
+        box-shadow: 0 20px 45px rgba(0, 0, 0, 0.55);
+    }
+    .handwritten-title {
+        font-size: 24px;
+        font-weight: 700;
+        color: #38BDF8;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+        padding-bottom: 8px;
+        margin-bottom: 16px;
+    }
+
     /* AI Response Glass Box */
     .ai-box {
         background: rgba(20, 24, 38, 0.88);
@@ -197,7 +217,7 @@ st.markdown("""
         border-color: rgba(255, 255, 255, 0.4) !important;
     }
 
-    /* Radio circular selection dot hide (clean button look) */
+    /* Radio circular selection dot hide */
     div[data-testid="stRadio"] div[role="radiogroup"] > label > div:first-child {
         display: none !important;
     }
@@ -251,7 +271,7 @@ st.markdown("""
         color: #FFFFFF !important;
     }
 
-    /* MOBILE AUTO-DETECTION (< 768px Viewport) */
+    /* MOBILE AUTO-DETECTION */
     @media (max-width: 768px) {
         .splash-title {
             font-size: 32px !important;
@@ -259,13 +279,6 @@ st.markdown("""
         .hero-title {
             font-size: 20px !important;
         }
-        .hero-banner {
-            padding: 14px 16px !important;
-        }
-        .apple-glass-card {
-            padding: 16px !important;
-        }
-
         div[data-testid="stRadio"] {
             top: 8px !important;
             padding: 6px 8px !important;
@@ -320,7 +333,7 @@ if "GEMINI_API_KEY" in st.secrets:
 with st.sidebar:
     st.markdown("### ⚙️ Engine Settings")
     if gemini_key:
-        st.markdown('<div class="badge-status">● Vision & AI Mentor Active</div>', unsafe_allow_html=True)
+        st.markdown('<div class="badge-status">● Vision & Notes Active</div>', unsafe_allow_html=True)
     else:
         with st.expander("🔑 Setup API Key", expanded=True):
             gemini_key = st.text_input("Gemini API Key:", type="password")
@@ -329,7 +342,7 @@ with st.sidebar:
                 st.success("Connected!")
     st.caption("Crafted with ❤️ by Raj • MLK PG College Balrampur")
 
-# Multimodal Dynamic Auto-Tokens Engine with Vision Support & Subject Context
+# Dynamic Multi-Model Caller
 def get_ai_response(prompt, image_input=None, forced_language=None, current_subject="Python"):
     if not gemini_key:
         return "⚠️ Pehle Gemini API Key configure karein."
@@ -344,21 +357,21 @@ def get_ai_response(prompt, image_input=None, forced_language=None, current_subj
         lang_instruction = f"Strictly generate the output in {forced_language}."
     else:
         lang_instruction = (
-            "Detect the user's input language automatically (English, Hinglish, Hindi in Devanagari, etc.) "
-            "and respond in the exact same language and script naturally."
+            "Detect user's input language naturally (English, Hinglish, Hindi in Devanagari) "
+            "and match it with direct clarity."
         )
 
     optimized_prompt = f"""
-    You are a distinguished university professor for BCA curriculum at MLK PG College, Balrampur (Affiliated with Maa Pateshwari State University).
-    Current Active Subject Context: {current_subject}
+    You are a senior computer science professor for BCA at MLK PG College, Balrampur (affiliated with Maa Pateshwari State University).
+    Subject: {current_subject}
     {lang_instruction}
-    
+
     TEACHING RULES:
-    1. Explain concepts in the most crystal-clear, intuitive, and easy language so the student never needs to re-read twice.
-    2. Provide step-by-step methods, exam tricks/shortcuts, and direct formulas for every question.
-    3. If an image is provided, thoroughly analyze handwritten questions, circuits, codes, or numerical formulas and solve completely.
-    4. Provide verified code or mathematical steps without cutting off. No filler fluff.
-    
+    1. Teach in the most intuitive, easy, and memorable language.
+    2. Format handwritten style notes with clean points, bullet summaries, key formula boxes, and mandatory example-based university exam questions with step-by-step solutions.
+    3. If an image is uploaded, analyze handwritten queries, code or circuits thoroughly.
+    4. Provide completed code and proofs without truncation.
+
     Query:
     {prompt}
     """
@@ -390,9 +403,9 @@ def get_ai_response(prompt, image_input=None, forced_language=None, current_subj
                     time.sleep(1.0)
                     continue
 
-    return f"⏳ AI Engine Temporary Busy. Details: {last_error}"
+    return f"⏳ AI Engine Temporary Busy: {last_error}"
 
-# ================= 0. OPENING SCREEN (CREATED BY RAJ) =================
+# ================= 0. OPENING SCREEN =================
 if not st.session_state.app_entered:
     st.markdown("""
     <div class="splash-container">
@@ -401,7 +414,7 @@ if not st.session_state.app_entered:
         <div class="creator-signature">Crafted & Created by Raj ⚡</div>
         <div class="splash-subtitle">
             Autonomous curriculum for MLK PG College, Balrampur (Maa Pateshwari State University).
-            Complete syllabus coverage for Python Programming, Computer System Architecture & Discrete Mathematics with Exam Solved Questions, Tricks & Multimodal Vision.
+            Complete syllabus coverage for Python Programming, CSA & Discrete Mathematics with Handwritten Notes, Solved Questions, and Multimodal Vision.
         </div>
     </div>
     """, unsafe_allow_html=True)
@@ -413,7 +426,7 @@ if not st.session_state.app_entered:
             st.rerun()
 
 else:
-    # Top Bar with Right Corner Subject Switcher
+    # Top Bar Header
     top_col1, top_col2 = st.columns([1.6, 1.4])
     with top_col1:
         st.markdown("""
@@ -433,11 +446,12 @@ else:
             index=0
         )
 
-    # ================= ZERO-OVERLAP TOP STICKY NAVIGATION DOCK =================
+    # ================= TOP STICKY NAVIGATION BAR =================
     selected_tab = st.radio(
         label="Top Navigation Bar",
         options=[
             "📖 Syllabus",
+            "📝 Handwritten Notes",
             "📝 Exam Engine",
             "🛠️ Projects",
             "🤖 AI Mentor",
@@ -656,73 +670,53 @@ val = -13
 print(f"Decimal: {val}")
 print(f"8-Bit 2's Complement: {to_twos_comp(val, 8)}")""", language="python")
 
-            # CSA UNIT 2 (HALF ADDER & FULL ADDER THOROUGHLY EXPLAINED)
+            # CSA UNIT 2
             elif sel_mod == "Unit 2: Logic Gates, Half Adder, Full Adder, K-Maps & Combinational Circuits":
                 with st.expander("1. Half Adder & Full Adder Architecture (Complete Detailed Guide)", expanded=True):
                     st.write("""
                     **Samjhein Seedhi Bhasha Mein:**
-                    * **Half Adder (HA):** Yeh do 1-bit binary inputs ($A$ aur $B$) ko add karta hai aur do outputs generate karta hai: **Sum ($S$)** aur **Carry ($C$)**.
-                      * **Truth Table:**
-                        * $A=0, B=0 \\implies Sum=0, Carry=0$
-                        * $A=0, B=1 \\implies Sum=1, Carry=0$
-                        * $A=1, B=0 \\implies Sum=1, Carry=0$
-                        * $A=1, B=1 \\implies Sum=0, Carry=1$ ($1+1 = 10_2$)
-                      * **Logic Formulas:**
-                        * $$Sum = A \\oplus B = A'B + AB'$$ (XOR Gate)
-                        * $$Carry = A \\cdot B$$ (AND Gate)
-                      * **Limitation:** Half adder pichle stage se aane wale carry ko add nahi kar sakta.
-
-                    ---
-                    * **Full Adder (FA):** Yeh teen 1-bit binary inputs ($A$, $B$, aur previous carry $C_{in}$) ko add karta hai.
-                      * **Logic Formulas:**
-                        * $$Sum = A \\oplus B \\oplus C_{in}$$ (3-input XOR Gate)
-                        * $$Carry_{out} = AB + BC_{in} + AC_{in} = AB + C_{in}(A \\oplus B)$$
+                    * **Half Adder (HA):** Yeh do 1-bit binary inputs ($A$ aur $B$) ko add karta hai aur do outputs deta hai: **Sum ($S$)** aur **Carry ($C$)**.
+                      * $$Sum = A \\oplus B = A'B + AB'$$ (XOR Gate)
+                      * $$Carry = A \\cdot B$$ (AND Gate)
+                    * **Full Adder (FA):** Yeh teen 1-bit binary inputs ($A$, $B$, aur $C_{in}$) ko add karta hai.
+                      * $$Sum = A \\oplus B \\oplus C_{in}$$ (XOR Gate)
+                      * $$Carry_{out} = AB + BC_{in} + AC_{in} = AB + C_{in}(A \\oplus B)$$
                     * **Master Design Trick:** Ek Full Adder ko **2 Half Adders aur 1 OR Gate** se banaya ja sakta hai!
                     """)
                     st.markdown("""
                     <div class="solved-box">
-                        <b>📝 Solved Exam Question:</b> Design a Full Adder using two Half Adders and an OR gate. Draw the logic block diagram and verify for $A=1, B=1, C_{in}=1$. (10 Marks)<br>
-                        <b>Step 1 (First Half Adder):</b> Inputs $A, B$. Output $S_1 = A \\oplus B = 1 \\oplus 1 = 0$, $C_1 = A \\cdot B = 1 \\cdot 1 = 1$.<br>
-                        <b>Step 2 (Second Half Adder):</b> Inputs $S_1$ and $C_{in}$. Output $Sum = S_1 \\oplus C_{in} = 0 \\oplus 1 = \\mathbf{1}$. Second carry $C_2 = S_1 \\cdot C_{in} = 0 \\cdot 1 = 0$.<br>
+                        <b>📝 Solved Exam Question:</b> Design a Full Adder using two Half Adders and an OR gate. Verify for $A=1, B=1, C_{in}=1$. (10 Marks)<br>
+                        <b>Step 1 (First HA):</b> Inputs $A, B \\implies S_1 = A \\oplus B = 1 \\oplus 1 = 0$, $C_1 = A \\cdot B = 1 \\cdot 1 = 1$.<br>
+                        <b>Step 2 (Second HA):</b> Inputs $S_1$ and $C_{in} \\implies Sum = S_1 \\oplus C_{in} = 0 \\oplus 1 = \\mathbf{1}$, $C_2 = S_1 \\cdot C_{in} = 0 \\cdot 1 = 0$.<br>
                         <b>Step 3 (OR Gate for Carry):</b> $C_{out} = C_1 + C_2 = 1 + 0 = \\mathbf{1}$.<br>
-                        <b>Final Output:</b> $Sum = 1, Carry = 1$ (Jo ki $1 + 1 + 1 = 3 = 11_2$ bilkul sahi hai!).
+                        <b>Final Result:</b> $Sum = 1, Carry = 1$ ($1 + 1 + 1 = 3 = 11_2$).
                     </div>
                     """, unsafe_allow_html=True)
-                    st.code("""# Interactive Full Adder Logic Simulator
+                    st.code("""# Full Adder Simulator via 2 Half Adders
 def half_adder(a, b):
-    sum_bit = a ^ b      # XOR gate
-    carry_bit = a & b    # AND gate
-    return sum_bit, carry_bit
+    return (a ^ b), (a & b)
 
 def full_adder_using_two_ha(a, b, cin):
     s1, c1 = half_adder(a, b)
     final_sum, c2 = half_adder(s1, cin)
-    final_carry = c1 | c2  # OR gate combines carries
+    final_carry = c1 | c2
     return final_sum, final_carry
 
-print("Full Adder Verification Table:")
-print("A | B | Cin | Sum | Carry")
-print("-" * 27)
-for a in [0, 1]:
-    for b in [0, 1]:
-        for cin in [0, 1]:
-            s, c = full_adder_using_two_ha(a, b, cin)
-            print(f"{a} | {b} |  {cin}  |  {s}  |   {c}")""", language="python")
+print("Full Adder Output (A=1, B=1, Cin=1):", full_adder_using_two_ha(1, 1, 1))""", language="python")
 
                 with st.expander("2. K-Map Minimization, Multiplexers (MUX) & Decoders", expanded=False):
                     st.write("""
-                    * **K-Map (Karnaugh Map):** Gray code ordering (`00, 01, 11, 10`) par chalta hai taaki consecutive cells ke beech sirf 1 bit ka change ho.
-                    * **Grouping Priority Trick:** Hamesha sabse bada group dhundho: 16 (Octet) $\\rightarrow$ 8 $\\rightarrow$ 4 (Quad) $\\rightarrow$ 2 (Pair). Bada group = Kam variables ki simplified equation!
+                    * **K-Map (Karnaugh Map):** Gray code ordering (`00, 01, 11, 10`) par chalta hai.
+                    * **Grouping Priority Trick:** 16 (Octet) $\\rightarrow$ 8 $\\rightarrow$ 4 (Quad) $\\rightarrow$ 2 (Pair). Bada group = Kam variables ki simplified equation!
                     * **Multiplexer (Data Selector):** $2^n$ inputs, $n$ select lines, 1 output.
-                    * **Decoder:** $n$ inputs, $2^n$ outputs.
                     """)
                     st.code("""# Multiplexer (4:1 MUX) Simulator
-def mux_4to1(i0, i1, i2, i3, s1, s0):
-    lines = [i0, i1, i2, i3]
+def mux_4to1(lines, s1, s0):
     select_index = (s1 << 1) | s0
     return lines[select_index]
 
-print("MUX Output with S1=1, S0=0 selecting I2:", mux_4to1("D0", "D1", "Selected D2", "D3", 1, 0))""", language="python")
+inputs = ["D0", "D1", "Selected D2", "D3"]
+print("4:1 MUX Output (S1=1, S0=0):", mux_4to1(inputs, 1, 0))""", language="python")
 
             # CSA UNIT 3
             elif sel_mod == "Unit 3: Sequential Circuits, Flip-Flops, Registers & Counters":
@@ -930,7 +924,7 @@ for p in [True, False]:
                     st.write("""
                     * Agar do functions multiply ho rahe hon ($y = u \\cdot v$), toh $n$-th derivative ka formula:
                       $$y_n = ^nC_0 u_n v + ^nC_1 u_{n-1} v_1 + ^nC_2 u_{n-2} v_2 + \\dots + ^nC_n u v_n$$
-                    * **Trick:** $v$ hamesha us function ko maano jo 2-3 baar differentiate hone par zero ho jaye (jaise $x^2$ ya $x^3$), taaki aage ke saare terms khatam ho jayein!
+                    * **Trick:** $v$ hamesha us function ko maano jo 2-3 baar differentiate karne ke baad zero ho jaye (jaise $x^2$ ya $x^3$), taaki aage ke saare terms automatically cancel ho jayein!
                     """)
                     st.markdown("""
                     <div class="solved-box">
@@ -1002,7 +996,88 @@ print("Converged Root:", round(root, 5))""", language="python")
                 ai_output = get_ai_response(prompt, current_subject=active_subj)
                 st.markdown(f'<div class="ai-box">{ai_output}</div>', unsafe_allow_html=True)
 
-    # ================= 2. EXAM ENGINE (WITH PHOTO ANSWER UPLOAD) =================
+    # ================= 2. HANDWRITTEN NOTES GENERATOR WITH EXAMPLES =================
+    def render_handwritten_notes():
+        active_subj = st.session_state.selected_subject
+        st.markdown(f"""
+        <div class="hero-banner">
+            <div class="hero-title">📝 Handwritten Notes & Solved Examples</div>
+            <div class="hero-sub">Subject Context: {active_subj} • Exam-oriented handwritten style points, memory tricks, and step-by-step example questions.</div>
+        </div>
+        """, unsafe_allow_html=True)
+
+        if active_subj == "🐍 Python Programming":
+            suggested_topics = [
+                "Python Bytecode & Dynamic Typing vs Static Typing",
+                "Operators Hierarchy & Bitwise Left/Right Shift Tricks",
+                "Loop-Else Construct & Prime Number Logic",
+                "*args, **kwargs & LEGB Scope Resolution Rules",
+                "List vs Tuple Memory Architecture & Dict Hash Tables",
+                "OOP Encapsulation, Mangling & Dunder Magic Methods",
+                "File Handling seek(), tell() & Context Managers",
+                "Regex Pattern Matching with re module"
+            ]
+        elif active_subj == "🖥️ Computer System Architecture":
+            suggested_topics = [
+                "2's Complement Direct Trick & Overflow Detection",
+                "Half Adder & Full Adder Design using 2 HA and 1 OR Gate",
+                "K-Map 4-Variable Minimization & Grouping Strategy",
+                "JK Flip-Flop Race-Around Condition & Master-Slave Solution",
+                "Instruction Cycle Phases (T0-T4 Micro-operations)",
+                "Addressing Modes Comparison with Real Examples",
+                "Cache Memory Mapping (Direct vs Associative vs Set-Associative)",
+                "DMA Controller Working: Cycle Stealing vs Burst Mode"
+            ]
+        else: # Maths
+            suggested_topics = [
+                "Equivalence Relations Proof (Reflexive, Symmetric, Transitive)",
+                "POSET & Hasse Diagram Construction Rules",
+                "Truth Table Proof of Conditional Equivalence (~p v q)",
+                "Rank of Matrix using Echelon Form & Consistency of AX=B",
+                "Cayley-Hamilton Theorem & Fast Inverse A^-1 Calculation",
+                "Handshaking Theorem & Euler Planar Formula (V - E + R = 2)",
+                "Leibnitz's Theorem for n-th Derivative with Product Trick",
+                "Newton-Raphson Method with Step-by-Step Numerical Root"
+            ]
+
+        col1, col2 = st.columns([2, 1])
+        with col1:
+            chosen_topic = st.selectbox("Select Topic for Notes:", suggested_topics)
+            custom_topic = st.text_input("Or enter any specific topic from syllabus (Optional):", placeholder="e.g. Multiplexer cascading / DeMorgan's laws")
+        with col2:
+            notes_lang = st.selectbox("Notes Language:", ["Hinglish (Simple Student Language)", "English", "Hindi (हिन्दी)"])
+
+        final_topic = custom_topic.strip() if custom_topic.strip() else chosen_topic
+
+        if st.button("✨ Generate Complete Handwritten Notes", use_container_width=True):
+            with st.spinner(f"Writing crystal-clear handwritten notes for {final_topic}..."):
+                notes_prompt = f"""
+                You are a top-rank BCA student and professor at MLK PG College Balrampur.
+                Create comprehensive, high-scoring 'Handwritten Style Notes' for the topic: '{final_topic}' in {active_subj}.
+                
+                Language Requirement: {notes_lang}.
+
+                Structure of Notes:
+                1. 📌 Core Concept in 3-4 bullet points (Easiest language, no unnecessary jargon).
+                2. ⚡ Memory Trick / Formula Box (How to remember in exams forever).
+                3. 📊 Diagrammatic / ASCII Flow representation (Text-based circuit, memory block, or logic diagram).
+                4. 📝 Solved University Exam Question (High probability 5-10 marks format with full step-by-step solution).
+                5. ⚠️ 1 Critical Examiner Warning (Mistake students usually make and lose marks).
+
+                Keep it completely comprehensive so the student never needs to re-read anywhere else.
+                """
+                st.session_state.current_notes = get_ai_response(notes_prompt, forced_language=notes_lang, current_subject=active_subj)
+                st.session_state.notes_topic = final_topic
+
+        if "current_notes" in st.session_state:
+            st.markdown(f"""
+            <div class="handwritten-card">
+                <div class="handwritten-title">📖 Notes: {st.session_state.get('notes_topic')} ({active_subj})</div>
+                {st.session_state.current_notes}
+            </div>
+            """, unsafe_allow_html=True)
+
+    # ================= 3. EXAM ENGINE (WITH PHOTO ANSWER UPLOAD) =================
     def render_exam_engine():
         active_subj = st.session_state.selected_subject
         st.markdown(f"""
@@ -1077,7 +1152,7 @@ print("Converged Root:", round(root, 5))""", language="python")
                         scorecard = get_ai_response(eval_prompt, image_input=pil_ans_img, forced_language=target_eval_lang, current_subject=st.session_state.get('test_subject_selected'))
                         st.markdown(f'<div class="ai-box"><h3>📊 University Scorecard</h3>{scorecard}</div>', unsafe_allow_html=True)
 
-    # ================= 3. GUIDED PROJECTS LAB =================
+    # ================= 4. GUIDED PROJECTS LAB =================
     def render_projects():
         active_subj = st.session_state.selected_subject
         st.markdown(f"""
@@ -1129,7 +1204,7 @@ print("Converged Root:", round(root, 5))""", language="python")
                 """
                 st.markdown(f'<div class="ai-box">{get_ai_response(blueprint_prompt, current_subject=active_subj)}</div>', unsafe_allow_html=True)
 
-    # ================= 4. 24/7 AI CODE & SUBJECT MENTOR (WITH PHOTO UPLOAD) =================
+    # ================= 5. 24/7 AI CODE & SUBJECT MENTOR (WITH PHOTO UPLOAD) =================
     def render_mentor():
         active_subj = st.session_state.selected_subject
         st.markdown(f"""
@@ -1163,7 +1238,7 @@ print("Converged Root:", round(root, 5))""", language="python")
                     ans = get_ai_response(user_q, image_input=pil_mentor_img, current_subject=active_subj)
                     st.markdown(f'<div class="ai-box">{ans}</div>', unsafe_allow_html=True)
 
-    # ================= 5. LIVE RUNNER SANDBOX =================
+    # ================= 6. LIVE RUNNER SANDBOX =================
     def render_runner():
         active_subj = st.session_state.selected_subject
         st.markdown(f"""
@@ -1228,6 +1303,8 @@ for i in range(5):
     # ================= TAB ROUTING =================
     if selected_tab == "📖 Syllabus":
         render_syllabus()
+    elif selected_tab == "📝 Handwritten Notes":
+        render_handwritten_notes()
     elif selected_tab == "📝 Exam Engine":
         render_exam_engine()
     elif selected_tab == "🛠️ Projects":
