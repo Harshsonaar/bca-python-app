@@ -37,7 +37,7 @@ st.markdown("""
         color: #F1F5F9;
     }
 
-    /* Streamlit Host Header, Badges & Footers Complete Elimination */
+    /* Streamlit Host Header, Badges & Footers Elimination */
     header[data-testid="stHeader"] {display: none !important;}
     footer {display: none !important; visibility: hidden !important;}
     .viewerBadge_container__1QSob, 
@@ -54,13 +54,13 @@ st.markdown("""
         pointer-events: none !important;
     }
 
-    /* Extra Page Bottom Padding */
+    /* Page Bottom Padding */
     .block-container {
         padding-top: 15px !important;
         padding-bottom: 180px !important;
     }
 
-    /* Premium Splash Screen Container */
+    /* Splash Screen */
     .splash-container {
         display: flex;
         flex-direction: column;
@@ -115,7 +115,7 @@ st.markdown("""
         box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
     }
 
-    /* Hero Banner (Apple Glass) */
+    /* Hero Banner */
     .hero-banner {
         background: rgba(255, 255, 255, 0.04);
         border: 1px solid rgba(255, 255, 255, 0.12);
@@ -152,42 +152,68 @@ st.markdown("""
         margin-top: 24px;
     }
 
-    /* ================= GENUINE STUDENT REGISTER PAGE DESIGN ================= */
-    .notebook-mini-page {
-        background-color: #fefefd !important;
-        /* Ruled lines pattern + Clean Red Margin line */
+    /* ================= REAL FIXED-SIZE NOTEBOOK PAGE DESIGN ================= */
+    .notebook-sheet {
+        background-color: #fefefe !important;
+        /* Ruled notebook lines + Red Margin Line on Left */
         background-image: 
-            linear-gradient(90deg, transparent 40px, #f43f5e 40px, #f43f5e 42px, transparent 42px),
+            linear-gradient(90deg, transparent 44px, #f43f5e 44px, #f43f5e 46px, transparent 46px),
             linear-gradient(#e2e8f0 1px, transparent 1px) !important;
-        background-size: 100% 100%, 100% 26px !important;
-        border-radius: 6px !important;
-        padding: 16px 14px 16px 52px !important; /* Safe padding away from red margin */
-        color: #1e3a8a !important; /* Clean Blue Pen Ink */
+        background-size: 100% 100%, 100% 28px !important;
+        border-radius: 8px !important;
+        padding: 22px 20px 22px 58px !important; /* Safe padding: text stays strictly right of margin */
+        color: #1e3a8a !important; /* Real blue ink */
         font-family: 'Patrick Hand', cursive, sans-serif !important;
-        font-size: 15px !important;
-        line-height: 26px !important;
+        font-size: 16px !important;
+        line-height: 28px !important;
         border: 1px solid #cbd5e1 !important;
-        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35) !important;
-        height: 380px !important;
-        overflow-y: hidden !important;
+        box-shadow: 0 6px 25px rgba(0, 0, 0, 0.45) !important;
+        height: 520px !important; /* Genuine Register Sheet Height */
+        overflow-y: auto !important; /* Smooth internal reading scroll */
         position: relative !important;
         box-sizing: border-box !important;
-        transition: transform 0.2s ease, border-color 0.2s ease !important;
     }
-    .notebook-mini-page:hover {
-        transform: translateY(-2px);
-        border-color: #38bdf8 !important;
-    }
-    .notebook-mini-page::before {
+
+    /* Left Spiral Notebook Binding Holes */
+    .notebook-sheet::before {
         content: '' !important;
         position: absolute !important;
-        top: 12px !important;
-        left: 12px !important;
-        width: 12px !important;
-        height: 90% !important;
-        background-image: radial-gradient(circle, #cbd5e1 4px, transparent 5px) !important;
-        background-size: 12px 26px !important;
+        top: 14px !important;
+        left: 14px !important;
+        width: 14px !important;
+        height: 92% !important;
+        background-image: radial-gradient(circle, #cbd5e1 5px, transparent 6px) !important;
+        background-size: 14px 28px !important;
         background-repeat: repeat-y !important;
+    }
+
+    .notebook-sheet h1, .notebook-sheet h2, .notebook-sheet h3 {
+        font-family: 'Shantell Sans', cursive !important;
+        color: #0f172a !important;
+        font-size: 19px !important;
+        margin-top: 10px !important;
+        margin-bottom: 4px !important;
+        border-bottom: 1.5px solid #ef4444 !important;
+        padding-bottom: 2px !important;
+    }
+
+    .notebook-sheet p, .notebook-sheet li {
+        font-family: 'Patrick Hand', cursive !important;
+        color: #1e293b !important;
+        font-size: 16px !important;
+        line-height: 28px !important;
+        margin-bottom: 4px !important;
+    }
+
+    .notebook-sheet pre, .notebook-sheet code {
+        font-family: 'JetBrains Mono', monospace !important;
+        background: #f8fafc !important;
+        color: #0284c7 !important;
+        border: 1px dashed #cbd5e1 !important;
+        border-radius: 6px !important;
+        padding: 4px 8px !important;
+        font-size: 13px !important;
+        line-height: 20px !important;
     }
 
     .page-tag-badge {
@@ -198,49 +224,8 @@ st.markdown("""
         font-weight: 700;
         padding: 1px 8px;
         border-radius: 10px;
-        margin-bottom: 6px;
+        margin-bottom: 8px;
         font-family: 'Plus Jakarta Sans', sans-serif !important;
-    }
-
-    /* FULL EXPANDED NOTEBOOK MODAL / READER */
-    .notebook-full-page {
-        background-color: #fefefd !important;
-        background-image: 
-            linear-gradient(90deg, transparent 46px, #f43f5e 46px, #f43f5e 48px, transparent 48px),
-            linear-gradient(#e0e7ff 1px, transparent 1px) !important;
-        background-size: 100% 100%, 100% 28px !important;
-        border-radius: 8px !important;
-        padding: 24px 20px 28px 60px !important; /* Proper text margin spacing */
-        color: #1e3a8a !important; /* Real Blue Ink */
-        font-family: 'Patrick Hand', cursive, sans-serif !important;
-        font-size: 17px !important;
-        line-height: 28px !important;
-        border: 1px solid #cbd5e1 !important;
-        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5) !important;
-        word-break: break-word !important;
-        box-sizing: border-box !important;
-    }
-    .notebook-full-page h1, .notebook-full-page h2, .notebook-full-page h3 {
-        color: #0f172a !important;
-        font-family: 'Shantell Sans', cursive !important;
-        margin-top: 12px !important;
-        margin-bottom: 6px !important;
-        font-size: 20px !important;
-        border-bottom: 1.5px solid #ef4444 !important;
-        padding-bottom: 3px !important;
-    }
-    .notebook-full-page p, .notebook-full-page li {
-        font-family: 'Patrick Hand', cursive !important;
-        color: #1e293b !important;
-        margin-bottom: 4px !important;
-    }
-    .notebook-full-page code {
-        font-family: 'JetBrains Mono', monospace !important;
-        background: #f1f5f9 !important;
-        color: #0369a1 !important;
-        padding: 1px 6px !important;
-        border-radius: 4px !important;
-        font-size: 13px !important;
     }
 
     /* AI Response Glass Box */
@@ -331,7 +316,7 @@ st.markdown("""
         color: #FFFFFF !important;
     }
 
-    /* MOBILE SCREEN SPECIFICS */
+    /* AUTO-DETECT DISPLAY: MOBILE SCREEN SPECIFICS (< 768px) */
     @media (max-width: 768px) {
         .splash-title {
             font-size: 32px !important;
@@ -367,32 +352,13 @@ st.markdown("""
             border-radius: 18px !important;
             flex-shrink: 0 !important;
         }
-        .notebook-mini-page {
-            padding: 14px 10px 14px 44px !important;
-            font-size: 13px !important;
-            line-height: 22px !important;
-            background-size: 100% 100%, 100% 22px !important;
-            height: 280px !important;
-        }
-        .notebook-full-page {
-            padding: 18px 12px 20px 48px !important;
+        .notebook-sheet {
+            height: 480px !important;
+            padding: 18px 12px 18px 48px !important;
             font-size: 15px !important;
-            line-height: 24px !important;
-            background-size: 100% 100%, 100% 24px !important;
+            line-height: 25px !important;
+            background-size: 100% 100%, 100% 25px !important;
         }
-    }
-
-    .badge-status {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        background: rgba(16, 185, 129, 0.15);
-        color: #34D399;
-        border: 1px solid rgba(16, 185, 129, 0.3);
-        padding: 4px 12px;
-        border-radius: 20px;
-        font-size: 12px;
-        font-weight: 600;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -704,13 +670,13 @@ for i in range(3):
                 ai_output = get_ai_response(prompt, current_subject=active_subj)
                 st.markdown(f'<div class="ai-box">{ai_output}</div>', unsafe_allow_html=True)
 
-    # ================= 2. GENUINE REGISTER SIZE DUAL-PAGE HANDWRITTEN NOTES =================
+    # ================= 2. REALISTIC BOUNDED REGISTER SHEETS (DUAL SPREAD) =================
     def render_handwritten_notes():
         active_subj = st.session_state.selected_subject
         st.markdown(f"""
         <div class="hero-banner">
-            <div class="hero-title">📝 Real Student Register Pages (Side-by-Side)</div>
-            <div class="hero-sub">Subject Context: {active_subj} • Normal student handwriting style notes with clean margin alignment. Tap to open full page view.</div>
+            <div class="hero-title">📝 Real Student Register Notebook Sheets</div>
+            <div class="hero-sub">Subject Context: {active_subj} • Fixed-size standard classmate register sheets with smooth internal scroll. Auto-adjusts for mobile and desktop screens.</div>
         </div>
         """, unsafe_allow_html=True)
 
@@ -758,81 +724,59 @@ for i in range(3):
 
         final_topic = custom_topic.strip() if custom_topic.strip() else chosen_topic
 
-        if st.button("✍️ Write on Register Pages", use_container_width=True):
-            with st.spinner(f"Writing Page 1 and Page 2 in clean student register format for {final_topic}..."):
-                # Page 1 Prompt (Normal neat handwriting points, no giant cursive headers)
+        if st.button("✍️ Write on Register Sheets", use_container_width=True):
+            with st.spinner(f"Writing Page 1 and Page 2 in natural student register notebook sheets for {final_topic}..."):
+                # Page 1 Prompt (Fit within 1 real notebook page)
                 prompt_p1 = f"""
-                You are a top BCA student writing clean register notes for: '{final_topic}' in {active_subj}.
+                You are a top BCA student writing 'Page 1' of standard notebook register notes for: '{final_topic}' in {active_subj}.
                 Language: {notes_lang}.
 
-                Write in clean, simple handwritten student notes format (NOT fancy or decorative cursive):
+                Write in clean, simple, natural student handwriting format (NOT fancy or decorative cursive):
                 - 📌 Core Concept (Seedhe 3-4 simple bullet points mein).
                 - ⚡ Formula / Shortcut Trick Box (Exam ke liye direct shortcut).
-                - 📊 Clean ASCII Flow, Truth Table or Diagram representation.
-                Do not use overly large header titles or fancy formatting. Keep it concise to fit a single notebook page.
+                - 📊 Flowchart, Truth Table, or Diagram Representation in clean text.
+                Do not use giant headers. Keep it tight and readable to fit a single register sheet.
                 """
                 
                 # Page 2 Prompt (Solved Question & Warning)
                 prompt_p2 = f"""
-                You are writing 'Page 2' of the student register notes for: '{final_topic}' in {active_subj}.
+                You are writing 'Page 2' of the notebook register notes for: '{final_topic}' in {active_subj}.
                 Language: {notes_lang}.
 
-                Write in clean, simple handwritten student notes format:
+                Write in clean, simple, natural student handwriting format:
                 - 📝 Solved University Exam Question (5-10 Marks format with step-by-step verified solution).
                 - ⚠️ 2 Examiner Warnings (Where students make silly mistakes and lose marks).
-                Keep it clear, concise and step-by-step.
+                Keep it concise and step-by-step.
                 """
 
                 st.session_state.notes_p1 = get_ai_response(prompt_p1, forced_language=notes_lang, current_subject=active_subj)
                 st.session_state.notes_p2 = get_ai_response(prompt_p2, forced_language=notes_lang, current_subject=active_subj)
                 st.session_state.notes_topic = final_topic
 
-        # RENDER DUAL PAGES (SIDE-BY-SIDE)
+        # RENDER DUAL REGISTER SHEETS (AUTO-RESPONSIVE SPREAD)
         if "notes_p1" in st.session_state and "notes_p2" in st.session_state:
-            st.markdown(f"#### 📖 Register Pages: {st.session_state.get('notes_topic')} ({active_subj})")
-            st.caption("👇 Dono pages agal-bagal hain. Kisi bhi page ke neeche **'🔍 Open Full Page'** click karke reader view mein kholein:")
+            st.markdown(f"#### 📖 Register Notebook Spread: {st.session_state.get('notes_topic')} ({active_subj})")
+            st.caption("👇 Notebook pages fixed standard size mein hain. Scroll karke pura page padhein:")
 
             col_p1, col_p2 = st.columns(2)
 
             with col_p1:
                 st.markdown(f"""
-                <div class="notebook-mini-page">
-                    <span class="page-tag-badge">PAGE 1</span>
-                    <div style="font-weight:700; font-size:16px; color:#0f172a; border-bottom:1px solid #ef4444; margin-bottom:6px; font-family:'Shantell Sans', cursive;">
-                        📌 Concept & Formulas
-                    </div>
-                    {st.session_state.notes_p1[:350]}...
-                    <div style="color:#ef4444; font-size:12px; margin-top:8px; font-weight:bold;">[Click below for full readable page]</div>
+                <div class="notebook-sheet">
+                    <span class="page-tag-badge">PAGE 1 : CONCEPT & FORMULAS</span>
+                    <h3 style="margin-top:4px;">{st.session_state.get('notes_topic')}</h3>
+                    {st.session_state.notes_p1}
                 </div>
                 """, unsafe_allow_html=True)
-                with st.expander("🔍 Open Page 1 (Fullscreen Reader)", expanded=False):
-                    st.markdown(f"""
-                    <div class="notebook-full-page">
-                        <span class="page-tag-badge">PAGE 1 : FULL VIEW</span>
-                        <h3>{st.session_state.get('notes_topic')}</h3>
-                        {st.session_state.notes_p1}
-                    </div>
-                    """, unsafe_allow_html=True)
 
             with col_p2:
                 st.markdown(f"""
-                <div class="notebook-mini-page">
-                    <span class="page-tag-badge">PAGE 2</span>
-                    <div style="font-weight:700; font-size:16px; color:#0f172a; border-bottom:1px solid #ef4444; margin-bottom:6px; font-family:'Shantell Sans', cursive;">
-                        📝 Solved Questions & Tips
-                    </div>
-                    {st.session_state.notes_p2[:350]}...
-                    <div style="color:#ef4444; font-size:12px; margin-top:8px; font-weight:bold;">[Click below for full readable page]</div>
+                <div class="notebook-sheet">
+                    <span class="page-tag-badge">PAGE 2 : SOLVED EXAM QUESTIONS</span>
+                    <h3 style="margin-top:4px;">{st.session_state.get('notes_topic')} - Practice</h3>
+                    {st.session_state.notes_p2}
                 </div>
                 """, unsafe_allow_html=True)
-                with st.expander("🔍 Open Page 2 (Fullscreen Reader)", expanded=False):
-                    st.markdown(f"""
-                    <div class="notebook-full-page">
-                        <span class="page-tag-badge">PAGE 2 : FULL VIEW</span>
-                        <h3>{st.session_state.get('notes_topic')} - Solved Exam Practice</h3>
-                        {st.session_state.notes_p2}
-                    </div>
-                    """, unsafe_allow_html=True)
 
     # ================= 3. EXAM ENGINE (WITH PHOTO ANSWER UPLOAD) =================
     def render_exam_engine():
