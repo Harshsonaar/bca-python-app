@@ -19,6 +19,9 @@ if "app_entered" not in st.session_state:
 if "selected_subject" not in st.session_state:
     st.session_state.selected_subject = "🐍 Python Programming"
 
+if "current_note_page" not in st.session_state:
+    st.session_state.current_note_page = 1
+
 # ================= ULTRA-PREMIUM APPLE FROSTED GLASS & REGISTER CSS =================
 st.markdown("""
 <style>
@@ -152,60 +155,67 @@ st.markdown("""
         margin-top: 24px;
     }
 
-    /* ================= REAL FIXED-SIZE NOTEBOOK PAGE DESIGN ================= */
-    .notebook-sheet {
-        background-color: #fefefe !important;
-        /* Ruled notebook lines + Red Margin Line on Left */
+    /* ================= REAL REGISTER FLIP-SHEET DESIGN (NO SCROLL, EXACT PAGE) ================= */
+    .register-flip-container {
+        display: flex;
+        justify-content: center;
+        margin-top: 15px;
+        margin-bottom: 20px;
+    }
+    .register-sheet-bounded {
+        background-color: #fefefd !important;
+        /* Ruled lines pattern + Clean Red Margin Line on Left */
         background-image: 
             linear-gradient(90deg, transparent 44px, #f43f5e 44px, #f43f5e 46px, transparent 46px),
             linear-gradient(#e2e8f0 1px, transparent 1px) !important;
         background-size: 100% 100%, 100% 28px !important;
         border-radius: 8px !important;
-        padding: 22px 20px 22px 58px !important; /* Safe padding: text stays strictly right of margin */
+        padding: 24px 22px 24px 60px !important; /* Safe padding away from red margin */
         color: #1e3a8a !important; /* Real blue ink */
         font-family: 'Patrick Hand', cursive, sans-serif !important;
-        font-size: 16px !important;
+        font-size: 17px !important;
         line-height: 28px !important;
         border: 1px solid #cbd5e1 !important;
-        box-shadow: 0 6px 25px rgba(0, 0, 0, 0.45) !important;
-        height: 520px !important; /* Genuine Register Sheet Height */
-        overflow-y: auto !important; /* Smooth internal reading scroll */
-        position: relative !important;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5) !important;
+        width: 100% !important;
+        max-width: 780px !important;
+        min-height: 480px !important;
         box-sizing: border-box !important;
+        position: relative !important;
     }
 
     /* Left Spiral Notebook Binding Holes */
-    .notebook-sheet::before {
+    .register-sheet-bounded::before {
         content: '' !important;
         position: absolute !important;
         top: 14px !important;
         left: 14px !important;
         width: 14px !important;
-        height: 92% !important;
+        height: 94% !important;
         background-image: radial-gradient(circle, #cbd5e1 5px, transparent 6px) !important;
         background-size: 14px 28px !important;
         background-repeat: repeat-y !important;
     }
 
-    .notebook-sheet h1, .notebook-sheet h2, .notebook-sheet h3 {
+    .register-sheet-bounded h1, .register-sheet-bounded h2, .register-sheet-bounded h3 {
         font-family: 'Shantell Sans', cursive !important;
         color: #0f172a !important;
-        font-size: 19px !important;
-        margin-top: 10px !important;
-        margin-bottom: 4px !important;
+        font-size: 20px !important;
+        margin-top: 8px !important;
+        margin-bottom: 6px !important;
         border-bottom: 1.5px solid #ef4444 !important;
         padding-bottom: 2px !important;
     }
 
-    .notebook-sheet p, .notebook-sheet li {
+    .register-sheet-bounded p, .register-sheet-bounded li {
         font-family: 'Patrick Hand', cursive !important;
         color: #1e293b !important;
-        font-size: 16px !important;
+        font-size: 17px !important;
         line-height: 28px !important;
         margin-bottom: 4px !important;
     }
 
-    .notebook-sheet pre, .notebook-sheet code {
+    .register-sheet-bounded pre, .register-sheet-bounded code {
         font-family: 'JetBrains Mono', monospace !important;
         background: #f8fafc !important;
         color: #0284c7 !important;
@@ -216,16 +226,18 @@ st.markdown("""
         line-height: 20px !important;
     }
 
-    .page-tag-badge {
-        display: inline-block;
+    .page-turn-pill {
+        display: inline-flex;
+        align-items: center;
         background: #ef4444;
         color: #ffffff;
-        font-size: 11px;
+        font-size: 12px;
         font-weight: 700;
-        padding: 1px 8px;
-        border-radius: 10px;
+        padding: 2px 10px;
+        border-radius: 12px;
         margin-bottom: 8px;
         font-family: 'Plus Jakarta Sans', sans-serif !important;
+        letter-spacing: 0.5px;
     }
 
     /* AI Response Glass Box */
@@ -352,12 +364,12 @@ st.markdown("""
             border-radius: 18px !important;
             flex-shrink: 0 !important;
         }
-        .notebook-sheet {
-            height: 480px !important;
-            padding: 18px 12px 18px 48px !important;
+        .register-sheet-bounded {
+            padding: 18px 12px 18px 50px !important;
             font-size: 15px !important;
             line-height: 25px !important;
             background-size: 100% 100%, 100% 25px !important;
+            min-height: 420px !important;
         }
     }
 </style>
@@ -453,7 +465,7 @@ if not st.session_state.app_entered:
         <div class="creator-signature">Crafted & Created by Raj ⚡</div>
         <div class="splash-subtitle">
             Autonomous curriculum for MLK PG College, Balrampur (Maa Pateshwari State University).
-            Complete syllabus coverage for Python Programming, CSA & Discrete Mathematics with Genuine Register Notes, Solved Questions, and Multimodal Vision.
+            Complete syllabus coverage for Python Programming, CSA & Discrete Mathematics with Page-Turning Register Notes, Solved Questions, and Multimodal Vision.
         </div>
     </div>
     """, unsafe_allow_html=True)
@@ -670,13 +682,13 @@ for i in range(3):
                 ai_output = get_ai_response(prompt, current_subject=active_subj)
                 st.markdown(f'<div class="ai-box">{ai_output}</div>', unsafe_allow_html=True)
 
-    # ================= 2. REALISTIC BOUNDED REGISTER SHEETS (DUAL SPREAD) =================
+    # ================= 2. PAGE-TURNING (FLIP-SHEET) HANDWRITTEN REGISTER NOTES =================
     def render_handwritten_notes():
         active_subj = st.session_state.selected_subject
         st.markdown(f"""
         <div class="hero-banner">
-            <div class="hero-title">📝 Real Student Register Notebook Sheets</div>
-            <div class="hero-sub">Subject Context: {active_subj} • Fixed-size standard classmate register sheets with smooth internal scroll. Auto-adjusts for mobile and desktop screens.</div>
+            <div class="hero-title">📝 Real Student Register Notebook (Page-Flip System)</div>
+            <div class="hero-sub">Subject Context: {active_subj} • Bilkul real copy ki tarah! No long scroll — bas "Next Page" palat kar aage padhein.</div>
         </div>
         """, unsafe_allow_html=True)
 
@@ -724,59 +736,106 @@ for i in range(3):
 
         final_topic = custom_topic.strip() if custom_topic.strip() else chosen_topic
 
-        if st.button("✍️ Write on Register Sheets", use_container_width=True):
-            with st.spinner(f"Writing Page 1 and Page 2 in natural student register notebook sheets for {final_topic}..."):
-                # Page 1 Prompt (Fit within 1 real notebook page)
-                prompt_p1 = f"""
-                You are a top BCA student writing 'Page 1' of standard notebook register notes for: '{final_topic}' in {active_subj}.
+        if st.button("✍️ Write on Register Pages", use_container_width=True):
+            st.session_state.current_note_page = 1
+            with st.spinner(f"Writing complete 3-page student register for {final_topic}..."):
+                # Page 1: Concept & Ground Understanding
+                p1_prompt = f"""
+                You are a top BCA student writing 'PAGE 1' of standard student register notes for: '{final_topic}' in {active_subj}.
                 Language: {notes_lang}.
 
-                Write in clean, simple, natural student handwriting format (NOT fancy or decorative cursive):
-                - 📌 Core Concept (Seedhe 3-4 simple bullet points mein).
-                - ⚡ Formula / Shortcut Trick Box (Exam ke liye direct shortcut).
-                - 📊 Flowchart, Truth Table, or Diagram Representation in clean text.
-                Do not use giant headers. Keep it tight and readable to fit a single register sheet.
+                Format for PAGE 1 (Clean, concise, fits within single page):
+                - 📌 Core Concept (Asli matlab kya hai? - In 3-4 bullet points).
+                - 🎯 Why is it used? (Examiner's key expectation).
+                Write in natural student handwriting format without decorative fancy fonts.
                 """
                 
-                # Page 2 Prompt (Solved Question & Warning)
-                prompt_p2 = f"""
-                You are writing 'Page 2' of the notebook register notes for: '{final_topic}' in {active_subj}.
+                # Page 2: Formula, Tricks & Diagrams
+                p2_prompt = f"""
+                You are writing 'PAGE 2' of the student register notes for: '{final_topic}' in {active_subj}.
                 Language: {notes_lang}.
 
-                Write in clean, simple, natural student handwriting format:
-                - 📝 Solved University Exam Question (5-10 Marks format with step-by-step verified solution).
-                - ⚠️ 2 Examiner Warnings (Where students make silly mistakes and lose marks).
-                Keep it concise and step-by-step.
+                Format for PAGE 2 (Fits within single page):
+                - ⚡ Memory Trick & Formula Box (How to remember formulas in exams forever).
+                - 📊 Flowchart, Truth Table, or Diagram Representation in clean text/ASCII.
+                Write in natural student handwriting format.
                 """
 
-                st.session_state.notes_p1 = get_ai_response(prompt_p1, forced_language=notes_lang, current_subject=active_subj)
-                st.session_state.notes_p2 = get_ai_response(prompt_p2, forced_language=notes_lang, current_subject=active_subj)
-                st.session_state.notes_topic = final_topic
+                # Page 3: Solved Exam Question & Pitfalls
+                p3_prompt = f"""
+                You are writing 'PAGE 3' of the student register notes for: '{final_topic}' in {active_subj}.
+                Language: {notes_lang}.
 
-        # RENDER DUAL REGISTER SHEETS (AUTO-RESPONSIVE SPREAD)
-        if "notes_p1" in st.session_state and "notes_p2" in st.session_state:
-            st.markdown(f"#### 📖 Register Notebook Spread: {st.session_state.get('notes_topic')} ({active_subj})")
-            st.caption("👇 Notebook pages fixed standard size mein hain. Scroll karke pura page padhein:")
+                Format for PAGE 3 (Fits within single page):
+                - 📝 Solved University Exam Question (5-10 Marks format with complete step-by-step verified solution).
+                - ⚠️ 2 Examiner Warnings (Where students make silly mistakes and lose marks).
+                Write in natural student handwriting format.
+                """
 
-            col_p1, col_p2 = st.columns(2)
+                st.session_state.flip_notes_p1 = get_ai_response(p1_prompt, forced_language=notes_lang, current_subject=active_subj)
+                st.session_state.flip_notes_p2 = get_ai_response(p2_prompt, forced_language=notes_lang, current_subject=active_subj)
+                st.session_state.flip_notes_p3 = get_ai_response(p3_prompt, forced_language=notes_lang, current_subject=active_subj)
+                st.session_state.flip_notes_topic = final_topic
 
-            with col_p1:
+        # RENDER PAGE-FLIP NAVIGATION & REALISTIC SHEET
+        if "flip_notes_p1" in st.session_state:
+            curr_pg = st.session_state.current_note_page
+            total_pages = 3
+
+            # Top Page Turner Controls
+            nav_col1, nav_col2, nav_col3 = st.columns([1, 2, 1])
+            with nav_col1:
+                if st.button("◀ Previous Page", disabled=(curr_pg == 1), use_container_width=True):
+                    st.session_state.current_note_page = max(1, curr_pg - 1)
+                    st.rerun()
+            with nav_col2:
                 st.markdown(f"""
-                <div class="notebook-sheet">
-                    <span class="page-tag-badge">PAGE 1 : CONCEPT & FORMULAS</span>
-                    <h3 style="margin-top:4px;">{st.session_state.get('notes_topic')}</h3>
-                    {st.session_state.notes_p1}
+                <div style="text-align:center; padding-top:8px;">
+                    <span style="font-weight:700; color:#38BDF8; font-size:16px;">📖 {st.session_state.get('flip_notes_topic')}</span><br>
+                    <span style="color:#94A3B8; font-size:13px;">Notebook Sheet {curr_pg} of {total_pages}</span>
                 </div>
                 """, unsafe_allow_html=True)
+            with nav_col3:
+                if st.button("Next Page ▶", disabled=(curr_pg == total_pages), use_container_width=True):
+                    st.session_state.current_note_page = min(total_pages, curr_pg + 1)
+                    st.rerun()
 
-            with col_p2:
-                st.markdown(f"""
-                <div class="notebook-sheet">
-                    <span class="page-tag-badge">PAGE 2 : SOLVED EXAM QUESTIONS</span>
-                    <h3 style="margin-top:4px;">{st.session_state.get('notes_topic')} - Practice</h3>
-                    {st.session_state.notes_p2}
+            # Render Active Register Sheet
+            if curr_pg == 1:
+                badge_title = "PAGE 1 : CONCEPT & UNDERSTANDING"
+                sheet_content = st.session_state.flip_notes_p1
+            elif curr_pg == 2:
+                badge_title = "PAGE 2 : TRICKS, FORMULAS & DIAGRAMS"
+                sheet_content = st.session_state.flip_notes_p2
+            else:
+                badge_title = "PAGE 3 : SOLVED EXAM QUESTIONS & WARNINGS"
+                sheet_content = st.session_state.flip_notes_p3
+
+            st.markdown(f"""
+            <div class="register-flip-container">
+                <div class="register-sheet-bounded">
+                    <span class="page-turn-pill">{badge_title}</span>
+                    <h3 style="margin-top:6px;">{st.session_state.get('flip_notes_topic')}</h3>
+                    <div style="font-size:13px; color:#64748b; margin-bottom:12px; font-family:'Plus Jakarta Sans', sans-serif;">
+                        <b>Subject:</b> {active_subj} | <b>Class:</b> BCA 1st Sem (MLK PG College)
+                    </div>
+                    {sheet_content}
                 </div>
-                """, unsafe_allow_html=True)
+            </div>
+            """, unsafe_allow_html=True)
+
+            # Bottom Quick Turner Buttons
+            b_nav1, b_nav2, b_nav3 = st.columns([1, 2, 1])
+            with b_nav1:
+                if st.button("◀ Back", disabled=(curr_pg == 1), key="b_prev", use_container_width=True):
+                    st.session_state.current_note_page = max(1, curr_pg - 1)
+                    st.rerun()
+            with b_nav2:
+                st.markdown(f"<div style='text-align:center; color:#94A3B8; font-size:12px;'>Use Next/Previous to flip through notebook pages</div>", unsafe_allow_html=True)
+            with b_nav3:
+                if st.button("Next Page ▶", disabled=(curr_pg == total_pages), key="b_next", use_container_width=True):
+                    st.session_state.current_note_page = min(total_pages, curr_pg + 1)
+                    st.rerun()
 
     # ================= 3. EXAM ENGINE (WITH PHOTO ANSWER UPLOAD) =================
     def render_exam_engine():
