@@ -3,6 +3,7 @@ import google.generativeai as genai
 import io
 import contextlib
 import time
+import re
 from PIL import Image
 
 st.set_page_config(
@@ -40,7 +41,7 @@ if "last_error" not in st.session_state:
 
 # Editor Preferences
 if "editor_rows" not in st.session_state:
-    st.session_state.editor_rows = 250
+    st.session_state.editor_rows = 240
 
 if "editor_font_size" not in st.session_state:
     st.session_state.editor_font_size = "14px"
@@ -81,7 +82,7 @@ st.markdown(f"""
     }}
 
     .block-container {{
-        padding-top: 1rem !important;
+        padding-top: 0.8rem !important;
         padding-bottom: 5rem !important;
         max-width: 1180px !important;
     }}
@@ -172,14 +173,6 @@ st.markdown(f"""
         box-shadow: 0 0 15px rgba(255, 230, 0, 0.25);
     }}
 
-    /* Subject Switcher Row */
-    .subject-button-dock {{
-        display: flex;
-        gap: 10px;
-        margin-bottom: 16px;
-        width: 100%;
-    }}
-
     /* Top Navigation Dock */
     div[data-testid="stRadio"] {{
         background: rgba(13, 14, 18, 0.9) !important;
@@ -219,30 +212,31 @@ st.markdown(f"""
         display: none !important;
     }}
 
-    /* ================= REGISTER NOTEBOOK CARD ================= */
+    /* ================= STRICT A4 REGISTER NOTEBOOK ================= */
     .register-center-wrapper {{
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
         width: 100%;
-        margin-top: 6px;
-        margin-bottom: 12px;
+        margin-top: 4px;
+        margin-bottom: 10px;
     }}
     .notebook-paper-a4 {{
         background-color: #ffffff !important;
         background-image: 
-            linear-gradient(90deg, transparent 42px, #f43f5e 42px, #f43f5e 43.5px, transparent 43.5px),
+            linear-gradient(90deg, transparent 40px, #f43f5e 40px, #f43f5e 41.5px, transparent 41.5px),
             linear-gradient(#e2e8f0 1px, transparent 1px) !important;
-        background-size: 100% 100%, 100% 26px !important;
+        background-size: 100% 100%, 100% 24px !important;
         border-radius: 8px !important;
-        padding: 22px 24px 30px 56px !important;
+        padding: 18px 20px 22px 52px !important;
         border: 1px solid #cbd5e1 !important;
-        box-shadow: 0 16px 45px rgba(0, 0, 0, 0.8), 0 0 20px rgba(255, 230, 0, 0.15) !important;
+        box-shadow: 0 14px 40px rgba(0, 0, 0, 0.8), 0 0 20px rgba(255, 230, 0, 0.15) !important;
         width: 100% !important;
-        max-width: 530px !important;
-        min-height: 480px !important;
-        height: auto !important;
+        max-width: 480px !important;
+        height: 440px !important;
+        max-height: 440px !important;
+        overflow: hidden !important;
         position: relative !important;
         box-sizing: border-box !important;
         color: #1e3a8a !important;
@@ -252,12 +246,12 @@ st.markdown(f"""
     .notebook-paper-a4::before {{
         content: '' !important;
         position: absolute !important;
-        top: 14px !important;
-        left: 11px !important;
-        width: 12px !important;
+        top: 12px !important;
+        left: 10px !important;
+        width: 10px !important;
         height: 94% !important;
-        background-image: radial-gradient(circle, #94a3b8 4px, transparent 5px) !important;
-        background-size: 12px 26px !important;
+        background-image: radial-gradient(circle, #94a3b8 3.5px, transparent 4.5px) !important;
+        background-size: 10px 24px !important;
         background-repeat: repeat-y !important;
     }}
 
@@ -266,30 +260,30 @@ st.markdown(f"""
         justify-content: space-between;
         align-items: center;
         border-bottom: 2px solid #ef4444;
-        padding-bottom: 4px;
-        margin-bottom: 10px;
+        padding-bottom: 2px;
+        margin-bottom: 6px;
     }}
     .notebook-title-text {{
         font-family: 'Plus Jakarta Sans', sans-serif !important;
         font-weight: 700 !important;
-        font-size: 16px !important;
+        font-size: 15px !important;
         color: #0f172a !important;
     }}
     .notebook-badge {{
         font-family: 'JetBrains Mono', monospace !important;
-        font-size: 11px !important;
+        font-size: 10.5px !important;
         font-weight: 700 !important;
         background: #1e293b !important;
         color: #FFE600 !important;
         border: 1px solid rgba(255, 230, 0, 0.4) !important;
-        padding: 2px 8px !important;
+        padding: 2px 7px !important;
         border-radius: 6px !important;
     }}
 
     .notebook-handwritten-text {{
         font-family: 'Patrick Hand', cursive !important;
-        font-size: 16.5px !important;
-        line-height: 26px !important;
+        font-size: 15px !important;
+        line-height: 24px !important;
         color: #1e3a8a !important;
         word-break: break-word !important;
         white-space: pre-wrap !important;
@@ -300,7 +294,7 @@ st.markdown(f"""
         background: rgba(13, 14, 18, 0.88);
         border: 1px solid rgba(255, 230, 0, 0.25);
         border-radius: 14px;
-        padding: 20px;
+        padding: 18px;
         backdrop-filter: blur(20px);
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
         margin-top: 14px;
@@ -311,11 +305,23 @@ st.markdown(f"""
         border: 1px solid rgba(255, 230, 0, 0.18);
         border-left: 3px solid #FFE600;
         border-radius: 8px;
-        padding: 12px 16px;
-        margin-bottom: 12px;
+        padding: 10px 14px;
+        margin-bottom: 10px;
     }}
 
-    /* ================= PEP-8 4-SPACE INDENTATION LINES GUIDE ================= */
+    /* Live Indentation Visualizer Card */
+    .indent-tracer-box {{
+        background: #090a0d;
+        border: 1px solid rgba(255, 230, 0, 0.25);
+        border-radius: 8px;
+        padding: 10px 14px;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 12px;
+        color: #94A3B8;
+        margin-top: 8px;
+    }}
+
+    /* Code Editor Styling */
     textarea[aria-label="Python Code Editor:"] {{
         font-size: {st.session_state.editor_font_size} !important;
         font-family: 'JetBrains Mono', monospace !important;
@@ -324,9 +330,6 @@ st.markdown(f"""
         border: 1px solid rgba(255, 230, 0, 0.35) !important;
         line-height: 24px !important;
         tab-size: 4 !important;
-        /* Visual Vertical Indentation Guides every 4 spaces */
-        background-image: linear-gradient(90deg, rgba(255, 230, 0, 0.07) 1px, transparent 1px) !important;
-        background-size: 33.6px 100% !important; /* Calibrated to 4 character monospace pitch */
         padding-left: 14px !important;
     }}
 
@@ -336,7 +339,7 @@ st.markdown(f"""
         color: #0A0A0C !important;
         border: 1px solid #FFE600 !important;
         border-radius: 10px !important;
-        padding: 8px 18px !important;
+        padding: 7px 16px !important;
         font-weight: 800 !important;
         font-family: 'JetBrains Mono', monospace !important;
         font-size: 13px !important;
@@ -349,15 +352,22 @@ st.markdown(f"""
         box-shadow: 0 8px 25px rgba(255, 230, 0, 0.6) !important;
     }}
 
+    /* STRICT COMPACT PHONE SCREEN LOCK (< 768px) */
     @media (max-width: 768px) {{
         .notebook-paper-a4 {{
-            padding: 16px 14px 22px 46px !important;
-            max-width: 95vw !important;
-            min-height: 440px !important;
+            padding: 14px 12px 18px 42px !important;
+            max-width: 90vw !important;
+            height: 380px !important;
+            max-height: 380px !important;
+            overflow: hidden !important;
+            background-size: 100% 100%, 100% 21px !important;
         }}
         .notebook-handwritten-text {{
-            font-size: 15px !important;
-            line-height: 24px !important;
+            font-size: 13.5px !important;
+            line-height: 21px !important;
+        }}
+        .notebook-title-text {{
+            font-size: 14px !important;
         }}
     }}
 </style>
@@ -406,11 +416,12 @@ def get_ai_response(prompt, image_input=None, forced_language=None, current_subj
     Subject Context: {current_subject}
     {lang_instruction}
 
-    TEACHING RULES:
-    1. Write in clean, concise student register notes or clean runnable Python scripts.
-    2. When analyzing code or fixing errors, explain step-by-step in simple language and follow strict PEP 8 4-space indentation.
-    3. Separate individual pages with the exact token '[PAGE_BREAK]' if asked for notes.
-    4. Write mathematical derivations with crystal clear steps and memory shortcuts.
+    STRICT CONSTRAINTS FOR NOTEBOOK PAGES:
+    1. Write in clean, concise student register notes.
+    2. IMPORTANT: Keep each page strictly to ONLY 40 to 50 WORDS so that it fits completely on the compact mobile screen without extending or cutting off.
+    3. Separate individual pages using the exact token '[PAGE_BREAK]'.
+    4. NEVER output raw markdown hashes like '###' or raw unparsed LaTeX with broken dollar signs. Write simple readable formulas (e.g. 0/0 form, lim (x -> a) [f'(x) / g'(x)]).
+    5. DO NOT output metadata boilerplate ('Subject:', 'Author:', 'Instructor:'). Start straight with the study points.
 
     Query:
     {prompt}
@@ -455,8 +466,8 @@ if not st.session_state.system_booted:
         <div class="coder-terminal-box">
             <div><span style="color:#38BDF8;">root@harshraj-os:~$</span> initialize_environment</div>
             <div style="color:#A3E635;">✔ Initializing Neural Kernel & LLM Gateway...</div>
-            <div style="color:#A3E635;">✔ Mounting Tactile Subject Selector Buttons...</div>
-            <div style="color:#A3E635;">✔ Strict PEP-8 Indent Guide Lines Active</div>
+            <div style="color:#A3E635;">✔ Live Indentation Tracer & Auto-Intent Detection: Active</div>
+            <div style="color:#A3E635;">✔ Standard Library Matrix & Keywords Suite: Mounted</div>
             <div style="color:#FFE600;">⚡ Status: Environment Ready. High-Performance Mode Engaged.</div>
         </div>
     </div>
@@ -530,7 +541,7 @@ else:
         index=0
     )
 
-    # ================= 1. SMART REGISTER NOTES =================
+    # ================= 1. SMART REGISTER NOTES (FIXED COMPACT BOUNDS) =================
     if selected_nav == "📝 Smart Register":
         st.markdown(f"#### 📖 Handwritten Register Notebook // {active_subj}")
 
@@ -614,7 +625,7 @@ else:
                         <span class="notebook-title-text">{st.session_state.get('flip_notes_topic')}</span>
                         <span class="notebook-badge">SHEET {curr_pg} / {total_pages}</span>
                     </div>
-                    <div style="font-size: 11px; color: #64748b; margin-bottom: 8px;">
+                    <div style="font-size: 11px; color: #64748b; margin-bottom: 6px;">
                         <b>Subject:</b> {active_subj} | <b>MLK PG College Balrampur</b>
                     </div>
                     <div class="notebook-handwritten-text">
@@ -889,45 +900,45 @@ else:
                     </div>
                     """, unsafe_allow_html=True)
 
-    # ================= 7. PYTHON SANDBOX, 4-SPACE INDENTATION & STORAGE (ONLY UNDER PYTHON) =================
+    # ================= 7. PYTHON SANDBOX, LIVE INDENTATION & INTENT DETECTOR =================
     elif selected_nav == "💻 Python Sandbox & Storage":
-        st.markdown(f"#### 💻 Interactive Colab Sandbox & PEP-8 Storage // Python Only")
+        st.markdown(f"#### 💻 Interactive Colab Sandbox & Smart Copilot Engine // Python")
 
-        # Top Drawer: Settings & Documentation CheatSheet
-        drawer_col1, drawer_col2, drawer_col3 = st.columns([1.5, 1.5, 1.2])
-        
-        with drawer_col1:
-            with st.expander("⚙️ PEP-8 Indentation & Editor Settings", expanded=False):
-                st.session_state.editor_rows = st.slider("Editor Height (px):", min_value=150, max_value=500, value=st.session_state.editor_rows, step=25)
-                st.session_state.editor_font_size = st.selectbox("Editor Font Size:", ["12px", "14px", "16px", "18px"], index=1)
+        # Top Drawer: Complete Keywords & Standard Libraries Encyclopedia
+        lib_c1, lib_c2 = st.columns([1.5, 1.5])
+        with lib_c1:
+            with st.expander("📚 Python All 35 Keywords Master Guide", expanded=False):
                 st.markdown("""
-                - **PEP-8 Indentation Assist:** Strictly Locked to **4 Spaces**.
-                - **Indentation Guide Lines:** Active (Subtle vertical guidelines rendered in editor).
+                - `def` : Defines functions | `lambda` : Anonymous 1-line functions
+                - `class` : Creates OOP blueprint | `return` : Exit function with value
+                - `yield` : Creates generator pipeline | `pass` : Empty null statement
+                - `if, elif, else` : Branching logic | `for, while, break, continue` : Loops
+                - `try, except, finally, raise` : Exception handling & error propagation
+                - `import, from, as` : Namespace importing
+                - `is` : Identity testing (`id(a) == id(b)`) | `in` : Membership testing
+                - `and, or, not` : Boolean operators | `True, False, None` : Constants
+                - `global, nonlocal` : Scope rebinding
+                - `async, await` : Asynchronous coroutine concurrency
+                - `with` : Context managers (`__enter__`, `__exit__`)
+                - `assert` : Debugging condition checks | `del` : Deletes reference
+                """)
+        with lib_c2:
+            with st.expander("📦 Exhaustive Standard Library Reference", expanded=False):
+                st.markdown("""
+                - `import math` : `math.sqrt()`, `math.pow()`, `math.sin()`, `math.pi`, `math.ceil()`
+                - `import re` : `re.findall()`, `re.search()`, `re.sub(r'pattern', 'repl', str)`
+                - `import json` : `json.dumps(dict)` (serialize), `json.loads(str)` (deserialize)
+                - `import datetime` : `datetime.datetime.now()`, `strftime("%Y-%m-%d")`
+                - `import collections` : `Counter()`, `defaultdict()`, `deque()`
+                - `import itertools` : `permutations()`, `combinations()`, `cycle()`
+                - `import random` : `random.randint(1, 100)`, `random.choice(list)`
+                - `import os, sys` : `os.getcwd()`, `sys.version`, `os.path.exists()`
+                - `import sqlite3` : `sqlite3.connect('bca.db')`
+                - `import hashlib` : `hashlib.sha256(b'pass').hexdigest()`
+                - `import csv` : `csv.reader()`, `csv.writer()`
                 """)
 
-        with drawer_col2:
-            with st.expander("📚 Python Keywords & Syntax Guide", expanded=False):
-                st.markdown("""
-                - `def func(*args, **kwargs)` : Variadic arguments & dictionaries.
-                - `lambda x, y: x + y` : Anonymous single-line function.
-                - `for-else` : Else executes only if loop never encounters `break`.
-                - `try-except-else-finally` : Complete exception control.
-                - `yield val` : Generator function stream producer.
-                - `is` vs `==` : `is` tests memory identity (`id()`), `==` tests values.
-                """)
-
-        with drawer_col3:
-            with st.expander("📦 Standard Library Matrix", expanded=False):
-                st.markdown("""
-                - `import math` : `isqrt()`, `sin()`, `log()`, `pi`
-                - `import re` : `re.findall()`, `re.sub()`, `re.match()`
-                - `import json` : `json.loads()`, `json.dumps()`
-                - `import datetime` : `datetime.now()`, `strftime()`
-                - `import collections` : `Counter`, `defaultdict`
-                - `import itertools` : `permutations()`, `combinations()`
-                """)
-
-        # Storage & File Management Toolbar
+        # Storage & File Vault
         with st.expander("📁 Virtual File Vault (Save, Load & Manage Files)", expanded=False):
             f_col1, f_col2, f_col3, f_col4 = st.columns([2, 1.2, 1.2, 1.2])
             with f_col1:
@@ -950,7 +961,7 @@ else:
                     else:
                         st.warning("Please enter a file name.")
 
-        # Interactive Code Editor with Visual 4-Space Indent Lines
+        # Interactive Code Editor
         user_code = st.text_area(
             "Python Code Editor:",
             value=st.session_state.active_code,
@@ -959,35 +970,57 @@ else:
         )
         st.session_state.active_code = user_code
 
-        # Action Toolbar (Run, Suggest, Export)
-        act_col1, act_col2, act_col3 = st.columns([1.2, 1.5, 1])
-        with act_col1:
-            run_btn = st.button("▶ RUN SCRIPT", use_container_width=True)
-        with act_col2:
-            suggest_btn = st.button("⚡ AI COPILOT SUGGESTION", use_container_width=True)
-        with act_col3:
-            st.download_button("💾 EXPORT (.PY)", data=user_code, file_name="script.py", use_container_width=True)
+        # ================= LIVE REAL-TIME INDENTATION TRACER =================
+        code_lines = user_code.splitlines()
+        indent_diagnostics = []
+        expected_next_indent = False
+        
+        for idx, line in enumerate(code_lines, start=1):
+            stripped = line.lstrip()
+            if not stripped or stripped.startswith("#"):
+                continue
+            leading_spaces = len(line) - len(stripped)
+            level = leading_spaces // 4
+            leftover = leading_spaces % 4
+            
+            status = f"L{idx:02d} | {'│   ' * level}└── {stripped[:35]}"
+            if leftover != 0:
+                status += f" ⚠️ [Indent Error: {leading_spaces} spaces (Use 4-spaces)]"
+            indent_diagnostics.append(status)
+            expected_next_indent = stripped.endswith(":")
 
-        # AI Suggestion Box
-        if suggest_btn:
-            with st.spinner("AI analyzing your code structure & logic..."):
-                copilot_prompt = f"""
-                You are a senior python engineer like GitHub Copilot and Google Colab AI.
-                Analyze this Python code:
+        with st.expander("⚡ Live Indentation Guide & Scope Structure", expanded=False):
+            if indent_diagnostics:
+                st.code("\n".join(indent_diagnostics[-8:]), language="text")
+            if expected_next_indent:
+                st.info("💡 Auto-Indent Detected: Last line ends with `:`, next line expects +4 spaces.")
+
+        # ================= LIVE CODE INTENT DETECTOR & AI AUTO-SUGGESTION =================
+        intent_col1, intent_col2 = st.columns([1.5, 1])
+        with intent_col1:
+            detect_intent_btn = st.button("🧠 Detect Code Intent & Suggest Next Steps", use_container_width=True)
+        with intent_col2:
+            run_btn = st.button("▶ RUN SCRIPT", use_container_width=True)
+
+        if detect_intent_btn:
+            with st.spinner("AI analyzing your keystrokes & predicting logic flow..."):
+                intent_prompt = f"""
+                You are a real-time smart code completion engine like GitHub Copilot and Google Colab.
+                Look at this Python code written by a BCA student:
                 ```python
                 {user_code}
                 ```
                 Provide:
-                1. ⚡ Best-practice suggestion / code optimization (how to make it cleaner or faster).
-                2. Potential logical bugs or edge-case warnings.
-                3. Improved code snippet if applicable.
-                Keep it concise and practical.
+                1. 🎯 What is the student trying to accomplish? (Code Intent in 1 line).
+                2. ⚡ Predicted Next Lines of Code (Complete the function/logic cleanly with 4-space indentation).
+                3. 💡 Immediate improvement or warning.
+                Keep it concise and ready to use.
                 """
-                suggestion = get_ai_response(copilot_prompt, current_subject="Python")
+                intent_analysis = get_ai_response(intent_prompt, current_subject="Python")
                 st.markdown(f"""
                 <div class="cyber-panel" style="border-left: 4px solid #FFE600;">
-                    <div style="font-size: 14px; font-weight: 700; color: #FFE600; font-family:'JetBrains Mono'; margin-bottom: 6px;">⚡ [AI_COPILOT_SUGGESTION]</div>
-                    {suggestion}
+                    <div style="font-size: 14px; font-weight: 700; color: #FFE600; font-family:'JetBrains Mono'; margin-bottom: 6px;">🧠 [CODE_INTENT_&_NEXT_LINE_PREDICTION]</div>
+                    {intent_analysis}
                 </div>
                 """, unsafe_allow_html=True)
 
