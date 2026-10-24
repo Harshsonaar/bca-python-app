@@ -1,5 +1,4 @@
 import streamlit as st
-import streamlit.components.v1 as components
 import google.generativeai as genai
 import io
 import contextlib
@@ -12,6 +11,14 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="collapsed"
 )
+
+# Query parameters for zero-reload instant swipe
+params = st.query_params
+if "note_page" in params:
+    try:
+        st.session_state.current_note_page = int(params["note_page"])
+    except:
+        pass
 
 # Initialize Session States
 if "system_booted" not in st.session_state:
@@ -237,6 +244,42 @@ st.markdown("""
         white-space: pre-wrap !important;
     }
 
+    /* CHHOTA ROUND ARROW CONTAINER (NO TEXT BUTTONS) */
+    .mini-arrow-row {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 16px;
+        margin-top: 10px;
+    }
+    .mini-arrow-btn {
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        background: rgba(30, 41, 59, 0.8);
+        border: 1px solid rgba(59, 130, 246, 0.4);
+        color: #60A5FA;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        font-weight: 800;
+        text-decoration: none;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    }
+    .mini-arrow-btn:hover {
+        background: #2563EB;
+        color: #FFFFFF;
+        transform: scale(1.1);
+    }
+    .mini-arrow-disabled {
+        opacity: 0.25;
+        pointer-events: none;
+        cursor: not-allowed;
+    }
+
     /* Formal Card Panel */
     .formal-panel {
         background: rgba(30, 41, 59, 0.35);
@@ -263,7 +306,7 @@ st.markdown("""
         margin-bottom: 14px;
     }
 
-    /* Primary Formal Buttons */
+    /* Standard Buttons */
     .stButton>button {
         background: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%) !important;
         color: #FFFFFF !important;
@@ -278,24 +321,6 @@ st.markdown("""
     .stButton>button:hover {
         transform: translateY(-1px);
         box-shadow: 0 6px 20px rgba(37, 99, 235, 0.5) !important;
-    }
-
-    /* Compact Round Arrow Buttons in Dock */
-    div[data-testid="column"]:has(button[key="arrow_btn_prev"]),
-    div[data-testid="column"]:has(button[key="arrow_btn_next"]) {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-    button[key="arrow_btn_prev"], button[key="arrow_btn_next"] {
-        width: 44px !important;
-        height: 44px !important;
-        border-radius: 50% !important;
-        font-size: 20px !important;
-        padding: 0 !important;
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
     }
 
     /* Phone Constraints (< 768px) */
@@ -354,14 +379,13 @@ def get_ai_response(prompt, image_input=None, forced_language=None, current_subj
             "and match it with direct clarity."
         )
 
-    # STRICT FORMAL MODERATION GUARDRAILS (NO SLANG / NO INFORMAL / NO ABUSIVE WORDS)
     optimized_prompt = f"""
     You are an esteemed university professor for the Bachelor of Computer Applications (BCA) program at MLK PG College, Balrampur (affiliated with Maa Pateshwari State University).
     Subject Discipline: {current_subject}
     {lang_instruction}
 
     STRICT ACADEMIC CONDUCT & LANGUAGE POLICY:
-    1. STRICT RESTRICTION: Maintain an academic, respectful, and dignified tone suitable for college professors and students. NEVER use colloquial, street slang, or offensive Hindi words (such as 'pel', 'chutiya', 'bakchodi', etc.). Use formal terms like 'solve karein', 'dhyan dein', 'likhein', 'pariksha mein dhyan rakhein'.
+    1. STRICT RESTRICTION: Maintain an academic, respectful, and dignified tone suitable for college professors and students. NEVER use colloquial, street slang, or offensive Hindi words. Use formal terms like 'solve karein', 'dhyan dein', 'likhein', 'pariksha mein dhyan rakhein'.
     2. FOR REGISTER NOTES: Keep each page strictly to 40 to 50 words to perfectly fit the compact mobile notebook page without cutoff.
     3. Separate individual pages with the exact delimiter token '[PAGE_BREAK]'.
     4. Provide completed, verifiable code and derivations without truncation.
@@ -486,7 +510,7 @@ else:
         index=0
     )
 
-    # ================= 1. SMART REGISTER NOTES (CLEAN SWIPE & SLEEK ARROWS) =================
+    # ================= 1. SMART REGISTER NOTES (TOUCH SWIPE + MINI ARROWS) =================
     if selected_nav == "📝 Smart Register":
         st.markdown(f"#### 📖 Handwritten Register Notebook — {active_subj}")
 
@@ -563,7 +587,14 @@ else:
             curr_pg = min(st.session_state.current_note_page, total_pages)
             page_text = pages[curr_pg - 1].replace("\n", "<br>")
 
-            register_html = f"""
+            prev_pg = max(1, curr_pg - 1)
+            next_pg = min(total_pages, curr_pg + 1)
+
+            prev_class = "mini-arrow-btn" if curr_pg > 1 else "mini-arrow-btn mini-arrow-disabled"
+            next_class = "mini-arrow-btn" if curr_pg < total_pages else "mini-arrow-btn mini-arrow-disabled"
+
+            # EMBEDDED TOUCH SWIPE CARD (100% PURE HTML/JS WITHOUT STREAMLIT CODE BLOCK LEAK)
+            custom_card_html = f"""
             <div class="register-center-wrapper">
                 <div class="notebook-paper-a4" id="academic_note_card">
                     <div class="notebook-title-row">
@@ -577,63 +608,48 @@ else:
 {page_text}
                     </div>
                 </div>
-            </div>
-            """
-            st.markdown(register_html, unsafe_allow_html=True)
 
-            # SILENT BACKGROUND JS LISTENER VIA COMPONENTS (ZERO RAW CODE ON SCREEN)
-            components.html(f"""
-            <script>
+                <!-- CHHOTA ROUND ARROW DOCK -->
+                <div class="mini-arrow-row">
+                    <a href="?note_page={prev_pg}" target="_self" class="{prev_class}">‹</a>
+                    <div style="text-align: center; color: #60A5FA; font-size: 13px; font-weight: 700;">
+                        Sheet {curr_pg} of {total_pages}
+                        <span style="display:block; color:#94A3B8; font-size:10.5px; font-weight:400;">Swipe left/right on paper</span>
+                    </div>
+                    <a href="?note_page={next_pg}" target="_self" class="{next_class}">›</a>
+                </div>
+            </div>
+
+            <img src="x" onerror="
                 (function() {{
-                    const parentDoc = window.parent.document;
-                    const card = parentDoc.getElementById('academic_note_card');
-                    if (!card) return;
+                    const card = document.getElementById('academic_note_card');
+                    if (!card || card.dataset.touchInit) return;
+                    card.dataset.touchInit = 'true';
 
                     let startX = 0;
                     let startY = 0;
 
-                    card.ontouchstart = function(e) {{
+                    card.addEventListener('touchstart', (e) => {{
                         startX = e.changedTouches[0].screenX;
                         startY = e.changedTouches[0].screenY;
-                    }};
+                    }}, {{passive: true}});
 
-                    card.ontouchend = function(e) {{
+                    card.addEventListener('touchend', (e) => {{
                         let diffX = e.changedTouches[0].screenX - startX;
                         let diffY = e.changedTouches[0].screenY - startY;
 
-                        if (Math.abs(diffX) > 40 && Math.abs(diffY) < 65) {{
-                            if (diffX < 0) {{
-                                // Swipe Left -> Next
-                                const nextBtn = Array.from(parentDoc.querySelectorAll('button')).find(el => el.innerText.trim() === '›');
-                                if (nextBtn && !nextBtn.disabled) nextBtn.click();
-                            }} else {{
-                                // Swipe Right -> Prev
-                                const prevBtn = Array.from(parentDoc.querySelectorAll('button')).find(el => el.innerText.trim() === '‹');
-                                if (prevBtn && !prevBtn.disabled) prevBtn.click();
+                        if (Math.abs(diffX) > 40 && Math.abs(diffY) < 60) {{
+                            if (diffX < 0 && {curr_pg} < {total_pages}) {{
+                                window.location.search = '?note_page={next_pg}';
+                            }} else if (diffX > 0 && {curr_pg} > 1) {{
+                                window.location.search = '?note_page={prev_pg}';
                             }}
                         }}
-                    }};
+                    }}, {{passive: true}});
                 }})();
-            </script>
-            """, height=0, width=0)
-
-            # SLEEK ARROW DOCK
-            ctrl_c1, ctrl_c2, ctrl_c3 = st.columns([1, 2, 1])
-            with ctrl_c1:
-                if st.button("‹", disabled=(curr_pg == 1), key="arrow_btn_prev", use_container_width=True, help="Previous Page"):
-                    st.session_state.current_note_page = max(1, curr_pg - 1)
-                    st.rerun()
-            with ctrl_c2:
-                st.markdown(f"""
-                <div style="text-align: center; color: #60A5FA; font-size: 13px; font-weight: 700; padding-top: 6px;">
-                    Sheet {curr_pg} of {total_pages}
-                    <span style="display:block; color:#94A3B8; font-size:11px; font-weight:400;">Swipe on paper or tap arrows to flip</span>
-                </div>
-                """, unsafe_allow_html=True)
-            with ctrl_c3:
-                if st.button("›", disabled=(curr_pg == total_pages), key="arrow_btn_next", use_container_width=True, help="Next Page"):
-                    st.session_state.current_note_page = min(total_pages, curr_pg + 1)
-                    st.rerun()
+            " style="display:none;" />
+            """
+            st.html(custom_card_html)
 
     # ================= 2. MATHS ENCYCLOPEDIA (MATHEMATICS ONLY) =================
     elif selected_nav == "📐 Maths Encyclopedia":
