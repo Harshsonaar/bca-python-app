@@ -12,23 +12,12 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# Query parameters for zero-reload instant swipe
-params = st.query_params
-if "note_page" in params:
-    try:
-        st.session_state.current_note_page = int(params["note_page"])
-    except:
-        pass
-
 # Initialize Session States
 if "system_booted" not in st.session_state:
     st.session_state.system_booted = False
 
 if "selected_subject" not in st.session_state:
     st.session_state.selected_subject = "🐍 Python Programming"
-
-if "current_note_page" not in st.session_state:
-    st.session_state.current_note_page = 1
 
 if "dynamic_pages_list" not in st.session_state:
     st.session_state.dynamic_pages_list = []
@@ -200,6 +189,10 @@ st.markdown("""
         color: #1e3a8a !important;
         user-select: none !important;
         touch-action: pan-y !important;
+        cursor: grab;
+    }
+    .notebook-paper-a4:active {
+        cursor: grabbing;
     }
     .notebook-paper-a4::before {
         content: '' !important;
@@ -244,40 +237,38 @@ st.markdown("""
         white-space: pre-wrap !important;
     }
 
-    /* CHHOTA ROUND ARROW CONTAINER (NO TEXT BUTTONS) */
+    /* MINI CIRCULAR ARROW CONTROLS (NO FULL-WIDTH BUTTONS) */
     .mini-arrow-row {
         display: flex;
         align-items: center;
         justify-content: center;
         gap: 16px;
         margin-top: 10px;
+        user-select: none;
     }
-    .mini-arrow-btn {
-        width: 38px;
-        height: 38px;
-        border-radius: 50%;
-        background: rgba(30, 41, 59, 0.8);
-        border: 1px solid rgba(59, 130, 246, 0.4);
-        color: #60A5FA;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 20px;
-        font-weight: 800;
-        text-decoration: none;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    .mini-round-btn {
+        width: 36px !important;
+        height: 36px !important;
+        min-width: 36px !important;
+        min-height: 36px !important;
+        border-radius: 50% !important;
+        background: rgba(30, 41, 59, 0.85) !important;
+        border: 1px solid rgba(59, 130, 246, 0.4) !important;
+        color: #60A5FA !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        font-size: 19px !important;
+        font-weight: 800 !important;
+        cursor: pointer !important;
+        transition: all 0.2s ease !important;
+        outline: none !important;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.4) !important;
     }
-    .mini-arrow-btn:hover {
-        background: #2563EB;
-        color: #FFFFFF;
-        transform: scale(1.1);
-    }
-    .mini-arrow-disabled {
-        opacity: 0.25;
-        pointer-events: none;
-        cursor: not-allowed;
+    .mini-round-btn:hover {
+        background: #2563EB !important;
+        color: #FFFFFF !important;
+        transform: scale(1.1) !important;
     }
 
     /* Formal Card Panel */
@@ -510,7 +501,7 @@ else:
         index=0
     )
 
-    # ================= 1. SMART REGISTER NOTES (TOUCH SWIPE + MINI ARROWS) =================
+    # ================= 1. SMART REGISTER NOTES (CLIENT-SIDE SWIPE & MINI ARROWS) =================
     if selected_nav == "📝 Smart Register":
         st.markdown(f"#### 📖 Handwritten Register Notebook — {active_subj}")
 
@@ -560,7 +551,6 @@ else:
         final_topic = custom_topic.strip() if custom_topic.strip() else chosen_topic
 
         if st.button("✍️ Write on Register Pages", use_container_width=True):
-            st.session_state.current_note_page = 1
             with st.spinner(f"Inscribing formal notes for {final_topic}..."):
                 raw_output = get_ai_response(
                     f"Write concise register notes for '{final_topic}' in {active_subj}.",
@@ -580,76 +570,104 @@ else:
                 st.session_state.dynamic_pages_list = clean_pages
                 st.session_state.flip_notes_topic = final_topic
 
-        # DISPLAY COMPACT REGISTER SHEET
+        # RENDER NOTEBOOK PAGES CLIENT-SIDE (ZERO PAGE RELOAD / INSTANT TOUCH SWIPE)
         if st.session_state.dynamic_pages_list:
             pages = st.session_state.dynamic_pages_list
             total_pages = len(pages)
-            curr_pg = min(st.session_state.current_note_page, total_pages)
-            page_text = pages[curr_pg - 1].replace("\n", "<br>")
+            topic_header = st.session_state.get('flip_notes_topic', 'Register Notes')
 
-            prev_pg = max(1, curr_pg - 1)
-            next_pg = min(total_pages, curr_pg + 1)
-
-            prev_class = "mini-arrow-btn" if curr_pg > 1 else "mini-arrow-btn mini-arrow-disabled"
-            next_class = "mini-arrow-btn" if curr_pg < total_pages else "mini-arrow-btn mini-arrow-disabled"
-
-            # EMBEDDED TOUCH SWIPE CARD (100% PURE HTML/JS WITHOUT STREAMLIT CODE BLOCK LEAK)
-            custom_card_html = f"""
-            <div class="register-center-wrapper">
-                <div class="notebook-paper-a4" id="academic_note_card">
+            # Prepare client-side slides
+            slides_html = ""
+            for i, p_text in enumerate(pages):
+                formatted_body = p_text.replace("\n", "<br>")
+                display_style = "block" if i == 0 else "none"
+                slides_html += f"""
+                <div class="note-slide" id="slide_{i}" style="display: {display_style}; width: 100%;">
                     <div class="notebook-title-row">
-                        <span class="notebook-title-text">{st.session_state.get('flip_notes_topic')}</span>
-                        <span class="notebook-badge">Sheet {curr_pg} / {total_pages}</span>
+                        <span class="notebook-title-text">{topic_header}</span>
+                        <span class="notebook-badge">Sheet {i + 1} / {total_pages}</span>
                     </div>
                     <div style="font-size: 11px; color: #64748b; margin-bottom: 6px;">
                         <b>Discipline:</b> {active_subj} | <b>MLK PG College Balrampur</b>
                     </div>
                     <div class="notebook-handwritten-text">
-{page_text}
+                        {formatted_body}
                     </div>
                 </div>
+                """
 
-                <!-- CHHOTA ROUND ARROW DOCK -->
+            # Pure Embedded Responsive Component (Instant Touch + Mini Round Arrows)
+            notebook_full_widget = f"""
+            <div class="register-center-wrapper">
+                <div class="notebook-paper-a4" id="academic_note_card">
+                    {slides_html}
+                </div>
+
+                <!-- MINI COMPACT ROUND ARROW DOCK -->
                 <div class="mini-arrow-row">
-                    <a href="?note_page={prev_pg}" target="_self" class="{prev_class}">‹</a>
+                    <button class="mini-round-btn" id="btn_prev_sheet" onclick="changeSlide(-1)">‹</button>
                     <div style="text-align: center; color: #60A5FA; font-size: 13px; font-weight: 700;">
-                        Sheet {curr_pg} of {total_pages}
+                        <span id="page_counter_text">Sheet 1 of {total_pages}</span>
                         <span style="display:block; color:#94A3B8; font-size:10.5px; font-weight:400;">Swipe left/right on paper</span>
                     </div>
-                    <a href="?note_page={next_pg}" target="_self" class="{next_class}">›</a>
+                    <button class="mini-round-btn" id="btn_next_sheet" onclick="changeSlide(1)">›</button>
                 </div>
             </div>
 
-            <img src="x" onerror="
+            <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onload="
                 (function() {{
+                    let currentIdx = 0;
+                    const total = {total_pages};
                     const card = document.getElementById('academic_note_card');
-                    if (!card || card.dataset.touchInit) return;
-                    card.dataset.touchInit = 'true';
+                    const counter = document.getElementById('page_counter_text');
+                    const prevBtn = document.getElementById('btn_prev_sheet');
+                    const nextBtn = document.getElementById('btn_next_sheet');
 
-                    let startX = 0;
-                    let startY = 0;
-
-                    card.addEventListener('touchstart', (e) => {{
-                        startX = e.changedTouches[0].screenX;
-                        startY = e.changedTouches[0].screenY;
-                    }}, {{passive: true}});
-
-                    card.addEventListener('touchend', (e) => {{
-                        let diffX = e.changedTouches[0].screenX - startX;
-                        let diffY = e.changedTouches[0].screenY - startY;
-
-                        if (Math.abs(diffX) > 40 && Math.abs(diffY) < 60) {{
-                            if (diffX < 0 && {curr_pg} < {total_pages}) {{
-                                window.location.search = '?note_page={next_pg}';
-                            }} else if (diffX > 0 && {curr_pg} > 1) {{
-                                window.location.search = '?note_page={prev_pg}';
-                            }}
+                    window.changeSlide = function(delta) {{
+                        let nextIdx = currentIdx + delta;
+                        if (nextIdx >= 0 && nextIdx < total) {{
+                            document.getElementById('slide_' + currentIdx).style.display = 'none';
+                            document.getElementById('slide_' + nextIdx).style.display = 'block';
+                            currentIdx = nextIdx;
+                            counter.innerText = 'Sheet ' + (currentIdx + 1) + ' of ' + total;
+                            updateButtons();
                         }}
-                    }}, {{passive: true}});
+                    }};
+
+                    function updateButtons() {{
+                        if (prevBtn) prevBtn.style.opacity = (currentIdx === 0) ? '0.3' : '1';
+                        if (nextBtn) nextBtn.style.opacity = (currentIdx === total - 1) ? '0.3' : '1';
+                    }}
+                    updateButtons();
+
+                    // REAL TOUCH SWIPE LISTENER ON CARD
+                    if (card && !card.dataset.touchSet) {{
+                        card.dataset.touchSet = 'true';
+                        let startX = 0;
+                        let startY = 0;
+
+                        card.addEventListener('touchstart', (e) => {{
+                            startX = e.changedTouches[0].screenX;
+                            startY = e.changedTouches[0].screenY;
+                        }}, {{passive: true}});
+
+                        card.addEventListener('touchend', (e) => {{
+                            let diffX = e.changedTouches[0].screenX - startX;
+                            let diffY = e.changedTouches[0].screenY - startY;
+
+                            if (Math.abs(diffX) > 35 && Math.abs(diffY) < 65) {{
+                                if (diffX < 0) {{
+                                    window.changeSlide(1);  // Swipe Left -> Next
+                                }} else {{
+                                    window.changeSlide(-1); // Swipe Right -> Prev
+                                }}
+                            }}
+                        }}, {{passive: true}});
+                    }}
                 }})();
             " style="display:none;" />
             """
-            st.html(custom_card_html)
+            st.html(notebook_full_widget)
 
     # ================= 2. MATHS ENCYCLOPEDIA (MATHEMATICS ONLY) =================
     elif selected_nav == "📐 Maths Encyclopedia":
