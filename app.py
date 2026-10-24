@@ -22,7 +22,7 @@ if "selected_subject" not in st.session_state:
 # ================= ULTRA-PREMIUM APPLE FROSTED GLASS & MODERN UI CSS =================
 st.markdown("""
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Caveat:wght@500;600;700&family=Kalam:wght@400;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Kalam:wght@400;700&display=swap');
 
     html, body, [class*="css"] {
         font-family: -apple-system, BlinkMacSystemFont, "Plus Jakarta Sans", "SF Pro Display", sans-serif;
@@ -152,93 +152,76 @@ st.markdown("""
         margin-top: 24px;
     }
 
-    /* ================= REAL NOTEBOOK / REGISTER PAGE DESIGN ================= */
-    .notebook-paper {
-        background-color: #fbfbfa !important;
-        /* Ruled lines pattern + Red Margin line on Left */
+    /* ================= MINI DUAL-PAGE NOTEBOOK DESIGN ================= */
+    .notebook-mini-page {
+        background-color: #fcfcfb !important;
         background-image: 
-            linear-gradient(90deg, transparent 54px, #f43f5e 54px, #f43f5e 56px, transparent 56px),
-            linear-gradient(#dbeafe 1px, transparent 1px) !important;
-        background-size: 100% 100%, 100% 32px !important;
-        border-radius: 12px !important;
-        padding: 40px 30px 40px 75px !important;
-        margin-top: 22px !important;
-        color: #172554 !important; /* Real Ballpen Blue Ink */
-        font-family: 'Kalam', 'Caveat', cursive, sans-serif !important;
-        font-size: 19px !important;
-        line-height: 32px !important;
-        box-shadow: 
-            0 1px 3px rgba(0,0,0,0.2), 
-            0 10px 30px rgba(0,0,0,0.45), 
-            inset 30px 0 20px -20px rgba(0,0,0,0.12) !important;
-        border: 1px solid #e2e8f0 !important;
+            linear-gradient(90deg, transparent 32px, #f43f5e 32px, #f43f5e 33px, transparent 33px),
+            linear-gradient(#e2e8f0 1px, transparent 1px) !important;
+        background-size: 100% 100%, 100% 24px !important;
+        border-radius: 8px !important;
+        padding: 16px 14px 16px 42px !important;
+        color: #1e293b !important;
+        font-family: 'Kalam', cursive, sans-serif !important;
+        font-size: 14px !important;
+        line-height: 24px !important;
+        border: 1px solid #cbd5e1 !important;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3) !important;
+        max-height: 380px !important;
+        overflow-y: hidden !important;
         position: relative !important;
+        cursor: pointer !important;
+        transition: transform 0.2s ease, box-shadow 0.2s ease !important;
     }
-
-    /* Spiral / Hole punch effect on left side */
-    .notebook-paper::before {
+    .notebook-mini-page:hover {
+        transform: translateY(-3px) scale(1.01);
+        box-shadow: 0 8px 22px rgba(56, 189, 248, 0.25) !important;
+        border-color: #38bdf8 !important;
+    }
+    .notebook-mini-page::before {
         content: '' !important;
         position: absolute !important;
-        top: 20px !important;
-        left: 18px !important;
-        width: 16px !important;
+        top: 10px !important;
+        left: 10px !important;
+        width: 10px !important;
         height: 90% !important;
-        background-image: radial-gradient(circle, #cbd5e1 6px, transparent 7px) !important;
-        background-size: 16px 36px !important;
+        background-image: radial-gradient(circle, #cbd5e1 4px, transparent 5px) !important;
+        background-size: 10px 24px !important;
         background-repeat: repeat-y !important;
     }
 
-    .notebook-title {
-        font-family: 'Kalam', cursive !important;
-        font-size: 32px !important;
-        font-weight: 700 !important;
-        color: #0f172a !important;
-        border-bottom: 2px solid #ef4444 !important;
-        padding-bottom: 8px !important;
-        margin-bottom: 18px !important;
-        letter-spacing: 0.5px !important;
+    .page-tag-badge {
+        display: inline-block;
+        background: #ef4444;
+        color: #ffffff;
+        font-size: 11px;
+        font-weight: 700;
+        padding: 2px 8px;
+        border-radius: 12px;
+        margin-bottom: 8px;
+        font-family: -apple-system, sans-serif;
     }
 
-    .notebook-paper h1, .notebook-paper h2, .notebook-paper h3, .notebook-paper h4 {
-        font-family: 'Kalam', cursive !important;
+    /* FULL EXPANDED NOTEBOOK MODAL / READER */
+    .notebook-full-page {
+        background-color: #fcfcfb !important;
+        background-image: 
+            linear-gradient(90deg, transparent 48px, #f43f5e 48px, #f43f5e 50px, transparent 50px),
+            linear-gradient(#e0e7ff 1px, transparent 1px) !important;
+        background-size: 100% 100%, 100% 30px !important;
+        border-radius: 12px !important;
+        padding: 30px 24px 30px 65px !important;
+        color: #0f172a !important;
+        font-family: 'Kalam', cursive, sans-serif !important;
+        font-size: 18px !important;
+        line-height: 30px !important;
+        border: 1px solid #cbd5e1 !important;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45) !important;
+    }
+    .notebook-full-page h1, .notebook-full-page h2, .notebook-full-page h3 {
         color: #1e3a8a !important;
-        font-weight: 700 !important;
-        margin-top: 18px !important;
-        margin-bottom: 8px !important;
-    }
-
-    .notebook-paper p, .notebook-paper li {
         font-family: 'Kalam', cursive !important;
-        color: #1e293b !important;
-        font-weight: 500 !important;
-    }
-
-    .notebook-paper code {
-        font-family: 'JetBrains Mono', monospace !important;
-        background: #f1f5f9 !important;
-        color: #0369a1 !important;
-        padding: 2px 8px !important;
-        border-radius: 6px !important;
-        font-size: 15px !important;
-        border: 1px solid #cbd5e1 !important;
-    }
-
-    .notebook-paper pre {
-        background: #f8fafc !important;
-        border: 1px solid #cbd5e1 !important;
-        border-left: 4px solid #3b82f6 !important;
-        border-radius: 8px !important;
-        padding: 12px 16px !important;
-        color: #0f172a !important;
-    }
-
-    /* Highlighter pen style callout inside notebook */
-    .notebook-highlight {
-        background: #fef08a !important; /* Yellow highlighter */
-        padding: 2px 6px !important;
-        border-radius: 4px !important;
-        color: #854d0e !important;
-        font-weight: 700 !important;
+        margin-top: 14px !important;
     }
 
     /* AI Response Glass Box */
@@ -291,7 +274,7 @@ st.markdown("""
         display: none !important;
     }
 
-    /* ================= ZERO-OVERLAP TOP STICKY NAVIGATION DOCK ================= */
+    /* ZERO-OVERLAP TOP STICKY NAVIGATION DOCK */
     div[data-testid="stRadio"] {
         position: sticky !important;
         top: 12px !important;
@@ -340,7 +323,7 @@ st.markdown("""
         color: #FFFFFF !important;
     }
 
-    /* MOBILE AUTO-DETECTION */
+    /* MOBILE SCREEN SPECIFICS */
     @media (max-width: 768px) {
         .splash-title {
             font-size: 32px !important;
@@ -376,16 +359,17 @@ st.markdown("""
             border-radius: 18px !important;
             flex-shrink: 0 !important;
         }
-        .notebook-paper {
-            padding: 30px 18px 30px 48px !important;
-            font-size: 17px !important;
-            line-height: 28px !important;
-            background-size: 100% 100%, 100% 28px !important;
+        .notebook-mini-page {
+            padding: 12px 10px 12px 30px !important;
+            font-size: 12px !important;
+            line-height: 20px !important;
+            background-size: 100% 100%, 100% 20px !important;
+            max-height: 280px !important;
         }
-        .notebook-paper::before {
-            left: 10px !important;
-            width: 12px !important;
-            background-size: 12px 30px !important;
+        .notebook-full-page {
+            padding: 20px 14px 20px 42px !important;
+            font-size: 16px !important;
+            line-height: 26px !important;
         }
     }
 
@@ -538,14 +522,13 @@ else:
             "🧪 Sandbox"
         ],
         horizontal=True,
-        index=0
+        index=1
     )
 
     # ================= 1. MULTI-SUBJECT SYLLABUS HUB =================
     def render_syllabus():
         active_subj = st.session_state.selected_subject
 
-        # ------------------- 1. PYTHON SYLLABUS -------------------
         if active_subj == "🐍 Python Programming":
             st.markdown("""
             <div class="hero-banner">
@@ -569,144 +552,74 @@ else:
             if sel_mod == "Module 1: Language Basics, Operators & Bitwise":
                 with st.expander("1. Python Architecture, Bytecode Compilation & Dynamic Typing", expanded=True):
                     st.write("""
-                    **Samjhein Seedhi Bhasha Mein:**
-                    * Python hybrid language hai: Pehle Source Code (`.py`) compile hokar **Bytecode (`.pyc`)** banta hai, aur fir **Python Virtual Machine (PVM)** is bytecode ko line-by-line machine binary (0s aur 1s) mein convert karke run karti hai.
-                    * **Dynamic Typing Trick:** C language ki tarah `int a;` nahi likhna padta. Jo value doge, variable wahi ban jayega!
+                    * Source code (`.py`) compile hokar **Bytecode (`.pyc`)** banta hai, aur fir **Python Virtual Machine (PVM)** is bytecode ko line-by-line machine code mein run karti hai.
+                    * **Dynamic Typing:** Variables runtime par value ke anusaar data type acquire karte hain.
                     """)
-                    st.markdown("""
-                    <div class="solved-box">
-                        <b>📝 Exam Question:</b> Python dynamically typed kaise hai aur 'is' vs '==' mein kya antar hota hai? (5 Marks)<br>
-                        <b>⚡ Trick to Remember:</b> <code>==</code> sirf <b>Value</b> dekhta hai, jabki <code>is</code> memory address (<b>ID</b>) dekhta hai!
-                    </div>
-                    """, unsafe_allow_html=True)
-                    st.code("""# Demonstration of Dynamic Typing & Object Identity
-x = 101
-print(f"Value: {x} | Type: {type(x)} | Memory ID: {id(x)}")
-
-x = "Raj Shraff"
-print(f"Value: {x} | Type: {type(x)} | Memory ID: {id(x)}")
-
-a = [1, 2, 3]
-b = [1, 2, 3]
-print("a == b (Values same hain):", a == b)      # True
-print("a is b (Memory address alag hai):", a is b) # False""", language="python")
-
-                with st.expander("2. Identifiers, Type Casting & Formatted I/O", expanded=False):
-                    st.write("""
-                    **Naming Rules & Shortcuts:**
-                    * Variable name kabhi number se shuru nahi ho sakta (`1st_num` ❌, `num_1` ✅).
-                    * **Type Casting:** `int()`, `float()`, `str()`. User input by-default hamesha `string` hoti hai, isliye number calculations ke liye `int(input())` lagana compulsory hai.
-                    """)
-                    st.code("""# Explicit Type Casting & Modern f-string trick
-marks_input = "88"
-converted = int(marks_input)
-total = converted + 5
-print(f"Student Marks: {converted} | With Grace: {total}")""", language="python")
-
-                with st.expander("3. Complete Operators (Arithmetic, Bitwise, Logical)", expanded=False):
-                    st.write("""
-                    * Floor Division `//`: Decimal ko kaat kar quotient integer deta hai (`14 // 4 = 3`).
-                    * Modulus `%`: Hamesha remainder deta hai (`14 % 4 = 2`).
-                    * Bitwise Shortcuts: `x << n` ka matlab $x \\times 2^n$, aur `x >> n` ka matlab $x // 2^n$.
-                    """)
-                    st.code("""a, b = 14, 4
-print("14 // 4 (Quotient):", a // b)
-print("14 % 4  (Remainder):", a % b)
-print("4 << 1  (4 * 2):", b << 1)
-print("14 >> 1 (14 // 2):", a >> 1)""", language="python")
+                    st.code("""x = 101           # int
+x = "Raj Shraff"  # dynamically becomes string
+print(x, type(x))""", language="python")
 
             elif sel_mod == "Module 2: Control Flow & Iteration (Branches & Loops)":
                 with st.expander("1. Decisions & for-else Loop Trick", expanded=True):
-                    st.write("""
-                    * **Ternary Operator:** `pass_status = "Pass" if marks >= 40 else "Fail"`
-                    * **Viva Trick (for-else):** Loop ke saath laga hua `else` block tabhi run hota hai jab loop bina `break` ke poora natural condition par end ho!
-                    """)
-                    st.markdown("""
-                    <div class="solved-box">
-                        <b>📝 Exam Question:</b> Write a program using loop-else construct to check if a number is prime. (5 Marks)
-                    </div>
-                    """, unsafe_allow_html=True)
-                    st.code("""# Prime Number check via for-else
-num = 29
+                    st.write("Loop ka `else` block tabhi run hota hai jab loop bina `break` statement ke naturally complete ho.")
+                    st.code("""num = 29
 for factor in range(2, int(num**0.5) + 1):
     if num % factor == 0:
-        print(f"{num} is composite (divisible by {factor})")
+        print(f"{num} is composite")
         break
 else:
-    print(f"{num} is a Verified Prime Number (No break triggered)!")""", language="python")
+    print(f"{num} is Prime!")""", language="python")
 
             elif sel_mod == "Module 3: Functions, Scopes, Lambdas & Recursion":
-                with st.expander("1. *args, **kwargs, Scopes & Recursion", expanded=True):
-                    st.write("""
-                    * `*args`: Jab pata na ho kitne arguments aayenge, ye unhe **Tuple** bana deta hai.
-                    * `**kwargs`: Keyword arguments ko **Dictionary** bana deta hai.
-                    * **LEGB Rule Shortcut:** Local $\\rightarrow$ Enclosing $\\rightarrow$ Global $\\rightarrow$ Built-in.
-                    """)
+                with st.expander("1. *args, **kwargs & Scopes", expanded=True):
                     st.code("""def register_student(name, *subjects, **stats):
-    print(f"Student: {name}")
-    print("Subjects Tuple:", subjects)
-    print("Stats Dict:", stats)
+    print(f"Student: {name} | Subjects: {subjects} | Stats: {stats}")
 
-register_student("Raj", "Python", "CSA", sem=1, college="MLK PG")""", language="python")
+register_student("Raj", "Python", "CSA", sem=1)""", language="python")
 
             elif sel_mod == "Module 4: In-Depth Data Structures (Lists, Tuples, Dicts, Sets)":
-                with st.expander("1. List Comprehensions & Dictionary Hash Maps", expanded=True):
-                    st.code("""matrix = [[1, 2], [3, 4]]
-flattened = [item for row in matrix for item in row]
-print("Flattened:", flattened)
-
-scores = {"Python": 95, "CSA": 88, "Maths": 92}
+                with st.expander("1. List Comprehensions & Dictionaries", expanded=True):
+                    st.code("""scores = {"Python": 95, "CSA": 88, "Maths": 92}
 high = {k: v for k, v in scores.items() if v >= 90}
 print("High Scorers:", high)""", language="python")
 
             elif sel_mod == "Module 5: Object-Oriented Programming (OOP Architecture)":
-                with st.expander("1. Classes, Encapsulation, Inheritance & Dunder Methods", expanded=True):
-                    st.write("""
-                    * Class = Blueprint, Object = Real Memory Instance.
-                    * Private variables start with `__` (double underscore).
-                    """)
+                with st.expander("1. Classes, Encapsulation & Magic Methods", expanded=True):
                     st.code("""class BCAStudent:
     def __init__(self, name, roll):
         self.name = name
         self.__roll = roll
-
     def get_roll(self): return self.__roll
 
 s = BCAStudent("Raj", 101)
-print(f"Student: {s.name} | Roll: {s.get_roll()}")""", language="python")
+print(s.name, s.get_roll())""", language="python")
 
             elif sel_mod == "Module 6: File Handling, Context Managers & JSON/CSV":
-                with st.expander("1. File Modes, seek(), tell() & JSON", expanded=True):
+                with st.expander("1. File Modes & JSON", expanded=True):
                     st.code("""import json
-data = {"name": "Raj", "degree": "BCA", "sem": 1}
-json_str = json.dumps(data, indent=2)
-print("Serialized JSON:\\n", json_str)""", language="python")
+data = {"name": "Raj", "degree": "BCA"}
+print(json.dumps(data, indent=2))""", language="python")
 
             elif sel_mod == "Module 7: Exception Handling & Custom Errors":
-                with st.expander("1. try-except-else-finally & Custom Exceptions", expanded=True):
-                    st.code("""class MarksError(Exception): pass
-def verify(m):
-    if m < 0 or m > 100: raise MarksError("Invalid Marks Range")
-    return "Valid"
-
-try:
-    print(verify(95))
-except MarksError as e:
-    print("Error:", e)""", language="python")
+                with st.expander("1. try-except-else-finally", expanded=True):
+                    st.code("""try:
+    val = 10 / 2
+except ZeroDivisionError:
+    print("Cannot divide by zero")
+else:
+    print("Success:", val)""", language="python")
 
             elif sel_mod == "Module 8: Standard Libraries, Regex & Date-Time":
-                with st.expander("1. math, datetime, re Regex", expanded=True):
-                    st.code("""import re, math
-print("Square Root 144:", math.isqrt(144))
-sample = "Contact raj@example.com, Phone: +91-9876543210"
-print("Found Emails:", re.findall(r'[\w\.-]+@[\w\.-]+', sample))""", language="python")
+                with st.expander("1. Regex Pattern Matching", expanded=True):
+                    st.code("""import re
+text = "Student Raj, Email: raj@example.com"
+print(re.findall(r'[\w\.-]+@[\w\.-]+', text))""", language="python")
 
-        # ------------------- 2. COMPUTER ARCHITECTURE (CSA) SYLLABUS -------------------
         elif active_subj == "🖥️ Computer System Architecture":
             st.markdown("""
             <div class="hero-banner">
                 <div class="hero-title">Computer System Architecture (CSA) Master</div>
-                <div class="hero-sub">MLK PG College Balrampur • Complete Digital Logic, Adders, Circuits, Memory & CPU with Solved Questions & Tricks</div>
+                <div class="hero-sub">MLK PG College Balrampur • Digital Logic, Adders, Memory & CPU Architecture</div>
             </div>
             """, unsafe_allow_html=True)
 
@@ -721,186 +634,25 @@ print("Found Emails:", re.findall(r'[\w\.-]+@[\w\.-]+', sample))""", language="p
             ]
             sel_mod = st.selectbox("📚 Select CSA Unit:", csa_modules)
 
-            # CSA UNIT 1
-            if sel_mod == "Unit 1: Data Representation, Number Systems & 1's/2's Complements":
-                with st.expander("1. Radix Conversions & 2's Complement Arithmetic", expanded=True):
+            if sel_mod == "Unit 2: Logic Gates, Half Adder, Full Adder, K-Maps & Combinational Circuits":
+                with st.expander("1. Half Adder & Full Adder Architecture", expanded=True):
                     st.write("""
-                    **Samjhein Seedhi Bhasha Mein:**
-                    * Computer data 4 number systems mein process karta hai: Binary (Base 2), Octal (Base 8), Decimal (Base 10), Hexadecimal (Base 16).
-                    * **1's Complement:** Har bit ko ulta kar do ($0 \\rightarrow 1, 1 \\rightarrow 0$).
-                    * **2's Complement:** $2's = (1's\\text{ Complement}) + 1$.
-                    * **Examiner Secret Trick (Direct 2's Complement):** Right side (LSB) se check karo, jab tak pehla `1` na mile waisa hi rehne do, us pehle `1` ke baad ke saare left bits ko invert kar do!
+                    * **Half Adder:** Sum = $A \\oplus B$, Carry = $A \\cdot B$.
+                    * **Full Adder:** Sum = $A \\oplus B \\oplus C_{in}$, Carry = $AB + C_{in}(A \\oplus B)$.
+                    * **Trick:** Ek Full Adder ko **2 Half Adders aur 1 OR gate** se banaya ja sakta hai!
                     """)
-                    st.markdown("""
-                    <div class="solved-box">
-                        <b>📝 Solved Exam Question:</b> Represent -13 in 8-bit 2's Complement binary form. (5 Marks)<br>
-                        <b>Step 1:</b> +13 in 8-bit binary = <code>0000 1101</code><br>
-                        <b>Step 2 (1's Complement):</b> <code>1111 0010</code><br>
-                        <b>Step 3 (Add 1):</b> <code>1111 0010 + 1 = 1111 0011</code><br>
-                        <b>⚡ Quick Verification Trick:</b> Sign bit (leftmost) 1 hai, yaani number negative hai!
-                    </div>
-                    """, unsafe_allow_html=True)
-                    st.code("""# CSA Radix & 2's Complement Simulator
-def to_twos_comp(n, bits=8):
-    if n >= 0:
-        return bin(n)[2:].zfill(bits)
-    return bin((1 << bits) + n)[2:]
+                    st.code("""def full_adder(a, b, cin):
+    sum_bit = a ^ b ^ cin
+    carry_bit = (a & b) | (cin & (a ^ b))
+    return sum_bit, carry_bit
 
-val = -13
-print(f"Decimal: {val}")
-print(f"8-Bit 2's Complement: {to_twos_comp(val, 8)}")""", language="python")
+print("Full Adder (1, 1, 1):", full_adder(1, 1, 1)) # (1, 1)""", language="python")
 
-            # CSA UNIT 2
-            elif sel_mod == "Unit 2: Logic Gates, Half Adder, Full Adder, K-Maps & Combinational Circuits":
-                with st.expander("1. Half Adder & Full Adder Architecture (Complete Detailed Guide)", expanded=True):
-                    st.write("""
-                    **Samjhein Seedhi Bhasha Mein:**
-                    * **Half Adder (HA):** Yeh do 1-bit binary inputs ($A$ aur $B$) ko add karta hai aur do outputs deta hai: **Sum ($S$)** aur **Carry ($C$)**.
-                      * $$Sum = A \\oplus B = A'B + AB'$$ (XOR Gate)
-                      * $$Carry = A \\cdot B$$ (AND Gate)
-                    * **Full Adder (FA):** Yeh teen 1-bit binary inputs ($A$, $B$, aur $C_{in}$) ko add karta hai.
-                      * $$Sum = A \\oplus B \\oplus C_{in}$$ (XOR Gate)
-                      * $$Carry_{out} = AB + BC_{in} + AC_{in} = AB + C_{in}(A \\oplus B)$$
-                    * **Master Design Trick:** Ek Full Adder ko **2 Half Adders aur 1 OR Gate** se banaya ja sakta hai!
-                    """)
-                    st.markdown("""
-                    <div class="solved-box">
-                        <b>📝 Solved Exam Question:</b> Design a Full Adder using two Half Adders and an OR gate. Verify for $A=1, B=1, C_{in}=1$. (10 Marks)<br>
-                        <b>Step 1 (First HA):</b> Inputs $A, B \\implies S_1 = A \\oplus B = 1 \\oplus 1 = 0$, $C_1 = A \\cdot B = 1 \\cdot 1 = 1$.<br>
-                        <b>Step 2 (Second HA):</b> Inputs $S_1$ and $C_{in} \\implies Sum = S_1 \\oplus C_{in} = 0 \\oplus 1 = \\mathbf{1}$, $C_2 = S_1 \\cdot C_{in} = 0 \\cdot 1 = 0$.<br>
-                        <b>Step 3 (OR Gate for Carry):</b> $C_{out} = C_1 + C_2 = 1 + 0 = \\mathbf{1}$.<br>
-                        <b>Final Result:</b> $Sum = 1, Carry = 1$ ($1 + 1 + 1 = 3 = 11_2$).
-                    </div>
-                    """, unsafe_allow_html=True)
-                    st.code("""# Full Adder Simulator via 2 Half Adders
-def half_adder(a, b):
-    return (a ^ b), (a & b)
-
-def full_adder_using_two_ha(a, b, cin):
-    s1, c1 = half_adder(a, b)
-    final_sum, c2 = half_adder(s1, cin)
-    final_carry = c1 | c2
-    return final_sum, final_carry
-
-print("Full Adder Output (A=1, B=1, Cin=1):", full_adder_using_two_ha(1, 1, 1))""", language="python")
-
-                with st.expander("2. K-Map Minimization, Multiplexers (MUX) & Decoders", expanded=False):
-                    st.write("""
-                    * **K-Map (Karnaugh Map):** Gray code ordering (`00, 01, 11, 10`) par chalta hai.
-                    * **Grouping Priority Trick:** 16 (Octet) $\\rightarrow$ 8 $\\rightarrow$ 4 (Quad) $\\rightarrow$ 2 (Pair). Bada group = Kam variables ki simplified equation!
-                    * **Multiplexer (Data Selector):** $2^n$ inputs, $n$ select lines, 1 output.
-                    """)
-                    st.code("""# Multiplexer (4:1 MUX) Simulator
-def mux_4to1(lines, s1, s0):
-    select_index = (s1 << 1) | s0
-    return lines[select_index]
-
-inputs = ["D0", "D1", "Selected D2", "D3"]
-print("4:1 MUX Output (S1=1, S0=0):", mux_4to1(inputs, 1, 0))""", language="python")
-
-            # CSA UNIT 3
-            elif sel_mod == "Unit 3: Sequential Circuits, Flip-Flops, Registers & Counters":
-                with st.expander("1. Flip-Flops & The Famous Race-Around Condition", expanded=True):
-                    st.write("""
-                    * **Combinational vs Sequential:** Combinational ka output sirf current input par depend karta hai; Sequential mein **Memory (feedback loop)** hoti hai.
-                    * **JK Flip-Flop Race Around Condition:** Jab $J=1, K=1$ ho aur clock pulse width ($t_p$) flip-flop ke propagation delay ($t_{pd}$) se badi ho, toh output toggle hota rehta hai aur unstable ho jata hai.
-                    * **Solution Trick:** Use **Master-Slave JK Flip-Flop** ya **Edge-Triggering**!
-                    """)
-                    st.markdown("""
-                    <div class="solved-box">
-                        <b>📝 Exam Question:</b> How Master-Slave JK Flip-Flop eliminates race-around condition? (5 Marks)<br>
-                        <b>Answer Shortcut:</b> Clock High par sirf Master active hota hai aur input save karta hai, jab Clock Low hoti hai tab Slave trigger hokar output deta hai. Dono ek saath active nahi hote!
-                    </div>
-                    """, unsafe_allow_html=True)
-
-            # CSA UNIT 4
-            elif sel_mod == "Unit 4: Basic Computer Organization, Instruction Cycle & Bus Architecture":
-                with st.expander("1. Instruction Cycle & Common Bus System", expanded=True):
-                    st.write("""
-                    **Samjhein Seedhi Bhasha Mein:**
-                    * **Common Bus:** Bahut saare registers (PC, MAR, MDR, AC) ko ek common data highway provide karta hai multiplexers ke zariye.
-                    * **Instruction Cycle ke 4 Steps:**
-                      1. **Fetch:** Instruction memory se IR mein aati hai ($PC \\rightarrow MAR$, $M[MAR] \\rightarrow IR$, $PC + 1$).
-                      2. **Decode:** Opcode decoder check karta hai konsa task hai.
-                      3. **Effective Address:** Indirect addressing ho toh actual memory address read hota hai.
-                      4. **Execute:** ALU operation complete karta hai.
-                    """)
-                    st.markdown("""
-                    <div class="solved-box">
-                        <b>📝 Solved Exam Question:</b> Write register transfer micro-operations for Fetch phase. (5 Marks)<br>
-                        <b>Step 1 ($T_0$):</b> $AR \\leftarrow PC$<br>
-                        <b>Step 2 ($T_1$):</b> $IR \\leftarrow M[AR], PC \\leftarrow PC + 1$<br>
-                        <b>Step 3 ($T_2$):</b> Decode $IR(12-14)$, $AR \\leftarrow IR(0-11)$, $I \\leftarrow IR(15)$
-                    </div>
-                    """, unsafe_allow_html=True)
-
-            # CSA UNIT 5
-            elif sel_mod == "Unit 5: Central Processing Unit (ALU, Addressing Modes & Pipeline)":
-                with st.expander("1. Addressing Modes Shortcuts & Pipeline Hazards", expanded=True):
-                    st.write("""
-                    **Addressing Modes Tricks:**
-                    * **Immediate:** Operand instruction ke andar hi hai (`MOV R1, #25`).
-                    * **Direct:** Address direct diya hai (`ADD 2000`).
-                    * **Indirect:** Address ke andar dusra address hai (`ADD @2000`).
-                    * **Pipeline Speedup Formula:** $Speedup = \\frac{n \\times k}{k + n - 1}$, jahan $k$ = pipeline stages, $n$ = instructions.
-                    """)
-                    st.markdown("""
-                    <div class="solved-box">
-                        <b>📝 Solved Numerical:</b> Ek 5-stage pipeline mein 100 instructions execute karne par speedup ratio kya hoga? (7 Marks)<br>
-                        <b>Calculation:</b> $k = 5, n = 100$<br>
-                        Non-pipeline time = $n \\times k = 100 \\times 5 = 500$ cycles.<br>
-                        Pipeline time = $k + n - 1 = 5 + 100 - 1 = 104$ cycles.<br>
-                        <b>Speedup:</b> $500 / 104 = 4.807$ (Lagbhag 5x faster!).
-                    </div>
-                    """, unsafe_allow_html=True)
-                    st.code("""# Pipeline Speedup Calculator
-def calculate_speedup(k_stages, n_instructions):
-    non_pipe = k_stages * n_instructions
-    pipe = k_stages + n_instructions - 1
-    return non_pipe / pipe
-
-print("Pipeline Speedup (k=5, n=100):", round(calculate_speedup(5, 100), 3))""", language="python")
-
-            # CSA UNIT 6
-            elif sel_mod == "Unit 6: Memory Hierarchy (Cache Mapping, RAM/ROM & Virtual Memory)":
-                with st.expander("1. Cache Mapping Formulas & Locality of Reference", expanded=True):
-                    st.write("""
-                    **Locality of Reference:**
-                    * **Temporal Locality:** Jo data abhi use hua hai, wo jaldi hi dobara use hoga (Loops).
-                    * **Spatial Locality:** Jo data abhi use hua hai, uske bagal wala memory location agle cycle mein use hoga (Arrays).
-                    * **Direct Cache Mapping Trick:** Main memory address divides into: **[Tag | Index (Line) | Offset (Word)]**.
-                    """)
-                    st.markdown("""
-                    <div class="solved-box">
-                        <b>📝 Solved Exam Question:</b> Agar Main Memory 64 KB aur Cache Memory 4 KB hai with 16-byte block size, toh Direct Mapping fields calculate karein. (7 Marks)<br>
-                        <b>Step 1 (Word Offset):</b> Block size 16 bytes = $2^4 \\implies$ <b>4 bits</b>.<br>
-                        <b>Step 2 (Cache Lines/Index):</b> $4\\text{ KB} / 16\\text{ B} = 4096 / 16 = 256 = 2^8 \\implies$ <b>8 bits</b>.<br>
-                        <b>Step 3 (Tag):</b> Total memory 64 KB = $2^{16} \\implies$ 16 bits total address.<br>
-                        $\\text{Tag Bits} = 16 - (8 + 4) =$ <b>4 bits</b>!
-                    </div>
-                    """, unsafe_allow_html=True)
-
-            # CSA UNIT 7
-            elif sel_mod == "Unit 7: Input-Output Organization (Interrupts, DMA, Programmed I/O)":
-                with st.expander("1. DMA (Direct Memory Access) Data Transfer", expanded=True):
-                    st.write("""
-                    * **Programmed I/O:** CPU baar-baar puchta rehta hai (Polling / Busy Waiting). CPU ka time waste hota hai.
-                    * **Interrupt I/O:** Jab data ready ho, device CPU ko interrupt bhejti hai.
-                    * **DMA (Master Trick):** CPU ko beech se hata do! Hard disk direct RAM se baat karegi. CPU sirf transfer shuru karta hai aur finish hone par interrupt leta hai.
-                    """)
-                    st.markdown("""
-                    <div class="solved-box">
-                        <b>📝 Exam Question:</b> Differentiate between Cycle Stealing and Burst Mode DMA. (5 Marks)<br>
-                        <b>Shortcut:</b> <b>Cycle Stealing</b> mein DMA controller CPU se 1 bus cycle chheen kar 1 byte bhejta hai; <b>Burst Mode</b> mein poora block bhejne tak bus CPU ko nahi milti.
-                    </div>
-                    """, unsafe_allow_html=True)
-
-        # ------------------- 3. MATHEMATICS SYLLABUS -------------------
         elif active_subj == "📐 Mathematics & Numerical Methods":
             st.markdown("""
             <div class="hero-banner">
                 <div class="hero-title">Discrete Mathematics & Numerical Methods</div>
-                <div class="hero-sub">MLK PG College Balrampur • Sets, Relations, Logic, Matrices, Calculus & Numerical Solvers with Tricks</div>
+                <div class="hero-sub">MLK PG College Balrampur • Sets, Relations, Logic, Matrices, Calculus & Numerical Solvers</div>
             </div>
             """, unsafe_allow_html=True)
 
@@ -914,175 +666,42 @@ print("Pipeline Speedup (k=5, n=100):", round(calculate_speedup(5, 100), 3))""",
             ]
             sel_mod = st.selectbox("📚 Select Mathematics Unit:", math_modules)
 
-            # MATH UNIT 1
-            if sel_mod == "Unit 1: Set Theory, Relations, Functions & POSET":
-                with st.expander("1. Equivalence Relations & Partial Order (POSET)", expanded=True):
-                    st.write("""
-                    **Samjhein Seedhi Bhasha Mein:**
-                    * **Reflexive:** Khud ka relation khud se ($a R a$).
-                    * **Symmetric:** Agar $a R b$ hai toh $b R a$ bhi hona chahiye.
-                    * **Transitive:** Agar $a R b$ aur $b R c$ hai toh $a R c$ hona zaroori hai.
-                    * **Equivalence Relation:** Jo relation Reflexive, Symmetric aur Transitive teeno ho.
-                    * **POSET (Partial Order Set):** Reflexive + **Antisymmetric** ($a R b$ aur $b R a \\implies a = b$) + Transitive.
-                    """)
-                    st.markdown("""
-                    <div class="solved-box">
-                        <b>📝 Solved Exam Question:</b> Show that relation $R = \\{(a, b) : a - b \\text{ is divisible by 3}\\}$ on integers $\\mathbb{Z}$ is an Equivalence Relation. (7 Marks)<br>
-                        <b>1. Reflexive:</b> $a - a = 0 = 3 \\times 0$ (divisible by 3) $\\implies (a, a) \\in R$.<br>
-                        <b>2. Symmetric:</b> Agar $a - b = 3k$ toh $b - a = -3k = 3(-k)$ (divisible by 3) $\\implies (b, a) \\in R$.<br>
-                        <b>3. Transitive:</b> $a - b = 3k_1$ aur $b - c = 3k_2$. Add both: $(a - b) + (b - c) = a - c = 3(k_1 + k_2) \\implies (a, c) \\in R$.<br>
-                        <b>Verdict:</b> Hence, it is an Equivalence Relation!
-                    </div>
-                    """, unsafe_allow_html=True)
-
-            # MATH UNIT 2
-            elif sel_mod == "Unit 2: Mathematical Logic, Truth Tables & Propositional Calculus":
-                with st.expander("1. Logic Connectives, Tautology & Modus Ponens", expanded=True):
-                    st.write("""
-                    * Conjunction $\\land$ (AND): Dono True honge tabhi True.
-                    * Disjunction $\\lor$ (OR): Ek bhi True hoga toh True.
-                    * Conditional $p \\rightarrow q$ (Implies): **Sirf tabhi False hota hai jab $p$ True ho aur $q$ False ho ($T \\rightarrow F = F$)**, baaki sabhi case mein True!
-                    * **Tautology:** Statement column mein saare values `True` hon.
-                    """)
-                    st.markdown("""
-                    <div class="solved-box">
-                        <b>📝 Solved Exam Question:</b> Prove that $(p \\rightarrow q) \\equiv (\\neg p \\lor q)$ using Truth Table. (5 Marks)<br>
-                        <b>Shortcut:</b> Column values match: Dono columns mein truth values <code>[T, F, T, T]</code> aati hain, isliye mathematically logically equivalent hain!
-                    </div>
-                    """, unsafe_allow_html=True)
-                    st.code("""# Truth Table Generator in Python
-print("p  | q  | p -> q | ~p v q")
-print("------------------------")
-for p in [True, False]:
-    for q in [True, False]:
-        implies = (not p) or q
-        equiv = (not p) or q
-        print(f"{int(p)}  | {int(q)}  |   {int(implies)}    |   {int(equiv)}")""", language="python")
-
-            # MATH UNIT 3
-            elif sel_mod == "Unit 3: Matrices, Determinants, Rank & System of Linear Equations":
-                with st.expander("1. Rank of Matrix, Rouche-Capelli Consistency & Cayley-Hamilton", expanded=True):
-                    st.write("""
-                    **Consistency Trick (Rouche-Capelli Theorem):**
-                    * $AX = B$ mein Augmented Matrix $[A|B]$ banate hain aur Echelon form mein convert karte hain:
-                      1. $Rank(A) = Rank(A|B) = n$ (variables) $\\implies$ **Unique Solution**.
-                      2. $Rank(A) = Rank(A|B) < n \\implies$ **Infinitely Many Solutions**.
-                      3. $Rank(A) \\neq Rank(A|B) \\implies$ **Inconsistent (No Solution)**.
-                    * **Cayley-Hamilton Theorem Shortcut:** Har square matrix apni characteristic equation $|A - \\lambda I| = 0$ ko satisfy karti hai! Isse $A^{-1}$ bina adjoint calculate kiye 2 minute mein nikalta hai!
-                    """)
-                    st.markdown("""
-                    <div class="solved-box">
-                        <b>📝 Solved Exam Question:</b> Find the eigenvalues of matrix $A = \\begin{pmatrix} 2 & 1 \\\\ 1 & 2 \\end{pmatrix}$. (5 Marks)<br>
-                        <b>Formula:</b> $|A - \\lambda I| = 0 \\implies (2 - \\lambda)(2 - \\lambda) - (1)(1) = 0$<br>
-                        $\\lambda^2 - 4\\lambda + 3 = 0 \\implies (\\lambda - 1)(\\lambda - 3) = 0$<br>
-                        <b>Eigenvalues:</b> $\\lambda = 1, 3$.<br>
-                        <b>⚡ Super Verification Trick:</b> Sum of eigenvalues ($1 + 3 = 4$) hamesha matrix ke trace (diagonal sum $2 + 2 = 4$) ke barabar hota hai!
-                    </div>
-                    """, unsafe_allow_html=True)
-
-            # MATH UNIT 4
-            elif sel_mod == "Unit 4: Combinatorics, Pigeonhole Principle & Graph Theory":
-                with st.expander("1. Handshaking Theorem & Euler Planar Formula", expanded=True):
-                    st.write("""
-                    * **Handshaking Theorem:** Graph ke saare vertices ki degree ka sum hamesha number of edges ke double ke barabar hota hai:
-                      $$\\sum_{v \\in V} deg(v) = 2E$$
-                    * **Euler's Planar Formula Trick:** Kisi bhi connected planar graph mein:
-                      $$V - E + R = 2$$
-                      (Vertices - Edges + Regions = 2).
-                    """)
-                    st.markdown("""
-                    <div class="solved-box">
-                        <b>📝 Solved Exam Question:</b> Ek graph mein 12 edges hain aur har vertex ki degree 3 hai. Total kitne vertices honge? (5 Marks)<br>
-                        <b>Step:</b> Handshaking Theorem se $\\sum deg(v) = 2E = 2 \\times 12 = 24$.<br>
-                        Agar $n$ vertices hain: $3 \\times n = 24 \\implies n = 8$ vertices!
-                    </div>
-                    """, unsafe_allow_html=True)
-
-            # MATH UNIT 5
-            elif sel_mod == "Unit 5: Differential Calculus, Leibnitz's Theorem & Maxima/Minima":
-                with st.expander("1. Leibnitz's Theorem for n-th Derivative", expanded=True):
-                    st.write("""
-                    * Agar do functions multiply ho rahe hon ($y = u \\cdot v$), toh $n$-th derivative ka formula:
-                      $$y_n = ^nC_0 u_n v + ^nC_1 u_{n-1} v_1 + ^nC_2 u_{n-2} v_2 + \\dots + ^nC_n u v_n$$
-                    * **Trick:** $v$ hamesha us function ko maano jo 2-3 baar differentiate karne ke baad zero ho jaye (jaise $x^2$ ya $x^3$), taaki aage ke saare terms automatically cancel ho jayein!
-                    """)
-                    st.markdown("""
-                    <div class="solved-box">
-                        <b>📝 Solved Exam Question:</b> Find the $n$-th derivative of $y = x^2 e^{ax}$. (7 Marks)<br>
-                        <b>Choose:</b> $u = e^{ax}$ (infinite derivatives) aur $v = x^2$ ($v_1 = 2x, v_2 = 2, v_3 = 0$).<br>
-                        $y_n = a^n e^{ax} \\cdot x^2 + n a^{n-1} e^{ax} \\cdot (2x) + \\frac{n(n-1)}{2} a^{n-2} e^{ax} \\cdot 2$<br>
-                        $= a^{n-2} e^{ax} [a^2 x^2 + 2nax + n(n-1)]$.
-                    </div>
-                    """, unsafe_allow_html=True)
-
-            # MATH UNIT 6
-            elif sel_mod == "Unit 6: Numerical Methods (Newton-Raphson, Bisection & Gauss Elimination)":
+            if sel_mod == "Unit 6: Numerical Methods (Newton-Raphson, Bisection & Gauss Elimination)":
                 with st.expander("1. Newton-Raphson Method Formula & Code Solver", expanded=True):
                     st.write("""
-                    **Samjhein Seedhi Bhasha Mein:**
-                    * Equations ka root (solution) nikalne ke liye tangent line use karta hai.
-                    * **Formula:**
-                      $$x_{n+1} = x_n - \\frac{f(x_n)}{f'(x_n)}$$
-                    * **Order of Convergence:** Quadratic (Order = 2), yaani har step mein decimal places double accuracy se aate hain!
+                    * Formula: $x_{n+1} = x_n - \\frac{f(x_n)}{f'(x_n)}$ (Quadratic convergence, Order = 2).
                     """)
-                    st.markdown("""
-                    <div class="solved-box">
-                        <b>📝 Solved Numerical:</b> Find root of $x^3 - x - 2 = 0$ using Newton-Raphson starting with $x_0 = 1.5$. (7 Marks)<br>
-                        $f(x) = x^3 - x - 2 \\implies f'(x) = 3x^2 - 1$<br>
-                        $f(1.5) = 3.375 - 1.5 - 2 = -0.125$<br>
-                        $f'(1.5) = 3(2.25) - 1 = 5.75$<br>
-                        $x_1 = 1.5 - \\frac{-0.125}{5.75} = 1.5 + 0.02174 = \\mathbf{1.5217}$!
-                    </div>
-                    """, unsafe_allow_html=True)
-                    st.code("""# Complete Newton-Raphson Solver
-def newton_raphson(f, df, x0, tol=1e-5, max_iter=10):
-    x = x0
-    for i in range(max_iter):
-        fx = f(x)
-        dfx = df(x)
-        x_new = x - fx / dfx
-        print(f"Iteration {i+1}: x = {x_new:.6f}")
-        if abs(x_new - x) < tol:
-            return x_new
-        x = x_new
-    return x
-
-# Testing x^3 - x - 2 = 0
-f = lambda x: x**3 - x - 2
+                    st.code("""f = lambda x: x**3 - x - 2
 df = lambda x: 3*x**2 - 1
-root = newton_raphson(f, df, 1.5)
-print("Converged Root:", round(root, 5))""", language="python")
+x = 1.5
+for i in range(3):
+    x = x - f(x)/df(x)
+    print(f"Iter {i+1}: x = {x:.5f}")""", language="python")
 
-        # Bottom AI Action Container
         st.markdown(f"""
         <div class="apple-glass-card">
             <h3 style="margin-top:0; font-size:20px; font-weight:700;">🎯 AI University Exam Preparation & Viva Master ({active_subj})</h3>
-            <p style="color:#94A3B8; font-size:13px; margin-bottom:14px;">MLK PG College / Maa Pateshwari University exam ke top expected questions, viva points aur tricks generate karein:</p>
+            <p style="color:#94A3B8; font-size:13px; margin-bottom:14px;">MLK PG College exam questions aur viva points generate karein:</p>
         </div>
         """, unsafe_allow_html=True)
 
         if st.button("🔥 Generate Most Important Exam Questions & Viva Points", use_container_width=True):
-            with st.spinner(f"AI Professor analyzing {active_subj} for MLK PG College Balrampur..."):
+            with st.spinner(f"AI Professor analyzing {active_subj}..."):
                 prompt = f"""
-                You are a senior BCA university examiner for MLK PG College, Balrampur (affiliated with Maa Pateshwari State University).
+                You are a senior BCA university examiner for MLK PG College, Balrampur.
                 Subject: {active_subj}
-                Active Unit/Topic: {sel_mod}
-                
-                1. Provide the top 3 high-weightage theory examination questions (5-10 marks format) with complete step-by-step model answers and shortcut tricks.
-                2. Provide 3 tricky Viva-Voce questions with short, precise, examiner-winning answers.
-                3. Highlight 2 critical practical/numerical pitfalls students usually make in university exams and how to avoid them easily.
-                Format cleanly using bolding and clear bullet points.
+                Provide top 3 high-weightage questions with step-by-step model answers and shortcut tricks.
                 """
                 ai_output = get_ai_response(prompt, current_subject=active_subj)
                 st.markdown(f'<div class="ai-box">{ai_output}</div>', unsafe_allow_html=True)
 
-    # ================= 2. REAL HANDWRITTEN COPY PAGE GENERATOR =================
+    # ================= 2. DUAL SIDE-BY-SIDE PAGES (PAGE 1 & PAGE 2) WITH TAP-TO-EXPAND =================
     def render_handwritten_notes():
         active_subj = st.session_state.selected_subject
         st.markdown(f"""
         <div class="hero-banner">
-            <div class="hero-title">📝 Real Handwritten Notes & Solved Examples</div>
-            <div class="hero-sub">Subject Context: {active_subj} • Pure register notebook page layout with real ink handwriting font and tricks.</div>
+            <div class="hero-title">📝 Real Notebook Pages (Side-by-Side Dual View)</div>
+            <div class="hero-sub">Subject Context: {active_subj} • Chhote copy ke do pages agal-bagal dikhenge. Tap karke fullscreen reader mein kholein.</div>
         </div>
         """, unsafe_allow_html=True)
 
@@ -1099,8 +718,8 @@ print("Converged Root:", round(root, 5))""", language="python")
             ]
         elif active_subj == "🖥️ Computer System Architecture":
             suggested_topics = [
-                "2's Complement Direct Trick & Overflow Detection",
                 "Truth Table Chart of Full Adder & Circuit with 2 HA",
+                "2's Complement Direct Trick & Overflow Detection",
                 "Half Adder & Full Adder Design using 2 HA and 1 OR Gate",
                 "K-Map 4-Variable Minimization & Grouping Strategy",
                 "JK Flip-Flop Race-Around Condition & Master-Slave Solution",
@@ -1109,7 +728,7 @@ print("Converged Root:", round(root, 5))""", language="python")
                 "Cache Memory Mapping (Direct vs Associative vs Set-Associative)",
                 "DMA Controller Working: Cycle Stealing vs Burst Mode"
             ]
-        else: # Maths
+        else:
             suggested_topics = [
                 "Equivalence Relations Proof (Reflexive, Symmetric, Transitive)",
                 "POSET & Hasse Diagram Construction Rules",
@@ -1124,45 +743,89 @@ print("Converged Root:", round(root, 5))""", language="python")
         col1, col2 = st.columns([2, 1])
         with col1:
             chosen_topic = st.selectbox("Select Topic for Notes:", suggested_topics)
-            custom_topic = st.text_input("Or enter any specific topic from syllabus (Optional):", placeholder="e.g. Multiplexer cascading / DeMorgan's laws")
+            custom_topic = st.text_input("Or enter custom topic from syllabus (Optional):", placeholder="e.g. Multiplexer cascading / DeMorgan's laws")
         with col2:
             notes_lang = st.selectbox("Notes Language:", ["Hinglish (Simple Student Language)", "English", "Hindi (हिन्दी)"])
 
         final_topic = custom_topic.strip() if custom_topic.strip() else chosen_topic
 
-        if st.button("✍️ Write on Real Notebook Page", use_container_width=True):
-            with st.spinner(f"Writing handwritten notes on notebook paper for {final_topic}..."):
-                notes_prompt = f"""
-                You are writing neat, high-scoring 'Handwritten Student Register Notes' for a BCA student at MLK PG College Balrampur.
-                Topic: '{final_topic}'
-                Subject: {active_subj}
-                Language: {notes_lang}
+        if st.button("✍️ Write on Side-by-Side Dual Pages", use_container_width=True):
+            with st.spinner(f"Writing Page 1 and Page 2 in student register style for {final_topic}..."):
+                # Page 1 Prompt (Theory, Core Points, Formulas & Diagram)
+                prompt_p1 = f"""
+                You are writing 'Page 1' of a neat student handwritten register notebook for BCA student at MLK PG College Balrampur.
+                Topic: '{final_topic}' in {active_subj}. Language: {notes_lang}.
 
-                Formatting Instructions:
-                Write as if a brilliant university student wrote it by blue pen in a notebook.
-                1. 📌 Core Concept (Asli Matlab Kya Hai?) - In simple bullet points.
-                2. ⚡ Memory Trick & Formula Box (Exam ke liye direct shortcut)
-                3. 📊 Truth Table / Logic Diagram / Derivation Steps (Clean formatted table or ASCII circuit representation)
-                4. 📝 Solved University Exam Question (5-10 Marks format with step-by-step verified solution)
-                5. ⚠️ Examiner Warning (Kahan marks kat te hain aur kaise bachein)
-
-                Keep it crystal clear and ready to copy into exam registers.
+                Format as PAGE 1:
+                - 📌 Core Concept (Asli Matlab Kya Hai?) in concise bullet points.
+                - ⚡ Memory Trick & Formula Box (Direct formula to remember for exam).
+                - 📊 Flowchart, Truth Table, or Diagram Representation in clean text format.
+                Keep it concise so it fits a single notebook page.
                 """
-                st.session_state.current_notes = get_ai_response(notes_prompt, forced_language=notes_lang, current_subject=active_subj)
+                
+                # Page 2 Prompt (Solved Question & Examiner Warnings)
+                prompt_p2 = f"""
+                You are writing 'Page 2' of the same student register notebook for BCA student at MLK PG College Balrampur.
+                Topic: '{final_topic}' in {active_subj}. Language: {notes_lang}.
+
+                Format as PAGE 2:
+                - 📝 Solved University Exam Question (High probability 5-10 Marks format with step-by-step verified solution).
+                - ⚠️ 2 Examiner Warnings (Where students make silly mistakes and how to score full marks).
+                Keep it clear, concise and step-by-step.
+                """
+
+                st.session_state.notes_p1 = get_ai_response(prompt_p1, forced_language=notes_lang, current_subject=active_subj)
+                st.session_state.notes_p2 = get_ai_response(prompt_p2, forced_language=notes_lang, current_subject=active_subj)
                 st.session_state.notes_topic = final_topic
 
-        if "current_notes" in st.session_state:
-            st.markdown(f"""
-            <div class="notebook-paper">
-                <div class="notebook-title">✍️ {st.session_state.get('notes_topic')}</div>
-                <div style="font-size:14px; color:#64748b; margin-bottom:14px; font-family:'Plus Jakarta Sans', sans-serif;">
-                    <b>Subject:</b> {active_subj} | <b>Institution:</b> MLK PG College Balrampur
-                </div>
-                {st.session_state.current_notes}
-            </div>
-            """, unsafe_allow_html=True)
+        # RENDER DUAL PAGES (SIDE-BY-SIDE)
+        if "notes_p1" in st.session_state and "notes_p2" in st.session_state:
+            st.markdown(f"#### 📖 Notebook Pages: {st.session_state.get('notes_topic')} ({active_subj})")
+            st.caption("👇 Dono pages agal-bagal hain. Kisi bhi page ke neeche **'🔍 Open Full Page'** click karke bade size mein kholein:")
 
-    # ================= 3. EXAM ENGINE (WITH PHOTO ANSWER UPLOAD) =================
+            col_p1, col_p2 = st.columns(2)
+
+            with col_p1:
+                st.markdown(f"""
+                <div class="notebook-mini-page">
+                    <span class="page-tag-badge">PAGE 1</span>
+                    <div style="font-weight:700; font-size:18px; color:#1e3a8a; border-bottom:1px solid #ef4444; margin-bottom:6px;">
+                        📌 Concept & Formulas
+                    </div>
+                    {st.session_state.notes_p1[:400]}...
+                    <div style="color:#ef4444; font-size:12px; margin-top:8px;">[Click button below to read full page]</div>
+                </div>
+                """, unsafe_allow_html=True)
+                with st.expander("🔍 Open Page 1 (Fullscreen Reader)", expanded=False):
+                    st.markdown(f"""
+                    <div class="notebook-full-page">
+                        <span class="page-tag-badge">PAGE 1 : FULL VIEW</span>
+                        <h2 style="font-family:'Kalam', cursive; color:#1e3a8a; margin-top:8px;">{st.session_state.get('notes_topic')}</h2>
+                        {st.session_state.notes_p1}
+                    </div>
+                    """, unsafe_allow_html=True)
+
+            with col_p2:
+                st.markdown(f"""
+                <div class="notebook-mini-page">
+                    <span class="page-tag-badge">PAGE 2</span>
+                    <div style="font-weight:700; font-size:18px; color:#1e3a8a; border-bottom:1px solid #ef4444; margin-bottom:6px;">
+                        📝 Solved Questions & Tips
+                    </div>
+                    {st.session_state.notes_p2[:400]}...
+                    <div style="color:#ef4444; font-size:12px; margin-top:8px;">[Click button below to read full page]</div>
+                </div>
+                """, unsafe_allow_html=True)
+                with st.expander("🔍 Open Page 2 (Fullscreen Reader)", expanded=False):
+                    st.markdown(f"""
+                    <div class="notebook-full-page">
+                        <span class="page-tag-badge">PAGE 2 : FULL VIEW</span>
+                        <h2 style="font-family:'Kalam', cursive; color:#1e3a8a; margin-top:8px;">{st.session_state.get('notes_topic')} - Solved Exam Practice</h2>
+                        {st.session_state.notes_p2}
+                    </div>
+                    """, unsafe_allow_html=True)
+
+    # ================= 3. EXAM ENGINE =================
     def render_exam_engine():
         active_subj = st.session_state.selected_subject
         st.markdown(f"""
