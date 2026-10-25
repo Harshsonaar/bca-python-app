@@ -305,7 +305,7 @@ def execute_ai_query(system_role, user_prompt, image_input=None):
 
     if "Groq" in ai_choice and groq_key:
         client = Groq(api_key=groq_key)
-        # Verified Groq model IDs that never throw 404
+        # Verified models on Groq that never 404
         candidate_models = [
             "llama-3.3-70b-specdec",
             "llama-3.1-70b-versatile",
@@ -331,7 +331,7 @@ def execute_ai_query(system_role, user_prompt, image_input=None):
                 last_groq_err = str(e)
                 continue
 
-        # If all candidate Groq models failed, fallback to Gemini
+        # If Groq fails, fallback to Gemini
         if gemini_key:
             try:
                 genai.configure(api_key=gemini_key)
@@ -489,4 +489,187 @@ else:
                 "Object Oriented Programming: Encapsulation & Inheritance",
                 "File Handling, Context Managers & Exception Hierarchy"
             ]
-        elif active
+        elif active_subj == "🖥️ Computer System Architecture":
+            suggested_topics = [
+                "Full Adder Circuit, Logic Gates & Truth Table",
+                "Half Adder & Full Adder Design using 2 HA and 1 OR Gate",
+                "Number Systems, Complements & Binary Operations",
+                "K-Map 4-Variable Minimization & Grouping Rules",
+                "Flip-Flops, Master-Slave JK & Race-Around Condition",
+                "Instruction Cycle Phases & Cache Memory Mapping"
+            ]
+        else:
+            suggested_topics = [
+                "L'Hopital's Rule for Indeterminate Forms with Solved Limit",
+                "Equivalence Relations Proof & POSET Hasse Diagrams",
+                "Matrix Rank, Echelon Forms & Rouche-Capelli Consistency",
+                "Eigenvalues, Eigenvectors & Cayley-Hamilton Theorem",
+                "Leibnitz Theorem for n-th Derivatives & Formula Matrix",
+                "Newton-Raphson Method & Numerical Convergence"
+            ]
+
+        c1, c2 = st.columns([2.5, 1])
+        with c1:
+            chosen_topic = st.selectbox("Topic:", suggested_topics)
+            custom_topic = st.text_input("Custom query (optional):", placeholder="e.g. Master-slave JK flip-flop working")
+        with c2:
+            notes_lang = st.selectbox("Language:", ["Hinglish", "English", "Hindi"])
+
+        final_topic = custom_topic.strip() if custom_topic.strip() else chosen_topic
+
+        if st.button("Generate Notes", use_container_width=True):
+            with st.spinner(f"Writing lecture sheet for {final_topic}..."):
+                st.session_state.notebook_rendered_html = get_handwritten_notes_html(final_topic, active_subj, notes_lang)
+
+        if st.session_state.notebook_rendered_html:
+            st.markdown(st.session_state.notebook_rendered_html, unsafe_allow_html=True)
+
+    # ================= 2. MATHS ENCYCLOPEDIA =================
+    elif selected_nav == "📐 Maths Menu":
+        st.markdown("#### 📐 Mathematics Formula Menu")
+        with st.expander("⚡ Differentiation Rules"):
+            st.latex(r"\frac{d}{dx}(x^n) = n x^{n-1}, \quad \frac{d}{dx}(u \cdot v) = u v' + v u'")
+            st.latex(r"\frac{d}{dx}\left(\frac{u}{v}\right) = \frac{v u' - u v'}{v^2}")
+        with st.expander("🎯 L'Hopital's Rule"):
+            st.latex(r"\lim_{x \to a} \frac{f(x)}{g(x)} = \lim_{x \to a} \frac{f'(x)}{g'(x)} \quad \left(\frac{0}{0} \text{ or } \frac{\infty}{\infty}\right)")
+        with st.expander("🔢 Matrix Rank & Consistency"):
+            st.write("Rank(A) = Rank(A|B) = n implies Unique Solution.")
+            st.write("Rank(A) = Rank(A|B) < n implies Infinite Solutions.")
+
+    # ================= 3. CSA CIRCUIT MENU =================
+    elif selected_nav == "🖥️ CSA Menu":
+        st.markdown("#### 🖥️ CSA Digital Logic & Architecture")
+        with st.expander("⚡ Half & Full Adder Equations"):
+            st.latex(r"Sum = A \oplus B \oplus C_{in}, \quad Carry = AB + C_{in}(A \oplus B)")
+        with st.expander("⚙️ Pipeline Speedup & Cache"):
+            st.latex(r"Speedup = \frac{n \cdot k}{k + n - 1}")
+
+    # ================= 4. SYLLABUS EXPLORER =================
+    elif selected_nav == "📖 Syllabus":
+        st.markdown(f"#### 📚 Curriculum Breakdown — {active_subj}")
+        if active_subj == "🐍 Python Programming":
+            st.info("Modules: 1. Architecture | 2. Control Flow | 3. Functions | 4. Data Structures | 5. OOPs | 6. File Handling")
+        elif active_subj == "🖥️ Computer System Architecture":
+            st.info("Units: 1. Number Systems | 2. Digital Logic | 3. Flip-Flops | 4. CPU & Instructions | 5. Memory | 6. I/O")
+        else:
+            st.info("Units: 1. Set Theory | 2. Logic | 3. Matrices & Rank | 4. Graphs | 5. Calculus | 6. Numerical Methods")
+
+    # ================= 5. EXAM ENGINE =================
+    elif selected_nav == "🎯 Exam Engine":
+        st.markdown(f"#### 🎯 Examination Simulator — {active_subj}")
+        c1, c2 = st.columns([2, 1])
+        with c1:
+            exam_topic = st.text_input("Topic Scope:", placeholder="e.g. Cache Mapping / L'Hopital Rule")
+        with c2:
+            exam_lang = st.selectbox("Exam Language:", ["English", "Hinglish", "Hindi"])
+
+        if st.button("Generate Paper", use_container_width=True):
+            sys_prompt = "You are a university examination creator. Provide a structured 15-mark test with marks distribution."
+            st.session_state.ex_res = execute_ai_query(sys_prompt, f"Create a 15-mark university exam test on '{exam_topic if exam_topic else 'Full Syllabus'}' for {active_subj} in {exam_lang}.")
+
+        if "ex_res" in st.session_state:
+            st.markdown(st.session_state.ex_res)
+
+            user_sol = st.text_area("Your Solution:", height=100)
+            uploaded_paper = st.file_uploader("Upload Solution Photo (Optional):", type=["png", "jpg", "jpeg"])
+            pil_p = Image.open(uploaded_paper) if uploaded_paper else None
+
+            if st.button("Evaluate Paper", use_container_width=True):
+                if not user_sol.strip() and not pil_p:
+                    st.warning("Please type solution or upload photo.")
+                else:
+                    with st.spinner("Grading paper..."):
+                        scorecard = execute_ai_query(
+                            "You are a strict BCA professor. Grade the student's solution out of 15 with score breakdown.",
+                            user_sol,
+                            image_input=pil_p
+                        )
+                        st.info(scorecard)
+
+    # ================= 6. PROJECTS LAB =================
+    elif selected_nav == "🔬 Projects":
+        st.markdown(f"#### 🔬 Academic Capstone Projects — {active_subj}")
+        if active_subj == "🐍 Python Programming":
+            projs = ["Student Management (SQLite)", "Banking Simulator (OOP)", "Billing Engine"]
+        elif active_subj == "🖥️ Computer System Architecture":
+            projs = ["Adder Simulator", "4-Bit ALU", "Cache Simulator"]
+        else:
+            projs = ["Newton-Raphson Solver", "Matrix Rank Calculator", "Dijkstra Engine"]
+
+        sel_p = st.selectbox("Select Project:", projs)
+        if st.button("Build Blueprint", use_container_width=True):
+            with st.spinner("Generating code..."):
+                sys_prompt = "You are an engineering mentor. Provide working code and step-by-step documentation."
+                res = execute_ai_query(sys_prompt, f"Provide complete working code and documentation for project: '{sel_p}' in {active_subj}.")
+                st.markdown(res)
+
+    # ================= 7. AI MENTOR =================
+    elif selected_nav == "🤖 AI Mentor":
+        st.markdown(f"#### 🤖 Doubt Clearance — {active_subj}")
+        q = st.text_input("Ask Question / Paste Error:")
+        q_img = st.file_uploader("Upload Question Photo (Optional):", type=["png", "jpg", "jpeg"])
+        pil_q = Image.open(q_img) if q_img else None
+
+        if st.button("Submit Doubt", use_container_width=True):
+            if q.strip() or pil_q:
+                with st.spinner("Analyzing doubt..."):
+                    sys_prompt = "You are a helpful BCA professor. Explain step-by-step with practical clarity."
+                    st.write(execute_ai_query(sys_prompt, q, image_input=pil_q))
+            else:
+                st.warning("Please enter text or upload image.")
+
+    # ================= 8. COLAB SANDBOX (PYTHON ONLY) =================
+    elif selected_nav == "💻 Sandbox" and active_subj == "🐍 Python Programming":
+        st.markdown("#### 💻 Colab Notebook // Python Only")
+
+        tb1, tb2 = st.columns([1, 1])
+        with tb1:
+            if st.button("Add Cell", use_container_width=True):
+                new_id = len(st.session_state.notebook_cells) + 1
+                st.session_state.notebook_cells.append({
+                    "id": new_id,
+                    "code": "# Python Cell\n",
+                    "output": "",
+                    "error": ""
+                })
+                st.rerun()
+        with tb2:
+            if st.button("Clear Outputs", use_container_width=True):
+                for cell in st.session_state.notebook_cells:
+                    cell["output"] = ""
+                    cell["error"] = ""
+                st.rerun()
+
+        for idx, cell in enumerate(st.session_state.notebook_cells):
+            st.markdown(f"**[ {idx + 1} ]** In [ ]:")
+            c_ed, c_act = st.columns([8.5, 1.5])
+            with c_ed:
+                cell["code"] = st.text_area(f"Cell {cell['id']}", value=cell["code"], height=120, label_visibility="collapsed")
+            with c_act:
+                run_btn = st.button("Run", key=f"run_{cell['id']}", use_container_width=True)
+                assist_btn = st.button("Assist", key=f"as_{cell['id']}", use_container_width=True)
+
+            if run_btn:
+                buf = io.StringIO()
+                try:
+                    with contextlib.redirect_stdout(buf):
+                        exec(cell["code"], {})
+                    cell["output"] = buf.getvalue() if buf.getvalue() else "[Finished with zero return output]"
+                    cell["error"] = ""
+                except Exception as ex:
+                    cell["output"] = ""
+                    cell["error"] = str(ex)
+
+            if assist_btn:
+                with st.spinner("AI checking cell..."):
+                    sys_prompt = "Optimize this python code cleanly and suggest best practices."
+                    cell["output"] = execute_ai_query(sys_prompt, f"Analyze:\n{cell['code']}")
+                    cell["error"] = ""
+
+            if cell["output"]:
+                st.code(cell["output"])
+            if cell["error"]:
+                st.error(cell["error"])
+                if st.button("Auto-Fix", key=f"afix_{cell['id']}"):
+                    sys_prompt = "Fix this python error and output 100% working code."
+                    st.info(execute_ai_query(sys_prompt, f"Fix this code error:\n{cell['code']}\nError: {cell['error']}"))
