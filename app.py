@@ -1,4 +1,5 @@
 import streamlit as st
+from openai import OpenAI
 import google.generativeai as genai
 import io
 import contextlib
@@ -185,7 +186,6 @@ st.markdown("""
         position: relative !important;
     }
 
-    /* Left Ring Binder Rings */
     .real-notebook-sheet::before {
         content: '' !important;
         position: absolute !important;
@@ -198,7 +198,6 @@ st.markdown("""
         background-repeat: repeat-y !important;
     }
 
-    /* Highlight Sticky Notes & Titles */
     .nb-title-h1 {
         font-family: 'Caveat', cursive !important;
         font-size: 32px !important;
@@ -265,93 +264,68 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# ================= BACKGROUND API SETUP =================
-gemini_key = None
-if "GEMINI_API_KEY" in st.secrets:
-    gemini_key = st.secrets["GEMINI_API_KEY"]
-    genai.configure(api_key=gemini_key)
+# ================= UNIVERSAL AI ENGINE (CHATGPT & GEMINI) =================
+openai_key = st.secrets.get("OPENAI_API_KEY", None)
+gemini_key = st.secrets.get("GEMINI_API_KEY", None)
 
 with st.sidebar:
-    st.markdown("### 🏛️ Academic Environment")
-    if gemini_key:
-        st.success("● AI Engine Active")
+    st.markdown("### 🏛️ Academic AI Engine")
+    ai_choice = st.radio("Choose AI Engine:", ["OpenAI (ChatGPT)", "Google Gemini"], index=0)
+    
+    if ai_choice == "OpenAI (ChatGPT)":
+        if not openai_key:
+            openai_key = st.text_input("OpenAI API Key:", type="password", placeholder="sk-...")
+        if openai_key:
+            st.success("● ChatGPT (GPT-4o-mini) Active")
+        else:
+            st.warning("Please provide OpenAI API Key")
     else:
-        with st.expander("🔑 Setup API Key", expanded=True):
+        if not gemini_key:
             gemini_key = st.text_input("Gemini API Key:", type="password")
-            if gemini_key:
-                genai.configure(api_key=gemini_key)
-                st.success("Connected!")
+        if gemini_key:
+            genai.configure(api_key=gemini_key)
+            st.success("● Gemini Active")
+            
     st.markdown("---")
     st.caption("⚡ Developed by **Harsh Raj Soni**")
     st.caption("🏛️ MLK PG College, Balrampur")
 
-def get_ai_response(prompt, image_input=None, forced_language=None, current_subject="Python"):
-    if not gemini_key:
-        return "⚠️ Pehle Gemini API Key configure karein."
-    
-    candidate_models = [
-        "models/gemini-3.5-flash-lite",
-        "models/gemini-3.8-flash",
-        "models/gemini-2.0-flash"
-    ]
-    
-    if forced_language:
-        lang_instruction = f"Strictly generate the output in {forced_language}."
-    else:
-        lang_instruction = (
-            "Detect user's input language naturally (English, Hinglish, Hindi in Devanagari) "
-            "and match it with direct clarity."
-        )
+def execute_ai_query(system_role, user_prompt):
+    """Executes prompt via ChatGPT (default) or Gemini fallback"""
+    if ai_choice == "OpenAI (ChatGPT)" and openai_key:
+        try:
+            client = OpenAI(api_key=openai_key)
+            response = client.chat.completions.create(
+                model="gpt-4o-mini",
+                messages=[
+                    {"role": "system", "content": system_role},
+                    {"role": "user", "content": user_prompt}
+                ],
+                temperature=0.25,
+                max_tokens=1500
+            )
+            return response.choices[0].message.content.strip()
+        except Exception as e:
+            return f"OpenAI Error: {e}"
 
-    optimized_prompt = f"""
-    You are an esteemed university professor for the BCA program at MLK PG College, Balrampur.
-    Subject Discipline: {current_subject}
-    {lang_instruction}
-
-    STRICT GUIDELINES:
-    1. Maintain a respectful, dignified academic tone. NO slang or vulgarity.
-    2. Write clear, structured lecture register notes directly suitable for university examinations.
-
-    Query:
-    {prompt}
-    """
-    
-    content_payload = [optimized_prompt]
-    if image_input:
-        content_payload.append(image_input)
-    
-    last_error = ""
-    for model_name in candidate_models:
-        for attempt in range(2):
-            try:
-                model = genai.GenerativeModel(
-                    model_name=model_name,
-                    generation_config={"temperature": 0.25}
-                )
-                response = model.generate_content(
-                    content_payload,
-                    request_options={"timeout": 60.0}
-                )
-                if response and response.text:
-                    return response.text
-            except Exception as e:
-                last_error = str(e)
-                if "429" in last_error:
-                    continue
-                elif "504" in last_error or "deadline" in last_error.lower():
-                    continue
-
-    return f"⏳ AI Engine Temporary Busy: {last_error}"
+    elif gemini_key:
+        try:
+            genai.configure(api_key=gemini_key)
+            model = genai.GenerativeModel("models/gemini-2.0-flash")
+            response = model.generate_content(f"{system_role}\n\n{user_prompt}")
+            if response and response.text:
+                return response.text.strip()
+        except Exception as e:
+            return f"Gemini Error: {e}"
+            
+    return "⚠️ Pehle Sidebar mein OpenAI ya Gemini ki API Key add karein."
 
 def get_handwritten_notes_html(topic, subject_name, notes_lang):
-    if not gemini_key:
-        return "<p>API Key not configured.</p>"
+    system_role = f"You are an expert professor for BCA at MLK PG College. Output ONLY clean raw HTML without markdown hashes or ```html blocks."
+    user_prompt = f"""
+    Create a clean handwritten lecture note on '{topic}' for {subject_name} in {notes_lang}.
     
-    prompt = f"""
-    Create a clean handwritten notebook register lecture on '{topic}' for {subject_name}.
-    Language preference: {notes_lang}.
-
-    FORMAT THE OUTPUT EXACTLY IN THIS CLEAN HTML SNIPPET (Do NOT use markdown, do not use ```html codeblock):
+    OUTPUT FORMAT (EXACT HTML ONLY):
     <div class="real-notebook-sheet">
         <div class="nb-title-h1">{topic}</div>
         <div style="font-size:12px; color:#6b7280; margin-bottom:8px;">{subject_name} • MLK PG College Balrampur</div>
@@ -360,29 +334,21 @@ def get_handwritten_notes_html(topic, subject_name, notes_lang):
         <p style="margin: 4px 0 10px 0;">[Explain in 2-3 concise lines]</p>
 
         <span class="nb-subhead">2. Key Formulation / Rules / Truth Table :</span>
-        [If applicable, provide a small <table class="nb-table"> or code/formula block. If logic, provide table rows. If code, clean 3 lines.]
+        [Provide either a clean <table class="nb-table"> or 3-4 clean logic lines]
 
         <span class="nb-subhead">3. Step-by-Step Logic / Working :</span>
-        <p style="margin: 4px 0 10px 0;">• Point 1 with exact explanation<br>• Point 2 with exact explanation<br>• Point 3 with exact explanation</p>
+        <p style="margin: 4px 0 10px 0;">• Step 1 with clear explanation<br>• Step 2 with clear explanation<br>• Step 3 with clear explanation</p>
 
         <div class="nb-keypoints-box">
             <b>✳ Key Exam Points :</b><br>
-            • Most important formula or rule for semester exam<br>
-            • Common mistake to avoid in paper
+            • Most important university exam rule<br>
+            • Crucial takeaway
         </div>
         <div style="font-size:11px; color:#9ca3af; text-align:right; margin-top:8px;">Harsh Raj Soni • BCA Ecosystem</div>
     </div>
     """
-    
-    try:
-        model = genai.GenerativeModel("models/gemini-2.0-flash", generation_config={"temperature": 0.2})
-        res = model.generate_content([prompt])
-        if res and res.text:
-            clean = res.text.replace("```html", "").replace("```", "").strip()
-            return clean
-    except Exception as e:
-        return f"<p>Error generating notes: {e}</p>"
-    return "<p>Could not generate sheet.</p>"
+    res = execute_ai_query(system_role, user_prompt)
+    return res.replace("```html", "").replace("```", "").strip()
 
 # ================= 0. INTRO SCREEN =================
 if not st.session_state.system_booted:
@@ -399,8 +365,8 @@ if not st.session_state.system_booted:
         </div>
         <div style="background:#0F172A; border:1px solid rgba(255,255,255,0.1); border-left:4px solid #3B82F6; border-radius:10px; padding:16px 22px; max-width:560px; width:100%; text-align:left; font-size:13px; color:#CBD5E1; line-height:1.6; margin-bottom:24px;">
             <div style="color:#60A5FA; font-weight:700; margin-bottom:4px;">Academic Portal Specification:</div>
+            <div>• Dual AI Engine Architecture: ChatGPT (GPT-4o) & Google Gemini</div>
             <div>• Real Ruled Handwriting Register Sheet Engine</div>
-            <div>• Zero-Blur Vector Typography & Auto-Height Fit</div>
             <div>• Full Python, CSA & Discrete Mathematics Compendium</div>
         </div>
     </div>
@@ -470,7 +436,7 @@ else:
         index=0
     )
 
-    # ================= 1. CLEAN HANDWRITTEN REGISTER NOTES (NO BLUR / AUTO-FIT) =================
+    # ================= 1. NOTES MODULE =================
     if selected_nav == "📝 Notes":
         st.markdown(f"#### 📖 Lecture Notes Register — {active_subj}")
         st.caption("Clean ruled paper layout with handwritten typography, tables, and formula highlights.")
@@ -512,12 +478,10 @@ else:
 
         final_topic = custom_topic.strip() if custom_topic.strip() else chosen_topic
 
-        # ONLY ONE CLEAN BUTTON: "Generate Notes"
         if st.button("Generate Notes", use_container_width=True):
             with st.spinner(f"Writing lecture sheet for {final_topic}..."):
                 st.session_state.notebook_rendered_html = get_handwritten_notes_html(final_topic, active_subj, notes_lang)
 
-        # RENDER CRISP, SHARP VECTOR SHEET
         if st.session_state.notebook_rendered_html:
             st.markdown(st.session_state.notebook_rendered_html, unsafe_allow_html=True)
 
@@ -555,7 +519,8 @@ else:
         st.markdown(f"#### 🎯 Examination Simulator — {active_subj}")
         exam_topic = st.text_input("Topic Scope:", placeholder="e.g. Cache Mapping / L'Hopital Rule")
         if st.button("Generate Paper", use_container_width=True):
-            st.session_state.ex_res = get_ai_response(f"15-mark test on {exam_topic if exam_topic else 'Comprehensive'}", current_subject=active_subj)
+            sys_prompt = "You are a university exam creator."
+            st.session_state.ex_res = execute_ai_query(sys_prompt, f"Create a 15-mark university test paper on {exam_topic if exam_topic else 'Full Syllabus'} for {active_subj}")
         if "ex_res" in st.session_state:
             st.write(st.session_state.ex_res)
 
@@ -572,7 +537,8 @@ else:
         sel_p = st.selectbox("Select Project:", projs)
         if st.button("Build Blueprint", use_container_width=True):
             with st.spinner("Generating code..."):
-                res = get_ai_response(f"Provide complete working code and documentation for project: '{sel_p}' in {active_subj}.", current_subject=active_subj)
+                sys_prompt = "You are an engineering mentor. Provide working code and steps."
+                res = execute_ai_query(sys_prompt, f"Provide complete working code and documentation for project: '{sel_p}' in {active_subj}.")
                 st.markdown(res)
 
     # ================= 7. AI MENTOR =================
@@ -580,7 +546,8 @@ else:
         st.markdown(f"#### 🤖 Doubt Clearance — {active_subj}")
         q = st.text_input("Ask Question:")
         if st.button("Submit") and q:
-            st.write(get_ai_response(q, current_subject=active_subj))
+            sys_prompt = "You are a helpful BCA professor. Explain step-by-step."
+            st.write(execute_ai_query(sys_prompt, q))
 
     # ================= 8. COLAB SANDBOX (PYTHON ONLY) =================
     elif selected_nav == "💻 Sandbox" and active_subj == "🐍 Python Programming":
@@ -626,7 +593,8 @@ else:
 
             if assist_btn:
                 with st.spinner("AI checking cell..."):
-                    cell["output"] = get_ai_response(f"Quickly analyze and optimize:\n{cell['code']}", current_subject="Python")
+                    sys_prompt = "Optimize this python code cleanly."
+                    cell["output"] = execute_ai_query(sys_prompt, f"Analyze:\n{cell['code']}")
                     cell["error"] = ""
 
             if cell["output"]:
@@ -634,4 +602,5 @@ else:
             if cell["error"]:
                 st.error(cell["error"])
                 if st.button("Auto-Fix", key=f"afix_{cell['id']}"):
-                    st.info(get_ai_response(f"Fix this code error:\n{cell['code']}\nError: {cell['error']}", current_subject="Python"))
+                    sys_prompt = "Fix this python error."
+                    st.info(execute_ai_query(sys_prompt, f"Fix this code error:\n{cell['code']}\nError: {cell['error']}"))
