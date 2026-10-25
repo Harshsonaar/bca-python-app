@@ -43,10 +43,10 @@ if "notebook_cells" not in st.session_state:
         }
     ]
 
-# ================= EXECUTIVE STYLING & REAL REGISTER CANVAS CSS =================
+# ================= EXECUTIVE STYLING & CLEAN NEAT REGISTER CSS =================
 st.markdown("""
 <style>
-    @import url('[https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Caveat:wght@600;700&family=Patrick+Hand&display=swap](https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Caveat:wght@600;700&family=Patrick+Hand&display=swap)');
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Kalam:wght@400;700&family=Patrick+Hand&display=swap');
 
     html, body, [class*="css"] {
         font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
@@ -77,18 +77,18 @@ st.markdown("""
     }
 
     .block-container {
-        padding-top: 0.8rem !important;
+        padding-top: 0.6rem !important;
         padding-bottom: 5rem !important;
-        max-width: 1100px !important;
+        max-width: 1040px !important;
     }
 
     .formal-top-banner {
         background: rgba(30, 41, 59, 0.45);
         border: 1px solid rgba(255, 255, 255, 0.1);
         border-radius: 14px;
-        padding: 12px 20px;
+        padding: 10px 18px;
         backdrop-filter: blur(20px);
-        margin-bottom: 14px;
+        margin-bottom: 12px;
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -100,9 +100,9 @@ st.markdown("""
         gap: 6px;
         background: rgba(37, 99, 235, 0.15);
         border: 1px solid rgba(59, 130, 246, 0.5);
-        padding: 5px 14px;
+        padding: 4px 12px;
         border-radius: 20px;
-        font-size: 12px;
+        font-size: 11.5px;
         font-weight: 700;
         color: #60A5FA;
         box-shadow: 0 0 16px rgba(37, 99, 235, 0.3);
@@ -111,20 +111,20 @@ st.markdown("""
     div[data-testid="stExpander"] {
         background: rgba(15, 23, 42, 0.85) !important;
         border: 1.5px solid #3B82F6 !important;
-        border-radius: 14px !important;
+        border-radius: 12px !important;
         box-shadow: 0 0 18px rgba(37, 99, 235, 0.3), 0 8px 24px rgba(0, 0, 0, 0.5) !important;
-        margin-bottom: 14px !important;
+        margin-bottom: 12px !important;
     }
 
     div[data-testid="stRadio"] {
         background: rgba(15, 23, 42, 0.8) !important;
         border: 1px solid rgba(255, 255, 255, 0.1) !important;
-        padding: 6px 10px !important;
+        padding: 5px 8px !important;
         border-radius: 35px !important;
         box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45) !important;
-        margin: 0 auto 16px auto !important;
+        margin: 0 auto 14px auto !important;
         width: 100% !important;
-        max-width: 960px !important;
+        max-width: 940px !important;
     }
     div[data-testid="stRadio"] > label {display: none !important;}
     div[data-testid="stRadio"] > div {
@@ -138,8 +138,8 @@ st.markdown("""
     div[data-testid="stRadio"] label {
         background: transparent !important;
         border-radius: 20px !important;
-        padding: 6px 14px !important;
-        font-size: 12.5px !important;
+        padding: 5px 12px !important;
+        font-size: 12px !important;
         font-weight: 600 !important;
         color: #94A3B8 !important;
         margin: 0 !important;
@@ -158,9 +158,9 @@ st.markdown("""
         color: #FFFFFF !important;
         border: 1px solid rgba(255, 255, 255, 0.15) !important;
         border-radius: 8px !important;
-        padding: 6px 16px !important;
+        padding: 5px 14px !important;
         font-weight: 600 !important;
-        font-size: 13px !important;
+        font-size: 12.5px !important;
         transition: all 0.2s ease !important;
         box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35) !important;
     }
@@ -169,113 +169,127 @@ st.markdown("""
         box-shadow: 0 6px 20px rgba(37, 99, 235, 0.5) !important;
     }
 
-    /* CENTER WRAPPER FOR REGISTER */
+    /* CENTER WRAPPER */
     .register-outer-center {
         display: flex;
         justify-content: center;
         align-items: center;
         width: 100%;
-        margin-top: 6px;
-        margin-bottom: 12px;
+        margin-top: 4px;
+        margin-bottom: 10px;
     }
 
-    /* REAL NOTEBOOK VECTOR SHEET (CRISP, NON-BLURRY, EXACT REGISTER PROPORTIONS) */
+    /* COMPACT, CLEAN STUDENT REGISTER SHEET (ZERO OVERFLOW / EASY READ FONT) */
     .real-notebook-sheet {
-        background-color: #fbfbfa !important;
+        background-color: #fbfbf8 !important;
         background-image: 
-            linear-gradient(90deg, transparent 44px, #ef4444 44px, #ef4444 45.5px, transparent 45.5px),
+            linear-gradient(90deg, transparent 36px, #ef4444 36px, #ef4444 37.5px, transparent 37.5px),
             linear-gradient(#e2e8f0 1px, transparent 1px) !important;
-        background-size: 100% 100%, 100% 28px !important;
+        background-size: 100% 100%, 100% 22px !important;
         border-radius: 8px !important;
-        padding: 20px 22px 22px 56px !important;
+        padding: 14px 14px 16px 44px !important;
         border: 1px solid #cbd5e1 !important;
-        box-shadow: 0 12px 35px rgba(0, 0, 0, 0.6) !important;
+        box-shadow: 0 10px 28px rgba(0, 0, 0, 0.5) !important;
         width: 100% !important;
-        max-width: 520px !important;
+        max-width: 440px !important;
         box-sizing: border-box !important;
-        font-family: 'Patrick Hand', cursive !important;
+        font-family: 'Patrick Hand', 'Kalam', cursive !important;
         color: #1e3a8a !important;
-        font-size: 17.5px !important;
-        line-height: 28px !important;
+        font-size: 14.5px !important;
+        line-height: 22px !important;
         position: relative !important;
+        overflow: hidden !important;
     }
 
     .real-notebook-sheet::before {
         content: '' !important;
         position: absolute !important;
-        top: 14px !important;
-        left: 10px !important;
-        width: 12px !important;
+        top: 10px !important;
+        left: 8px !important;
+        width: 10px !important;
         height: 96% !important;
-        background-image: radial-gradient(circle, #94a3b8 3.5px, transparent 4.5px) !important;
-        background-size: 12px 28px !important;
+        background-image: radial-gradient(circle, #94a3b8 3px, transparent 4px) !important;
+        background-size: 10px 22px !important;
         background-repeat: repeat-y !important;
     }
 
     .nb-title-h1 {
-        font-family: 'Caveat', cursive !important;
-        font-size: 28px !important;
+        font-family: 'Kalam', cursive !important;
+        font-size: 20px !important;
         font-weight: 700 !important;
         color: #1e1b4b !important;
         background: #fdf2f8 !important;
-        padding: 2px 12px !important;
-        border-radius: 6px !important;
+        padding: 1px 10px !important;
+        border-radius: 4px !important;
         display: inline-block !important;
         border-bottom: 2px dashed #ec4899 !important;
-        margin-bottom: 4px !important;
-        line-height: 30px !important;
+        margin-bottom: 3px !important;
+        line-height: 24px !important;
     }
 
     .nb-subhead {
         font-weight: 700 !important;
         color: #0369a1 !important;
-        font-size: 18.5px !important;
+        font-size: 15.5px !important;
         text-decoration: underline !important;
-        margin-top: 6px !important;
+        margin-top: 4px !important;
         display: block !important;
     }
 
+    /* COMPACT SCROLL-SAFE TABLE (NO SCREEN OVERFLOW) */
+    .table-container {
+        width: 100% !important;
+        overflow-x: auto !important;
+        margin: 4px 0 !important;
+        box-sizing: border-box !important;
+    }
     .nb-table {
         border-collapse: collapse !important;
-        margin: 6px 0 !important;
         font-family: 'Patrick Hand', cursive !important;
-        font-size: 16px !important;
+        font-size: 13.5px !important;
+        line-height: 18px !important;
         background: #ffffff !important;
         border: 1.5px solid #1e3a8a !important;
         width: 100% !important;
-        max-width: 380px !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
     }
     .nb-table th, .nb-table td {
-        border: 1.5px solid #1e3a8a !important;
-        padding: 2px 8px !important;
+        border: 1px solid #1e3a8a !important;
+        padding: 2px 4px !important;
         text-align: center !important;
+        word-break: break-word !important;
     }
     .nb-table th {
         background: #e0f2fe !important;
         color: #0369a1 !important;
+        font-weight: 700 !important;
     }
 
     .nb-keypoints-box {
-        border: 2px dashed #16a34a !important;
+        border: 1.5px dashed #16a34a !important;
         background: #f0fdf4 !important;
-        border-radius: 12px !important;
-        padding: 6px 12px !important;
-        margin-top: 8px !important;
+        border-radius: 8px !important;
+        padding: 5px 10px !important;
+        margin-top: 6px !important;
         color: #14532d !important;
-        font-size: 15.5px !important;
-        line-height: 22px !important;
+        font-size: 13.5px !important;
+        line-height: 19px !important;
     }
 
     @media (max-width: 768px) {
         .real-notebook-sheet {
-            padding: 14px 12px 18px 44px !important;
-            font-size: 15.5px !important;
-            line-height: 24px !important;
-            background-size: 100% 100%, 100% 24px !important;
-            max-width: 92vw !important;
+            padding: 12px 10px 14px 38px !important;
+            font-size: 13.5px !important;
+            line-height: 20px !important;
+            background-size: 100% 100%, 100% 20px !important;
+            max-width: 96vw !important;
         }
         .nb-title-h1 {
-            font-size: 22px !important;
+            font-size: 18px !important;
+        }
+        .nb-table {
+            font-size: 12.5px !important;
         }
     }
 </style>
@@ -372,32 +386,35 @@ def generate_multi_sheets_html(topic, subject_name, notes_lang):
         "You are an esteemed university professor for BCA at MLK PG College, Balrampur. "
         "Strictly maintain academic dignity. Never use slang or informal abusive words. "
         "Output EXACTLY 4 TO 5 INDIVIDUAL COMPLETE LECTURE SHEETS separated strictly by the token '===SHEET_SPLIT==='. "
-        "Each sheet must be formatted in clean raw HTML matching the classmate notebook register style (Definition, Block Diagram, Truth Table if applicable, Logic Expressions, and Key Points). "
-        "DO NOT USE CODE BLOCKS OR MARKDOWN TICKS (never output ```html or ```). Start directly with <div class='real-notebook-sheet'>."
+        "Each sheet must be formatted in clean, compact, readable HTML matching the classmate notebook register style. "
+        "DO NOT USE CODE BLOCKS OR MARKDOWN TICKS (never output ```html or ```). Start directly with <div class='register-outer-center'>."
     )
     user_prompt = f"""
     Create a complete 4-sheet ruled lecture register for '{topic}' in {subject_name} ({notes_lang}).
+    Keep explanations very compact, clear, and easy to read on mobile.
 
     FORMAT FOR EACH SHEET (Separate each sheet by ===SHEET_SPLIT===):
     <div class="register-outer-center">
         <div class="real-notebook-sheet">
             <div class="nb-title-h1">{topic} [Part X]</div>
-            <div style="font-size:11px; color:#6b7280; margin-bottom:4px;">{subject_name} • MLK PG College Balrampur</div>
+            <div style="font-size:10.5px; color:#6b7280; margin-bottom:3px;">{subject_name} • MLK PG College Balrampur</div>
 
             <span class="nb-subhead">1. Definition & Core Concept :</span>
-            <p style="margin: 2px 0 6px 0;">[Clear 2-3 lines explanation in {notes_lang}]</p>
+            <p style="margin: 2px 0 4px 0;">[Clear 2 concise lines in {notes_lang}]</p>
 
             <span class="nb-subhead">2. Truth Table / Formulation / Rules :</span>
-            <table class="nb-table">
-                <tr><th>Input A</th><th>Input B</th><th>Output</th><th>Status</th></tr>
-                <tr><td>0</td><td>0</td><td>0</td><td>Normal</td></tr>
-                <tr><td>0</td><td>1</td><td>1</td><td>Active</td></tr>
-                <tr><td>1</td><td>0</td><td>1</td><td>Active</td></tr>
-                <tr><td>1</td><td>1</td><td>1</td><td>Max</td></tr>
-            </table>
+            <div class="table-container">
+                <table class="nb-table">
+                    <tr><th>A</th><th>B</th><th>Result</th><th>Status</th></tr>
+                    <tr><td>0</td><td>0</td><td>0</td><td>Normal</td></tr>
+                    <tr><td>0</td><td>1</td><td>1</td><td>Active</td></tr>
+                    <tr><td>1</td><td>0</td><td>1</td><td>Active</td></tr>
+                    <tr><td>1</td><td>1</td><td>1</td><td>Max</td></tr>
+                </table>
+            </div>
 
             <span class="nb-subhead">3. Logic Expressions / Step-by-Step Working :</span>
-            <p style="margin: 2px 0 6px 0;">
+            <p style="margin: 2px 0 4px 0;">
                 • Step 1: Core working logic and data flow<br>
                 • Step 2: Key mathematical or architectural deduction<br>
                 • Step 3: Practical exam consideration
@@ -408,13 +425,12 @@ def generate_multi_sheets_html(topic, subject_name, notes_lang):
                 • Crucial university examination theorem / takeaway<br>
                 • Examiner evaluation note
             </div>
-            <div style="font-size:11px; color:#9ca3af; text-align:right; margin-top:6px;">Harsh Raj Soni • BCA Ecosystem</div>
+            <div style="font-size:10px; color:#9ca3af; text-align:right; margin-top:4px;">Harsh Raj Soni • BCA Ecosystem</div>
         </div>
     </div>
     """
     raw_res = execute_ai_query(system_role, user_prompt)
     
-    # Clean any backtick or code wrapper leaks completely
     clean_text = raw_res.replace("```html", "").replace("```HTML", "").replace("```", "").strip()
     clean_text = re.sub(r"^`+|`+$", "", clean_text)
     
@@ -436,7 +452,7 @@ if not st.session_state.system_booted:
         </div>
         <div style="background:#0F172A; border:1px solid rgba(255,255,255,0.1); border-left:4px solid #3B82F6; border-radius:10px; padding:16px 22px; max-width:560px; width:100%; text-align:left; font-size:13px; color:#CBD5E1; line-height:1.6; margin-bottom:24px;">
             <div style="color:#60A5FA; font-weight:700; margin-bottom:4px;">Academic Portal Specification:</div>
-            <div>• Real Ruled Handwriting Register Sheet Engine (Auto-Fit)</div>
+            <div>• Real Ruled Handwriting Register Sheet Engine (Auto-Fit & Compact)</div>
             <div>• Photos Style Gallery Grid with Direct Tap Zoom View</div>
             <div>• Full Python, CSA & Discrete Mathematics Compendium</div>
         </div>
@@ -533,9 +549,9 @@ else:
             ]
         else:
             suggested_topics = [
+                "Matrix Rank, Echelon Forms & Rouche-Capelli Consistency",
                 "L'Hopital's Rule for Indeterminate Forms with Solved Limit",
                 "Equivalence Relations Proof & POSET Hasse Diagrams",
-                "Matrix Rank, Echelon Forms & Rouche-Capelli Consistency",
                 "Eigenvalues, Eigenvectors & Cayley-Hamilton Theorem",
                 "Leibnitz Theorem for n-th Derivatives & Formula Matrix",
                 "Newton-Raphson Method & Numerical Convergence"
@@ -544,7 +560,7 @@ else:
         c1, c2 = st.columns([2.5, 1])
         with c1:
             chosen_topic = st.selectbox("Topic:", suggested_topics)
-            custom_topic = st.text_input("Custom query (optional):", placeholder="e.g. Full Adder circuit diagram and truth table")
+            custom_topic = st.text_input("Custom query (optional):", placeholder="e.g. Matrix Rank echelon form rules")
         with c2:
             notes_lang = st.selectbox("Language:", ["Hinglish", "English", "Hindi"])
 
@@ -565,7 +581,7 @@ else:
                 cur_i = st.session_state.active_sheet_index
                 st.markdown(f"##### 🔍 Viewing Sheet {cur_i + 1} of {total_sheets}")
 
-                # Display with st.html() to render 100% pure HTML without code block leaks
+                # Display cleanly with st.html()
                 st.html(sheets[cur_i])
 
                 nav_c1, nav_c2, nav_c3 = st.columns([1.5, 2, 1.5])
@@ -596,7 +612,7 @@ else:
                         # Clean card thumbnail preview
                         st.markdown(f"""
                         <div style="border:1.5px solid #3B82F6; border-radius:8px; padding:10px; background:rgba(30,41,59,0.7); text-align:center; margin-bottom:12px;">
-                            <span style="font-size:14px; color:#60A5FA; font-weight:700;">Sheet #{idx + 1}</span><br>
+                            <span style="font-size:13.5px; color:#60A5FA; font-weight:700;">Sheet #{idx + 1}</span><br>
                             <span style="font-size:11px; color:#94A3B8;">Ruled Lecture Register</span>
                         </div>
                         """, unsafe_allow_html=True)
