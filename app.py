@@ -44,7 +44,7 @@ if "notebook_cells" not in st.session_state:
     ]
 
 # ================= EXECUTIVE STYLING & CLEAN NEAT REGISTER CSS =================
-st.markdown("""
+CUSTOM_APP_CSS = """
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Kalam:wght@400;700&family=Patrick+Hand&display=swap');
 
@@ -290,7 +290,8 @@ st.markdown("""
         }
     }
 </style>
-""", unsafe_allow_html=True)
+"""
+st.markdown(CUSTOM_APP_CSS, unsafe_allow_html=True)
 
 # ================= UNIVERSAL AI ENGINE =================
 groq_key = st.secrets.get("GROQ_API_KEY", None)
@@ -319,16 +320,15 @@ with st.sidebar:
     st.caption("🏛️ MLK PG College, Balrampur")
 
 def execute_ai_query(system_role, user_prompt, max_budget=4096, image_input=None):
-    """Executes prompt with dynamic high token limit (4096) to prevent cutting"""
     if image_input and gemini_key:
         try:
             genai.configure(api_key=gemini_key)
             model = genai.GenerativeModel("models/gemini-2.0-flash")
-            response = model.generate_content([f"{system_role}\n\n{user_prompt}", image_input])
+            response = model.generate_content([system_role + "\n\n" + user_prompt, image_input])
             if response and response.text:
                 return response.text.strip()
         except Exception as e:
-            return f"Gemini Vision Error: {e}"
+            return "Gemini Vision Error: " + str(e)
 
     if "Groq" in ai_choice and groq_key:
         client = Groq(api_key=groq_key)
@@ -359,27 +359,26 @@ def execute_ai_query(system_role, user_prompt, max_budget=4096, image_input=None
             try:
                 genai.configure(api_key=gemini_key)
                 model = genai.GenerativeModel("models/gemini-2.0-flash")
-                res = model.generate_content(f"{system_role}\n\n{user_prompt}")
+                res = model.generate_content(system_role + "\n\n" + user_prompt)
                 if res and res.text:
                     return res.text.strip()
             except Exception:
                 pass
-        return f"Engine Error: {last_err}"
+        return "Engine Error: " + str(last_err)
 
     elif gemini_key:
         try:
             genai.configure(api_key=gemini_key)
             model = genai.GenerativeModel("models/gemini-2.0-flash")
-            response = model.generate_content(f"{system_role}\n\n{user_prompt}")
+            response = model.generate_content(system_role + "\n\n" + user_prompt)
             if response and response.text:
                 return response.text.strip()
         except Exception as e:
-            return f"Gemini Error: {e}"
+            return "Gemini Error: " + str(e)
 
     return "⚠️ Pehle Sidebar mein Groq ya Gemini ki API Key add karein."
 
 def fix_unclosed_html(html_str):
-    """Auto-closes broken HTML tags if output was cut"""
     open_divs = html_str.count("<div")
     close_divs = html_str.count("</div>")
     if open_divs > close_divs:
@@ -403,46 +402,41 @@ def generate_multi_sheets_html(topic, subject_name, notes_lang):
         "4. Key Exam Points. "
         "DO NOT USE CODE BLOCKS OR MARKDOWN TICKS (never output ```html or ```). Start directly with <div class='register-outer-center'>."
     )
-    user_prompt = f"""
-    Create a complete 3 to 4-sheet lecture register for '{topic}' in {subject_name} ({notes_lang}).
-    Ensure each sheet has its full truth table completed with all output rows, full logic working steps, and key exam points.
-
-    TEMPLATE FOR EACH SHEET (Separate sheets strictly by ===SHEET_SPLIT===):
-    <div class="register-outer-center">
-        <div class="real-notebook-sheet">
-            <div class="nb-title-h1">{topic} [Part X]</div>
-            <div style="font-size:10.5px; color:#6b7280; margin-bottom:3px;">{subject_name} • MLK PG College Balrampur</div>
-
-            <span class="nb-subhead">1. Definition & Core Concept :</span>
-            <p style="margin: 2px 0 4px 0;">[2 clear concise explanation lines in {notes_lang}]</p>
-
-            <span class="nb-subhead">2. Truth Table / Formulation / Rules :</span>
-            <div class="table-container">
-                <table class="nb-table">
-                    <tr><th>Input A</th><th>Input B</th><th>Output</th><th>Status</th></tr>
-                    <tr><td>0</td><td>0</td><td>0</td><td>Low</td></tr>
-                    <tr><td>0</td><td>1</td><td>1</td><td>High</td></tr>
-                    <tr><td>1</td><td>0</td><td>1</td><td>High</td></tr>
-                    <tr><td>1</td><td>1</td><td>0</td><td>Invert</td></tr>
-                </table>
-            </div>
-
-            <span class="nb-subhead">3. Logic Expressions / Step-by-Step Working :</span>
-            <p style="margin: 2px 0 4px 0;">
-                • Step 1: Core working logic and operation<br>
-                • Step 2: Signal/Bytecode execution path<br>
-                • Step 3: Practical implementation rule
-            </p>
-
-            <div class="nb-keypoints-box">
-                <b>✳ Key Exam Points :</b><br>
-                • Important semester exam rule & common pitfall<br>
-                • High priority formula
-            </div>
-            <div style="font-size:10px; color:#9ca3af; text-align:right; margin-top:4px;">Harsh Raj Soni • BCA Ecosystem</div>
-        </div>
-    </div>
-    """
+    user_prompt = (
+        "Create a complete 3 to 4-sheet lecture register for '" + topic + "' in " + subject_name + " (" + notes_lang + ").\n"
+        "Ensure each sheet has its full truth table completed with all output rows, full logic working steps, and key exam points.\n\n"
+        "TEMPLATE FOR EACH SHEET (Separate sheets strictly by ===SHEET_SPLIT===):\n"
+        "<div class=\"register-outer-center\">\n"
+        "    <div class=\"real-notebook-sheet\">\n"
+        "        <div class=\"nb-title-h1\">" + topic + " [Part X]</div>\n"
+        "        <div style=\"font-size:10.5px; color:#6b7280; margin-bottom:3px;\">" + subject_name + " • MLK PG College Balrampur</div>\n\n"
+        "        <span class=\"nb-subhead\">1. Definition & Core Concept :</span>\n"
+        "        <p style=\"margin: 2px 0 4px 0;\">[2 clear concise explanation lines in " + notes_lang + "]</p>\n\n"
+        "        <span class=\"nb-subhead\">2. Truth Table / Formulation / Rules :</span>\n"
+        "        <div class=\"table-container\">\n"
+        "            <table class=\"nb-table\">\n"
+        "                <tr><th>Input A</th><th>Input B</th><th>Output</th><th>Status</th></tr>\n"
+        "                <tr><td>0</td><td>0</td><td>0</td><td>Low</td></tr>\n"
+        "                <tr><td>0</td><td>1</td><td>1</td><td>High</td></tr>\n"
+        "                <tr><td>1</td><td>0</td><td>1</td><td>High</td></tr>\n"
+        "                <tr><td>1</td><td>1</td><td>0</td><td>Invert</td></tr>\n"
+        "            </table>\n"
+        "        </div>\n\n"
+        "        <span class=\"nb-subhead\">3. Logic Expressions / Step-by-Step Working :</span>\n"
+        "        <p style=\"margin: 2px 0 4px 0;\">\n"
+        "            • Step 1: Core working logic and operation<br>\n"
+        "            • Step 2: Signal/Bytecode execution path<br>\n"
+        "            • Step 3: Practical implementation rule\n"
+        "        </p>\n\n"
+        "        <div class=\"nb-keypoints-box\">\n"
+        "            <b>✳ Key Exam Points :</b><br>\n"
+        "            • Important semester exam rule & common pitfall<br>\n"
+        "            • High priority formula\n"
+        "        </div>\n"
+        "        <div style=\"font-size:10px; color:#9ca3af; text-align:right; margin-top:4px;\">Harsh Raj Soni • BCA Ecosystem</div>\n"
+        "    </div>\n"
+        "</div>"
+    )
     raw_res = execute_ai_query(system_role, user_prompt, max_budget=4096)
     
     clean_text = raw_res.replace("```html", "").replace("```HTML", "").replace("```", "").strip()
@@ -505,12 +499,6 @@ else:
 
     # Subject Selector Tile
     curr_sub = st.session_state.selected_subject
-    with st.expander(f"Active Stream: {curr_sub} (Tap to Switch)", expanded=False):
+    with st.expander("Active Stream: " + curr_sub + " (Tap to Switch)", expanded=False):
         sub_list = [
-            "🐍 Python Programming",
-            "🖥️ Computer System Architecture",
-            "📐 Mathematics & Numerical Methods"
-        ]
-        for s in sub_list:
-            is_active = (s == curr_sub)
-            label = f"✔ {s}" if is_active else f"➔ Sw
+            "🐍 Python P
