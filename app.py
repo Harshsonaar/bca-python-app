@@ -1,8 +1,9 @@
 import streamlit as st
-from openai import OpenAI
+from groq import Groq
 import google.generativeai as genai
 import io
 import contextlib
+from PIL import Image
 
 st.set_page_config(
     page_title="BCA Academic Suite | Harsh Raj Soni",
@@ -26,7 +27,7 @@ if "notebook_cells" not in st.session_state:
     st.session_state.notebook_cells = [
         {
             "id": 1,
-            "code": "# Python Cell 1: Verification\ndeveloper_name = 'Harsh Raj Soni'\ninstitution = 'MLK PG College, Balrampur'\nprint(f'Portal Active | Developer: {developer_name} [{institution}]')",
+            "code": "# Python Cell 1: Verification & Environment\ndeveloper_name = 'Harsh Raj Soni'\ninstitution = 'MLK PG College, Balrampur'\nprint(f'Academic Portal Active | Developer: {developer_name} [{institution}]')",
             "output": "",
             "error": ""
         },
@@ -264,39 +265,51 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# ================= UNIVERSAL AI ENGINE (CHATGPT & GEMINI) =================
-openai_key = st.secrets.get("OPENAI_API_KEY", None)
+# ================= UNIVERSAL AI ENGINE (GROQ + GEMINI DUAL ENGINE) =================
+groq_key = st.secrets.get("GROQ_API_KEY", None)
 gemini_key = st.secrets.get("GEMINI_API_KEY", None)
 
 with st.sidebar:
-    st.markdown("### 🏛️ Academic AI Engine")
-    ai_choice = st.radio("Choose AI Engine:", ["OpenAI (ChatGPT)", "Google Gemini"], index=0)
-    
-    if ai_choice == "OpenAI (ChatGPT)":
-        if not openai_key:
-            openai_key = st.text_input("OpenAI API Key:", type="password", placeholder="sk-...")
-        if openai_key:
-            st.success("● ChatGPT (GPT-4o-mini) Active")
+    st.markdown("### ⚡ AI Engine Status")
+    ai_choice = st.radio("Active Engine:", ["⚡ Groq LPU (Ultra Fast)", "Google Gemini"], index=0)
+
+    if ai_choice == "⚡ Groq LPU (Ultra Fast)":
+        if not groq_key:
+            groq_key = st.text_input("Groq API Key:", type="password", placeholder="gsk_...")
+        if groq_key:
+            st.success("● Groq Llama-3.3-70B Active")
         else:
-            st.warning("Please provide OpenAI API Key")
+            st.info("console.groq.com se free key lein")
     else:
         if not gemini_key:
             gemini_key = st.text_input("Gemini API Key:", type="password")
         if gemini_key:
             genai.configure(api_key=gemini_key)
-            st.success("● Gemini Active")
-            
+            st.success("● Gemini Multimodal Active")
+
     st.markdown("---")
     st.caption("⚡ Developed by **Harsh Raj Soni**")
     st.caption("🏛️ MLK PG College, Balrampur")
 
-def execute_ai_query(system_role, user_prompt):
-    """Executes prompt via ChatGPT (default) or Gemini fallback"""
-    if ai_choice == "OpenAI (ChatGPT)" and openai_key:
+def execute_ai_query(system_role, user_prompt, image_input=None):
+    """Executes prompt via Groq LPU (default text) or Gemini Multimodal (vision/fallback)"""
+    # Multimodal image task routing
+    if image_input and gemini_key:
         try:
-            client = OpenAI(api_key=openai_key)
-            response = client.chat.completions.create(
-                model="gpt-4o-mini",
+            genai.configure(api_key=gemini_key)
+            model = genai.GenerativeModel("models/gemini-2.0-flash")
+            response = model.generate_content([f"{system_role}\n\n{user_prompt}", image_input])
+            if response and response.text:
+                return response.text.strip()
+        except Exception as e:
+            return f"Gemini Vision Error: {e}"
+
+    # Text query execution
+    if "Groq" in ai_choice and groq_key:
+        try:
+            client = Groq(api_key=groq_key)
+            completion = client.chat.completions.create(
+                model="llama-3.3-70b-versatile",
                 messages=[
                     {"role": "system", "content": system_role},
                     {"role": "user", "content": user_prompt}
@@ -304,9 +317,19 @@ def execute_ai_query(system_role, user_prompt):
                 temperature=0.25,
                 max_tokens=1500
             )
-            return response.choices[0].message.content.strip()
+            return completion.choices[0].message.content.strip()
         except Exception as e:
-            return f"OpenAI Error: {e}"
+            # Fallback to Gemini if Groq faces temporary rate issue
+            if gemini_key:
+                try:
+                    genai.configure(api_key=gemini_key)
+                    model = genai.GenerativeModel("models/gemini-2.0-flash")
+                    res = model.generate_content(f"{system_role}\n\n{user_prompt}")
+                    if res and res.text:
+                        return res.text.strip()
+                except Exception:
+                    pass
+            return f"Groq Error: {e}"
 
     elif gemini_key:
         try:
@@ -317,14 +340,18 @@ def execute_ai_query(system_role, user_prompt):
                 return response.text.strip()
         except Exception as e:
             return f"Gemini Error: {e}"
-            
-    return "⚠️ Pehle Sidebar mein OpenAI ya Gemini ki API Key add karein."
+
+    return "⚠️ Pehle Sidebar mein Groq ya Gemini ki API Key add karein."
 
 def get_handwritten_notes_html(topic, subject_name, notes_lang):
-    system_role = f"You are an expert professor for BCA at MLK PG College. Output ONLY clean raw HTML without markdown hashes or ```html blocks."
+    system_role = (
+        "You are an esteemed university professor for BCA at MLK PG College, Balrampur. "
+        "Strictly maintain academic dignity. Never use slang or informal abusive words. "
+        "Output ONLY valid raw HTML snippet matching the template, without any markdown code fences (no ```html)."
+    )
     user_prompt = f"""
     Create a clean handwritten lecture note on '{topic}' for {subject_name} in {notes_lang}.
-    
+
     OUTPUT FORMAT (EXACT HTML ONLY):
     <div class="real-notebook-sheet">
         <div class="nb-title-h1">{topic}</div>
@@ -365,8 +392,8 @@ if not st.session_state.system_booted:
         </div>
         <div style="background:#0F172A; border:1px solid rgba(255,255,255,0.1); border-left:4px solid #3B82F6; border-radius:10px; padding:16px 22px; max-width:560px; width:100%; text-align:left; font-size:13px; color:#CBD5E1; line-height:1.6; margin-bottom:24px;">
             <div style="color:#60A5FA; font-weight:700; margin-bottom:4px;">Academic Portal Specification:</div>
-            <div>• Dual AI Engine Architecture: ChatGPT (GPT-4o) & Google Gemini</div>
-            <div>• Real Ruled Handwriting Register Sheet Engine</div>
+            <div>• Dual AI Engine Architecture: Groq LPU (Ultra Fast) + Gemini Vision</div>
+            <div>• Real Ruled Handwriting Register Sheet Engine (Auto-Height Fit)</div>
             <div>• Full Python, CSA & Discrete Mathematics Compendium</div>
         </div>
     </div>
@@ -495,6 +522,7 @@ else:
             st.latex(r"\lim_{x \to a} \frac{f(x)}{g(x)} = \lim_{x \to a} \frac{f'(x)}{g'(x)} \quad \left(\frac{0}{0} \text{ or } \frac{\infty}{\infty}\right)")
         with st.expander("🔢 Matrix Rank & Consistency"):
             st.write("Rank(A) = Rank(A|B) = n implies Unique Solution.")
+            st.write("Rank(A) = Rank(A|B) < n implies Infinite Solutions.")
 
     # ================= 3. CSA CIRCUIT MENU =================
     elif selected_nav == "🖥️ CSA Menu":
@@ -517,12 +545,34 @@ else:
     # ================= 5. EXAM ENGINE =================
     elif selected_nav == "🎯 Exam Engine":
         st.markdown(f"#### 🎯 Examination Simulator — {active_subj}")
-        exam_topic = st.text_input("Topic Scope:", placeholder="e.g. Cache Mapping / L'Hopital Rule")
+        c1, c2 = st.columns([2, 1])
+        with c1:
+            exam_topic = st.text_input("Topic Scope:", placeholder="e.g. Cache Mapping / L'Hopital Rule")
+        with c2:
+            exam_lang = st.selectbox("Exam Language:", ["English", "Hinglish", "Hindi"])
+
         if st.button("Generate Paper", use_container_width=True):
-            sys_prompt = "You are a university exam creator."
-            st.session_state.ex_res = execute_ai_query(sys_prompt, f"Create a 15-mark university test paper on {exam_topic if exam_topic else 'Full Syllabus'} for {active_subj}")
+            sys_prompt = "You are a university examination creator. Provide a structured 15-mark test with marks distribution."
+            st.session_state.ex_res = execute_ai_query(sys_prompt, f"Create a 15-mark university exam test on '{exam_topic if exam_topic else 'Full Syllabus'}' for {active_subj} in {exam_lang}.")
+
         if "ex_res" in st.session_state:
-            st.write(st.session_state.ex_res)
+            st.markdown(st.session_state.ex_res)
+
+            user_sol = st.text_area("Your Solution:", height=100)
+            uploaded_paper = st.file_uploader("Upload Solution Photo (Optional):", type=["png", "jpg", "jpeg"])
+            pil_p = Image.open(uploaded_paper) if uploaded_paper else None
+
+            if st.button("Evaluate Paper", use_container_width=True):
+                if not user_sol.strip() and not pil_p:
+                    st.warning("Please type solution or upload photo.")
+                else:
+                    with st.spinner("Grading paper..."):
+                        scorecard = execute_ai_query(
+                            "You are a strict BCA professor. Grade the student's solution out of 15 with score breakdown.",
+                            user_sol,
+                            image_input=pil_p
+                        )
+                        st.info(scorecard)
 
     # ================= 6. PROJECTS LAB =================
     elif selected_nav == "🔬 Projects":
@@ -537,22 +587,29 @@ else:
         sel_p = st.selectbox("Select Project:", projs)
         if st.button("Build Blueprint", use_container_width=True):
             with st.spinner("Generating code..."):
-                sys_prompt = "You are an engineering mentor. Provide working code and steps."
+                sys_prompt = "You are an engineering mentor. Provide working code and step-by-step documentation."
                 res = execute_ai_query(sys_prompt, f"Provide complete working code and documentation for project: '{sel_p}' in {active_subj}.")
                 st.markdown(res)
 
     # ================= 7. AI MENTOR =================
     elif selected_nav == "🤖 AI Mentor":
         st.markdown(f"#### 🤖 Doubt Clearance — {active_subj}")
-        q = st.text_input("Ask Question:")
-        if st.button("Submit") and q:
-            sys_prompt = "You are a helpful BCA professor. Explain step-by-step."
-            st.write(execute_ai_query(sys_prompt, q))
+        q = st.text_input("Ask Question / Paste Error:")
+        q_img = st.file_uploader("Upload Question Photo (Optional):", type=["png", "jpg", "jpeg"])
+        pil_q = Image.open(q_img) if q_img else None
+
+        if st.button("Submit Doubt", use_container_width=True):
+            if q.strip() or pil_q:
+                with st.spinner("Analyzing doubt..."):
+                    sys_prompt = "You are a helpful BCA professor. Explain step-by-step with practical clarity."
+                    st.write(execute_ai_query(sys_prompt, q, image_input=pil_q))
+            else:
+                st.warning("Please enter text or upload image.")
 
     # ================= 8. COLAB SANDBOX (PYTHON ONLY) =================
     elif selected_nav == "💻 Sandbox" and active_subj == "🐍 Python Programming":
         st.markdown("#### 💻 Colab Notebook // Python Only")
-        
+
         tb1, tb2 = st.columns([1, 1])
         with tb1:
             if st.button("Add Cell", use_container_width=True):
@@ -593,7 +650,7 @@ else:
 
             if assist_btn:
                 with st.spinner("AI checking cell..."):
-                    sys_prompt = "Optimize this python code cleanly."
+                    sys_prompt = "Optimize this python code cleanly and suggest best practices."
                     cell["output"] = execute_ai_query(sys_prompt, f"Analyze:\n{cell['code']}")
                     cell["error"] = ""
 
@@ -602,5 +659,5 @@ else:
             if cell["error"]:
                 st.error(cell["error"])
                 if st.button("Auto-Fix", key=f"afix_{cell['id']}"):
-                    sys_prompt = "Fix this python error."
+                    sys_prompt = "Fix this python error and output 100% working code."
                     st.info(execute_ai_query(sys_prompt, f"Fix this code error:\n{cell['code']}\nError: {cell['error']}"))
