@@ -18,11 +18,11 @@ if "system_booted" not in st.session_state:
 if "selected_subject" not in st.session_state:
     st.session_state.selected_subject = "🐍 Python Programming"
 
-if "current_note_page" not in st.session_state:
-    st.session_state.current_note_page = 1
-
 if "generated_page_images" not in st.session_state:
     st.session_state.generated_page_images = []
+
+if "viewing_image_index" not in st.session_state:
+    st.session_state.viewing_image_index = None
 
 # Colab Notebook Multi-Cell Storage (Python Only)
 if "notebook_cells" not in st.session_state:
@@ -41,7 +41,7 @@ if "notebook_cells" not in st.session_state:
         }
     ]
 
-# ================= EXECUTIVE STYLING CSS =================
+# ================= EXECUTIVE STYLING & GALLERY CSS =================
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
@@ -75,18 +75,18 @@ st.markdown("""
     }
 
     .block-container {
-        padding-top: 1rem !important;
+        padding-top: 0.8rem !important;
         padding-bottom: 5rem !important;
-        max-width: 1140px !important;
+        max-width: 1100px !important;
     }
 
     .formal-top-banner {
         background: rgba(30, 41, 59, 0.45);
         border: 1px solid rgba(255, 255, 255, 0.1);
         border-radius: 14px;
-        padding: 14px 22px;
+        padding: 12px 20px;
         backdrop-filter: blur(20px);
-        margin-bottom: 16px;
+        margin-bottom: 14px;
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -98,9 +98,9 @@ st.markdown("""
         gap: 6px;
         background: rgba(37, 99, 235, 0.15);
         border: 1px solid rgba(59, 130, 246, 0.5);
-        padding: 6px 16px;
+        padding: 5px 14px;
         border-radius: 20px;
-        font-size: 12.5px;
+        font-size: 12px;
         font-weight: 700;
         color: #60A5FA;
         box-shadow: 0 0 16px rgba(37, 99, 235, 0.3);
@@ -110,8 +110,8 @@ st.markdown("""
         background: rgba(15, 23, 42, 0.85) !important;
         border: 1.5px solid #3B82F6 !important;
         border-radius: 14px !important;
-        box-shadow: 0 0 20px rgba(37, 99, 235, 0.35), 0 8px 24px rgba(0, 0, 0, 0.5) !important;
-        margin-bottom: 18px !important;
+        box-shadow: 0 0 18px rgba(37, 99, 235, 0.3), 0 8px 24px rgba(0, 0, 0, 0.5) !important;
+        margin-bottom: 14px !important;
     }
 
     div[data-testid="stRadio"] {
@@ -120,9 +120,9 @@ st.markdown("""
         padding: 6px 10px !important;
         border-radius: 35px !important;
         box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45) !important;
-        margin: 0 auto 18px auto !important;
+        margin: 0 auto 16px auto !important;
         width: 100% !important;
-        max-width: 980px !important;
+        max-width: 960px !important;
     }
     div[data-testid="stRadio"] > label {display: none !important;}
     div[data-testid="stRadio"] > div {
@@ -156,9 +156,9 @@ st.markdown("""
         color: #FFFFFF !important;
         border: 1px solid rgba(255, 255, 255, 0.15) !important;
         border-radius: 8px !important;
-        padding: 7px 16px !important;
+        padding: 6px 14px !important;
         font-weight: 600 !important;
-        font-size: 13px !important;
+        font-size: 12.5px !important;
         transition: all 0.2s ease !important;
         box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35) !important;
     }
@@ -167,58 +167,50 @@ st.markdown("""
         box-shadow: 0 6px 20px rgba(37, 99, 235, 0.5) !important;
     }
 
-    div[data-testid="column"]:has(button[key="mini_p_prev"]),
-    div[data-testid="column"]:has(button[key="mini_p_next"]) {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-    button[key="mini_p_prev"], button[key="mini_p_next"] {
-        width: 38px !important;
-        height: 38px !important;
-        min-width: 38px !important;
-        min-height: 38px !important;
-        border-radius: 50% !important;
-        font-size: 19px !important;
-        padding: 0 !important;
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
+    /* Photos Grid Item Styling */
+    .gallery-badge {
+        font-size: 11px;
+        font-weight: 700;
+        color: #60A5FA;
+        margin-top: 4px;
+        margin-bottom: 8px;
+        text-align: center;
     }
 </style>
 """, unsafe_allow_html=True)
 
-# ================= 7-PAGE HIGH DEFINITION A4 PHOTO RENDERER =================
+# ================= COMPACT GALLERY IMAGE RENDERER =================
 def create_a4_sheet_image(topic, page_index, total_pages, text_content, subject_name):
-    width, height = 750, 950
+    width, height = 450, 560
     image = Image.new("RGB", (width, height), "#FFFFFF")
     draw = ImageDraw.Draw(image)
 
-    # Blue Ruled Lines
-    line_spacing = 34
-    for y in range(120, height - 30, line_spacing):
+    # Ruled Blue Lines
+    line_spacing = 25
+    for y in range(80, height - 20, line_spacing):
         draw.line([(0, y), (width, y)], fill="#E2E8F0", width=1)
 
     # Red Margin Line
-    draw.line([(85, 0), (85, height)], fill="#EF4444", width=2)
+    draw.line([(60, 0), (60, height)], fill="#EF4444", width=2)
 
     # Spiral Rings
-    for ring_y in range(35, height - 20, 36):
-        draw.ellipse([20, ring_y, 34, ring_y + 14], fill="#CBD5E1", outline="#94A3B8", width=1)
+    for ring_y in range(25, height - 15, 26):
+        draw.ellipse([14, ring_y, 24, ring_y + 11], fill="#CBD5E1", outline="#94A3B8", width=1)
+
+    font_default = ImageFont.load_default()
 
     # Header Card
-    font_bold = ImageFont.load_default()
-    draw.rectangle([(95, 25), (240, 52)], fill="#2563EB")
-    draw.text((105, 32), f"A4 SHEET {page_index} OF {total_pages}", fill="#FFFFFF", font=font_bold)
+    draw.rectangle([(68, 16), (185, 36)], fill="#2563EB")
+    draw.text((75, 21), f"SHEET {page_index} OF {total_pages}", fill="#FFFFFF", font=font_default)
 
-    clean_topic = topic[:45]
-    draw.text((95, 62), clean_topic, fill="#0F172A", font=font_bold)
-    draw.line([(95, 82), (width - 40, 82)], fill="#EF4444", width=2)
-    draw.text((95, 88), f"Discipline: {subject_name} | MLK PG College Balrampur", fill="#64748B", font=font_bold)
+    clean_topic = topic[:30]
+    draw.text((68, 44), clean_topic, fill="#0F172A", font=font_default)
+    draw.line([(68, 58), (width - 25, 58)], fill="#EF4444", width=1)
+    draw.text((68, 62), f"{subject_name} | MLK PG College", fill="#64748B", font=font_default)
 
-    # Word Wrap Engine
-    start_y = 130
-    x_pos = 100
+    # Text Wrap
+    start_y = 92
+    x_pos = 70
     words = text_content.replace("\n", " [BREAK] ").split()
     current_line = []
     lines_to_draw = []
@@ -229,7 +221,7 @@ def create_a4_sheet_image(topic, page_index, total_pages, text_content, subject_
             current_line = []
             continue
         test_line = " ".join(current_line + [word])
-        if len(test_line) > 52:
+        if len(test_line) > 36:
             lines_to_draw.append(" ".join(current_line))
             current_line = [word]
         else:
@@ -237,11 +229,11 @@ def create_a4_sheet_image(topic, page_index, total_pages, text_content, subject_
     if current_line:
         lines_to_draw.append(" ".join(current_line))
 
-    for idx, line_text in enumerate(lines_to_draw[:23]):
+    for idx, line_text in enumerate(lines_to_draw[:17]):
         y_coord = start_y + (idx * line_spacing)
-        draw.text((x_pos, y_coord - 14), line_text, fill="#1E3A8A", font=font_bold)
+        draw.text((x_pos, y_coord - 11), line_text, fill="#1E3A8A", font=font_default)
 
-    draw.text((95, height - 35), f"Created by Harsh Raj Soni • BCA Ecosystem • Sheet {page_index}", fill="#94A3B8", font=font_bold)
+    draw.text((68, height - 22), f"Harsh Raj Soni • Sheet {page_index}", fill="#94A3B8", font=font_default)
     return image
 
 # ================= BACKGROUND API SETUP =================
@@ -253,7 +245,7 @@ if "GEMINI_API_KEY" in st.secrets:
 with st.sidebar:
     st.markdown("### 🏛️ Academic Environment")
     if gemini_key:
-        st.success("● AI Engine & Vision Active")
+        st.success("● AI Engine Active")
     else:
         with st.expander("🔑 Setup API Key", expanded=True):
             gemini_key = st.text_input("Gemini API Key:", type="password")
@@ -288,10 +280,10 @@ def get_ai_response(prompt, image_input=None, forced_language=None, current_subj
     {lang_instruction}
 
     STRICT GUIDELINES:
-    1. Maintain a respectful, dignified academic tone. NEVER use vulgarity, slang, or offensive Hindi words.
-    2. If writing notes, generate EXACTLY 7 COMPLETE PAGES. Separate each page with '[PAGE_BREAK]'.
-    3. Keep each page between 45 to 60 words so it fits properly on the A4 photo.
-    4. Start directly with core educational concepts. No introductory boilerplate.
+    1. Maintain a respectful, dignified academic tone. NO slang or vulgarity.
+    2. Generate EXACTLY 7 PAGES. Separate each page with '[PAGE_BREAK]'.
+    3. Keep each page strictly between 35 to 45 words so it fits properly on the compact photo card.
+    4. Start directly with core educational concepts.
 
     Query:
     {prompt}
@@ -339,9 +331,9 @@ if not st.session_state.system_booted:
         </div>
         <div style="background:#0F172A; border:1px solid rgba(255,255,255,0.1); border-left:4px solid #3B82F6; border-radius:10px; padding:16px 22px; max-width:560px; width:100%; text-align:left; font-size:13px; color:#CBD5E1; line-height:1.6; margin-bottom:24px;">
             <div style="color:#60A5FA; font-weight:700; margin-bottom:4px;">Academic Portal Specification:</div>
-            <div>• Core Curriculum Coverage: Python Programming, CSA & Discrete Mathematics</div>
-            <div>• Real-time Ruled Register Notes & Formula Compendium</div>
-            <div>• Interactive Evaluation & Sandbox Environment</div>
+            <div>• Photos Gallery Grid View for Instant Study</div>
+            <div>• Full Python, CSA & Discrete Mathematics Compendium</div>
+            <div>• Zero Text-Cutoff & Mobile Gallery Touch Friendly</div>
         </div>
     </div>
     """, unsafe_allow_html=True)
@@ -384,13 +376,14 @@ else:
             if st.button(label, key=f"switch_sub_{s}", use_container_width=True, type="primary" if is_active else "secondary"):
                 st.session_state.selected_subject = s
                 st.session_state.generated_page_images = []
+                st.session_state.viewing_image_index = None
                 st.rerun()
 
     active_subj = st.session_state.selected_subject
 
     # Navigation Dock
     nav_options = [
-        "📝 Notes",
+        "🖼️ Photos Gallery",
         "📖 Syllabus",
         "🎯 Exam Engine",
         "🔬 Projects",
@@ -410,18 +403,18 @@ else:
         index=0
     )
 
-    # ================= 1. 7-PAGE PHOTO BINDER =================
-    if selected_nav == "📝 Notes":
-        st.markdown(f"#### 📖 7-Page HD Binder — {active_subj}")
-        st.caption("Each sheet is rendered as a standalone high-definition photo. Zero text cutting or layout stretching.")
+    # ================= 1. GALLERY IMAGE LIBRARY (PHONE PHOTOS STYLE) =================
+    if selected_nav == "🖼️ Photos Gallery":
+        st.markdown(f"#### 🖼️ Image Library & Note Sheets — {active_subj}")
+        st.caption("Phone Photos style grid. Kisi bhi sheet par tap karke view karein.")
 
         if active_subj == "🐍 Python Programming":
             suggested_topics = [
-                "Python Complete Architecture, Bytecode & Memory Management",
+                "Python Architecture, Bytecode & Memory Management",
                 "Control Flow, Loops, For-Else Logic & Prime Verification",
                 "Functions, Scopes, LEGB Resolution & Lambda Expressions",
                 "Data Structures: Lists, Tuples, Dictionaries & Sets",
-                "Object Oriented Programming: Encapsulation, Mangling & MRO",
+                "Object Oriented Programming: Encapsulation & Inheritance",
                 "File Handling, Context Managers & Exception Hierarchy"
             ]
         elif active_subj == "🖥️ Computer System Architecture":
@@ -429,7 +422,7 @@ else:
                 "Number Systems, Complements & Binary Logic Operations",
                 "Half Adder, Full Adder & K-Map 4-Variable Minimization",
                 "Flip-Flops, Master-Slave JK & Race-Around Condition",
-                "Instruction Cycle Phases, Addressing Modes & Micro-operations",
+                "Instruction Cycle Phases, Addressing Modes & Micro-ops",
                 "Cache Memory Mapping, Virtual Memory & Pipeline Hazards"
             ]
         else:
@@ -445,17 +438,17 @@ else:
         c1, c2 = st.columns([2.5, 1])
         with c1:
             chosen_topic = st.selectbox("Topic:", suggested_topics)
-            custom_topic = st.text_input("Custom topic (optional):", placeholder="e.g. Master-slave JK flip-flop working")
+            custom_topic = st.text_input("Custom query (optional):", placeholder="e.g. Master-slave JK flip-flop working")
         with c2:
             notes_lang = st.selectbox("Language:", ["Hinglish", "English", "Hindi"])
 
         final_topic = custom_topic.strip() if custom_topic.strip() else chosen_topic
 
-        if st.button("Generate", use_container_width=True):
-            st.session_state.current_note_page = 1
+        if st.button("Generate Gallery", use_container_width=True):
+            st.session_state.viewing_image_index = None
             st.session_state.generated_page_images = []
             
-            with st.spinner(f"Rendering 7 distinct A4 sheets for {final_topic}..."):
+            with st.spinner(f"Creating 7 photo sheets for {final_topic}..."):
                 raw_output = get_ai_response(
                     f"Create comprehensive 7-page university notes on '{final_topic}' in {active_subj}.",
                     forced_language=notes_lang,
@@ -464,7 +457,7 @@ else:
 
                 raw_pages = [p.strip() for p in raw_output.split("[PAGE_BREAK]") if p.strip()]
                 while len(raw_pages) < 7:
-                    raw_pages.append(f"Continued analysis of {final_topic} [Part {len(raw_pages)+1}]. Review syllabus guidelines, step proofs, and examiner marks distribution.")
+                    raw_pages.append(f"Continued analysis of {final_topic} [Part {len(raw_pages)+1}]. Review syllabus guidelines, step proofs, and marks distribution.")
                 raw_pages = raw_pages[:7]
 
                 photos = []
@@ -476,43 +469,57 @@ else:
                 st.session_state.generated_page_images = photos
                 st.session_state.flip_notes_topic = final_topic
 
-        # Display Photo Binder
+        # RENDER GALLERY VIEW (GRID & EXPANDED VIEWER)
         if st.session_state.generated_page_images:
-            total_photos = len(st.session_state.generated_page_images)
-            curr_p = max(1, min(st.session_state.current_note_page, total_photos))
-            active_photo = st.session_state.generated_page_images[curr_p - 1]
-            
-            col_l, col_center, col_r = st.columns([1, 2.8, 1])
-            with col_center:
-                st.image(active_photo, caption=f"Sheet {curr_p} of {total_photos} — {st.session_state.get('flip_notes_topic')}", use_container_width=True)
+            images = st.session_state.generated_page_images
+            total = len(images)
 
-            ctrl_c1, ctrl_c2, ctrl_c3 = st.columns([1.2, 2, 1.2])
-            with ctrl_c1:
-                if st.button("‹", key="mini_p_prev", disabled=(curr_p == 1), use_container_width=True):
-                    st.session_state.current_note_page = max(1, curr_p - 1)
-                    st.rerun()
-            with ctrl_c2:
-                st.markdown(f"""
-                <div style="text-align: center; color: #60A5FA; font-size: 13px; font-weight: 700; padding-top: 6px;">
-                    Sheet {curr_p} of {total_photos}
-                </div>
-                """, unsafe_allow_html=True)
-            with ctrl_c3:
-                if st.button("›", key="mini_p_next", disabled=(curr_p == total_photos), use_container_width=True):
-                    st.session_state.current_note_page = min(total_photos, curr_p + 1)
-                    st.rerun()
+            # Single Selected Image Zoom / Focus View
+            if st.session_state.viewing_image_index is not None:
+                idx = st.session_state.viewing_image_index
+                st.markdown(f"##### 🔍 Viewing Sheet {idx + 1} of {total}")
+                
+                v_col1, v_col2, v_col3 = st.columns([1, 2.2, 1])
+                with v_col2:
+                    st.image(images[idx], caption=f"Sheet {idx + 1} • {st.session_state.get('flip_notes_topic')}", use_container_width=True)
+                
+                b1, b2, b3 = st.columns([1.5, 2, 1.5])
+                with b1:
+                    if st.button("‹ Previous Sheet", disabled=(idx == 0), use_container_width=True):
+                        st.session_state.viewing_image_index = max(0, idx - 1)
+                        st.rerun()
+                with b2:
+                    if st.button("📁 Close & Back to Gallery Grid", use_container_width=True):
+                        st.session_state.viewing_image_index = None
+                        st.rerun()
+                with b3:
+                    if st.button("Next Sheet ›", disabled=(idx == total - 1), use_container_width=True):
+                        st.session_state.viewing_image_index = min(total - 1, idx + 1)
+                        st.rerun()
+
+            else:
+                st.markdown(f"##### 📸 Photo Library Grid ({total} Sheets)")
+                st.caption("Kisi bhi photo sheet ko tap/click karein full-size padhne ke liye:")
+                
+                # 3-Column Responsive Phone Gallery Grid
+                g_cols = st.columns(3)
+                for i, img in enumerate(images):
+                    with g_cols[i % 3]:
+                        st.image(img, use_container_width=True)
+                        if st.button(f"🔍 Open Sheet {i + 1}", key=f"open_sheet_{i}", use_container_width=True):
+                            st.session_state.viewing_image_index = i
+                            st.rerun()
 
     # ================= 2. MATHS ENCYCLOPEDIA =================
     elif selected_nav == "📐 Maths Menu":
         st.markdown("#### 📐 Mathematics Formula Menu")
         with st.expander("⚡ Differentiation Rules"):
             st.latex(r"\frac{d}{dx}(x^n) = n x^{n-1}, \quad \frac{d}{dx}(u \cdot v) = u v' + v u'")
-            st.latex(r"\frac{d}{dx}\left(\frac{u}{v}\right) = \frac{v u' - u v'}{v^2}, \quad \frac{d}{dx}(\sin x) = \cos x")
+            st.latex(r"\frac{d}{dx}\left(\frac{u}{v}\right) = \frac{v u' - u v'}{v^2}")
         with st.expander("🎯 L'Hopital's Rule"):
             st.latex(r"\lim_{x \to a} \frac{f(x)}{g(x)} = \lim_{x \to a} \frac{f'(x)}{g'(x)} \quad \left(\frac{0}{0} \text{ or } \frac{\infty}{\infty}\right)")
         with st.expander("🔢 Matrix Rank & Consistency"):
             st.write("Rank(A) = Rank(A|B) = n implies Unique Solution.")
-            st.write("Rank(A) = Rank(A|B) < n implies Infinite Solutions.")
 
     # ================= 3. CSA CIRCUIT MENU =================
     elif selected_nav == "🖥️ CSA Menu":
@@ -521,7 +528,6 @@ else:
             st.latex(r"Sum = A \oplus B \oplus C_{in}, \quad Carry = AB + C_{in}(A \oplus B)")
         with st.expander("⚙️ Pipeline Speedup & Cache"):
             st.latex(r"Speedup = \frac{n \cdot k}{k + n - 1}")
-            st.write("Address division: Tag | Line Index | Word Offset")
 
     # ================= 4. SYLLABUS EXPLORER =================
     elif selected_nav == "📖 Syllabus":
