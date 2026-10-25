@@ -283,7 +283,7 @@ CUSTOM_APP_CSS = """
             max-width: 96vw !important;
         }
         .nb-title-h1 {
-            font-size: 18px !important;
+            font-size: 17.5px !important;
         }
         .nb-table {
             font-size: 12.5px !important;
@@ -292,6 +292,216 @@ CUSTOM_APP_CSS = """
 </style>
 """
 st.markdown(CUSTOM_APP_CSS, unsafe_allow_html=True)
+
+# ================= UNIVERSAL AI ENGINE =================
+groq_key = st.secrets.get("GROQ_API_KEY", None)
+gemini_key = st.secrets.get("GEMINI_API_KEY", None)
+
+with st.sidebar:
+    st.markdown("### ⚡ AI Engine Status")
+    ai_choice = st.radio("Active Engine:", ["⚡ Groq LPU (Ultra Fast)", "Google Gemini"], index=0)
+
+    if ai_choice == "⚡ Groq LPU (Ultra Fast)":
+        if not groq_key:
+            groq_key = st.text_input("Groq API Key:", type="password", placeholder="gsk_...")
+        if groq_key:
+            st.success("● Groq LPU Active")
+        else:
+            st.info("console.groq.com se free key lein")
+    else:
+        if not gemini_key:
+            gemini_key = st.text_input("Gemini API Key:", type="password")
+        if gemini_key:
+            genai.configure(api_key=gemini_key)
+            st.success("● Gemini Multimodal Active")
+
+    st.markdown("---")
+    st.caption("⚡ Developed by **Harsh Raj Soni**")
+    st.caption("🏛️ MLK PG College, Balrampur")
+
+def execute_ai_query(system_role, user_prompt, max_budget=4096, image_input=None):
+    if image_input and gemini_key:
+        try:
+            genai.configure(api_key=gemini_key)
+            model = genai.GenerativeModel("models/gemini-2.0-flash")
+            response = model.generate_content([system_role + "\n\n" + user_prompt, image_input])
+            if response and response.text:
+                return response.text.strip()
+        except Exception as e:
+            return "Gemini Vision Error: " + str(e)
+
+    if "Groq" in ai_choice and groq_key:
+        client = Groq(api_key=groq_key)
+        active_models = [
+            "openai/gpt-oss-120b",
+            "openai/gpt-oss-20b",
+            "llama-3.1-8b-instant"
+        ]
+        
+        last_err = ""
+        for model_id in active_models:
+            try:
+                completion = client.chat.completions.create(
+                    model=model_id,
+                    messages=[
+                        {"role": "system", "content": system_role},
+                        {"role": "user", "content": user_prompt}
+                    ],
+                    temperature=0.25,
+                    max_tokens=max_budget
+                )
+                return completion.choices[0].message.content.strip()
+            except Exception as e:
+                last_err = str(e)
+                continue
+
+        if gemini_key:
+            try:
+                genai.configure(api_key=gemini_key)
+                model = genai.GenerativeModel("models/gemini-2.0-flash")
+                res = model.generate_content(system_role + "\n\n" + user_prompt)
+                if res and res.text:
+                    return res.text.strip()
+            except Exception:
+                pass
+        return "Engine Error: " + str(last_err)
+
+    elif gemini_key:
+        try:
+            genai.configure(api_key=gemini_key)
+            model = genai.GenerativeModel("models/gemini-2.0-flash")
+            response = model.generate_content(system_role + "\n\n" + user_prompt)
+            if response and response.text:
+                return response.text.strip()
+        except Exception as e:
+            return "Gemini Error: " + str(e)
+
+    return "⚠️ Pehle Sidebar mein Groq ya Gemini ki API Key add karein."
+
+def fix_unclosed_html(html_str):
+    open_divs = html_str.count("<div")
+    close_divs = html_str.count("</div>")
+    if open_divs > close_divs:
+        html_str += "</div>" * (open_divs - close_divs)
+        
+    if "<table" in html_str and "</table" not in html_str:
+        html_str += "</table>"
+    if "<p" in html_str and "</p" not in html_str:
+        html_str += "</p>"
+    return html_str
+
+def generate_multi_sheets_html(topic, subject_name, notes_lang):
+    system_role = (
+        "You are an esteemed university professor for BCA at MLK PG College, Balrampur. "
+        "Strictly maintain academic dignity. Never use slang or informal abusive words. "
+        "Output EXACTLY 3 TO 4 INDIVIDUAL COMPLETE LECTURE SHEETS separated strictly by the token '===SHEET_SPLIT==='. "
+        "Every single sheet MUST be 100% complete with all 4 sections fully finished: "
+        "1. Definition & Core Concept, "
+        "2. Truth Table / Formulation / Rules (must include full table rows, never leave table empty), "
+        "3. Logic Expressions / Step-by-Step Working, "
+        "4. Key Exam Points. "
+        "DO NOT USE CODE BLOCKS OR MARKDOWN TICKS (never output ```html or ```). Start directly with <div class='register-outer-center'>."
+    )
+    user_prompt = (
+        "Create a complete 3 to 4-sheet lecture register for '" + topic + "' in " + subject_name + " (" + notes_lang + ").\n"
+        "Ensure each sheet has its full truth table completed with all output rows, full logic working steps, and key exam points.\n\n"
+        "TEMPLATE FOR EACH SHEET (Separate sheets strictly by ===SHEET_SPLIT===):\n"
+        "<div class=\"register-outer-center\">\n"
+        "    <div class=\"real-notebook-sheet\">\n"
+        "        <div class=\"nb-title-h1\">" + topic + " [Part X]</div>\n"
+        "        <div style=\"font-size:10.5px; color:#6b7280; margin-bottom:3px;\">" + subject_name + " • MLK PG College Balrampur</div>\n\n"
+        "        <span class=\"nb-subhead\">1. Definition & Core Concept :</span>\n"
+        "        <p style=\"margin: 2px 0 4px 0;\">[2 clear concise explanation lines in " + notes_lang + "]</p>\n\n"
+        "        <span class=\"nb-subhead\">2. Truth Table / Formulation / Rules :</span>\n"
+        "        <div class=\"table-container\">\n"
+        "            <table class=\"nb-table\">\n"
+        "                <tr><th>Input A</th><th>Input B</th><th>Output</th><th>Status</th></tr>\n"
+        "                <tr><td>0</td><td>0</td><td>0</td><td>Low</td></tr>\n"
+        "                <tr><td>0</td><td>1</td><td>1</td><td>High</td></tr>\n"
+        "                <tr><td>1</td><td>0</td><td>1</td><td>High</td></tr>\n"
+        "                <tr><td>1</td><td>1</td><td>0</td><td>Invert</td></tr>\n"
+        "            </table>\n"
+        "        </div>\n\n"
+        "        <span class=\"nb-subhead\">3. Logic Expressions / Step-by-Step Working :</span>\n"
+        "        <p style=\"margin: 2px 0 4px 0;\">\n"
+        "            • Step 1: Core working logic and operation<br>\n"
+        "            • Step 2: Signal/Bytecode execution path<br>\n"
+        "            • Step 3: Practical implementation rule\n"
+        "        </p>\n\n"
+        "        <div class=\"nb-keypoints-box\">\n"
+        "            <b>✳ Key Exam Points :</b><br>\n"
+        "            • Important semester exam rule & common pitfall<br>\n"
+        "            • High priority formula\n"
+        "        </div>\n"
+        "        <div style=\"font-size:10px; color:#9ca3af; text-align:right; margin-top:4px;\">Harsh Raj Soni • BCA Ecosystem</div>\n"
+        "    </div>\n"
+        "</div>"
+    )
+    raw_res = execute_ai_query(system_role, user_prompt, max_budget=4096)
+    
+    clean_text = raw_res.replace("```html", "").replace("```HTML", "").replace("```", "").strip()
+    clean_text = re.sub(r"^`+|`+$", "", clean_text)
+    
+    raw_sheets = [s.strip() for s in clean_text.split("===SHEET_SPLIT===") if s.strip()]
+    
+    sanitized_sheets = []
+    for s in raw_sheets:
+        fixed = fix_unclosed_html(s)
+        sanitized_sheets.append(fixed)
+        
+    return sanitized_sheets if sanitized_sheets else [clean_text]
+
+# ================= 0. INTRO SCREEN =================
+if not st.session_state.system_booted:
+    st.markdown("""
+    <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:72vh; text-align:center;">
+        <div style="display:inline-flex; align-items:center; gap:8px; background:rgba(37,99,235,0.12); border:1px solid #3B82F6; padding:6px 20px; border-radius:30px; font-size:13px; font-weight:700; color:#60A5FA; margin-bottom:14px;">
+            🎓 BCA ACADEMIC ECOSYSTEM
+        </div>
+        <div style="font-size:32px; font-weight:800; color:#F8FAFC; letter-spacing:-0.5px; margin-bottom:6px;">
+            Created & Designed by Harsh Raj Soni
+        </div>
+        <div style="font-size:14px; color:#94A3B8; margin-bottom:24px;">
+            MLK PG College, Balrampur • Affiliated with Maa Pateshwari State University
+        </div>
+        <div style="background:#0F172A; border:1px solid rgba(255,255,255,0.1); border-left:4px solid #3B82F6; border-radius:10px; padding:16px 22px; max-width:560px; width:100%; text-align:left; font-size:13px; color:#CBD5E1; line-height:1.6; margin-bottom:24px;">
+            <div style="color:#60A5FA; font-weight:700; margin-bottom:4px;">Academic Portal Specification:</div>
+            <div>• Real Ruled Handwriting Register Sheet Engine (Auto-Fit & Compact)</div>
+            <div>• Dynamic Token Engine (Complete Non-Truncated Sheets)</div>
+            <div>• Full Python, CSA & Discrete Mathematics Compendium</div>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    c1, c2, c3 = st.columns([1, 1.2, 1])
+    with c2:
+        if st.button("Enter Portal", use_container_width=True):
+            st.session_state.system_booted = True
+            st.rerun()
+
+else:
+    # Top Executive Bar
+    st.markdown("""
+    <div class="formal-top-banner">
+        <div>
+            <div style="font-size: 18px; font-weight: 700; color: #F8FAFC;">
+                BCA Academic Portal
+            </div>
+            <div style="font-size: 12px; color: #94A3B8;">
+                MLK PG College, Balrampur • Maa Pateshwari State University
+            </div>
+        </div>
+        <div class="formal-author-pill">
+            Developer: Harsh Raj Soni
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    # Subject Selector Tile
+    curr_sub = st.session_state.selected_subject
+    with st.expander("Active Stream: " + curr_sub + " (Tap to Switch)", expanded=False):
+        sub_list = [
+            "🐍 Python Pkdown(CUSTOM_APP_CSS, unsafe_allow_html=True)
 
 # ================= UNIVERSAL AI ENGINE =================
 groq_key = st.secrets.get("GROQ_API_KEY", None)
