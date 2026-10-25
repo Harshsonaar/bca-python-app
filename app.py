@@ -2,7 +2,6 @@ import streamlit as st
 import google.generativeai as genai
 import io
 import contextlib
-import time
 from PIL import Image, ImageDraw, ImageFont
 
 st.set_page_config(
@@ -22,9 +21,6 @@ if "selected_subject" not in st.session_state:
 if "current_note_page" not in st.session_state:
     st.session_state.current_note_page = 1
 
-if "dynamic_pages_list" not in st.session_state:
-    st.session_state.dynamic_pages_list = []
-
 if "generated_page_images" not in st.session_state:
     st.session_state.generated_page_images = []
 
@@ -33,13 +29,13 @@ if "notebook_cells" not in st.session_state:
     st.session_state.notebook_cells = [
         {
             "id": 1,
-            "code": "# Python Cell 1: Verification & Metadata\ndeveloper_name = 'Harsh Raj Soni'\ninstitution = 'MLK PG College, Balrampur'\nprint(f'Academic Portal Active | Developer: {developer_name} [{institution}]')",
+            "code": "# Python Cell 1: Verification\ndeveloper_name = 'Harsh Raj Soni'\ninstitution = 'MLK PG College, Balrampur'\nprint(f'Portal Active | Developer: {developer_name} [{institution}]')",
             "output": "",
             "error": ""
         },
         {
             "id": 2,
-            "code": "# Python Cell 2: Numerical Logic\ndef is_prime(number):\n    if number <= 1:\n        return False\n    for divisor in range(2, int(number**0.5) + 1):\n        if number % divisor == 0:\n            return False\n    return True\n\nval = 37\nprint(f'Is {val} a prime number?:', is_prime(val))",
+            "code": "# Python Cell 2: Numerical Logic\ndef is_prime(number):\n    if number <= 1:\n        return False\n    for divisor in range(2, int(number**0.5) + 1):\n        if number % divisor == 0:\n            return False\n    return True\n\nval = 37\nprint(f'Is {val} prime?:', is_prime(val))",
             "output": "",
             "error": ""
         }
@@ -155,16 +151,6 @@ st.markdown("""
         display: none !important;
     }
 
-    .photo-display-container {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        width: 100%;
-        margin-top: 4px;
-        margin-bottom: 8px;
-    }
-
     .stButton>button {
         background: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%) !important;
         color: #FFFFFF !important;
@@ -208,7 +194,7 @@ def create_a4_sheet_image(topic, page_index, total_pages, text_content, subject_
     image = Image.new("RGB", (width, height), "#FFFFFF")
     draw = ImageDraw.Draw(image)
 
-    # Blue Ruled Horizontal Lines
+    # Blue Ruled Lines
     line_spacing = 34
     for y in range(120, height - 30, line_spacing):
         draw.line([(0, y), (width, y)], fill="#E2E8F0", width=1)
@@ -216,11 +202,11 @@ def create_a4_sheet_image(topic, page_index, total_pages, text_content, subject_
     # Red Margin Line
     draw.line([(85, 0), (85, height)], fill="#EF4444", width=2)
 
-    # Spiral Rings on Left
+    # Spiral Rings
     for ring_y in range(35, height - 20, 36):
         draw.ellipse([20, ring_y, 34, ring_y + 14], fill="#CBD5E1", outline="#94A3B8", width=1)
 
-    # Header Text
+    # Header Card
     font_bold = ImageFont.load_default()
     draw.rectangle([(95, 25), (240, 52)], fill="#2563EB")
     draw.text((105, 32), f"A4 SHEET {page_index} OF {total_pages}", fill="#FFFFFF", font=font_bold)
@@ -230,11 +216,9 @@ def create_a4_sheet_image(topic, page_index, total_pages, text_content, subject_
     draw.line([(95, 82), (width - 40, 82)], fill="#EF4444", width=2)
     draw.text((95, 88), f"Discipline: {subject_name} | MLK PG College Balrampur", fill="#64748B", font=font_bold)
 
-    # Handwritten Body (Text Wrapping & Ruled Line Snapping)
+    # Word Wrap Engine
     start_y = 130
     x_pos = 100
-    
-    # Word Wrap Engine
     words = text_content.replace("\n", " [BREAK] ").split()
     current_line = []
     lines_to_draw = []
@@ -253,14 +237,11 @@ def create_a4_sheet_image(topic, page_index, total_pages, text_content, subject_
     if current_line:
         lines_to_draw.append(" ".join(current_line))
 
-    # Ink drawing
     for idx, line_text in enumerate(lines_to_draw[:23]):
         y_coord = start_y + (idx * line_spacing)
         draw.text((x_pos, y_coord - 14), line_text, fill="#1E3A8A", font=font_bold)
 
-    # Bottom watermark
     draw.text((95, height - 35), f"Created by Harsh Raj Soni • BCA Ecosystem • Sheet {page_index}", fill="#94A3B8", font=font_bold)
-
     return image
 
 # ================= BACKGROUND API SETUP =================
@@ -306,12 +287,11 @@ def get_ai_response(prompt, image_input=None, forced_language=None, current_subj
     Subject Discipline: {current_subject}
     {lang_instruction}
 
-    STRICT 7-PAGE GENERATION INSTRUCTIONS:
-    1. Write respectful academic register notes. Absolutely NO SLANG or abusive language.
-    2. You MUST strictly generate EXACTLY 7 COMPLETE PAGES.
-    3. Separate each page with the exact delimiter token '[PAGE_BREAK]'.
-    4. Keep each individual page strictly between 45 to 60 words so that each page fits on a clean A4 sheet photo.
-    5. No metadata header lines. Start directly with key educational points.
+    STRICT GUIDELINES:
+    1. Maintain a respectful, dignified academic tone. NEVER use vulgarity, slang, or offensive Hindi words.
+    2. If writing notes, generate EXACTLY 7 COMPLETE PAGES. Separate each page with '[PAGE_BREAK]'.
+    3. Keep each page between 45 to 60 words so it fits properly on the A4 photo.
+    4. Start directly with core educational concepts. No introductory boilerplate.
 
     Query:
     {prompt}
@@ -338,10 +318,8 @@ def get_ai_response(prompt, image_input=None, forced_language=None, current_subj
             except Exception as e:
                 last_error = str(e)
                 if "429" in last_error:
-                    time.sleep(1.0)
-                    break
+                    continue
                 elif "504" in last_error or "deadline" in last_error.lower():
-                    time.sleep(1.0)
                     continue
 
     return f"⏳ AI Engine Temporary Busy: {last_error}"
@@ -360,22 +338,22 @@ if not st.session_state.system_booted:
             MLK PG College, Balrampur • Affiliated with Maa Pateshwari State University
         </div>
         <div style="background:#0F172A; border:1px solid rgba(255,255,255,0.1); border-left:4px solid #3B82F6; border-radius:10px; padding:16px 22px; max-width:560px; width:100%; text-align:left; font-size:13px; color:#CBD5E1; line-height:1.6; margin-bottom:24px;">
-            <div style="color:#60A5FA; font-weight:700; margin-bottom:4px;">Academic Portal System:</div>
-            <div>• 7-Page High Definition Photo Binder Engine Active</div>
-            <div>• Full Python, CSA & Discrete Mathematics Compendium</div>
-            <div>• Zero Text-Cutoff & Complete Mobile Optimization</div>
+            <div style="color:#60A5FA; font-weight:700; margin-bottom:4px;">Academic Portal Specification:</div>
+            <div>• Core Curriculum Coverage: Python Programming, CSA & Discrete Mathematics</div>
+            <div>• Real-time Ruled Register Notes & Formula Compendium</div>
+            <div>• Interactive Evaluation & Sandbox Environment</div>
         </div>
     </div>
     """, unsafe_allow_html=True)
 
     c1, c2, c3 = st.columns([1, 1.2, 1])
     with c2:
-        if st.button("🚀 ENTER ACADEMIC PORTAL", use_container_width=True):
+        if st.button("Enter Portal", use_container_width=True):
             st.session_state.system_booted = True
             st.rerun()
 
 else:
-    # ================= TOP EXECUTIVE BAR =================
+    # Top Executive Bar
     st.markdown("""
     <div class="formal-top-banner">
         <div>
@@ -394,7 +372,7 @@ else:
 
     # Subject Selector Tile
     curr_sub = st.session_state.selected_subject
-    with st.expander(f"⚡ ACTIVE STREAM: {curr_sub} (Tap here to Switch Subject)", expanded=False):
+    with st.expander(f"Active Stream: {curr_sub} (Tap to Switch)", expanded=False):
         sub_list = [
             "🐍 Python Programming",
             "🖥️ Computer System Architecture",
@@ -402,7 +380,7 @@ else:
         ]
         for s in sub_list:
             is_active = (s == curr_sub)
-            label = f"✔ {s} [ACTIVE]" if is_active else f"➔ Switch to {s}"
+            label = f"✔ {s}" if is_active else f"➔ Switch to {s}"
             if st.button(label, key=f"switch_sub_{s}", use_container_width=True, type="primary" if is_active else "secondary"):
                 st.session_state.selected_subject = s
                 st.session_state.generated_page_images = []
@@ -412,18 +390,18 @@ else:
 
     # Navigation Dock
     nav_options = [
-        "📝 7-Page Smart Register",
-        "📖 Syllabus Explorer",
+        "📝 Notes",
+        "📖 Syllabus",
         "🎯 Exam Engine",
-        "🔬 Projects Lab",
-        "🤖 AI Academic Mentor"
+        "🔬 Projects",
+        "🤖 AI Mentor"
     ]
     if active_subj == "🐍 Python Programming":
-        nav_options.append("💻 Colab Notebook & Sandbox")
+        nav_options.append("💻 Sandbox")
     elif active_subj == "📐 Mathematics & Numerical Methods":
-        nav_options.insert(1, "📐 Maths Encyclopedia")
+        nav_options.insert(1, "📐 Maths Menu")
     elif active_subj == "🖥️ Computer System Architecture":
-        nav_options.insert(1, "🖥️ CSA Circuit Matrix")
+        nav_options.insert(1, "🖥️ CSA Menu")
 
     selected_nav = st.radio(
         label="Navigation Section",
@@ -432,9 +410,9 @@ else:
         index=0
     )
 
-    # ================= 1. PURE 7-PAGE PHOTO BINDER =================
-    if selected_nav == "📝 7-Page Smart Register":
-        st.markdown(f"#### 📖 7-Page HD Photo Binder — {active_subj}")
+    # ================= 1. 7-PAGE PHOTO BINDER =================
+    if selected_nav == "📝 Notes":
+        st.markdown(f"#### 📖 7-Page HD Binder — {active_subj}")
         st.caption("Each sheet is rendered as a standalone high-definition photo. Zero text cutting or layout stretching.")
 
         if active_subj == "🐍 Python Programming":
@@ -466,18 +444,18 @@ else:
 
         c1, c2 = st.columns([2.5, 1])
         with c1:
-            chosen_topic = st.selectbox("Select Academic Topic:", suggested_topics)
-            custom_topic = st.text_input("Or enter specific topic:", placeholder="e.g. Complete L'Hopital rule with proofs")
+            chosen_topic = st.selectbox("Topic:", suggested_topics)
+            custom_topic = st.text_input("Custom topic (optional):", placeholder="e.g. Master-slave JK flip-flop working")
         with c2:
-            notes_lang = st.selectbox("Language Preference:", ["Hinglish (Simple Academic Notes)", "English", "Hindi (हिन्दी)"])
+            notes_lang = st.selectbox("Language:", ["Hinglish", "English", "Hindi"])
 
         final_topic = custom_topic.strip() if custom_topic.strip() else chosen_topic
 
-        if st.button("📸 Generate 7 High-Definition Register Page Photos", use_container_width=True):
+        if st.button("Generate", use_container_width=True):
             st.session_state.current_note_page = 1
             st.session_state.generated_page_images = []
             
-            with st.spinner(f"Writing and rendering 7 distinct A4 page photos for {final_topic}..."):
+            with st.spinner(f"Rendering 7 distinct A4 sheets for {final_topic}..."):
                 raw_output = get_ai_response(
                     f"Create comprehensive 7-page university notes on '{final_topic}' in {active_subj}.",
                     forced_language=notes_lang,
@@ -485,13 +463,10 @@ else:
                 )
 
                 raw_pages = [p.strip() for p in raw_output.split("[PAGE_BREAK]") if p.strip()]
-                
-                # Ensure exactly 7 distinct pages
                 while len(raw_pages) < 7:
                     raw_pages.append(f"Continued analysis of {final_topic} [Part {len(raw_pages)+1}]. Review syllabus guidelines, step proofs, and examiner marks distribution.")
                 raw_pages = raw_pages[:7]
 
-                # Render 7 High-Def PIL Images
                 photos = []
                 for p_num, p_text in enumerate(raw_pages, start=1):
                     clean_text = p_text.replace("### ", "").replace("## ", "").replace("# ", "")
@@ -501,55 +476,56 @@ else:
                 st.session_state.generated_page_images = photos
                 st.session_state.flip_notes_topic = final_topic
 
-        # DISPLAY IMAGE BINDER WITH COMPACT CONTROLS
+        # Display Photo Binder
         if st.session_state.generated_page_images:
             total_photos = len(st.session_state.generated_page_images)
-            curr_p = st.session_state.current_note_page
-            curr_p = max(1, min(curr_p, total_photos))
-
-            # Display exact image photo (Crisp, no elongation, no cutoff)
+            curr_p = max(1, min(st.session_state.current_note_page, total_photos))
             active_photo = st.session_state.generated_page_images[curr_p - 1]
             
             col_l, col_center, col_r = st.columns([1, 2.8, 1])
             with col_center:
-                st.image(active_photo, caption=f"Photo {curr_p} of {total_photos} — {st.session_state.get('flip_notes_topic')}", use_container_width=True)
+                st.image(active_photo, caption=f"Sheet {curr_p} of {total_photos} — {st.session_state.get('flip_notes_topic')}", use_container_width=True)
 
-            # Compact Circular Controls Below Photo
             ctrl_c1, ctrl_c2, ctrl_c3 = st.columns([1.2, 2, 1.2])
             with ctrl_c1:
-                if st.button("‹", key="mini_p_prev", disabled=(curr_p == 1), use_container_width=True, help="Previous Photo"):
+                if st.button("‹", key="mini_p_prev", disabled=(curr_p == 1), use_container_width=True):
                     st.session_state.current_note_page = max(1, curr_p - 1)
                     st.rerun()
             with ctrl_c2:
                 st.markdown(f"""
                 <div style="text-align: center; color: #60A5FA; font-size: 13px; font-weight: 700; padding-top: 6px;">
-                    Photo Sheet {curr_p} of {total_photos}
+                    Sheet {curr_p} of {total_photos}
                 </div>
                 """, unsafe_allow_html=True)
             with ctrl_c3:
-                if st.button("›", key="mini_p_next", disabled=(curr_p == total_photos), use_container_width=True, help="Next Photo"):
+                if st.button("›", key="mini_p_next", disabled=(curr_p == total_photos), use_container_width=True):
                     st.session_state.current_note_page = min(total_photos, curr_p + 1)
                     st.rerun()
 
     # ================= 2. MATHS ENCYCLOPEDIA =================
-    elif selected_nav == "📐 Maths Encyclopedia":
-        st.markdown("#### 📐 Mathematics & Numerical Methods Reference Compendium")
+    elif selected_nav == "📐 Maths Menu":
+        st.markdown("#### 📐 Mathematics Formula Menu")
         with st.expander("⚡ Differentiation Rules"):
             st.latex(r"\frac{d}{dx}(x^n) = n x^{n-1}, \quad \frac{d}{dx}(u \cdot v) = u v' + v u'")
+            st.latex(r"\frac{d}{dx}\left(\frac{u}{v}\right) = \frac{v u' - u v'}{v^2}, \quad \frac{d}{dx}(\sin x) = \cos x")
         with st.expander("🎯 L'Hopital's Rule"):
             st.latex(r"\lim_{x \to a} \frac{f(x)}{g(x)} = \lim_{x \to a} \frac{f'(x)}{g'(x)} \quad \left(\frac{0}{0} \text{ or } \frac{\infty}{\infty}\right)")
         with st.expander("🔢 Matrix Rank & Consistency"):
             st.write("Rank(A) = Rank(A|B) = n implies Unique Solution.")
+            st.write("Rank(A) = Rank(A|B) < n implies Infinite Solutions.")
 
-    # ================= 3. CSA CIRCUIT MATRIX =================
-    elif selected_nav == "🖥️ CSA Circuit Matrix":
+    # ================= 3. CSA CIRCUIT MENU =================
+    elif selected_nav == "🖥️ CSA Menu":
         st.markdown("#### 🖥️ CSA Digital Logic & Architecture")
         with st.expander("⚡ Half & Full Adder Equations"):
             st.latex(r"Sum = A \oplus B \oplus C_{in}, \quad Carry = AB + C_{in}(A \oplus B)")
+        with st.expander("⚙️ Pipeline Speedup & Cache"):
+            st.latex(r"Speedup = \frac{n \cdot k}{k + n - 1}")
+            st.write("Address division: Tag | Line Index | Word Offset")
 
     # ================= 4. SYLLABUS EXPLORER =================
-    elif selected_nav == "📖 Syllabus Explorer":
-        st.markdown(f"#### 📚 Curriculum Syllabus Breakdown — {active_subj}")
+    elif selected_nav == "📖 Syllabus":
+        st.markdown(f"#### 📚 Curriculum Breakdown — {active_subj}")
         if active_subj == "🐍 Python Programming":
             st.info("Modules: 1. Architecture | 2. Control Flow | 3. Functions | 4. Data Structures | 5. OOPs | 6. File Handling")
         elif active_subj == "🖥️ Computer System Architecture":
@@ -560,35 +536,85 @@ else:
     # ================= 5. EXAM ENGINE =================
     elif selected_nav == "🎯 Exam Engine":
         st.markdown(f"#### 🎯 Examination Simulator — {active_subj}")
-        exam_topic = st.text_input("Examination Scope:", placeholder="e.g. Full Syllabus")
-        if st.button("⚡ Generate Paper", use_container_width=True):
-            st.session_state.ex_res = get_ai_response(f"15-mark test on {exam_topic}", current_subject=active_subj)
+        exam_topic = st.text_input("Topic Scope:", placeholder="e.g. Cache Mapping / L'Hopital Rule")
+        if st.button("Generate Paper", use_container_width=True):
+            st.session_state.ex_res = get_ai_response(f"15-mark test on {exam_topic if exam_topic else 'Comprehensive'}", current_subject=active_subj)
         if "ex_res" in st.session_state:
             st.write(st.session_state.ex_res)
 
     # ================= 6. PROJECTS LAB =================
-    elif selected_nav == "🔬 Projects Lab":
+    elif selected_nav == "🔬 Projects":
         st.markdown(f"#### 🔬 Academic Capstone Projects — {active_subj}")
-        st.write("Production grade semester blueprints.")
+        if active_subj == "🐍 Python Programming":
+            projs = ["Student Management (SQLite)", "Banking Simulator (OOP)", "Billing Engine"]
+        elif active_subj == "🖥️ Computer System Architecture":
+            projs = ["Adder Simulator", "4-Bit ALU", "Cache Simulator"]
+        else:
+            projs = ["Newton-Raphson Solver", "Matrix Rank Calculator", "Dijkstra Engine"]
+
+        sel_p = st.selectbox("Select Project:", projs)
+        if st.button("Build Blueprint", use_container_width=True):
+            with st.spinner("Generating code..."):
+                res = get_ai_response(f"Provide complete working code and documentation for project: '{sel_p}' in {active_subj}.", current_subject=active_subj)
+                st.markdown(res)
 
     # ================= 7. AI MENTOR =================
-    elif selected_nav == "🤖 AI Academic Mentor":
-        st.markdown(f"#### 🤖 Academic Doubt Clearance — {active_subj}")
+    elif selected_nav == "🤖 AI Mentor":
+        st.markdown(f"#### 🤖 Doubt Clearance — {active_subj}")
         q = st.text_input("Ask Question:")
         if st.button("Submit") and q:
             st.write(get_ai_response(q, current_subject=active_subj))
 
-    # ================= 8. COLAB SANDBOX =================
-    elif selected_nav == "💻 Colab Notebook & Sandbox" and active_subj == "🐍 Python Programming":
-        st.markdown("#### 💻 Colab Notebook Sandbox // Python")
+    # ================= 8. COLAB SANDBOX (PYTHON ONLY) =================
+    elif selected_nav == "💻 Sandbox" and active_subj == "🐍 Python Programming":
+        st.markdown("#### 💻 Colab Notebook // Python Only")
+        
+        tb1, tb2 = st.columns([1, 1])
+        with tb1:
+            if st.button("Add Cell", use_container_width=True):
+                new_id = len(st.session_state.notebook_cells) + 1
+                st.session_state.notebook_cells.append({
+                    "id": new_id,
+                    "code": "# Python Cell\n",
+                    "output": "",
+                    "error": ""
+                })
+                st.rerun()
+        with tb2:
+            if st.button("Clear Outputs", use_container_width=True):
+                for cell in st.session_state.notebook_cells:
+                    cell["output"] = ""
+                    cell["error"] = ""
+                st.rerun()
+
         for idx, cell in enumerate(st.session_state.notebook_cells):
-            cell_code = st.text_area(f"Cell {idx+1}", value=cell["code"], height=100)
-            cell["code"] = cell_code
-            if st.button(f"▶ Run Cell {idx+1}", key=f"run_cell_{idx}"):
+            st.markdown(f"**[ {idx + 1} ]** In [ ]:")
+            c_ed, c_act = st.columns([8.5, 1.5])
+            with c_ed:
+                cell["code"] = st.text_area(f"Cell {cell['id']}", value=cell["code"], height=120, label_visibility="collapsed")
+            with c_act:
+                run_btn = st.button("Run", key=f"run_{cell['id']}", use_container_width=True)
+                assist_btn = st.button("Assist", key=f"as_{cell['id']}", use_container_width=True)
+
+            if run_btn:
                 buf = io.StringIO()
                 try:
                     with contextlib.redirect_stdout(buf):
                         exec(cell["code"], {})
-                    st.code(buf.getvalue() if buf.getvalue() else "[Finished with no output]")
+                    cell["output"] = buf.getvalue() if buf.getvalue() else "[Finished with zero return output]"
+                    cell["error"] = ""
                 except Exception as ex:
-                    st.error(str(ex))
+                    cell["output"] = ""
+                    cell["error"] = str(ex)
+
+            if assist_btn:
+                with st.spinner("AI checking cell..."):
+                    cell["output"] = get_ai_response(f"Quickly analyze and optimize:\n{cell['code']}", current_subject="Python")
+                    cell["error"] = ""
+
+            if cell["output"]:
+                st.code(cell["output"])
+            if cell["error"]:
+                st.error(cell["error"])
+                if st.button("Auto-Fix", key=f"afix_{cell['id']}"):
+                    st.info(get_ai_response(f"Fix this code error:\n{cell['code']}\nError: {cell['error']}", current_subject="Python"))
