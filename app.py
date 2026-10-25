@@ -41,7 +41,7 @@ if "notebook_cells" not in st.session_state:
         }
     ]
 
-# ================= EXECUTIVE STYLING & GALLERY CSS =================
+# ================= EXECUTIVE STYLING & DIRECT-TAP GALLERY CSS =================
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
@@ -167,50 +167,30 @@ st.markdown("""
         box-shadow: 0 6px 20px rgba(37, 99, 235, 0.5) !important;
     }
 
-    /* Photos Grid Item Styling */
-    .gallery-badge {
-        font-size: 11px;
-        font-weight: 700;
-        color: #60A5FA;
-        margin-top: 4px;
-        margin-bottom: 8px;
-        text-align: center;
+    /* Clean Direct Tap Card Image */
+    div[data-testid="stImage"] img {
+        border-radius: 8px !important;
+        border: 1px solid rgba(255, 255, 255, 0.12) !important;
+        box-shadow: 0 8px 22px rgba(0, 0, 0, 0.45) !important;
+        transition: transform 0.2s ease, border-color 0.2s ease !important;
+        cursor: pointer !important;
+    }
+    div[data-testid="stImage"] img:hover {
+        transform: scale(1.02) !important;
+        border-color: #3B82F6 !important;
     }
 </style>
 """, unsafe_allow_html=True)
 
-# ================= COMPACT GALLERY IMAGE RENDERER =================
+# ================= DYNAMIC TEXT-FIT A4 PHOTO RENDERER =================
 def create_a4_sheet_image(topic, page_index, total_pages, text_content, subject_name):
-    width, height = 450, 560
-    image = Image.new("RGB", (width, height), "#FFFFFF")
-    draw = ImageDraw.Draw(image)
-
-    # Ruled Blue Lines
+    width = 460
     line_spacing = 25
-    for y in range(80, height - 20, line_spacing):
-        draw.line([(0, y), (width, y)], fill="#E2E8F0", width=1)
-
-    # Red Margin Line
-    draw.line([(60, 0), (60, height)], fill="#EF4444", width=2)
-
-    # Spiral Rings
-    for ring_y in range(25, height - 15, 26):
-        draw.ellipse([14, ring_y, 24, ring_y + 11], fill="#CBD5E1", outline="#94A3B8", width=1)
-
-    font_default = ImageFont.load_default()
-
-    # Header Card
-    draw.rectangle([(68, 16), (185, 36)], fill="#2563EB")
-    draw.text((75, 21), f"SHEET {page_index} OF {total_pages}", fill="#FFFFFF", font=font_default)
-
-    clean_topic = topic[:30]
-    draw.text((68, 44), clean_topic, fill="#0F172A", font=font_default)
-    draw.line([(68, 58), (width - 25, 58)], fill="#EF4444", width=1)
-    draw.text((68, 62), f"{subject_name} | MLK PG College", fill="#64748B", font=font_default)
-
-    # Text Wrap
     start_y = 92
     x_pos = 70
+    font_default = ImageFont.load_default()
+
+    # Pre-calculate wrapped lines to find exact required height
     words = text_content.replace("\n", " [BREAK] ").split()
     current_line = []
     lines_to_draw = []
@@ -221,7 +201,7 @@ def create_a4_sheet_image(topic, page_index, total_pages, text_content, subject_
             current_line = []
             continue
         test_line = " ".join(current_line + [word])
-        if len(test_line) > 36:
+        if len(test_line) > 37:
             lines_to_draw.append(" ".join(current_line))
             current_line = [word]
         else:
@@ -229,10 +209,39 @@ def create_a4_sheet_image(topic, page_index, total_pages, text_content, subject_
     if current_line:
         lines_to_draw.append(" ".join(current_line))
 
-    for idx, line_text in enumerate(lines_to_draw[:17]):
+    # DYNAMIC HEIGHT CALCULATION: Jitna text hai utni hi exact height banegi
+    text_lines_count = max(3, len(lines_to_draw))
+    height = start_y + (text_lines_count * line_spacing) + 40
+
+    image = Image.new("RGB", (width, height), "#FFFFFF")
+    draw = ImageDraw.Draw(image)
+
+    # Blue Ruled Lines (Only drawn for the exact text area)
+    for y in range(80, height - 20, line_spacing):
+        draw.line([(0, y), (width, y)], fill="#E2E8F0", width=1)
+
+    # Red Margin Line
+    draw.line([(60, 0), (60, height)], fill="#EF4444", width=2)
+
+    # Spiral Rings
+    for ring_y in range(25, height - 15, 26):
+        draw.ellipse([14, ring_y, 24, ring_y + 11], fill="#CBD5E1", outline="#94A3B8", width=1)
+
+    # Header Card
+    draw.rectangle([(68, 16), (185, 36)], fill="#2563EB")
+    draw.text((75, 21), f"SHEET {page_index} OF {total_pages}", fill="#FFFFFF", font=font_default)
+
+    clean_topic = topic[:30]
+    draw.text((68, 44), clean_topic, fill="#0F172A", font=font_default)
+    draw.line([(68, 58), (width - 25, 58)], fill="#EF4444", width=1)
+    draw.text((68, 62), f"{subject_name} | MLK PG College", fill="#64748B", font=font_default)
+
+    # Draw exact text lines
+    for idx, line_text in enumerate(lines_to_draw):
         y_coord = start_y + (idx * line_spacing)
         draw.text((x_pos, y_coord - 11), line_text, fill="#1E3A8A", font=font_default)
 
+    # Clean bottom signature
     draw.text((68, height - 22), f"Harsh Raj Soni • Sheet {page_index}", fill="#94A3B8", font=font_default)
     return image
 
@@ -282,7 +291,7 @@ def get_ai_response(prompt, image_input=None, forced_language=None, current_subj
     STRICT GUIDELINES:
     1. Maintain a respectful, dignified academic tone. NO slang or vulgarity.
     2. Generate EXACTLY 7 PAGES. Separate each page with '[PAGE_BREAK]'.
-    3. Keep each page strictly between 35 to 45 words so it fits properly on the compact photo card.
+    3. Keep each page strictly concise (30 to 45 words) focusing directly on key syllabus points.
     4. Start directly with core educational concepts.
 
     Query:
@@ -331,9 +340,9 @@ if not st.session_state.system_booted:
         </div>
         <div style="background:#0F172A; border:1px solid rgba(255,255,255,0.1); border-left:4px solid #3B82F6; border-radius:10px; padding:16px 22px; max-width:560px; width:100%; text-align:left; font-size:13px; color:#CBD5E1; line-height:1.6; margin-bottom:24px;">
             <div style="color:#60A5FA; font-weight:700; margin-bottom:4px;">Academic Portal Specification:</div>
-            <div>• Photos Gallery Grid View for Instant Study</div>
+            <div>• Dynamic Height Auto-Fit Photo Sheets (No extra blank ruled space)</div>
+            <div>• Direct Tap Image Gallery Library</div>
             <div>• Full Python, CSA & Discrete Mathematics Compendium</div>
-            <div>• Zero Text-Cutoff & Mobile Gallery Touch Friendly</div>
         </div>
     </div>
     """, unsafe_allow_html=True)
@@ -403,10 +412,10 @@ else:
         index=0
     )
 
-    # ================= 1. GALLERY IMAGE LIBRARY (PHONE PHOTOS STYLE) =================
+    # ================= 1. DIRECT-TAP PHOTOS GALLERY =================
     if selected_nav == "🖼️ Photos Gallery":
         st.markdown(f"#### 🖼️ Image Library & Note Sheets — {active_subj}")
-        st.caption("Phone Photos style grid. Kisi bhi sheet par tap karke view karein.")
+        st.caption("Kisi bhi sheet image par seedhe tap karke padhein. Height text ke according auto-fit rahegi.")
 
         if active_subj == "🐍 Python Programming":
             suggested_topics = [
@@ -448,7 +457,7 @@ else:
             st.session_state.viewing_image_index = None
             st.session_state.generated_page_images = []
             
-            with st.spinner(f"Creating 7 photo sheets for {final_topic}..."):
+            with st.spinner(f"Rendering text-fit sheets for {final_topic}..."):
                 raw_output = get_ai_response(
                     f"Create comprehensive 7-page university notes on '{final_topic}' in {active_subj}.",
                     forced_language=notes_lang,
@@ -469,7 +478,7 @@ else:
                 st.session_state.generated_page_images = photos
                 st.session_state.flip_notes_topic = final_topic
 
-        # RENDER GALLERY VIEW (GRID & EXPANDED VIEWER)
+        # RENDER GALLERY VIEW (DIRECT IMAGE TAP ONLY, NO EXTRA BUTTONS)
         if st.session_state.generated_page_images:
             images = st.session_state.generated_page_images
             total = len(images)
@@ -477,7 +486,7 @@ else:
             # Single Selected Image Zoom / Focus View
             if st.session_state.viewing_image_index is not None:
                 idx = st.session_state.viewing_image_index
-                st.markdown(f"##### 🔍 Viewing Sheet {idx + 1} of {total}")
+                st.markdown(f"##### 🔍 Sheet {idx + 1} of {total}")
                 
                 v_col1, v_col2, v_col3 = st.columns([1, 2.2, 1])
                 with v_col2:
@@ -485,30 +494,32 @@ else:
                 
                 b1, b2, b3 = st.columns([1.5, 2, 1.5])
                 with b1:
-                    if st.button("‹ Previous Sheet", disabled=(idx == 0), use_container_width=True):
+                    if st.button("‹ Previous", disabled=(idx == 0), use_container_width=True):
                         st.session_state.viewing_image_index = max(0, idx - 1)
                         st.rerun()
                 with b2:
-                    if st.button("📁 Close & Back to Gallery Grid", use_container_width=True):
+                    if st.button("📁 Back to Gallery", use_container_width=True):
                         st.session_state.viewing_image_index = None
                         st.rerun()
                 with b3:
-                    if st.button("Next Sheet ›", disabled=(idx == total - 1), use_container_width=True):
+                    if st.button("Next ›", disabled=(idx == total - 1), use_container_width=True):
                         st.session_state.viewing_image_index = min(total - 1, idx + 1)
                         st.rerun()
 
             else:
-                st.markdown(f"##### 📸 Photo Library Grid ({total} Sheets)")
-                st.caption("Kisi bhi photo sheet ko tap/click karein full-size padhne ke liye:")
+                st.markdown(f"##### 📸 Photo Library ({total} Sheets)")
+                st.caption("Kisi bhi sheet image par seedhe tap karein:")
                 
-                # 3-Column Responsive Phone Gallery Grid
+                # 3-Column Direct-Tap Image Grid (Alag se button hatakar direct image clickable banayi hai)
                 g_cols = st.columns(3)
                 for i, img in enumerate(images):
                     with g_cols[i % 3]:
-                        st.image(img, use_container_width=True)
-                        if st.button(f"🔍 Open Sheet {i + 1}", key=f"open_sheet_{i}", use_container_width=True):
+                        # Streamlit native callback: Image tap selection
+                        btn_label = f"📄 Sheet {i + 1}"
+                        if st.button(btn_label, key=f"img_tap_btn_{i}", use_container_width=True):
                             st.session_state.viewing_image_index = i
                             st.rerun()
+                        st.image(img, use_container_width=True)
 
     # ================= 2. MATHS ENCYCLOPEDIA =================
     elif selected_nav == "📐 Maths Menu":
