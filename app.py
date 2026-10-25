@@ -2,7 +2,6 @@ import streamlit as st
 import google.generativeai as genai
 import io
 import contextlib
-from PIL import Image, ImageDraw, ImageFont
 
 st.set_page_config(
     page_title="BCA Academic Suite | Harsh Raj Soni",
@@ -18,11 +17,8 @@ if "system_booted" not in st.session_state:
 if "selected_subject" not in st.session_state:
     st.session_state.selected_subject = "🐍 Python Programming"
 
-if "generated_page_images" not in st.session_state:
-    st.session_state.generated_page_images = []
-
-if "viewing_image_index" not in st.session_state:
-    st.session_state.viewing_image_index = None
+if "notebook_rendered_html" not in st.session_state:
+    st.session_state.notebook_rendered_html = ""
 
 # Colab Notebook Multi-Cell Storage (Python Only)
 if "notebook_cells" not in st.session_state:
@@ -41,10 +37,10 @@ if "notebook_cells" not in st.session_state:
         }
     ]
 
-# ================= EXECUTIVE STYLING & DIRECT-TAP GALLERY CSS =================
+# ================= EXECUTIVE STYLING & REAL HANDWRITTEN PAPER CSS =================
 st.markdown("""
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Caveat:wght@600;700&family=Patrick+Hand&display=swap');
 
     html, body, [class*="css"] {
         font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
@@ -77,7 +73,7 @@ st.markdown("""
     .block-container {
         padding-top: 0.8rem !important;
         padding-bottom: 5rem !important;
-        max-width: 1100px !important;
+        max-width: 1080px !important;
     }
 
     .formal-top-banner {
@@ -156,9 +152,9 @@ st.markdown("""
         color: #FFFFFF !important;
         border: 1px solid rgba(255, 255, 255, 0.15) !important;
         border-radius: 8px !important;
-        padding: 6px 14px !important;
+        padding: 6px 16px !important;
         font-weight: 600 !important;
-        font-size: 12.5px !important;
+        font-size: 13px !important;
         transition: all 0.2s ease !important;
         box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35) !important;
     }
@@ -167,83 +163,107 @@ st.markdown("""
         box-shadow: 0 6px 20px rgba(37, 99, 235, 0.5) !important;
     }
 
-    /* Clean Direct Tap Card Image */
-    div[data-testid="stImage"] img {
-        border-radius: 8px !important;
-        border: 1px solid rgba(255, 255, 255, 0.12) !important;
-        box-shadow: 0 8px 22px rgba(0, 0, 0, 0.45) !important;
-        transition: transform 0.2s ease, border-color 0.2s ease !important;
-        cursor: pointer !important;
+    /* REAL NOTEBOOK VECTOR SHEET (CRISP, NON-BLURRY, DYNAMIC HEIGHT) */
+    .real-notebook-sheet {
+        background-color: #fcfbf7 !important;
+        background-image: 
+            linear-gradient(90deg, transparent 46px, #ef4444 46px, #ef4444 47.5px, transparent 47.5px),
+            linear-gradient(#e5e7eb 1px, transparent 1px) !important;
+        background-size: 100% 100%, 100% 32px !important;
+        border-radius: 10px !important;
+        padding: 24px 28px 24px 62px !important;
+        border: 1px solid #d1d5db !important;
+        box-shadow: 0 12px 35px rgba(0, 0, 0, 0.55) !important;
+        width: 100% !important;
+        max-width: 680px !important;
+        margin: 0 auto 20px auto !important;
+        box-sizing: border-box !important;
+        font-family: 'Patrick Hand', cursive !important;
+        color: #1e3a8a !important;
+        font-size: 18px !important;
+        line-height: 32px !important;
+        position: relative !important;
     }
-    div[data-testid="stImage"] img:hover {
-        transform: scale(1.02) !important;
-        border-color: #3B82F6 !important;
+
+    /* Left Ring Binder Rings */
+    .real-notebook-sheet::before {
+        content: '' !important;
+        position: absolute !important;
+        top: 14px !important;
+        left: 14px !important;
+        width: 12px !important;
+        height: 96% !important;
+        background-image: radial-gradient(circle, #9ca3af 4px, transparent 5px) !important;
+        background-size: 12px 32px !important;
+        background-repeat: repeat-y !important;
+    }
+
+    /* Highlight Sticky Notes & Titles */
+    .nb-title-h1 {
+        font-family: 'Caveat', cursive !important;
+        font-size: 32px !important;
+        font-weight: 700 !important;
+        color: #1e1b4b !important;
+        background: #fdf2f8 !important;
+        padding: 2px 14px !important;
+        border-radius: 6px !important;
+        display: inline-block !important;
+        border-bottom: 2px dashed #ec4899 !important;
+        margin-bottom: 8px !important;
+        line-height: 34px !important;
+    }
+
+    .nb-subhead {
+        font-weight: 700 !important;
+        color: #0369a1 !important;
+        font-size: 20px !important;
+        text-decoration: underline !important;
+        margin-top: 6px !important;
+        display: block !important;
+    }
+
+    .nb-table {
+        border-collapse: collapse !important;
+        margin: 8px 0 !important;
+        font-family: 'Patrick Hand', cursive !important;
+        font-size: 17px !important;
+        background: #ffffff !important;
+        border: 1.5px solid #1e3a8a !important;
+        width: auto !important;
+    }
+    .nb-table th, .nb-table td {
+        border: 1.5px solid #1e3a8a !important;
+        padding: 2px 14px !important;
+        text-align: center !important;
+    }
+    .nb-table th {
+        background: #e0f2fe !important;
+        color: #0369a1 !important;
+    }
+
+    .nb-keypoints-box {
+        border: 2px dashed #16a34a !important;
+        background: #f0fdf4 !important;
+        border-radius: 12px !important;
+        padding: 8px 16px !important;
+        margin-top: 10px !important;
+        color: #14532d !important;
+        font-size: 17px !important;
+    }
+
+    @media (max-width: 768px) {
+        .real-notebook-sheet {
+            padding: 16px 14px 20px 48px !important;
+            font-size: 16.5px !important;
+            line-height: 28px !important;
+            background-size: 100% 100%, 100% 28px !important;
+        }
+        .nb-title-h1 {
+            font-size: 26px !important;
+        }
     }
 </style>
 """, unsafe_allow_html=True)
-
-# ================= DYNAMIC TEXT-FIT A4 PHOTO RENDERER =================
-def create_a4_sheet_image(topic, page_index, total_pages, text_content, subject_name):
-    width = 460
-    line_spacing = 25
-    start_y = 92
-    x_pos = 70
-    font_default = ImageFont.load_default()
-
-    # Pre-calculate wrapped lines to find exact required height
-    words = text_content.replace("\n", " [BREAK] ").split()
-    current_line = []
-    lines_to_draw = []
-    
-    for word in words:
-        if word == "[BREAK]":
-            lines_to_draw.append(" ".join(current_line))
-            current_line = []
-            continue
-        test_line = " ".join(current_line + [word])
-        if len(test_line) > 37:
-            lines_to_draw.append(" ".join(current_line))
-            current_line = [word]
-        else:
-            current_line.append(word)
-    if current_line:
-        lines_to_draw.append(" ".join(current_line))
-
-    # DYNAMIC HEIGHT CALCULATION: Jitna text hai utni hi exact height banegi
-    text_lines_count = max(3, len(lines_to_draw))
-    height = start_y + (text_lines_count * line_spacing) + 40
-
-    image = Image.new("RGB", (width, height), "#FFFFFF")
-    draw = ImageDraw.Draw(image)
-
-    # Blue Ruled Lines (Only drawn for the exact text area)
-    for y in range(80, height - 20, line_spacing):
-        draw.line([(0, y), (width, y)], fill="#E2E8F0", width=1)
-
-    # Red Margin Line
-    draw.line([(60, 0), (60, height)], fill="#EF4444", width=2)
-
-    # Spiral Rings
-    for ring_y in range(25, height - 15, 26):
-        draw.ellipse([14, ring_y, 24, ring_y + 11], fill="#CBD5E1", outline="#94A3B8", width=1)
-
-    # Header Card
-    draw.rectangle([(68, 16), (185, 36)], fill="#2563EB")
-    draw.text((75, 21), f"SHEET {page_index} OF {total_pages}", fill="#FFFFFF", font=font_default)
-
-    clean_topic = topic[:30]
-    draw.text((68, 44), clean_topic, fill="#0F172A", font=font_default)
-    draw.line([(68, 58), (width - 25, 58)], fill="#EF4444", width=1)
-    draw.text((68, 62), f"{subject_name} | MLK PG College", fill="#64748B", font=font_default)
-
-    # Draw exact text lines
-    for idx, line_text in enumerate(lines_to_draw):
-        y_coord = start_y + (idx * line_spacing)
-        draw.text((x_pos, y_coord - 11), line_text, fill="#1E3A8A", font=font_default)
-
-    # Clean bottom signature
-    draw.text((68, height - 22), f"Harsh Raj Soni • Sheet {page_index}", fill="#94A3B8", font=font_default)
-    return image
 
 # ================= BACKGROUND API SETUP =================
 gemini_key = None
@@ -290,9 +310,7 @@ def get_ai_response(prompt, image_input=None, forced_language=None, current_subj
 
     STRICT GUIDELINES:
     1. Maintain a respectful, dignified academic tone. NO slang or vulgarity.
-    2. Generate EXACTLY 7 PAGES. Separate each page with '[PAGE_BREAK]'.
-    3. Keep each page strictly concise (30 to 45 words) focusing directly on key syllabus points.
-    4. Start directly with core educational concepts.
+    2. Write clear, structured lecture register notes directly suitable for university examinations.
 
     Query:
     {prompt}
@@ -325,6 +343,47 @@ def get_ai_response(prompt, image_input=None, forced_language=None, current_subj
 
     return f"⏳ AI Engine Temporary Busy: {last_error}"
 
+def get_handwritten_notes_html(topic, subject_name, notes_lang):
+    if not gemini_key:
+        return "<p>API Key not configured.</p>"
+    
+    prompt = f"""
+    Create a clean handwritten notebook register lecture on '{topic}' for {subject_name}.
+    Language preference: {notes_lang}.
+
+    FORMAT THE OUTPUT EXACTLY IN THIS CLEAN HTML SNIPPET (Do NOT use markdown, do not use ```html codeblock):
+    <div class="real-notebook-sheet">
+        <div class="nb-title-h1">{topic}</div>
+        <div style="font-size:12px; color:#6b7280; margin-bottom:8px;">{subject_name} • MLK PG College Balrampur</div>
+
+        <span class="nb-subhead">1. Definition & Core Concept :</span>
+        <p style="margin: 4px 0 10px 0;">[Explain in 2-3 concise lines]</p>
+
+        <span class="nb-subhead">2. Key Formulation / Rules / Truth Table :</span>
+        [If applicable, provide a small <table class="nb-table"> or code/formula block. If logic, provide table rows. If code, clean 3 lines.]
+
+        <span class="nb-subhead">3. Step-by-Step Logic / Working :</span>
+        <p style="margin: 4px 0 10px 0;">• Point 1 with exact explanation<br>• Point 2 with exact explanation<br>• Point 3 with exact explanation</p>
+
+        <div class="nb-keypoints-box">
+            <b>✳ Key Exam Points :</b><br>
+            • Most important formula or rule for semester exam<br>
+            • Common mistake to avoid in paper
+        </div>
+        <div style="font-size:11px; color:#9ca3af; text-align:right; margin-top:8px;">Harsh Raj Soni • BCA Ecosystem</div>
+    </div>
+    """
+    
+    try:
+        model = genai.GenerativeModel("models/gemini-2.0-flash", generation_config={"temperature": 0.2})
+        res = model.generate_content([prompt])
+        if res and res.text:
+            clean = res.text.replace("```html", "").replace("```", "").strip()
+            return clean
+    except Exception as e:
+        return f"<p>Error generating notes: {e}</p>"
+    return "<p>Could not generate sheet.</p>"
+
 # ================= 0. INTRO SCREEN =================
 if not st.session_state.system_booted:
     st.markdown("""
@@ -340,8 +399,8 @@ if not st.session_state.system_booted:
         </div>
         <div style="background:#0F172A; border:1px solid rgba(255,255,255,0.1); border-left:4px solid #3B82F6; border-radius:10px; padding:16px 22px; max-width:560px; width:100%; text-align:left; font-size:13px; color:#CBD5E1; line-height:1.6; margin-bottom:24px;">
             <div style="color:#60A5FA; font-weight:700; margin-bottom:4px;">Academic Portal Specification:</div>
-            <div>• Dynamic Height Auto-Fit Photo Sheets (No extra blank ruled space)</div>
-            <div>• Direct Tap Image Gallery Library</div>
+            <div>• Real Ruled Handwriting Register Sheet Engine</div>
+            <div>• Zero-Blur Vector Typography & Auto-Height Fit</div>
             <div>• Full Python, CSA & Discrete Mathematics Compendium</div>
         </div>
     </div>
@@ -384,15 +443,14 @@ else:
             label = f"✔ {s}" if is_active else f"➔ Switch to {s}"
             if st.button(label, key=f"switch_sub_{s}", use_container_width=True, type="primary" if is_active else "secondary"):
                 st.session_state.selected_subject = s
-                st.session_state.generated_page_images = []
-                st.session_state.viewing_image_index = None
+                st.session_state.notebook_rendered_html = ""
                 st.rerun()
 
     active_subj = st.session_state.selected_subject
 
     # Navigation Dock
     nav_options = [
-        "🖼️ Photos Gallery",
+        "📝 Notes",
         "📖 Syllabus",
         "🎯 Exam Engine",
         "🔬 Projects",
@@ -412,10 +470,10 @@ else:
         index=0
     )
 
-    # ================= 1. DIRECT-TAP PHOTOS GALLERY =================
-    if selected_nav == "🖼️ Photos Gallery":
-        st.markdown(f"#### 🖼️ Image Library & Note Sheets — {active_subj}")
-        st.caption("Kisi bhi sheet image par seedhe tap karke padhein. Height text ke according auto-fit rahegi.")
+    # ================= 1. CLEAN HANDWRITTEN REGISTER NOTES (NO BLUR / AUTO-FIT) =================
+    if selected_nav == "📝 Notes":
+        st.markdown(f"#### 📖 Lecture Notes Register — {active_subj}")
+        st.caption("Clean ruled paper layout with handwritten typography, tables, and formula highlights.")
 
         if active_subj == "🐍 Python Programming":
             suggested_topics = [
@@ -428,20 +486,21 @@ else:
             ]
         elif active_subj == "🖥️ Computer System Architecture":
             suggested_topics = [
-                "Number Systems, Complements & Binary Logic Operations",
-                "Half Adder, Full Adder & K-Map 4-Variable Minimization",
+                "Full Adder Circuit, Logic Gates & Truth Table",
+                "Half Adder & Full Adder Design using 2 HA and 1 OR Gate",
+                "Number Systems, Complements & Binary Operations",
+                "K-Map 4-Variable Minimization & Grouping Rules",
                 "Flip-Flops, Master-Slave JK & Race-Around Condition",
-                "Instruction Cycle Phases, Addressing Modes & Micro-ops",
-                "Cache Memory Mapping, Virtual Memory & Pipeline Hazards"
+                "Instruction Cycle Phases & Cache Memory Mapping"
             ]
         else:
             suggested_topics = [
-                "L'Hopital's Rule for Indeterminate Forms with Multi-Step Derivatives",
+                "L'Hopital's Rule for Indeterminate Forms with Solved Limit",
                 "Equivalence Relations Proof & POSET Hasse Diagrams",
                 "Matrix Rank, Echelon Forms & Rouche-Capelli Consistency",
                 "Eigenvalues, Eigenvectors & Cayley-Hamilton Theorem",
                 "Leibnitz Theorem for n-th Derivatives & Formula Matrix",
-                "Newton-Raphson Method & Bisection Numerical Convergence"
+                "Newton-Raphson Method & Numerical Convergence"
             ]
 
         c1, c2 = st.columns([2.5, 1])
@@ -453,73 +512,14 @@ else:
 
         final_topic = custom_topic.strip() if custom_topic.strip() else chosen_topic
 
-        if st.button("Generate Gallery", use_container_width=True):
-            st.session_state.viewing_image_index = None
-            st.session_state.generated_page_images = []
-            
-            with st.spinner(f"Rendering text-fit sheets for {final_topic}..."):
-                raw_output = get_ai_response(
-                    f"Create comprehensive 7-page university notes on '{final_topic}' in {active_subj}.",
-                    forced_language=notes_lang,
-                    current_subject=active_subj
-                )
+        # ONLY ONE CLEAN BUTTON: "Generate Notes"
+        if st.button("Generate Notes", use_container_width=True):
+            with st.spinner(f"Writing lecture sheet for {final_topic}..."):
+                st.session_state.notebook_rendered_html = get_handwritten_notes_html(final_topic, active_subj, notes_lang)
 
-                raw_pages = [p.strip() for p in raw_output.split("[PAGE_BREAK]") if p.strip()]
-                while len(raw_pages) < 7:
-                    raw_pages.append(f"Continued analysis of {final_topic} [Part {len(raw_pages)+1}]. Review syllabus guidelines, step proofs, and marks distribution.")
-                raw_pages = raw_pages[:7]
-
-                photos = []
-                for p_num, p_text in enumerate(raw_pages, start=1):
-                    clean_text = p_text.replace("### ", "").replace("## ", "").replace("# ", "")
-                    img = create_a4_sheet_image(final_topic, p_num, 7, clean_text, active_subj)
-                    photos.append(img)
-
-                st.session_state.generated_page_images = photos
-                st.session_state.flip_notes_topic = final_topic
-
-        # RENDER GALLERY VIEW (DIRECT IMAGE TAP ONLY, NO EXTRA BUTTONS)
-        if st.session_state.generated_page_images:
-            images = st.session_state.generated_page_images
-            total = len(images)
-
-            # Single Selected Image Zoom / Focus View
-            if st.session_state.viewing_image_index is not None:
-                idx = st.session_state.viewing_image_index
-                st.markdown(f"##### 🔍 Sheet {idx + 1} of {total}")
-                
-                v_col1, v_col2, v_col3 = st.columns([1, 2.2, 1])
-                with v_col2:
-                    st.image(images[idx], caption=f"Sheet {idx + 1} • {st.session_state.get('flip_notes_topic')}", use_container_width=True)
-                
-                b1, b2, b3 = st.columns([1.5, 2, 1.5])
-                with b1:
-                    if st.button("‹ Previous", disabled=(idx == 0), use_container_width=True):
-                        st.session_state.viewing_image_index = max(0, idx - 1)
-                        st.rerun()
-                with b2:
-                    if st.button("📁 Back to Gallery", use_container_width=True):
-                        st.session_state.viewing_image_index = None
-                        st.rerun()
-                with b3:
-                    if st.button("Next ›", disabled=(idx == total - 1), use_container_width=True):
-                        st.session_state.viewing_image_index = min(total - 1, idx + 1)
-                        st.rerun()
-
-            else:
-                st.markdown(f"##### 📸 Photo Library ({total} Sheets)")
-                st.caption("Kisi bhi sheet image par seedhe tap karein:")
-                
-                # 3-Column Direct-Tap Image Grid (Alag se button hatakar direct image clickable banayi hai)
-                g_cols = st.columns(3)
-                for i, img in enumerate(images):
-                    with g_cols[i % 3]:
-                        # Streamlit native callback: Image tap selection
-                        btn_label = f"📄 Sheet {i + 1}"
-                        if st.button(btn_label, key=f"img_tap_btn_{i}", use_container_width=True):
-                            st.session_state.viewing_image_index = i
-                            st.rerun()
-                        st.image(img, use_container_width=True)
+        # RENDER CRISP, SHARP VECTOR SHEET
+        if st.session_state.notebook_rendered_html:
+            st.markdown(st.session_state.notebook_rendered_html, unsafe_allow_html=True)
 
     # ================= 2. MATHS ENCYCLOPEDIA =================
     elif selected_nav == "📐 Maths Menu":
