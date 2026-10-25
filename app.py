@@ -165,7 +165,7 @@ st.markdown("""
         box-shadow: 0 6px 20px rgba(37, 99, 235, 0.5) !important;
     }
 
-    /* REAL NOTEBOOK VECTOR SHEET (CRISP, NON-BLURRY, DYNAMIC HEIGHT) */
+    /* REAL NOTEBOOK VECTOR SHEET */
     .real-notebook-sheet {
         background-color: #fcfbf7 !important;
         background-image: 
@@ -265,7 +265,7 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# ================= UNIVERSAL AI ENGINE (CURRENT ACTIVE GROQ MODELS + GEMINI FALLBACK) =================
+# ================= UNIVERSAL AI ENGINE (CURRENT RECOMMENDED GROQ MODELS) =================
 groq_key = st.secrets.get("GROQ_API_KEY", None)
 gemini_key = st.secrets.get("GEMINI_API_KEY", None)
 
@@ -277,7 +277,7 @@ with st.sidebar:
         if not groq_key:
             groq_key = st.text_input("Groq API Key:", type="password", placeholder="gsk_...")
         if groq_key:
-            st.success("● Groq LPU Active (llama-3.1-8b-instant)")
+            st.success("● Groq LPU Active")
         else:
             st.info("console.groq.com se free key lein")
     else:
@@ -292,7 +292,8 @@ with st.sidebar:
     st.caption("🏛️ MLK PG College, Balrampur")
 
 def execute_ai_query(system_role, user_prompt, image_input=None):
-    """Executes prompt via current active Groq model list or Gemini Multimodal fallback"""
+    """Executes prompt via official recommended Groq replacement models or Gemini fallback"""
+    # Multimodal image tasks
     if image_input and gemini_key:
         try:
             genai.configure(api_key=gemini_key)
@@ -305,14 +306,17 @@ def execute_ai_query(system_role, user_prompt, image_input=None):
 
     if "Groq" in ai_choice and groq_key:
         client = Groq(api_key=groq_key)
-        # Active, non-decommissioned Groq models
-        active_groq_models = [
-            "llama-3.1-8b-instant",
-            "gemma2-9b-it"
+        
+        # OFFICIAL RECOMMENDED REPLACEMENT MODELS FROM GROQ DEPRECATION TABLE
+        active_models = [
+            "openai/gpt-oss-120b",
+            "openai/gpt-oss-20b",
+            "qwen/qwen3-32b",
+            "llama-3.1-8b-instant"
         ]
         
-        last_groq_err = ""
-        for model_id in active_groq_models:
+        last_err = ""
+        for model_id in active_models:
             try:
                 completion = client.chat.completions.create(
                     model=model_id,
@@ -325,10 +329,10 @@ def execute_ai_query(system_role, user_prompt, image_input=None):
                 )
                 return completion.choices[0].message.content.strip()
             except Exception as e:
-                last_groq_err = str(e)
+                last_err = str(e)
                 continue
 
-        # If Groq models fail, fallback cleanly to Gemini
+        # Smooth fallback to Gemini if Groq keys/models encounter limit
         if gemini_key:
             try:
                 genai.configure(api_key=gemini_key)
@@ -338,7 +342,7 @@ def execute_ai_query(system_role, user_prompt, image_input=None):
                     return res.text.strip()
             except Exception:
                 pass
-        return f"Groq Error: {last_groq_err}"
+        return f"Engine Error: {last_err}"
 
     elif gemini_key:
         try:
@@ -401,7 +405,7 @@ if not st.session_state.system_booted:
         </div>
         <div style="background:#0F172A; border:1px solid rgba(255,255,255,0.1); border-left:4px solid #3B82F6; border-radius:10px; padding:16px 22px; max-width:560px; width:100%; text-align:left; font-size:13px; color:#CBD5E1; line-height:1.6; margin-bottom:24px;">
             <div style="color:#60A5FA; font-weight:700; margin-bottom:4px;">Academic Portal Specification:</div>
-            <div>• Dual AI Engine Architecture: Groq LPU (Ultra Fast) + Gemini Vision</div>
+            <div>• Verified Recommended Groq Replacement Core + Gemini Multimodal Vision</div>
             <div>• Real Ruled Handwriting Register Sheet Engine (Auto-Height Fit)</div>
             <div>• Full Python, CSA & Discrete Mathematics Compendium</div>
         </div>
