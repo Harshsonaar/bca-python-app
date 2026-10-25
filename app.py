@@ -265,7 +265,7 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# ================= UNIVERSAL AI ENGINE (VERIFIED GROQ MODELS + GEMINI FALLBACK) =================
+# ================= UNIVERSAL AI ENGINE (CURRENT ACTIVE GROQ MODELS + GEMINI FALLBACK) =================
 groq_key = st.secrets.get("GROQ_API_KEY", None)
 gemini_key = st.secrets.get("GEMINI_API_KEY", None)
 
@@ -277,7 +277,7 @@ with st.sidebar:
         if not groq_key:
             groq_key = st.text_input("Groq API Key:", type="password", placeholder="gsk_...")
         if groq_key:
-            st.success("● Groq LPU Active (Auto-Failover)")
+            st.success("● Groq LPU Active (llama-3.1-8b-instant)")
         else:
             st.info("console.groq.com se free key lein")
     else:
@@ -292,7 +292,7 @@ with st.sidebar:
     st.caption("🏛️ MLK PG College, Balrampur")
 
 def execute_ai_query(system_role, user_prompt, image_input=None):
-    """Executes prompt via verified Groq model list or Gemini Multimodal fallback"""
+    """Executes prompt via current active Groq model list or Gemini Multimodal fallback"""
     if image_input and gemini_key:
         try:
             genai.configure(api_key=gemini_key)
@@ -305,17 +305,14 @@ def execute_ai_query(system_role, user_prompt, image_input=None):
 
     if "Groq" in ai_choice and groq_key:
         client = Groq(api_key=groq_key)
-        # Verified models on Groq that never 404
-        candidate_models = [
-            "llama-3.3-70b-specdec",
-            "llama-3.1-70b-versatile",
-            "llama3-70b-8192",
+        # Active, non-decommissioned Groq models
+        active_groq_models = [
             "llama-3.1-8b-instant",
-            "mixtral-8x7b-32768"
+            "gemma2-9b-it"
         ]
         
         last_groq_err = ""
-        for model_id in candidate_models:
+        for model_id in active_groq_models:
             try:
                 completion = client.chat.completions.create(
                     model=model_id,
@@ -331,7 +328,7 @@ def execute_ai_query(system_role, user_prompt, image_input=None):
                 last_groq_err = str(e)
                 continue
 
-        # If Groq fails, fallback to Gemini
+        # If Groq models fail, fallback cleanly to Gemini
         if gemini_key:
             try:
                 genai.configure(api_key=gemini_key)
