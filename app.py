@@ -4,6 +4,7 @@ import google.generativeai as genai
 import io
 import re
 import os
+import json
 import shelve
 import threading
 import time
@@ -14,18 +15,18 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from PIL import Image
 
+# ================= APP NAME & LOGO CONFIG =================
 st.set_page_config(
-    page_title="Universal Academic & Competitive Suite | Harsh Raj Soni",
-    page_icon="🎓",
+    page_title="Harsh's Lex & Tech Suite | Universal Academic Portal",
+    page_icon="⚖️",
     layout="wide",
     initial_sidebar_state="collapsed"
 )
 
 ADMIN_EMAIL = "harshrajsoni92@gmail.com"
-
-# PERSISTENT STORAGE
 STORAGE_FILE = "user_memory_store.db"
 
+# ================= PERSISTENT STORAGE ENGINE =================
 def load_user_memory():
     default_data = {
         "last_course": "⚖️ Law & Judiciary (LL.B / CLAT / PCS-J)",
@@ -55,7 +56,6 @@ def save_user_memory():
     except Exception:
         pass
 
-# Initialize Session States
 saved_state = load_user_memory()
 
 if "system_booted" not in st.session_state:
@@ -125,13 +125,13 @@ if "notebook_cells" not in st.session_state:
     st.session_state.notebook_cells = [
         {
             "id": 1,
-            "code": "# Python Cell 1: Verification & Environment\ndeveloper_name = 'Harsh Raj Soni'\ninstitution = 'MLK PG College, Balrampur'\nprint(f'Academic Portal Active | Developer: {developer_name} [{institution}]')",
+            "code": "# Python Cell 1: Verification & Environment\ndeveloper_name = 'Harsh Raj Soni'\ninstitution = 'MLK PG College, Balrampur'\nprint(f'Harsh\\'s Lex & Tech Suite Active | Developer: {developer_name} [{institution}]')",
             "output": "",
             "error": ""
         }
     ]
 
-# Anti-Sleep Keep Alive Heartbeat
+# ================= ANTI-SLEEP KEEP ALIVE HEARTBEAT =================
 def run_anti_sleep_heartbeat():
     while True:
         try:
@@ -144,7 +144,7 @@ if "heartbeat_started" not in st.session_state:
     t = threading.Thread(target=run_anti_sleep_heartbeat, daemon=True)
     t.start()
 
-# THEME PALETTES (EYE-FRIENDLY SOFT DARK GRADIENTS)
+# ================= EYE-FRIENDLY STREAM THEME PALETTES =================
 THEME_PALETTES = {
     "⚖️ Law & Judiciary (LL.B / CLAT / PCS-J)": {
         "grad_top": "#1F0D16",
@@ -200,19 +200,18 @@ THEME_PALETTES = {
 
 active_theme = THEME_PALETTES.get(st.session_state.current_course, THEME_PALETTES["⚖️ Law & Judiciary (LL.B / CLAT / PCS-J)"])
 
-# API KEYS & GMAIL APP PASSWORD CONFIG
 groq_key = st.secrets.get("GROQ_API_KEY", None)
 gemini_key = st.secrets.get("GEMINI_API_KEY", None)
 gmail_app_password = st.secrets.get("GMAIL_APP_PASSWORD", None)
 
-# AUTOMATIC BACKGROUND GMAIL SMTP SENDER
+# ================= AUTOMATIC BACKGROUND GMAIL SMTP SENDER =================
 def send_auto_smtp_email(sender_name, student_email, stream_name, rating_str, feedback_text, app_pwd):
     if not app_pwd:
         return False, "No App Password"
     try:
         clean_pwd = app_pwd.replace(" ", "").strip()
         msg = MIMEMultipart("alternative")
-        msg["From"] = f"Academic Suite Portal <{ADMIN_EMAIL}>"
+        msg["From"] = f"Harsh's Lex & Tech Suite <{ADMIN_EMAIL}>"
         msg["To"] = ADMIN_EMAIL
         if student_email and "@" in student_email:
             msg["Reply-To"] = student_email
@@ -220,7 +219,7 @@ def send_auto_smtp_email(sender_name, student_email, stream_name, rating_str, fe
 
         html_body = f"""
         <div style="font-family: Arial, sans-serif; max-width: 580px; border: 2px solid #2563EB; border-radius: 12px; padding: 20px; background: #0F172A; color: #F8FAFC;">
-            <h2 style="color: #38BDF8; margin-top: 0;">🎓 Universal Academic Suite — New Student Feedback</h2>
+            <h2 style="color: #38BDF8; margin-top: 0;">⚖️ Harsh's Lex & Tech Suite — Student Feedback</h2>
             <p style="font-size: 14px; color: #CBD5E1;">Hello <b>Harsh Raj Soni</b>, ek student ne aapke portal par naya review submit kiya hai:</p>
             <table style="width: 100%; border-collapse: collapse; margin: 14px 0; font-size: 14px; color: #F8FAFC;">
                 <tr><td style="padding: 8px; border-bottom: 1px solid #334155;"><b>Student Name:</b></td><td style="padding: 8px; border-bottom: 1px solid #334155;">{sender_name}</td></tr>
@@ -244,7 +243,7 @@ def send_auto_smtp_email(sender_name, student_email, stream_name, rating_str, fe
     except Exception as e:
         return False, str(e)
 
-# RATING & FEEDBACK POPUP DIALOG ENGINE
+# ================= RATING & FEEDBACK POPUP DIALOG ENGINE =================
 def render_feedback_form_contents(context_key="modal"):
     st.markdown(f"""
     <div style="background:{active_theme['card_bg']}; border:1.5px solid {active_theme['accent']}; border-radius:12px; padding:14px 18px; margin-bottom:12px;">
@@ -311,7 +310,6 @@ def render_feedback_form_contents(context_key="modal"):
                 st.success(f"✅ Shukriya {sender}! Aapki rating aur feedback automatic `{ADMIN_EMAIL}` par bhej diya gaya hai!")
                 return
 
-        # Fallback 1-Click Link if App Password is not yet in Secrets
         subject_line = f"Portal Rating {rating_short} from {sender} ({fb_stream})"
         body_line = (
             f"Hello Harsh Raj Soni,\n\n"
@@ -335,11 +333,11 @@ def render_feedback_form_contents(context_key="modal"):
         """, unsafe_allow_html=True)
 
 if hasattr(st, "dialog"):
-    @st.dialog("⭐ Rate & Feedback — Universal Academic Suite")
+    @st.dialog("⭐ Rate & Feedback — Harsh's Lex & Tech Suite")
     def open_feedback_popup_dialog():
         render_feedback_form_contents(context_key="popup_dlg")
 elif hasattr(st, "experimental_dialog"):
-    @st.experimental_dialog("⭐ Rate & Feedback — Universal Academic Suite")
+    @st.experimental_dialog("⭐ Rate & Feedback — Harsh's Lex & Tech Suite")
     def open_feedback_popup_dialog():
         render_feedback_form_contents(context_key="popup_dlg")
 else:
@@ -347,7 +345,7 @@ else:
         with st.expander("⭐ Rate & Feedback Popup", expanded=True):
             render_feedback_form_contents(context_key="popup_fallback")
 
-# MASTER ACADEMIC & COMPETITIVE DATABASE
+# ================= MASTER ACADEMIC & COMPETITIVE DATABASE =================
 COURSE_DATABASE = {
     "⚖️ Law & Judiciary (LL.B / CLAT / PCS-J)": {
         "icon": "⚖️",
@@ -683,7 +681,7 @@ COURSE_DATABASE = {
     }
 }
 
-# DYNAMIC EYE-FRIENDLY CSS
+# ================= DYNAMIC EYE-FRIENDLY & RULED REGISTER CSS =================
 DYNAMIC_THEME_CSS = f"""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Kalam:wght@400;700&family=Patrick+Hand&display=swap');
@@ -964,7 +962,7 @@ DYNAMIC_THEME_CSS = f"""
 """
 st.markdown(DYNAMIC_THEME_CSS, unsafe_allow_html=True)
 
-# SIDEBAR & AI ENGINE CONFIG
+# ================= SIDEBAR & AI ENGINE CONFIG =================
 with st.sidebar:
     st.subheader("⚡ AI Engine & System")
     ai_choice = st.radio("Active Engine:", ["⚡ Groq LPU (Ultra Fast)", "Google Gemini"], index=0)
@@ -1001,6 +999,33 @@ with st.sidebar:
     st.caption("⚡ Developed by **Harsh Raj Soni**")
     st.caption("🏛️ MLK PG College, Balrampur")
 
+# ================= DYNAMIC MODEL AUTO-DISCOVERY ENGINE (NEVER 404s) =================
+def get_working_groq_models(client):
+    preferred = [
+        "llama-3.3-70b-versatile",
+        "llama-3.1-8b-instant",
+        "gemma2-9b-it",
+        "llama3-70b-8192",
+        "llama3-8b-8192",
+        "mixtral-8x7b-32768",
+        "qwen-qwq-32b",
+        "deepseek-r1-distill-llama-70b"
+    ]
+    try:
+        live_list = [
+            m.id for m in client.models.list().data
+            if not any(skip in m.id.lower() for skip in ["whisper", "tts", "guard", "vision", "embed", " playai"])
+        ]
+        if not live_list:
+            return preferred
+        ordered = [m for m in preferred if m in live_list]
+        for m in live_list:
+            if m not in ordered:
+                ordered.append(m)
+        return ordered
+    except Exception:
+        return preferred
+
 def execute_ai_query(system_role, user_prompt, max_budget=3500, image_input=None):
     safe_tokens = min(max_budget, 3800)
 
@@ -1012,20 +1037,13 @@ def execute_ai_query(system_role, user_prompt, max_budget=3500, image_input=None
             if response and response.text:
                 return response.text.strip()
         except Exception as e:
-            return "Gemini Vision Error: " + str(e)
+            return "API_ERROR: Gemini Vision Error: " + str(e)
 
     if "Groq" in ai_choice and groq_key:
         client = Groq(api_key=groq_key)
-        active_models = [
-            "llama-3.3-70b-versatile",
-            "llama-3.1-8b-instant",
-            "openai/gpt-oss-120b",
-            "openai/gpt-oss-20b",
-            "gemma2-9b-it"
-        ]
-        
+        candidate_models = get_working_groq_models(client)
         last_err = ""
-        for model_id in active_models:
+        for model_id in candidate_models:
             try:
                 completion = client.chat.completions.create(
                     model=model_id,
@@ -1038,6 +1056,8 @@ def execute_ai_query(system_role, user_prompt, max_budget=3500, image_input=None
                 )
                 res_text = completion.choices[0].message.content.strip()
                 if res_text:
+                    # Strip <think>...</think> blocks if reasoning model was auto-selected
+                    res_text = re.sub(r"<think>.*?</think>", "", res_text, flags=re.DOTALL).strip()
                     return res_text
             except Exception as e:
                 last_err = str(e)
@@ -1128,31 +1148,33 @@ def generate_multi_sheets_html(topic, subject_name, course_name, notes_lang):
         "            • High priority exam rule / Landmark SC Judgment<br>\n"
         "            • Key section / formula shortcut\n"
         "        </div>\n"
-        "        <div style=\"font-size:10px; color:#9ca3af; text-align:right; margin-top:4px;\">Harsh Raj Soni • Universal Portal</div>\n"
+        "        <div style=\"font-size:10px; color:#9ca3af; text-align:right; margin-top:4px;\">Harsh Raj Soni • Lex & Tech Suite</div>\n"
         "    </div>\n"
         "</div>"
     )
     raw_res = execute_ai_query(system_role, user_prompt, max_budget=3800)
-    
+    if raw_res.startswith("API_ERROR:"):
+        st.error(raw_res)
+        return []
+
     clean_text = raw_res.replace("```html", "").replace("```HTML", "").replace("```", "").strip()
     clean_text = re.sub(r"^`+|`+$", "", clean_text)
-    
     raw_sheets = [s.strip() for s in clean_text.split("===SHEET_SPLIT===") if s.strip()]
-    
+
     sanitized_sheets = []
     for s in raw_sheets:
         fixed = fix_unclosed_html(s)
         sanitized_sheets.append(fixed)
-        
+
     if course_name not in st.session_state.ai_memory:
         st.session_state.ai_memory[course_name] = {}
     st.session_state.ai_memory[course_name]["last_topic"] = topic
     st.session_state.ai_memory[course_name]["last_summary"] = "Recently studied " + topic + " in " + subject_name
     save_user_memory()
-    
+
     return sanitized_sheets if sanitized_sheets else [clean_text]
 
-# BULLETPROOF BLOCK PARSER
+# ================= BULLETPROOF BLOCK PARSER =================
 def parse_mcq_blocks(raw_text, default_tag="Official Set"):
     if not raw_text or raw_text.startswith("API_ERROR:"):
         return []
@@ -1250,8 +1272,7 @@ def generate_batch_questions(topic, course_name, subject_name, count=15, batch_n
         st.error(raw_res)
         return []
 
-    parsed = parse_mcq_blocks(raw_res, default_tag=tag_label)
-    return parsed
+    return parse_mcq_blocks(raw_res, default_tag=tag_label)
 
 def generate_90_100_dpp_marathon(topic, course_name, subject_name, target_count=90):
     all_questions = []
@@ -1278,12 +1299,12 @@ def generate_90_100_dpp_marathon(topic, course_name, subject_name, target_count=
     status_box.empty()
     return all_questions
 
-# INTRO SCREEN
+# ================= 0. INTRO SCREEN =================
 if not st.session_state.system_booted:
     st.markdown(f"""
     <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:70vh; text-align:center;">
         <div style="display:inline-flex; align-items:center; gap:8px; background:rgba(255,255,255,0.06); border:1px solid {active_theme['accent']}; padding:6px 20px; border-radius:30px; font-size:13px; font-weight:700; color:{active_theme['accent']}; margin-bottom:14px; box-shadow:0 0 16px {active_theme['glow']};">
-            🎓 UNIVERSAL ACADEMIC, LAW & ENTRANCE SUITE
+            ⚖️ HARSH'S LEX & TECH SUITE • UNIVERSAL PORTAL
         </div>
         <div style="font-size:32px; font-weight:800; color:#F8FAFC; letter-spacing:-0.5px; margin-bottom:6px;">
             Created & Designed by Harsh Raj Soni
@@ -1294,7 +1315,7 @@ if not st.session_state.system_booted:
         <div style="background:{active_theme['card_bg']}; border:1px solid rgba(255,255,255,0.1); border-left:4px solid {active_theme['accent']}; border-radius:10px; padding:16px 22px; max-width:600px; width:100%; text-align:left; font-size:13px; color:#CBD5E1; line-height:1.6; margin-bottom:24px;">
             <div style="color:{active_theme['accent']}; font-weight:700; margin-bottom:4px;">Enterprise Features Active:</div>
             <div>• ⚖️ Complete Indian Law Stream (Constitution, BNS/BNSS/BSA 2023, IPC/CrPC, Contract, CPC, Torts, Family Law)</div>
-            <div>• 🔥 90–100 Questions DPP Marathon Generator (100% Reliable Block Parser)</div>
+            <div>• 🔥 90–100 Questions DPP Marathon Generator (Auto-Model Discovery Engine)</div>
             <div>• 📚 Direct In-App Official PYQ Paper Booklet + Interactive OMR</div>
             <div>• 📧 Background SMTP Auto-Email Dispatch to {ADMIN_EMAIL}</div>
         </div>
@@ -1318,7 +1339,7 @@ else:
         <div class="formal-top-banner">
             <div>
                 <div style="font-size: 18px; font-weight: 700; color: #F8FAFC;">
-                    Universal Academic, Law & Competitive Portal
+                    ⚖️ Harsh's Lex & Tech Suite — Academic & Competitive Portal
                 </div>
                 <div style="font-size: 12px; color: #94A3B8;">
                     In-App PYQ Booklet • 90–100 Qs DPP Engine • Auto-SMTP Feedback
@@ -1343,7 +1364,7 @@ else:
             unsafe_allow_html=True
         )
 
-    # COURSE SWITCHER
+    # ================= COURSE SWITCHER =================
     curr_course = st.session_state.current_course
     with st.expander("🎓 Active Stream: " + curr_course + " (Tap to Switch)", expanded=False):
         c_list = list(COURSE_DATABASE.keys())
@@ -1400,7 +1421,7 @@ else:
         "🤖 AI Mentor",
         "⭐ Feedback & Ratings"
     ]
-    if "Python" in active_subj:
+    if "Python" in active_subj or "BCA" in active_course:
         nav_options.append("💻 Sandbox")
 
     selected_nav = st.radio(
@@ -1410,7 +1431,7 @@ else:
         index=0
     )
 
-    # SECTION 1: NOTES GALLERY
+    # ================= SECTION 1: NOTES GALLERY =================
     if selected_nav == "📝 Notes Gallery":
         st.subheader("📖 Lecture Notes Register Gallery — " + active_subj)
         st.caption("Classmate ruled paper layout with Bare Act sections, tables, formulas, and key exam points.")
@@ -1431,12 +1452,14 @@ else:
             save_user_memory()
 
             with st.spinner("Writing complete lecture sheets for '" + final_topic + "' under " + active_course + "..."):
-                st.session_state.generated_gallery_sheets = generate_multi_sheets_html(
+                sheets_out = generate_multi_sheets_html(
                     final_topic, active_subj, active_course, notes_lang
                 )
-                if not st.session_state.feedback_popup_shown:
-                    st.session_state.trigger_feedback_modal = True
-                st.rerun()
+                if sheets_out:
+                    st.session_state.generated_gallery_sheets = sheets_out
+                    if not st.session_state.feedback_popup_shown:
+                        st.session_state.trigger_feedback_modal = True
+                    st.rerun()
 
         if st.session_state.generated_gallery_sheets:
             sheets = st.session_state.generated_gallery_sheets
@@ -1477,7 +1500,7 @@ else:
                         """
                         st.markdown(card_thumb, unsafe_allow_html=True)
 
-    # SECTION 2: DPP (90-100 QUESTIONS MARATHON ENGINE)
+    # ================= SECTION 2: DPP (90-100 QUESTIONS MARATHON ENGINE) =================
     elif selected_nav == "🔥 DPP (90-100 Qs)":
         st.subheader(f"🔥 Daily Practice Problems (DPP Marathon) — {active_subj}")
         st.caption("Full chapter practice sheet with 90–100 questions, OMR option tick, and paginated smooth view.")
@@ -1488,7 +1511,7 @@ else:
             sel_dpp_topic = st.selectbox("Select Chapter / Act for DPP:", dpp_topic_list)
             custom_dpp = st.text_input("Or Enter Custom Act / Chapter:", placeholder="e.g. Complete BNS 2023 Offences / Indian Contract Act Sec 1-75")
         with c2:
-            dpp_target_count = st.selectbox("DPP Sheet Size:", [90, 100, 45], index=0)
+            dpp_target_count = st.selectbox("DPP Sheet Size:", [90, 100, 45, 15], index=0)
         with c3:
             page_size = st.selectbox("Questions Per Page:", [20, 25, 50, 100], index=1)
 
@@ -1613,7 +1636,7 @@ else:
                 </div>
                 """, unsafe_allow_html=True)
 
-    # SECTION 3: DIRECT IN-APP REAL PYQS VAULT
+    # ================= SECTION 3: DIRECT IN-APP REAL PYQS VAULT =================
     elif selected_nav == "📚 Real PYQs Vault":
         st.subheader(f"📚 Official Past Question Papers (100% In-App Booklet & OMR) — {active_course}")
         st.caption("Open and solve real past examination question papers directly inside the app without opening any external website.")
@@ -1749,7 +1772,7 @@ else:
                     </div>
                     """, unsafe_allow_html=True)
 
-    # SECTION 4: QUICK MOCK EXAM
+    # ================= SECTION 4: QUICK MOCK EXAM =================
     elif selected_nav == "🎯 Mock Exam":
         st.subheader(f"🎯 Rapid Mock Test — {active_course}")
         c1, c2 = st.columns([2.5, 1])
@@ -1819,7 +1842,7 @@ else:
                 max_marks = total_q * 4
                 st.info(f"🏆 **Mock Test Score:** {total_marks} / {max_marks}  |  ✔ Correct: {correct_cnt}  |  ✖ Wrong: {wrong_cnt}")
 
-    # SECTION 5: SYLLABUS & ACTS BREAKDOWN
+    # ================= SECTION 5: SYLLABUS & ACTS BREAKDOWN =================
     elif selected_nav == "📖 Syllabus & Acts":
         st.subheader("📚 Complete Statutory & Curriculum Breakdown — " + active_course)
         st.info("Active Subject: **" + active_subj + "**")
@@ -1831,7 +1854,7 @@ else:
                 st.caption(s_v.get("units", ""))
                 st.divider()
 
-    # SECTION 6: BARE ACTS & MAXIMS / FORMULA LAB
+    # ================= SECTION 6: BARE ACTS & MAXIMS / FORMULA LAB =================
     elif selected_nav == ref_tab_label:
         if "Law" in active_course:
             st.subheader("⚖️ Indian Bare Acts, BNS-IPC Section Mapper & Legal Maxims (100% In-App)")
@@ -1885,7 +1908,7 @@ else:
                 else:
                     st.latex(r"Sum = A \oplus B \oplus C_{in}, \quad Carry = AB + C_{in}(A \oplus B)")
 
-    # SECTION 7: AI MENTOR
+    # ================= SECTION 7: AI MENTOR =================
     elif selected_nav == "🤖 AI Mentor":
         st.subheader("🤖 1-on-1 AI Faculty Mentor — " + active_course)
         past_ctx = st.session_state.ai_memory.get(active_course, {}).get("last_summary", "Starting fresh discussion.")
@@ -1913,7 +1936,7 @@ else:
             else:
                 st.warning("Please type a question or upload image.")
 
-    # SECTION 8: FEEDBACK & RATINGS WALL
+    # ================= SECTION 8: FEEDBACK & RATINGS WALL =================
     elif selected_nav == "⭐ Feedback & Ratings":
         st.subheader(f"⭐ Student Ratings & Auto-SMTP Feedback Hub — `{ADMIN_EMAIL}`")
         st.caption("Submit karte hi feedback background SMTP ke zariye automatic Harsh Raj Soni ke Gmail par chala jayega.")
@@ -1946,8 +1969,8 @@ else:
                     </div>
                     """, unsafe_allow_html=True)
 
-    # SECTION 9: COLAB SANDBOX (PYTHON)
-    elif selected_nav == "💻 Sandbox" and "Python" in active_subj:
+    # ================= SECTION 9: COLAB SANDBOX (PYTHON) =================
+    elif selected_nav == "💻 Sandbox":
         st.subheader("💻 Colab Notebook // Python Only")
 
         tb1, tb2 = st.columns([1, 1])
