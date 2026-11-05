@@ -11,7 +11,7 @@ import urllib.parse
 import contextlib
 from PIL import Image
 
-# ================= APP CONFIG & LOGO =================
+# ================= APP CONFIG & BRANDING =================
 st.set_page_config(
     page_title="Harsh's Lex & Tech Suite",
     page_icon="⚖️",
@@ -81,6 +81,8 @@ if "dpp_user_answers" not in st.session_state:
     st.session_state.dpp_user_answers = {}
 if "dpp_submitted" not in st.session_state:
     st.session_state.dpp_submitted = False
+if "dpp_page" not in st.session_state:
+    st.session_state.dpp_page = 0
 if "pyq_questions" not in st.session_state:
     st.session_state.pyq_questions = []
 if "pyq_user_answers" not in st.session_state:
@@ -91,7 +93,7 @@ if "notebook_cells" not in st.session_state:
     st.session_state.notebook_cells = [
         {
             "id": 1,
-            "code": "# Python Cell 1: Environment Check\ndev = 'Harsh Raj Soni'\nprint(f'Active Suite | Developer: {dev}')",
+            "code": "# Python Cell 1: Environment Check\ndev = 'Harsh Raj Soni'\ninstitution = 'MLK PG College, Balrampur'\nprint(f'Active Suite | Developer: {dev} [{institution}]')",
             "output": "",
             "error": ""
         }
@@ -167,7 +169,6 @@ else:
         with st.expander("⭐ Rate & Feedback Popup", expanded=True):
             render_feedback_form_contents(context_key="popup_fallback")
 
-# FULL COMPREHENSIVE COURSE & LAW DATABASE
 COURSE_DATABASE = {
     "⚖️ Law & Judiciary (LL.B / CLAT / PCS-J)": {
         "icon": "⚖️",
@@ -345,18 +346,29 @@ with st.sidebar:
     st.caption("Developer: **Harsh Raj Soni**")
     st.caption("MLK PG College, Balrampur")
 
-def execute_ai_query(system_role, user_prompt, max_budget=2500):
+# ROBUST MULTI-MODEL FALLBACK ENGINE
+def execute_ai_query(system_role, user_prompt, max_budget=3000):
     if "Groq" in ai_choice and groq_key:
         client = Groq(api_key=groq_key)
-        try:
-            completion = client.chat.completions.create(
-                model="llama-3.1-8b-instant",
-                messages=[{"role": "system", "content": system_role}, {"role": "user", "content": user_prompt}],
-                temperature=0.2, max_tokens=max_budget
-            )
-            return completion.choices[0].message.content.strip()
-        except Exception as e:
-            return f"API_ERROR: {str(e)}"
+        working_models = [
+            "gemma2-9b-it",
+            "llama-3.1-8b-instant",
+            "llama-3.3-70b-versatile",
+            "openai/gpt-oss-20b"
+        ]
+        for mdl in working_models:
+            try:
+                completion = client.chat.completions.create(
+                    model=mdl,
+                    messages=[{"role": "system", "content": system_role}, {"role": "user", "content": user_prompt}],
+                    temperature=0.2, max_tokens=max_budget
+                )
+                res = completion.choices[0].message.content.strip()
+                if res:
+                    return res
+            except Exception:
+                continue
+        return "API_ERROR: All Groq models failed. Check your API key."
     elif gemini_key:
         try:
             genai.configure(api_key=gemini_key)
@@ -422,8 +434,30 @@ def generate_fast_questions(topic, course_name, subject_name, count=15, is_pyq=F
         "EXP: [Explanation]\n"
         "===Q_END==="
     )
-    raw = execute_ai_query(sys_prompt, f"Generate {count} questions for '{topic}' in {subject_name}.", max_budget=2500)
+    raw = execute_ai_query(sys_prompt, f"Generate {count} questions for '{topic}' in {subject_name}.", max_budget=3000)
     return parse_mcq_blocks(raw)
+
+def generate_90_100_dpp_marathon(topic, course_name, subject_name, target_count=90):
+    all_questions = []
+    batch_size = 15
+    total_batches = (target_count + batch_size - 1) // batch_size
+    progress_bar = st.progress(0, text=f"Initializing {target_count}-Question DPP Engine...")
+    status_box = st.empty()
+
+    for b in range(1, total_batches + 1):
+        status_box.info(f"⚡ Compiling DPP Batch {b} of {total_batches} ({len(all_questions)}/{target_count} Questions Ready)...")
+        batch_qs = generate_fast_questions(topic, course_name, subject_name, count=batch_size, is_pyq=False)
+        if batch_qs:
+            for q in batch_qs:
+                q["q_no"] = len(all_questions) + 1
+                all_questions.append(q)
+        else:
+            break
+        progress_bar.progress(min(b / total_batches, 1.0), text=f"Loaded {len(all_questions)} Questions...")
+
+    progress_bar.empty()
+    status_box.empty()
+    return all_questions
 
 # INTRO SCREEN
 if not st.session_state.system_booted:
@@ -447,7 +481,7 @@ else:
         <div class="formal-top-banner">
             <div>
                 <div style="font-size: 18px; font-weight: 700; color: #F8FAFC;">Harsh's Lex & Tech Suite</div>
-                <div style="font-size: 12px; color: #94A3B8;">Notes Gallery • DPP • In-App PYQs • Colab Sandbox</div>
+                <div style="font-size: 12px; color: #94A3B8;">Notes Gallery • 90-100 Qs DPP • In-App PYQs • Sandbox</div>
             </div>
             <div class="formal-author-pill">Harsh Raj Soni</div>
         </div>
@@ -491,7 +525,7 @@ else:
     # FULL NAVIGATION DOCK RESTORED
     nav_options = [
         "📝 Notes Gallery",
-        "🔥 Fast DPP (15 Qs)",
+        "🔥 DPP (90-100 Qs)",
         "📚 In-App PYQs Vault",
         "🎯 Mock Exam",
         "⚖️ Bare Acts & Maxims",
@@ -509,7 +543,7 @@ else:
         if st.button("Generate Lecture Register Sheets", use_container_width=True):
             with st.spinner("Writing register sheets..."):
                 sys_role = f"You are an expert professor in {active_course}. Output 3 complete lecture register parts separated by ===SHEET_SPLIT=== in HTML format."
-                res = execute_ai_query(sys_role, f"Create lecture sheets on '{chosen_topic}' for {active_subj}.", max_budget=2500)
+                res = execute_ai_query(sys_role, f"Create lecture sheets on '{chosen_topic}' for {active_subj}.", max_budget=3000)
                 st.session_state.generated_gallery_sheets = [s.strip() for s in res.split("===SHEET_SPLIT===") if s.strip()]
                 st.rerun()
 
@@ -518,15 +552,15 @@ else:
                 st.markdown(f"**Sheet Part {i+1}**")
                 st.html(sheet)
 
-    # 2. DPP
-    elif selected_nav == "🔥 Fast DPP (15 Qs)":
-        st.subheader(f"🔥 Daily Practice Problems — {active_subj}")
-        dpp_topic = st.selectbox("Select Topic:", subject_details.get("topics", []))
-        if st.button("🚀 Generate 15 Qs DPP", use_container_width=True):
-            with st.spinner("Generating DPP..."):
-                st.session_state.dpp_questions = generate_fast_questions(dpp_topic, active_course, active_subj, count=15)
-                st.session_state.dpp_submitted = False
-                st.rerun()
+    # 2. DPP MARATHON (90-100 QUESTIONS)
+    elif selected_nav == "🔥 DPP (90-100 Qs)":
+        st.subheader(f"🔥 Daily Practice Problems (Marathon) — {active_subj}")
+        dpp_target = st.selectbox("Select DPP Size:", [90, 100, 45], index=0)
+        dpp_topic = st.selectbox("Select Topic/Act:", subject_details.get("topics", []))
+        if st.button(f"🚀 Generate Full {dpp_target}-Question DPP Sheet", use_container_width=True):
+            st.session_state.dpp_questions = generate_90_100_dpp_marathon(dpp_topic, active_course, active_subj, target_count=dpp_target)
+            st.session_state.dpp_submitted = False
+            st.rerun()
 
         if st.session_state.dpp_questions:
             for idx, q in enumerate(st.session_state.dpp_questions):
@@ -539,20 +573,20 @@ else:
                 st.radio(f"Answer Q.{idx+1}:", options=q['options'], key=f"dpp_{idx}", index=None)
                 if st.session_state.dpp_submitted:
                     st.info(f"Correct: {q['correct_option']} | Exp: {q['explanation']}")
-            if st.button("Submit DPP", type="primary"):
+            if st.button("Submit DPP Marathon", type="primary"):
                 st.session_state.dpp_submitted = True
                 st.rerun()
 
-    # 3. IN-APP PYQS
+    # 3. IN-APP PYQS VAULT
     elif selected_nav == "📚 In-App PYQs Vault":
         st.subheader(f"📚 Official Past Papers In-App Viewer — {active_course}")
         chosen_year = st.selectbox("Select Exam Year:", subject_details.get("pyqs_years", ["2024 Paper"]))
         view_mode = st.selectbox("Display Mode:", ["📝 Interactive OMR Mode", "📄 Full Booklet Reader Mode"])
 
         if st.button(f"📥 Load {chosen_year} Inside App", use_container_width=True):
-            with st.spinner("Loading paper..."):
+            with st.spinner("Loading official paper inside app..."):
                 st.session_state.pyq_questions = generate_fast_questions(
-                    f"Official paper {chosen_year}", active_course, active_subj, count=10, is_pyq=True, pyq_year=chosen_year
+                    f"Official paper {chosen_year}", active_course, active_subj, count=15, is_pyq=True, pyq_year=chosen_year
                 )
                 st.session_state.pyq_submitted = False
                 st.rerun()
@@ -590,7 +624,7 @@ else:
         st.subheader("🎯 Rapid Mock Exam")
         if st.button("Generate Mock Test", use_container_width=True):
             with st.spinner("Generating test..."):
-                st.session_state.active_exam_questions = generate_fast_questions("Mock Test", active_course, active_subj, count=10)
+                st.session_state.active_exam_questions = generate_fast_questions("Mock Test", active_course, active_subj, count=15)
                 st.session_state.exam_submitted = False
                 st.rerun()
         if st.session_state.active_exam_questions:
@@ -598,7 +632,7 @@ else:
                 st.markdown(f"""
                 <div class="question-card">
                     <div class="question-header"><span class="q-number-tag">Q.{idx+1}</span></div>
-                    <div class="q-text">{q['question']}</div>
+                    <div class="question-text">{q['question']}</div>
                 </div>
                 """, unsafe_allow_html=True)
                 st.radio(f"Answer Mock {idx+1}:", options=q['options'], key=f"mock_{idx}", index=None)
@@ -611,8 +645,8 @@ else:
     # 5. BARE ACTS & MAXIMS
     elif selected_nav == "⚖️ Bare Acts & Maxims":
         st.subheader("⚖️ Indian Law Bare Acts & Maxims Reader")
-        query = st.text_input("Search Bare Act Section / Article:")
-        if st.button("Read Provision", use_container_width=True) and query.strip():
+        query = st.text_input("Search Bare Act Section / Article / Case Law:")
+        if st.button("Read Provision Inside App", use_container_width=True) and query.strip():
             with st.spinner("Loading legal commentary..."):
                 ans = execute_ai_query("You are a senior advocate. Explain Indian Law provision with case laws.", f"Explain {query}")
                 st.info(ans)
