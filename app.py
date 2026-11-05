@@ -24,9 +24,9 @@ STORAGE_FILE = "user_memory_store.db"
 
 def load_user_memory():
     default_data = {
-        "last_course": "🩺 NEET (Medical Entrance)",
-        "last_subject": "🧬 Zoology & Human Physiology",
-        "last_topic": "Generation & Conduction of Nerve Impulse (Action Potential)",
+        "last_course": "⚖️ Law & Judiciary (LL.B / CLAT / PCS-J)",
+        "last_subject": "🏛️ Constitutional Law of India",
+        "last_topic": "Fundamental Rights: Article 14 (Equality), Art 19 (Freedoms) & Art 21 (Life & Personal Liberty)",
         "study_history": {},
         "ai_memory": {}
     }
@@ -56,10 +56,10 @@ if "system_booted" not in st.session_state:
     st.session_state.system_booted = False
 
 if "current_course" not in st.session_state:
-    st.session_state.current_course = saved_state.get("last_course", "🩺 NEET (Medical Entrance)")
+    st.session_state.current_course = saved_state.get("last_course", "⚖️ Law & Judiciary (LL.B / CLAT / PCS-J)")
 
 if "current_subject" not in st.session_state:
-    st.session_state.current_subject = saved_state.get("last_subject", "🧬 Zoology & Human Physiology")
+    st.session_state.current_subject = saved_state.get("last_subject", "🏛️ Constitutional Law of India")
 
 if "current_topic" not in st.session_state:
     st.session_state.current_topic = saved_state.get("last_topic", "")
@@ -128,15 +128,15 @@ if "heartbeat_started" not in st.session_state:
 
 # ================= THEME PALETTES (EYE-FRIENDLY SOFT DARK GRADIENTS) =================
 THEME_PALETTES = {
-    "🎓 BCA (Computer Applications)": {
-        "grad_top": "#0B132B",
-        "grad_mid": "#080D1A",
-        "grad_base": "#020617",
-        "accent": "#38BDF8",
-        "accent_dark": "#0284C7",
-        "glow": "rgba(56, 189, 248, 0.25)",
-        "card_bg": "rgba(15, 23, 42, 0.85)",
-        "border": "#0284C7"
+    "⚖️ Law & Judiciary (LL.B / CLAT / PCS-J)": {
+        "grad_top": "#1F0D16",
+        "grad_mid": "#14080E",
+        "grad_base": "#090306",
+        "accent": "#FB7185",
+        "accent_dark": "#BE123C",
+        "glow": "rgba(251, 113, 133, 0.22)",
+        "card_bg": "rgba(31, 13, 22, 0.85)",
+        "border": "#BE123C"
     },
     "🩺 NEET (Medical Entrance)": {
         "grad_top": "#062016",
@@ -158,6 +158,16 @@ THEME_PALETTES = {
         "card_bg": "rgba(28, 19, 8, 0.85)",
         "border": "#EA580C"
     },
+    "🎓 BCA (Computer Applications)": {
+        "grad_top": "#0B132B",
+        "grad_mid": "#080D1A",
+        "grad_base": "#020617",
+        "accent": "#38BDF8",
+        "accent_dark": "#0284C7",
+        "glow": "rgba(56, 189, 248, 0.25)",
+        "card_bg": "rgba(15, 23, 42, 0.85)",
+        "border": "#0284C7"
+    },
     "🏛️ UPSC / Civil Services (CSAT & GS)": {
         "grad_top": "#1A0B2E",
         "grad_mid": "#110720",
@@ -170,10 +180,132 @@ THEME_PALETTES = {
     }
 }
 
-active_theme = THEME_PALETTES.get(st.session_state.current_course, THEME_PALETTES["🩺 NEET (Medical Entrance)"])
+active_theme = THEME_PALETTES.get(st.session_state.current_course, THEME_PALETTES["⚖️ Law & Judiciary (LL.B / CLAT / PCS-J)"])
 
 # ================= MASTER ACADEMIC & COMPETITIVE DATABASE =================
 COURSE_DATABASE = {
+    "⚖️ Law & Judiciary (LL.B / CLAT / PCS-J)": {
+        "icon": "⚖️",
+        "official_archive_url": "https://www.indiacode.nic.in/",
+        "subjects": {
+            "🏛️ Constitutional Law of India": {
+                "units": (
+                    "Part I-II (Art. 1–11): The Union, Territory & Citizenship | "
+                    "Part III (Art. 12–35): Fundamental Rights & Prerogative Writs | "
+                    "Part IV & IVA (Art. 36–51A): DPSP & Fundamental Duties | "
+                    "Part V (Art. 52–151): President, Parliament, Supreme Court & CAG | "
+                    "Part VI (Art. 152–237): Governor, State Legislature & High Courts | "
+                    "Part XI–XII (Art. 245–300A): Centre-State Relations, Finance & Property | "
+                    "Part XVIII & XX (Art. 352–368): Emergency Provisions & Constitutional Amendments | "
+                    "Schedules 1 to 12 & Landmark Supreme Court Judgments"
+                ),
+                "topics": [
+                    "Preamble, Basic Structure Doctrine (Kesavananda Bharati) & Article 368 Amendment Power",
+                    "Fundamental Rights: Article 14 (Equality), Art 19 (Six Freedoms) & Art 21 (Life & Personal Liberty)",
+                    "Constitutional Remedies: Article 32 vs Article 226 & 5 Prerogative Writs (Habeas Corpus to Quo Warranto)",
+                    "Right to Freedom of Religion (Articles 25–28) & Cultural/Educational Rights (Articles 29–30)",
+                    "Directive Principles (Art 36–51) vs Fundamental Rights Conflict & Harmonious Construction",
+                    "Union & State Judiciary: Supreme Court (Art 124–147), High Courts (Art 214–231) & Collegium System",
+                    "Emergency Provisions (Articles 352, 356, 360) & S.R. Bommai Guidelines",
+                    "7th Schedule (Union, State, Concurrent Lists) & Doctrine of Pith and Substance / Colourable Legislation"
+                ],
+                "pyqs_years": [
+                    "CLAT UG & PG 2025 (Official Consortium Paper)",
+                    "UP PCS-J / Delhi Judicial Service 2024 (Official Paper)",
+                    "All India Bar Examination (AIBE XIX / XVIII Official)",
+                    "CUET LL.B / DU LL.B Entrance 2024 Official Paper"
+                ]
+            },
+            "⚔️ Criminal Law (BNS, BNSS, BSA 2023 & IPC/CrPC/IEA)": {
+                "units": (
+                    "Bharatiya Nyaya Sanhita (BNS), 2023 [Sections 1–358] & Indian Penal Code (IPC), 1860 [Sections 1–511] | "
+                    "Bharatiya Nagarik Suraksha Sanhita (BNSS), 2023 [Sections 1–531] & CrPC, 1973 [Sections 1–484] | "
+                    "Bharatiya Sakshya Adhiniyam (BSA), 2023 [Sections 1–170] & Indian Evidence Act, 1872 [Sections 1–167] | "
+                    "Special Criminal Statutes: POCSO Act, NDPS Act, PMLA & Juvenile Justice Act"
+                ),
+                "topics": [
+                    "BNS 2023 vs IPC 1860: General Exceptions (Sec 14–44 BNS / Sec 76–106 IPC) & Right of Private Defence",
+                    "Offences Affecting Human Body: Culpable Homicide vs Murder (Sec 100–103 BNS / Sec 299–302 IPC)",
+                    "Offences Against Women & Children (Sec 63–99 BNS): Cruelty, Dowry Death & New Organised Crime/Terrorism (Sec 111–113 BNS)",
+                    "Offences Against Property: Theft, Snatching (Sec 304 BNS), Extortion, Robbery, Dacoity & Criminal Breach of Trust (Sec 303–318 BNS)",
+                    "Inchoate Offences & Joint Liability: Common Intention (Sec 3(5) BNS / Sec 34 IPC) vs Common Object (Sec 190 BNS / Sec 149 IPC)",
+                    "BNSS 2023 (CrPC): Zero FIR, e-FIR (Sec 173 BNSS), Arrest, Police Custody/Remand (Sec 187 BNSS) & Mandatory Forensics (Sec 176(3) BNSS)",
+                    "BNSS Bail Jurisprudence: Regular Bail, Anticipatory Bail (Sec 482 BNSS / 438 CrPC) & Default Bail",
+                    "BSA 2023 (Evidence Act): Relevancy of Facts (Sec 3–50 BSA), Confessions, Dying Declaration (Sec 26 BSA / 32 IEA) & Electronic Evidence (Sec 61–63 BSA)"
+                ],
+                "pyqs_years": [
+                    "Judiciary PCS-J Criminal Law 2025/2024 (BNS/BNSS/BSA & IPC/CrPC)",
+                    "AIBE XIX / XVIII Criminal Law Official Paper",
+                    "CLAT PG Criminal Jurisprudence Archive",
+                    "UGC NET Law Paper-II Official Criminal Law"
+                ]
+            },
+            "📜 Contract, Specific Relief & Property Law (ICA, SRA, TPA)": {
+                "units": (
+                    "Indian Contract Act, 1872 [Sec 1–75: General Principles; Sec 124–238: Indemnity, Guarantee, Bailment, Pledge & Agency] | "
+                    "Specific Relief Act, 1963 (with 2018 Amendment) [Sec 1–44] | "
+                    "Transfer of Property Act, 1882 [Sec 1–137: Sale, Mortgage, Lease, Exchange, Gift & Actionable Claims] | "
+                    "Sale of Goods Act, 1930 [Sec 1–66] & Indian Partnership Act, 1932 [Sec 1–74]"
+                ),
+                "topics": [
+                    "Indian Contract Act 1872 (Sec 1–30): Offer, Acceptance, Consideration (Sec 2(d)), Capacity (Mohori Bibee Case) & Free Consent (Sec 13–22)",
+                    "Void, Voidable & Contingent Contracts (Sec 24–36), Doctrine of Frustration (Sec 56), Quasi-Contracts (Sec 68–72) & Breach Damages (Sec 73–75)",
+                    "Special Contracts (Sec 124–238): Contract of Indemnity vs Guarantee, Bailment, Pledge & Principal-Agent Liability",
+                    "Specific Relief Act 1963: Recovery of Possession (Sec 5–8), Specific Performance (Sec 10–24), Rectification, Rescission & Injunctions (Sec 36–42)",
+                    "Transfer of Property Act 1882: Ostensible Owner (Sec 41), Doctrine of Election (Sec 35), Lis Pendens (Sec 52) & Part Performance (Sec 53A)",
+                    "TPA Mortgages & Leases (Sec 58–117): Types of Mortgages, Right of Redemption (Once a Mortgage Always a Mortgage) & Determination of Lease"
+                ],
+                "pyqs_years": [
+                    "PCS-J Civil Law Paper-I 2024 (Contract & TPA)",
+                    "CLAT Legal Reasoning Official Paper 2025/2024",
+                    "AIBE Contract, Specific Relief & Property Official Paper",
+                    "AILET / Symbiosis SLAT Legal Aptitude Archive"
+                ]
+            },
+            "⚖️ Civil Procedure (CPC), Limitation & Law of Torts": {
+                "units": (
+                    "Code of Civil Procedure (CPC), 1908 [Sections 1–158 & Schedule-I Orders I to LI] | "
+                    "Limitation Act, 1963 [Sections 1–32 & Schedule of Periods] | "
+                    "Law of Torts: General Defences, Negligence, Nuisance, Defamation, Strict & Absolute Liability | "
+                    "Consumer Protection Act, 2019 [Sec 1–107] & Motor Vehicles Act, 1988"
+                ),
+                "topics": [
+                    "CPC 1908 Jurisdiction & Res Judicata: Decree, Order, Mesne Profits (Sec 2), Res Sub Judice (Sec 10), Res Judicata (Sec 11) & Place of Suing (Sec 15–20)",
+                    "CPC Stages of Civil Suit: Institution of Suit (Order IV), Summons (Order V), Pleadings (Order VI), Plaint Rejection (Order VII Rule 11) & Written Statement (Order VIII)",
+                    "CPC Interim Orders & Execution: Temporary Injunctions (Order XXXIX Rules 1–5), Receiver (Order XL), Appeals (Sec 96–108), Review, Revision (Sec 113–115) & Execution (Order XXI)",
+                    "Limitation Act 1963: Bar of Limitation (Sec 3), Condonation of Delay (Sec 5), Legal Disability (Sec 6–9) & Computation of Period (Sec 12–24)",
+                    "Law of Torts: Damnum Sine Injuria vs Injuria Sine Damno, Volenti Non Fit Injuria, Strict Liability (Rylands v. Fletcher) vs Absolute Liability (M.C. Mehta Case)",
+                    "Consumer Protection Act 2019: E-Commerce Rules, Product Liability (Sec 82–87) & Jurisdiction of District, State and National Commissions"
+                ],
+                "pyqs_years": [
+                    "PCS-J Civil Procedure & Limitation Official Paper 2024",
+                    "CLAT / AILET Law of Torts & Legal Maxims Paper",
+                    "AIBE CPC & Consumer Protection Official Paper"
+                ]
+            },
+            "👨‍👩‍👧 Family Law, Corporate Law, ADR & Jurisprudence": {
+                "units": (
+                    "Hindu Law: Hindu Marriage Act 1955 [Sec 1–30], Hindu Succession Act 1956 [Sec 1–31], Adoption & Maintenance Act 1956, Minority & Guardianship Act 1956 | "
+                    "Muslim Law: Sources, Nikah, Mahr, Talaq, Dissolution of Muslim Marriages Act 1939, Waqf & Inheritance | "
+                    "Corporate & Commercial Law: Companies Act 2013, Negotiable Instruments Act 1881 [Sec 138–148], Competition Act 2002 | "
+                    "Arbitration & Conciliation Act 1996 [Sec 1–87], Intellectual Property Rights (Patents, Trademarks, Copyright) & Jurisprudence"
+                ),
+                "topics": [
+                    "Hindu Marriage Act 1955: Conditions (Sec 5), Void/Voidable Marriages (Sec 11–12), Restitution of Conjugal Rights (Sec 9) & Divorce Grounds (Sec 13 & 13B Mutual Consent)",
+                    "Hindu Succession Act 1956 (2005 Amendment): Mitakshara Coparcenary, Daughters as Coparceners (Sec 6 - Vineeta Sharma Judgment) & Female Intestate Succession (Sec 14–16)",
+                    "Muslim Personal Law: Essentials of Nikah, Prompt vs Deferred Dower (Mahr), Triple Talaq Unconstitutionality (Shayara Bano Case) & Maintenance (Sec 144 BNSS / Danial Latifi)",
+                    "Negotiable Instruments Act 1881: Promissory Note, Bill of Exchange, Cheque & Criminal Liability for Dishonour of Cheque (Sec 138–143A)",
+                    "Companies Act 2013 & ADR: Doctrine of Lifting Corporate Veil, Indoor Management (Turquand Rule), Oppression/Mismanagement & Arbitration Act 1996 (Sec 7, 9, 11, 34)",
+                    "Jurisprudence & Schools of Law: Analytical Positivism (Austin, Kelsen's Pure Theory, Hart), Historical (Savigny), Sociological (Roscoe Pound) & Natural Law"
+                ],
+                "pyqs_years": [
+                    "PCS-J Family & Personal Law Official Paper 2024",
+                    "CLAT PG Jurisprudence & Corporate Law Paper",
+                    "AIBE Family Law, ADR & Company Law Official Paper"
+                ]
+            }
+        }
+    },
     "🩺 NEET (Medical Entrance)": {
         "icon": "🩺",
         "official_archive_url": "https://nta.ac.in/Downloads",
@@ -771,19 +903,26 @@ def fix_unclosed_html(html_str):
     return html_str
 
 def generate_multi_sheets_html(topic, subject_name, course_name, notes_lang):
-    token_budget = 4096 if len(topic) < 30 else 5500
+    token_budget = 4500 if len(topic) < 30 else 6000
     last_ai_ctx = st.session_state.ai_memory.get(course_name, {}).get("last_summary", "No previous context.")
+
+    law_instruction = ""
+    if "Law" in course_name:
+        law_instruction = (
+            "Since this is Indian Law, strictly cite exact Bare Act Sections, Articles, BNS/BNSS/BSA 2023 equivalents alongside IPC/CrPC/IEA, "
+            "and landmark Supreme Court case laws (with year) in the tables and key exam points. "
+        )
 
     system_role = (
         "You are an esteemed professor and entrance mentor specializing in " + course_name + ". "
-        "Strictly maintain academic dignity. "
+        "Strictly maintain academic dignity. " + law_instruction +
         "Student Context Memory: " + last_ai_ctx + ". "
         "Output EXACTLY 3 TO 4 INDIVIDUAL COMPLETE LECTURE SHEETS separated strictly by the token '===SHEET_SPLIT==='. "
         "Every single sheet MUST be 100% complete with all 4 sections fully finished: "
-        "1. Definition & Core Concept, "
-        "2. Truth Table / Formulation / Comparison Matrix, "
-        "3. Step-by-Step Working / Derivation, "
-        "4. Key Exam Points / Formulas / Shortcuts. "
+        "1. Definition & Core Statutory Provision, "
+        "2. Bare Act Section / Formulation / Comparison Matrix, "
+        "3. Step-by-Step Legal Ingredients / Derivation / Case Law Application, "
+        "4. Key Exam Points / Landmark Judgments / Shortcuts. "
         "DO NOT USE CODE BLOCKS OR MARKDOWN TICKS. Start directly with <div class='register-outer-center'>."
     )
     user_prompt = (
@@ -796,24 +935,24 @@ def generate_multi_sheets_html(topic, subject_name, course_name, notes_lang):
         "        <div style=\"font-size:10.5px; color:#6b7280; margin-bottom:3px;\">" + course_name + " • " + subject_name + "</div>\n\n"
         "        <span class=\"nb-subhead\">1. Definition & Core Concept :</span>\n"
         "        <p style=\"margin: 2px 0 4px 0;\">[2 concise explanation lines in " + notes_lang + "]</p>\n\n"
-        "        <span class=\"nb-subhead\">2. Formulation / Table / Matrix :</span>\n"
+        "        <span class=\"nb-subhead\">2. Statutory Sections / Table / Matrix :</span>\n"
         "        <div class=\"table-container\">\n"
         "            <table class=\"nb-table\">\n"
-        "                <tr><th>Key Factor</th><th>Parameter / Condition</th><th>Result / Output</th></tr>\n"
-        "                <tr><td>Condition 1</td><td>Value Alpha</td><td>Stable</td></tr>\n"
-        "                <tr><td>Condition 2</td><td>Value Beta</td><td>Optimal</td></tr>\n"
+        "                <tr><th>Provision / Factor</th><th>Section / Parameter</th><th>Legal Effect / Output</th></tr>\n"
+        "                <tr><td>Provision 1</td><td>Sec / Art Alpha</td><td>Binding / Valid</td></tr>\n"
+        "                <tr><td>Provision 2</td><td>Sec / Art Beta</td><td>Exception</td></tr>\n"
         "            </table>\n"
         "        </div>\n\n"
-        "        <span class=\"nb-subhead\">3. Step-by-Step Working / Derivation :</span>\n"
+        "        <span class=\"nb-subhead\">3. Essential Ingredients / Step-by-Step Working :</span>\n"
         "        <p style=\"margin: 2px 0 4px 0;\">\n"
-        "            • Step 1: Core working logic and operation<br>\n"
-        "            • Step 2: Signal/Formula execution path<br>\n"
-        "            • Step 3: Practical problem solving rule\n"
+        "            • Step 1: Core statutory ingredient or working logic<br>\n"
+        "            • Step 2: Judicial interpretation / Formula execution path<br>\n"
+        "            • Step 3: Practical problem / Case law rule\n"
         "        </p>\n\n"
         "        <div class=\"nb-keypoints-box\">\n"
-        "            <b>✳ Key Exam Points & Shortcuts :</b><br>\n"
-        "            • High priority question rule<br>\n"
-        "            • Key shortcut formula\n"
+        "            <b>✳ Key Exam Points & Landmark Cases :</b><br>\n"
+        "            • High priority exam rule / Landmark SC Judgment<br>\n"
+        "            • Key section / formula shortcut\n"
         "        </div>\n"
         "        <div style=\"font-size:10px; color:#9ca3af; text-align:right; margin-top:4px;\">Harsh Raj Soni • Universal Portal</div>\n"
         "    </div>\n"
@@ -860,35 +999,39 @@ def parse_mcq_json(raw_json):
 
 # ================= STRUCTURED EXAM / REAL PYQ / 90-100 DPP GENERATOR =================
 def generate_batch_questions(topic, course_name, subject_name, count=15, batch_num=1, is_pyq=False, pyq_year=""):
+    law_context = ""
+    if "Law" in course_name:
+        law_context = "Include exact Indian Bare Act Section numbers (including BNS/BNSS/BSA 2023 & IPC/CrPC/IEA where applicable), Constitutional Articles, Legal Maxims, and Landmark Supreme Court judgments."
+
     if is_pyq:
         mode_desc = (
             f"STRICTLY RECALL AND OUTPUT REAL VERBATIM QUESTIONS THAT APPEARED IN OFFICIAL {pyq_year} ({course_name}). "
-            "Include exact year and paper shift/code in 'year_tag' (e.g. 'NEET 2024 Set-Q2' or 'JEE Main 2024 27-Jan Shift-1')."
+            f"Include exact year and exam name in 'year_tag'. {law_context}"
         )
     else:
         sub_focus = [
-            "Core Conceptual & Direct Formula Application",
-            "Numerical Problem Solving & Multi-Step Calculations",
+            "Core Statutory Provisions, Bare Act Sections & Direct Principles",
+            "Fact-Situation Legal Reasoning & Case Law Application",
             "Assertion-Reason & Statement-Based Analytical Questions",
-            "NCERT / Standard Textbook Line-by-Line Deep Exceptions & Graphs",
-            "Advanced Rank-Decider & Tricky Edge-Case Questions"
+            "Landmark Supreme Court Judgments, Maxims & Exceptions",
+            "Advanced Judiciary / Rank-Decider Edge-Case Questions"
         ][(batch_num - 1) % 5]
-        mode_desc = f"DPP Batch #{batch_num} focusing on: {sub_focus}. Do not repeat previous questions."
+        mode_desc = f"DPP Batch #{batch_num} focusing on: {sub_focus}. {law_context} Do not repeat previous questions."
 
     sys_prompt = (
         f"You are the Chief Question Paper Setter for {course_name}. "
         f"Output EXACTLY {count} multiple choice questions as a valid JSON array. "
         "NEVER output markdown tables or HTML. Output ONLY raw JSON array. "
-        "Keep explanations crisp (1-2 lines) so all JSON objects fit cleanly. "
+        "Keep explanations crisp (1-2 lines citing exact section/case/formula) so all JSON objects fit cleanly. "
         "JSON Schema:\n"
         "[\n"
         "  {\n"
         '    "q_no": 1,\n'
-        '    "year_tag": "DPP Set" or "NEET 2024 Official",\n'
+        '    "year_tag": "DPP Set" or "CLAT/PCS-J Official",\n'
         '    "question": "Question text here",\n'
         '    "options": ["A. Option 1", "B. Option 2", "C. Option 3", "D. Option 4"],\n'
         '    "correct_option": "A. Option 1",\n'
-        '    "explanation": "Concise formula/concept explanation"\n'
+        '    "explanation": "Concise section/case/formula explanation"\n'
         "  }\n"
         "]"
     )
@@ -929,19 +1072,19 @@ if not st.session_state.system_booted:
     st.markdown(f"""
     <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:70vh; text-align:center;">
         <div style="display:inline-flex; align-items:center; gap:8px; background:rgba(255,255,255,0.06); border:1px solid {active_theme['accent']}; padding:6px 20px; border-radius:30px; font-size:13px; font-weight:700; color:{active_theme['accent']}; margin-bottom:14px; box-shadow:0 0 16px {active_theme['glow']};">
-            🎓 UNIVERSAL ACADEMIC & ENTRANCE SUITE
+            🎓 UNIVERSAL ACADEMIC, LAW & ENTRANCE SUITE
         </div>
         <div style="font-size:32px; font-weight:800; color:#F8FAFC; letter-spacing:-0.5px; margin-bottom:6px;">
             Created & Designed by Harsh Raj Soni
         </div>
         <div style="font-size:14px; color:#94A3B8; margin-bottom:24px;">
-            NEET • JEE • BCA • UPSC | MLK PG College, Balrampur
+            LAW (LL.B/CLAT/PCS-J) • NEET • JEE • BCA • UPSC | MLK PG College, Balrampur
         </div>
-        <div style="background:{active_theme['card_bg']}; border:1px solid rgba(255,255,255,0.1); border-left:4px solid {active_theme['accent']}; border-radius:10px; padding:16px 22px; max-width:560px; width:100%; text-align:left; font-size:13px; color:#CBD5E1; line-height:1.6; margin-bottom:24px;">
+        <div style="background:{active_theme['card_bg']}; border:1px solid rgba(255,255,255,0.1); border-left:4px solid {active_theme['accent']}; border-radius:10px; padding:16px 22px; max-width:600px; width:100%; text-align:left; font-size:13px; color:#CBD5E1; line-height:1.6; margin-bottom:24px;">
             <div style="color:{active_theme['accent']}; font-weight:700; margin-bottom:4px;">Enterprise Features Active:</div>
-            <div>• 🔥 90–100 Questions DPP Marathon Generator (All Courses)</div>
-            <div>• 📚 Real Official PYQ Papers + Direct Internet PDF Archives</div>
-            <div>• Interactive OMR Option Tick & Instant Evaluation (+4 / -1)</div>
+            <div>• ⚖️ Complete Indian Law Stream (Constitution, BNS/BNSS/BSA 2023, IPC/CrPC, Contract, CPC, Torts, Family Law)</div>
+            <div>• 🔥 90–100 Questions DPP Marathon Generator (All Streams)</div>
+            <div>• 📚 Real Official PYQ Papers + India Code & NTA Direct Archives</div>
         </div>
     </div>
     """, unsafe_allow_html=True)
@@ -958,10 +1101,10 @@ else:
     <div class="formal-top-banner">
         <div>
             <div style="font-size: 18px; font-weight: 700; color: #F8FAFC;">
-                Universal Academic & Competitive Portal
+                Universal Academic, Law & Competitive Portal
             </div>
             <div style="font-size: 12px; color: #94A3B8;">
-                90–100 Qs DPP Engine • Real Internet PYQ Vault • OMR Simulator
+                Indian Law Bare Acts • 90–100 Qs DPP Engine • Real Internet PYQ Vault
             </div>
         </div>
         <div class="formal-author-pill">
@@ -1027,14 +1170,15 @@ else:
     active_subj = st.session_state.current_subject
     subject_details = active_course_data["subjects"][active_subj]
 
-    # Navigation Dock (Added 90-100 DPP & Real PYQs)
+    # Navigation Dock
+    ref_tab_label = "⚖️ Bare Acts & Maxims" if "Law" in active_course else "🔬 Formula & Lab"
     nav_options = [
         "📝 Notes Gallery",
         "🔥 DPP (90-100 Qs)",
         "📚 Real PYQs Vault",
         "🎯 Mock Exam",
-        "📖 Syllabus",
-        "🔬 Formula & Lab",
+        "📖 Syllabus & Acts",
+        ref_tab_label,
         "🤖 AI Mentor"
     ]
     if "Python" in active_subj:
@@ -1050,13 +1194,13 @@ else:
     # ================= SECTION 1: NOTES GALLERY =================
     if selected_nav == "📝 Notes Gallery":
         st.markdown("#### 📖 Lecture Notes Register Gallery — " + active_subj)
-        st.caption("Classmate ruled paper layout with tables, formulas, and key points in a mobile gallery grid.")
+        st.caption("Classmate ruled paper layout with Bare Act sections, tables, formulas, and key exam points.")
 
         c1, c2 = st.columns([2.5, 1])
         with c1:
             suggested = subject_details.get("topics", [])
             chosen_topic = st.selectbox("Curated Topic List:", suggested)
-            custom_topic = st.text_input("Or Type ANY Custom Topic / Concept:", placeholder="e.g. Action potential in cardiac muscle / K-Map with Don't Care")
+            custom_topic = st.text_input("Or Type ANY Custom Topic / Section / Act:", placeholder="e.g. Section 103 BNS vs 302 IPC / Article 21 / Doctrine of Eclipse")
         with c2:
             notes_lang = st.selectbox("Language:", ["Hinglish", "English", "Hindi"])
 
@@ -1119,8 +1263,8 @@ else:
         c1, c2, c3 = st.columns([2, 1, 1])
         with c1:
             dpp_topic_list = subject_details.get("topics", [])
-            sel_dpp_topic = st.selectbox("Select Chapter / Topic for DPP:", dpp_topic_list)
-            custom_dpp = st.text_input("Or Enter Custom Chapter:", placeholder="e.g. Complete Human Physiology / rotational mechanics")
+            sel_dpp_topic = st.selectbox("Select Chapter / Act for DPP:", dpp_topic_list)
+            custom_dpp = st.text_input("Or Enter Custom Act / Chapter:", placeholder="e.g. Complete BNS 2023 Offences / Indian Contract Act Sec 1-75")
         with c2:
             dpp_target_count = st.selectbox("DPP Sheet Size:", [90, 100, 50], index=0)
         with c3:
@@ -1165,7 +1309,6 @@ else:
             answered_count = len([v for v in st.session_state.dpp_user_answers.values() if v is not None])
             st.markdown(f"**📋 Active DPP Sheet:** `{final_dpp_topic}` | **Total Questions:** `{total_dpp}` | **Attempted:** `{answered_count}/{total_dpp}` | **Page:** `{cur_page + 1}/{total_pages}`")
 
-            # Top Pagination Bar
             p_c1, p_c2, p_c3 = st.columns([1, 2, 1])
             with p_c1:
                 if st.button("⬅️ Previous Page", disabled=(cur_page == 0), key="dpp_prev_top", use_container_width=True):
@@ -1208,9 +1351,8 @@ else:
                     else:
                         st.error(f"✖ **Incorrect / Unattempted.** Official Key: {correct} | Your Tick: {chosen if chosen else 'None'}")
                     with st.expander(f"💡 Solution for Q.{q_num}", expanded=False):
-                        st.write(q_data.get("explanation", "Refer to standard formula derivation."))
+                        st.write(q_data.get("explanation", "Refer to statutory section / standard derivation."))
 
-            # Bottom Pagination & Submit
             b_c1, b_c2, b_c3 = st.columns([1, 2, 1])
             with b_c1:
                 if st.button("⬅️ Prev Page", disabled=(cur_page == 0), key="dpp_prev_bot", use_container_width=True):
@@ -1248,30 +1390,31 @@ else:
     # ================= SECTION 3: REAL INTERNET PYQS VAULT =================
     elif selected_nav == "📚 Real PYQs Vault":
         st.markdown(f"#### 📚 Official Past Question Papers (Internet Archive + Interactive OMR) — {active_course}")
-        st.caption("Download real original PDF papers from the internet or solve verbatim official past questions right here.")
+        st.caption("Download real original PDF papers & Bare Acts from the internet or solve verbatim official past questions right here.")
 
         pyqs_list = subject_details.get("pyqs_years", ["2024 Official Paper"])
         c1, c2 = st.columns([2, 1])
         with c1:
             chosen_year = st.selectbox("Select Official Exam Paper:", pyqs_list)
-            pyq_topic = st.text_input("Specific Chapter Filter (Leave blank for Full Paper):", placeholder="e.g. Genetics / Electrostatics / Polity")
+            pyq_topic = st.text_input("Specific Act / Chapter Filter (Leave blank for Full Paper):", placeholder="e.g. Fundamental Rights / BNS & IPC / Contract Act")
         with c2:
             pyq_count = st.selectbox("Questions to Load:", [20, 40, 60], index=0)
 
-        # Direct Internet PDF Search & Official Archive Links
         encoded_query = urllib.parse.quote(f"{chosen_year} {active_subj} official question paper pdf download")
         google_pdf_url = f"https://www.google.com/search?q={encoded_query}"
-        official_portal_url = active_course_data.get("official_archive_url", "https://nta.ac.in/Downloads")
+        official_portal_url = active_course_data.get("official_archive_url", "https://www.indiacode.nic.in/")
+
+        archive_btn_label = "🏛️ India Code (Official Bare Acts)" if "Law" in active_course else "🏛️ Official Exam Archive"
 
         st.markdown(f"""
         <div class="archive-link-box">
             <div>
                 <div style="font-size:13.5px; font-weight:700; color:#F8FAFC;">🌐 Direct Internet Official Question Paper PDFs ({chosen_year})</div>
-                <div style="font-size:11.5px; color:#94A3B8;">Open original scanned exam booklet PDFs directly from official web archives:</div>
+                <div style="font-size:11.5px; color:#94A3B8;">Open original scanned exam booklet PDFs and official Government portals:</div>
             </div>
             <div style="display:flex; gap:10px;">
                 <a href="{google_pdf_url}" target="_blank">📄 Download {chosen_year} PDF</a>
-                <a href="{official_portal_url}" target="_blank">🏛️ Official Exam Archive</a>
+                <a href="{official_portal_url}" target="_blank">{archive_btn_label}</a>
             </div>
         </div>
         """, unsafe_allow_html=True)
@@ -1333,7 +1476,7 @@ else:
                         st.error(f"✖ **Incorrect / Skipped.** Official Key: {correct} (You ticked: {sel_ans if sel_ans else 'None'})")
 
                     with st.expander(f"💡 View Official Solution #{q_num}", expanded=True):
-                        st.write(q_data.get("explanation", "Standard syllabus derivation."))
+                        st.write(q_data.get("explanation", "Standard statutory provision & case law rationale."))
 
             if st.button("📝 Submit Official PYQ Paper & Check Score", type="primary", use_container_width=True):
                 st.session_state.pyq_submitted = True
@@ -1363,7 +1506,7 @@ else:
         st.markdown(f"#### 🎯 Rapid Mock Test — {active_course}")
         c1, c2 = st.columns([2.5, 1])
         with c1:
-            exam_topic = st.text_input("Scope / Chapter for Test:", value=st.session_state.current_topic if st.session_state.current_topic else active_subj)
+            exam_topic = st.text_input("Scope / Act / Chapter for Test:", value=st.session_state.current_topic if st.session_state.current_topic else active_subj)
         with c2:
             mock_q_cnt = st.selectbox("Questions:", [10, 15, 25], index=1)
 
@@ -1413,32 +1556,71 @@ else:
                 st.session_state.exam_submitted = True
                 st.rerun()
 
-    # ================= SECTION 5: SYLLABUS BREAKDOWN =================
-    elif selected_nav == "📖 Syllabus":
-        st.markdown("#### 📚 Curriculum Breakdown — " + active_course)
-        st.info("Current Subject: **" + active_subj + "**")
-        st.write(subject_details.get("units", "Comprehensive syllabus mapped to entrance standards."))
+    # ================= SECTION 5: SYLLABUS & ACTS BREAKDOWN =================
+    elif selected_nav == "📖 Syllabus & Acts":
+        st.markdown("#### 📚 Complete Statutory & Curriculum Breakdown — " + active_course)
+        st.info("Active Subject: **" + active_subj + "**")
+        st.write(subject_details.get("units", "Comprehensive syllabus mapped to national standards."))
 
-        with st.expander("📌 View All Units in " + active_course):
+        with st.expander("📌 View Complete Stream Breakdown (" + active_course + ")", expanded=True):
             for s_k, s_v in active_course_data["subjects"].items():
-                st.markdown("**" + s_k + "**")
+                st.markdown(f"**{s_k}**")
                 st.caption(s_v.get("units", ""))
+                st.markdown("---")
 
-    # ================= SECTION 6: FORMULA & BLUEPRINTS =================
-    elif selected_nav == "🔬 Formula & Lab":
-        st.markdown("#### 🔬 Formula & Concepts Compendium — " + active_subj)
-        with st.expander("⚡ Core Formulation & Important Matrix"):
-            if "Math" in active_subj:
-                st.latex(r"\frac{d}{dx}\left(\frac{u}{v}\right) = \frac{v u' - u v'}{v^2}")
-                st.latex(r"\lim_{x \to a} \frac{f(x)}{g(x)} = \lim_{x \to a} \frac{f'(x)}{g'(x)}")
-            elif "Physics" in active_subj:
-                st.latex(r"\vec{F} = \frac{d\vec{p}}{dt}, \quad E = mc^2")
-                st.latex(r"V = IR, \quad B = \frac{\mu_0 I}{2\pi r}")
-            elif "Chemistry" in active_subj:
-                st.latex(r"\Delta G = \Delta H - T\Delta S")
-                st.latex(r"E_{cell} = E^\circ_{cell} - \frac{RT}{nF} \ln Q")
-            else:
-                st.latex(r"Sum = A \oplus B \oplus C_{in}, \quad Carry = AB + C_{in}(A \oplus B)")
+    # ================= SECTION 6: BARE ACTS & MAXIMS / FORMULA LAB =================
+    elif selected_nav == ref_tab_label:
+        if "Law" in active_course:
+            st.markdown("#### ⚖️ Indian Bare Acts, BNS-IPC Section Mapper & Legal Maxims")
+            with st.expander("⚔️ New Criminal Laws (2023) vs Old Laws — Master Section Comparison", expanded=True):
+                st.markdown("""
+                * **Common Intention:** `Section 3(5) BNS 2023` ⬅️ *Earlier Section 34 IPC 1860*
+                * **Private Defence of Body & Property:** `Sections 34 to 44 BNS 2023` ⬅️ *Earlier Sections 96 to 106 IPC 1860*
+                * **Culpable Homicide & Murder:** `Sections 100 & 101 BNS 2023` ⬅️ *Earlier Sections 299 & 300 IPC 1860*
+                * **Punishment for Murder:** `Section 103 BNS 2023` ⬅️ *Earlier Section 302 IPC 1860*
+                * **Causing Death by Negligence:** `Section 106 BNS 2023` ⬅️ *Earlier Section 304A IPC 1860*
+                * **Organised Crime & Terrorist Act (New):** `Sections 111 & 113 BNS 2023`
+                * **Defamation:** `Section 356 BNS 2023` ⬅️ *Earlier Section 499/500 IPC 1860*
+                * **Zero FIR & e-FIR Registration:** `Section 173 BNSS 2023` ⬅️ *Earlier Section 154 CrPC 1973*
+                * **Order for Maintenance of Wives, Children & Parents:** `Section 144 BNSS 2023` ⬅️ *Earlier Section 125 CrPC 1973*
+                * **Anticipatory Bail:** `Section 482 BNSS 2023` ⬅️ *Earlier Section 438 CrPC 1973*
+                * **Dying Declaration:** `Section 26(a) BSA 2023` ⬅️ *Earlier Section 32(1) Indian Evidence Act 1872*
+                * **Electronic & Digital Records Admissibility:** `Sections 61 & 63 BSA 2023` ⬅️ *Earlier Section 65B Evidence Act*
+                """)
+
+            with st.expander("🏛️ High-Yield Latin Legal Maxims for CLAT / Judiciary"):
+                st.markdown("""
+                * **Actus Non Facit Reum Nisi Mens Sit Rea:** An act does not make a person guilty unless there is a guilty mind.
+                * **Ubi Jus Ibi Remedium:** Where there is a right, there is a remedy (*Ashby v. White*).
+                * **Injuria Sine Damno:** Infringement of an absolute legal right without actual physical damage (Actionable).
+                * **Damnum Sine Injuria:** Actual financial/physical loss without infringement of a legal right (Not actionable — *Gloucester Grammar School Case*).
+                * **Volenti Non Fit Injuria:** To a willing person, injury is not done (Defence of consent in Torts).
+                * **Res Ipsa Loquitur:** The thing speaks for itself (Presumption of negligence).
+                * **Nemo Judex In Causa Sua & Audi Alteram Partem:** No one shall be a judge in their own cause & Hear the other side (Principles of Natural Justice).
+                * **Ignorantia Facti Excusat, Ignorantia Juris Non Excusat:** Ignorance of fact is an excuse, ignorance of law is no excuse (Sec 14 & 17 BNS / Sec 76 & 79 IPC).
+                """)
+
+            st.markdown("##### 🔍 Instant Bare Act Section / Article / Case Law Finder")
+            bare_query = st.text_input("Enter any Section, Article, or Act (e.g. 'Section 138 NI Act', 'Article 21', 'Section 103 BNS'):")
+            if st.button("Fetch Exact Bare Act Text & Landmark Cases", use_container_width=True):
+                if bare_query.strip():
+                    with st.spinner("Searching Indian Statutory Database..."):
+                        sys_p = "You are an Indian Legal Encyclopedia & Senior Advocate. Provide the exact Bare Act text, essential ingredients, punishment/remedy, BNS/IPC parallel (if criminal), and top 2 Supreme Court landmark judgments."
+                        st.info(execute_ai_query(sys_p, f"Explain Indian Law provision: {bare_query}"))
+        else:
+            st.markdown("#### 🔬 Formula & Concepts Compendium — " + active_subj)
+            with st.expander("⚡ Core Formulation & Important Matrix", expanded=True):
+                if "Math" in active_subj:
+                    st.latex(r"\frac{d}{dx}\left(\frac{u}{v}\right) = \frac{v u' - u v'}{v^2}")
+                    st.latex(r"\lim_{x \to a} \frac{f(x)}{g(x)} = \lim_{x \to a} \frac{f'(x)}{g'(x)}")
+                elif "Physics" in active_subj:
+                    st.latex(r"\vec{F} = \frac{d\vec{p}}{dt}, \quad E = mc^2")
+                    st.latex(r"V = IR, \quad B = \frac{\mu_0 I}{2\pi r}")
+                elif "Chemistry" in active_subj:
+                    st.latex(r"\Delta G = \Delta H - T\Delta S")
+                    st.latex(r"E_{cell} = E^\circ_{cell} - \frac{RT}{nF} \ln Q")
+                else:
+                    st.latex(r"Sum = A \oplus B \oplus C_{in}, \quad Carry = AB + C_{in}(A \oplus B)")
 
     # ================= SECTION 7: AI MENTOR =================
     elif selected_nav == "🤖 AI Mentor":
@@ -1446,7 +1628,7 @@ else:
         past_ctx = st.session_state.ai_memory.get(active_course, {}).get("last_summary", "Starting fresh discussion.")
         st.caption("AI Memory Context: *" + past_ctx + "*")
 
-        q = st.text_input("Ask Any Doubt / Paste Question:")
+        q = st.text_input("Ask Any Doubt / Case Law / Section / Numerical:")
         q_img = st.file_uploader("Upload Problem Image (Optional):", type=["png", "jpg", "jpeg"])
         pil_q = Image.open(q_img) if q_img else None
 
@@ -1456,7 +1638,7 @@ else:
                     sys_prompt = (
                         "You are a master mentor for " + active_course + " (" + active_subj + "). "
                         "Remember previous progress: " + past_ctx + ". "
-                        "Explain step-by-step with derivation and exam tricks."
+                        "Explain step-by-step with statutory sections, case laws, or derivations."
                     )
                     ans = execute_ai_query(sys_prompt, q, image_input=pil_q)
                     st.write(ans)
