@@ -17,7 +17,7 @@ from PIL import Image
 
 # ================= APP NAME & LOGO CONFIG =================
 st.set_page_config(
-    page_title="Harsh's Lex & Tech Suite | iOS Academic Ecosystem",
+    page_title="Harsh's Lex & Tech Suite | Universal Academic Portal",
     page_icon="⚖️",
     layout="wide",
     initial_sidebar_state="collapsed"
@@ -25,6 +25,10 @@ st.set_page_config(
 
 ADMIN_EMAIL = "harshrajsoni92@gmail.com"
 STORAGE_FILE = "user_memory_store.db"
+
+# Helper to prevent Markdown 4-space indentation from turning HTML into black code blocks
+def clean_html(raw_html):
+    return "\n".join(line.lstrip() for line in raw_html.splitlines() if line.strip())
 
 # ================= PERSISTENT STORAGE ENGINE =================
 def load_user_memory():
@@ -179,7 +183,7 @@ if "heartbeat_started" not in st.session_state:
     t = threading.Thread(target=run_anti_sleep_heartbeat, daemon=True)
     t.start()
 
-# ================= iOS 18 DYNAMIC MESH AURORA PALETTES =================
+# ================= DYNAMIC MESH AURORA PALETTES =================
 THEME_PALETTES = {
     "⚖️ Law": {
         "orb1": "#3B0A26",
@@ -188,7 +192,7 @@ THEME_PALETTES = {
         "accent": "#FF5E8E",
         "accent_sec": "#A855F7",
         "glow": "rgba(255, 94, 142, 0.30)",
-        "glass": "rgba(24, 18, 38, 0.65)",
+        "glass": "rgba(24, 18, 38, 0.68)",
         "border": "rgba(255, 94, 142, 0.40)"
     },
     "🩺 NEET": {
@@ -198,7 +202,7 @@ THEME_PALETTES = {
         "accent": "#2DD4BF",
         "accent_sec": "#38BDF8",
         "glow": "rgba(45, 212, 191, 0.28)",
-        "glass": "rgba(10, 30, 36, 0.65)",
+        "glass": "rgba(10, 30, 36, 0.68)",
         "border": "rgba(45, 212, 191, 0.40)"
     },
     "⚙️ JEE": {
@@ -208,7 +212,7 @@ THEME_PALETTES = {
         "accent": "#FB923C",
         "accent_sec": "#F43F5E",
         "glow": "rgba(251, 146, 60, 0.28)",
-        "glass": "rgba(30, 20, 28, 0.65)",
+        "glass": "rgba(30, 20, 28, 0.68)",
         "border": "rgba(251, 146, 60, 0.40)"
     },
     "💻 BCA": {
@@ -218,7 +222,7 @@ THEME_PALETTES = {
         "accent": "#38BDF8",
         "accent_sec": "#818CF8",
         "glow": "rgba(56, 189, 248, 0.30)",
-        "glass": "rgba(14, 23, 46, 0.65)",
+        "glass": "rgba(14, 23, 46, 0.68)",
         "border": "rgba(56, 189, 248, 0.40)"
     },
     "🏛️ UPSC": {
@@ -228,12 +232,11 @@ THEME_PALETTES = {
         "accent": "#C084FC",
         "accent_sec": "#60A5FA",
         "glow": "rgba(192, 132, 252, 0.28)",
-        "glass": "rgba(22, 16, 42, 0.65)",
+        "glass": "rgba(22, 16, 42, 0.68)",
         "border": "rgba(192, 132, 252, 0.40)"
     }
 }
 
-# Normalize legacy course name if stored in shelve
 if st.session_state.current_course not in THEME_PALETTES:
     st.session_state.current_course = "⚖️ Law"
 
@@ -257,7 +260,7 @@ def send_auto_smtp_email(sender_name, student_email, stream_name, rating_str, fe
         msg["Subject"] = f"⭐ New Portal Rating ({rating_str.split(' ')[0]}) from {sender_name}"
 
         html_body = f"""
-        <div style="font-family: -apple-system, sans-serif; max-width: 580px; border: 2px solid #38BDF8; border-radius: 16px; padding: 22px; background: #0F172A; color: #F8FAFC;">
+        <div style="font-family: sans-serif; max-width: 580px; border: 2px solid #38BDF8; border-radius: 16px; padding: 22px; background: #0F172A; color: #F8FAFC;">
             <h2 style="color: #38BDF8; margin-top: 0;">⚖️ Harsh's Lex & Tech Suite — Student Review</h2>
             <p style="font-size: 14px; color: #CBD5E1;">Hello <b>Harsh Raj Soni</b>, ek student ne aapke portal par naya review submit kiya hai:</p>
             <table style="width: 100%; border-collapse: collapse; margin: 14px 0; font-size: 14px; color: #F8FAFC;">
@@ -283,14 +286,14 @@ def send_auto_smtp_email(sender_name, student_email, stream_name, rating_str, fe
 
 # ================= RATING & FEEDBACK POPUP DIALOG ENGINE =================
 def render_feedback_form_contents(context_key="modal"):
-    st.markdown(f"""
-    <div class="ios-glass-card" style="padding:14px 18px; margin-bottom:12px;">
+    st.markdown(clean_html(f"""
+    <div class="glass-panel-card" style="padding:14px 18px; margin-bottom:12px;">
         <div style="font-size:16px; font-weight:700; color:{active_theme['accent']};">⭐ Rate & Share Your Experience</div>
         <div style="font-size:12px; color:#CBD5E1; margin-top:2px;">
             Submit karte hi aapka feedback seedhe Developer <b>Harsh Raj Soni</b> (<code>{ADMIN_EMAIL}</code>) ke Gmail inbox mein jayega.
         </div>
     </div>
-    """, unsafe_allow_html=True)
+    """), unsafe_allow_html=True)
 
     star_options = [
         "⭐⭐⭐⭐⭐ (5/5 - Super Smooth & Addictive!)",
@@ -309,7 +312,7 @@ def render_feedback_form_contents(context_key="modal"):
 
     fb_msg = st.text_area(
         "Aapka Feedback / Feature Idea:",
-        placeholder="UI, Animations ya Notes kaise lage? Zaroor batayein...",
+        placeholder="Portal, Animations ya Notes kaise lage? Zaroor batayein...",
         height=90,
         key=f"fb_msg_{context_key}"
     )
@@ -317,7 +320,7 @@ def render_feedback_form_contents(context_key="modal"):
     if st.button("🚀 Submit Rating & Send to Harsh", key=f"fb_sub_{context_key}", type="primary", use_container_width=True):
         sender = fb_name.strip() if fb_name.strip() else "Anonymous Student"
         u_mail = fb_user_email.strip()
-        comment = fb_msg.strip() if fb_msg.strip() else "Loved the new iOS UI!"
+        comment = fb_msg.strip() if fb_msg.strip() else "Loved the smooth UI!"
         rating_short = chosen_stars.split(" ")[0]
 
         entry = {
@@ -584,42 +587,35 @@ COURSE_DATABASE = {
     }
 }
 
-# ================= iOS 18 / VISION-OS ULTRA-SMOOTH ANIMATED CSS =================
-IOS_DYNAMIC_CSS = f"""
+# ================= ULTRA-SMOOTH ANIMATED GLASSMORPHISM CSS =================
+DYNAMIC_SUITE_CSS = f"""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Kalam:wght@400;700&family=Patrick+Hand&display=swap');
 
-    /* Keyframe Animations for Buttery Smooth iOS Feel */
-    @keyframes iosAuroraShift {{
+    @keyframes auroraShift {{
         0% {{ background-position: 0% 50%; }}
         50% {{ background-position: 100% 50%; }}
         100% {{ background-position: 0% 50%; }}
     }}
 
     @keyframes springSlideUp {{
-        0% {{ opacity: 0; transform: translateY(18px) scale(0.98); }}
+        0% {{ opacity: 0; transform: translateY(16px) scale(0.985); }}
         100% {{ opacity: 1; transform: translateY(0) scale(1); }}
     }}
 
-    @keyframes pulseGlow {{
-        0%, 100% {{ box-shadow: 0 0 14px {active_theme['glow']}; }}
-        50% {{ box-shadow: 0 0 26px {active_theme['glow']}; }}
-    }}
-
-    @keyframes islandFloat {{
+    @keyframes floatingBar {{
         0%, 100% {{ transform: translateY(0px); }}
         50% {{ transform: translateY(-2px); }}
     }}
 
     html, body, [class*="css"] {{
-        font-family: -apple-system, BlinkMacSystemFont, 'Plus Jakarta Sans', sans-serif;
+        font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
         scroll-behavior: smooth;
     }}
     code, pre {{
         font-family: 'JetBrains Mono', monospace !important;
     }}
 
-    /* Dynamic Animated iOS 18 Mesh Background */
     .stApp {{
         background: 
             radial-gradient(circle at 15% 15%, {active_theme['orb1']} 0%, transparent 45%),
@@ -627,7 +623,7 @@ IOS_DYNAMIC_CSS = f"""
             radial-gradient(circle at 50% 90%, {active_theme['orb1']} 0%, transparent 55%),
             {active_theme['base']} !important;
         background-size: 200% 200% !important;
-        animation: iosAuroraShift 18s ease infinite !important;
+        animation: auroraShift 18s ease infinite !important;
         color: #F8FAFC;
         transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
     }}
@@ -643,12 +639,12 @@ IOS_DYNAMIC_CSS = f"""
         padding-top: 0.6rem !important;
         padding-bottom: 3rem !important;
         max-width: 1060px !important;
-        animation: springSlideUp 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+        animation: springSlideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1);
     }}
 
-    /* iOS Dynamic Island Header */
-    .ios-dynamic-island {{
-        background: rgba(12, 14, 24, 0.78);
+    /* Top Floating Command Capsule */
+    .floating-command-bar {{
+        background: rgba(12, 14, 24, 0.80);
         backdrop-filter: blur(28px) saturate(180%);
         -webkit-backdrop-filter: blur(28px) saturate(180%);
         border: 1px solid {active_theme['border']};
@@ -661,10 +657,10 @@ IOS_DYNAMIC_CSS = f"""
         flex-wrap: wrap;
         gap: 10px;
         box-shadow: 0 14px 34px rgba(0, 0, 0, 0.55), 0 0 20px {active_theme['glow']};
-        animation: islandFloat 5s ease-in-out infinite;
+        animation: floatingBar 5s ease-in-out infinite;
     }}
 
-    .island-badge {{
+    .command-badge {{
         display: inline-flex;
         align-items: center;
         gap: 6px;
@@ -679,7 +675,7 @@ IOS_DYNAMIC_CSS = f"""
     }}
 
     /* Frosted Glass Cards */
-    .ios-glass-card {{
+    .glass-panel-card {{
         background: {active_theme['glass']};
         backdrop-filter: blur(24px) saturate(160%);
         -webkit-backdrop-filter: blur(24px) saturate(160%);
@@ -690,7 +686,7 @@ IOS_DYNAMIC_CSS = f"""
         transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
         animation: springSlideUp 0.45s cubic-bezier(0.16, 1, 0.3, 1);
     }}
-    .ios-glass-card:hover {{
+    .glass-panel-card:hover {{
         transform: translateY(-3px) scale(1.005);
         border-color: {active_theme['accent']};
         box-shadow: 0 14px 36px rgba(0, 0, 0, 0.45), 0 0 18px {active_theme['glow']};
@@ -742,7 +738,6 @@ IOS_DYNAMIC_CSS = f"""
         color: #F8FAFC;
     }}
 
-    /* iOS Segmented Pill Navigation Bar */
     div[data-testid="stRadio"] {{
         background: rgba(15, 20, 35, 0.68) !important;
         backdrop-filter: blur(20px) !important;
@@ -754,7 +749,6 @@ IOS_DYNAMIC_CSS = f"""
         transition: all 0.3s ease !important;
     }}
 
-    /* Springy iOS Buttons */
     .stButton>button {{
         background: linear-gradient(135deg, {active_theme['accent']} 0%, {active_theme['accent_sec']} 100%) !important;
         color: #FFFFFF !important;
@@ -829,7 +823,7 @@ IOS_DYNAMIC_CSS = f"""
         transform: rotateY(180deg);
     }}
 
-    /* FIXED RULED NOTEBOOK SHEET & BALANCED TABLE (NEVER SQUISHES COLUMNS!) */
+    /* FIXED RULED NOTEBOOK SHEET & BALANCED TABLE */
     .register-outer-center {{
         display: flex;
         justify-content: center;
@@ -904,7 +898,6 @@ IOS_DYNAMIC_CSS = f"""
         box-sizing: border-box !important;
     }}
 
-    /* Fixed Table Layout guarantees NO column gets squished to 1 letter wide */
     .nb-table {{
         border-collapse: collapse !important;
         table-layout: fixed !important;
@@ -956,7 +949,7 @@ IOS_DYNAMIC_CSS = f"""
     }}
 </style>
 """
-st.markdown(IOS_DYNAMIC_CSS, unsafe_allow_html=True)
+st.markdown(DYNAMIC_SUITE_CSS, unsafe_allow_html=True)
 
 # ================= SIDEBAR & AI ENGINE CONFIG =================
 with st.sidebar:
@@ -1077,9 +1070,8 @@ def execute_ai_query(system_role, user_prompt, max_budget=2600, image_input=None
 
     return "API_ERROR: Pehle left sidebar khol kar apni Groq ya Gemini API Key enter karein."
 
-# ================= TABLE CELL TRIMMER (PREVENTS RUNAWAY NUMBER LISTS) =================
+# ================= TABLE CELL TRIMMER =================
 def sanitize_sheet_html(html_str):
-    # Trim any runaway long text inside <td>...</td> to max 95 characters so table never stretches
     def trim_td(match):
         content = match.group(1).strip()
         if len(content) > 95:
@@ -1093,7 +1085,7 @@ def sanitize_sheet_html(html_str):
         html_str += "</div>" * (open_divs - close_divs)
     if "<table" in html_str and "</table" not in html_str:
         html_str += "</table>"
-    return html_str
+    return clean_html(html_str)
 
 def generate_multi_sheets_html(topic, subject_name, course_name, notes_lang):
     last_ai_ctx = st.session_state.ai_memory.get(course_name, {}).get("last_summary", "Fresh session.")
@@ -1112,29 +1104,29 @@ def generate_multi_sheets_html(topic, subject_name, course_name, notes_lang):
         "Separate sheets strictly with ===SHEET_SPLIT===.\n\n"
         "TEMPLATE FOR EACH SHEET:\n"
         "<div class=\"register-outer-center\">\n"
-        "    <div class=\"real-notebook-sheet\">\n"
-        "        <div class=\"nb-title-h1\">" + topic + " [Page X]</div>\n"
-        "        <div style=\"font-size:11px; color:#64748b; margin-bottom:4px;\">" + course_name + " • " + subject_name + "</div>\n"
-        "        <span class=\"nb-subhead\">1. Core Concept :</span>\n"
-        "        <p style=\"margin: 2px 0 4px 0;\">[1-2 clear sentences in " + notes_lang + "]</p>\n"
-        "        <span class=\"nb-subhead\">2. Key Matrix (Max 8 words per cell) :</span>\n"
-        "        <div class=\"table-container\">\n"
-        "            <table class=\"nb-table\">\n"
-        "                <tr><th>Category</th><th>Rule / Section</th><th>Key Example</th></tr>\n"
-        "                <tr><td>Type 1</td><td>Simple / Sec A</td><td>2-3 examples only</td></tr>\n"
-        "                <tr><td>Type 2</td><td>Special / Sec B</td><td>2-3 examples only</td></tr>\n"
-        "            </table>\n"
-        "        </div>\n"
-        "        <span class=\"nb-subhead\">3. Essential Points :</span>\n"
-        "        <p style=\"margin: 2px 0 4px 0;\">\n"
-        "            • Point 1: Crisp working step or legal ingredient<br>\n"
-        "            • Point 2: Practical application / case law\n"
-        "        </p>\n"
-        "        <div class=\"nb-keypoints-box\">\n"
-        "            <b>✳ Golden Exam Trick :</b><br>\n"
-        "            • 1 high-yield exam takeaway or shortcut\n"
-        "        </div>\n"
-        "    </div>\n"
+        "<div class=\"real-notebook-sheet\">\n"
+        "<div class=\"nb-title-h1\">" + topic + " [Page X]</div>\n"
+        "<div style=\"font-size:11px; color:#64748b; margin-bottom:4px;\">" + course_name + " • " + subject_name + "</div>\n"
+        "<span class=\"nb-subhead\">1. Core Concept :</span>\n"
+        "<p style=\"margin: 2px 0 4px 0;\">[1-2 clear sentences in " + notes_lang + "]</p>\n"
+        "<span class=\"nb-subhead\">2. Key Matrix (Max 8 words per cell) :</span>\n"
+        "<div class=\"table-container\">\n"
+        "<table class=\"nb-table\">\n"
+        "<tr><th>Category</th><th>Rule / Section</th><th>Key Example</th></tr>\n"
+        "<tr><td>Type 1</td><td>Simple / Sec A</td><td>2-3 examples only</td></tr>\n"
+        "<tr><td>Type 2</td><td>Special / Sec B</td><td>2-3 examples only</td></tr>\n"
+        "</table>\n"
+        "</div>\n"
+        "<span class=\"nb-subhead\">3. Essential Points :</span>\n"
+        "<p style=\"margin: 2px 0 4px 0;\">\n"
+        "• Point 1: Crisp working step or legal ingredient<br>\n"
+        "• Point 2: Practical application / case law\n"
+        "</p>\n"
+        "<div class=\"nb-keypoints-box\">\n"
+        "<b>✳ Golden Exam Trick :</b><br>\n"
+        "• 1 high-yield exam takeaway or shortcut\n"
+        "</div>\n"
+        "</div>\n"
         "</div>"
     )
     raw_res = execute_ai_query(system_role, user_prompt, max_budget=2000)
@@ -1165,7 +1157,7 @@ def generate_multi_sheets_html(topic, subject_name, course_name, notes_lang):
 
     return sanitized_sheets if sanitized_sheets else [sanitize_sheet_html(clean_text)]
 
-# ================= 3D FLASHCARDS & MNEMONICS GENERATOR (NEW STUDENT ADDICTION!) =================
+# ================= 3D FLASHCARDS & MNEMONICS GENERATOR =================
 def generate_3d_flashcards(topic, subject_name, course_name):
     sys_p = (
         f"You are a memory coach for {course_name}. Generate 6 high-yield active-recall flashcards for '{topic}' ({subject_name}). "
@@ -1301,12 +1293,12 @@ def generate_90_100_dpp_marathon(topic, course_name, subject_name, target_count=
     status_box.empty()
     return all_questions
 
-# ================= 0. iOS VISION-OS LAUNCH SCREEN =================
+# ================= 0. LAUNCH SCREEN =================
 if not st.session_state.system_booted:
-    st.markdown(f"""
+    st.markdown(clean_html(f"""
     <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:70vh; text-align:center;">
-        <div class="ios-dynamic-island" style="max-width:460px; justify-content:center; margin-bottom:20px;">
-            <span style="font-size:13px; font-weight:700; color:{active_theme['accent']};">✨ iOS 18 Dynamic Academic Ecosystem</span>
+        <div class="floating-command-bar" style="max-width:460px; justify-content:center; margin-bottom:20px;">
+            <span style="font-size:13px; font-weight:700; color:{active_theme['accent']};">✨ Next-Gen Dynamic Academic Ecosystem</span>
         </div>
         <div style="font-size:38px; font-weight:800; color:#FFFFFF; letter-spacing:-0.8px; margin-bottom:8px;">
             Harsh's Lex & Tech Suite
@@ -1314,19 +1306,19 @@ if not st.session_state.system_booted:
         <div style="font-size:15px; color:#CBD5E1; margin-bottom:26px;">
             ⚖️ Law • 🩺 NEET • ⚙️ JEE • 💻 BCA • 🏛️ UPSC — Designed by <b>Harsh Raj Soni</b>
         </div>
-        <div class="ios-glass-card" style="max-width:580px; width:100%; text-align:left; font-size:13.5px; color:#E2E8F0; line-height:1.7; margin-bottom:26px;">
-            <div style="color:{active_theme['accent']}; font-weight:700; font-size:14.5px; margin-bottom:6px;">🚀 What's New in iOS Dynamic Edition:</div>
-            <div>• 🎨 <b>iOS 18 Aurora Mesh Background</b> & Buttery Spring Animations</div>
+        <div class="glass-panel-card" style="max-width:580px; width:100%; text-align:left; font-size:13.5px; color:#E2E8F0; line-height:1.7; margin-bottom:26px;">
+            <div style="color:{active_theme['accent']}; font-weight:700; font-size:14.5px; margin-bottom:6px;">🚀 Platform Highlights:</div>
+            <div>• 🎨 <b>Dynamic Aurora Mesh Theme</b> & Buttery Spring Animations</div>
             <div>• 🃏 <b>3D Interactive Flip Flashcards</b> & Instant Desi Mnemonics Generator</div>
-            <div>• 📄 <b>Fixed Balanced Notebook Tables</b> (Zero Column Squishing)</div>
-            <div>• 🔥 <b>Gamified XP, Rank Levels & Daily Study Streak</b> in Dynamic Island</div>
+            <div>• 📄 <b>Fixed Balanced Notebook Tables</b> & Clean PYQ Booklet View</div>
+            <div>• 🔥 <b>Live XP, Rank Levels & Daily Study Streak</b></div>
         </div>
     </div>
-    """, unsafe_allow_html=True)
+    """), unsafe_allow_html=True)
 
     c1, c2, c3 = st.columns([1, 1.2, 1])
     with c2:
-        if st.button("🚀 Launch iOS Learning Suite", use_container_width=True):
+        if st.button("🚀 Launch Learning Suite", use_container_width=True):
             st.session_state.system_booted = True
             st.rerun()
 
@@ -1335,32 +1327,32 @@ else:
         st.session_state.trigger_feedback_modal = False
         open_feedback_popup_dialog()
 
-    # ================= iOS DYNAMIC ISLAND TOP BAR =================
+    # ================= TOP FLOATING COMMAND BAR =================
     student_xp = st.session_state.get("xp_points", 120)
     student_rank = get_student_rank(student_xp)
     streak = st.session_state.get("streak_days", 3)
 
     isl_c1, isl_c2 = st.columns([4.2, 1])
     with isl_c1:
-        st.markdown(f"""
-        <div class="ios-dynamic-island">
+        st.markdown(clean_html(f"""
+        <div class="floating-command-bar">
             <div style="display:flex; align-items:center; gap:10px;">
                 <span style="height:10px; width:10px; background:{active_theme['accent']}; border-radius:50%; display:inline-block; box-shadow:0 0 10px {active_theme['accent']};"></span>
                 <span style="font-size:16px; font-weight:800; color:#FFFFFF;">Harsh's Lex & Tech Suite</span>
             </div>
             <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
-                <span class="island-badge">🔥 {streak} Day Streak</span>
-                <span class="island-badge">⚡ {student_xp} XP • {student_rank}</span>
-                <span class="island-badge">👨‍💻 Harsh Raj Soni</span>
+                <span class="command-badge">🔥 {streak} Day Streak</span>
+                <span class="command-badge">⚡ {student_xp} XP • {student_rank}</span>
+                <span class="command-badge">👨‍💻 Harsh Raj Soni</span>
             </div>
         </div>
-        """, unsafe_allow_html=True)
+        """), unsafe_allow_html=True)
     with isl_c2:
         st.write("")
         if st.button("⭐ Rate App", key="top_rate_btn", use_container_width=True):
             open_feedback_popup_dialog()
 
-    # ================= SUPER SIMPLE & CLEAR COURSE + SUBJECT SELECTOR BAR =================
+    # ================= SIMPLE & CLEAR COURSE + SUBJECT SELECTOR BAR =================
     course_list = list(COURSE_DATABASE.keys())
     if st.session_state.current_course not in course_list:
         st.session_state.current_course = course_list[0]
@@ -1406,7 +1398,7 @@ else:
     active_subj = st.session_state.current_subject
     subject_details = active_course_data["subjects"][active_subj]
 
-    # ================= iOS SEGMENTED NAVIGATION DOCK =================
+    # ================= NAVIGATION DOCK =================
     ref_tab_label = "⚖️ Bare Acts" if "Law" in active_course else "🔬 Formulas"
     nav_options = [
         "📝 Notes",
@@ -1432,12 +1424,12 @@ else:
 
     # ================= SECTION 1: FIXED BALANCED NOTES GALLERY =================
     if selected_nav == "📝 Notes":
-        st.markdown(f"""
-        <div class="ios-glass-card" style="margin-bottom:12px;">
+        st.markdown(clean_html(f"""
+        <div class="glass-panel-card" style="margin-bottom:12px;">
             <div style="font-size:18px; font-weight:800; color:#FFFFFF;">📖 Smart Handwritten Notes — {active_subj}</div>
             <div style="font-size:12.5px; color:#CBD5E1;">Balanced 3-column tables, zero squishing, aur single-screen notebook cards (+25 XP per topic).</div>
         </div>
-        """, unsafe_allow_html=True)
+        """), unsafe_allow_html=True)
 
         c1, c2 = st.columns([2.6, 1])
         with c1:
@@ -1490,24 +1482,24 @@ else:
                 grid_cols = st.columns(3)
                 for idx, _ in enumerate(sheets):
                     with grid_cols[idx % 3]:
-                        st.markdown(f"""
-                        <div class="ios-glass-card" style="text-align:center; margin-bottom:8px;">
+                        st.markdown(clean_html(f"""
+                        <div class="glass-panel-card" style="text-align:center; margin-bottom:8px;">
                             <div style="font-size:15px; font-weight:800; color:{active_theme['accent']};">📄 Register Page #{idx + 1}</div>
                             <div style="font-size:11.5px; color:#CBD5E1; margin-top:4px;">{final_topic[:32]}...</div>
                         </div>
-                        """, unsafe_allow_html=True)
+                        """), unsafe_allow_html=True)
                         if st.button(f"Open Page #{idx + 1}", key=f"sheet_btn_{idx}", use_container_width=True):
                             st.session_state.active_sheet_index = idx
                             st.rerun()
 
-    # ================= SECTION 2: 3D INTERACTIVE FLIP FLASHCARDS & MNEMONICS (NEW!) =================
+    # ================= SECTION 2: 3D INTERACTIVE FLIP FLASHCARDS & MNEMONICS =================
     elif selected_nav == "🃏 3D Flashcards":
-        st.markdown(f"""
-        <div class="ios-glass-card" style="margin-bottom:12px;">
+        st.markdown(clean_html(f"""
+        <div class="glass-panel-card" style="margin-bottom:12px;">
             <div style="font-size:18px; font-weight:800; color:#FFFFFF;">🃏 3D Active-Recall Flashcards & Desi Mnemonics — {active_subj}</div>
             <div style="font-size:12.5px; color:#CBD5E1;">Kisi bhi card par hover ya tap karein 3D mein flip karke answer dekhne ke liye!</div>
         </div>
-        """, unsafe_allow_html=True)
+        """), unsafe_allow_html=True)
 
         fc_c1, fc_c2 = st.columns([2, 1])
         with fc_c1:
@@ -1525,39 +1517,39 @@ else:
         if st.session_state.flashcards_data:
             cards_html = '<div class="flip-card-grid">'
             for i, c in enumerate(st.session_state.flashcards_data):
-                cards_html += f"""
-                <div class="flip-card">
-                    <div class="flip-card-inner">
-                        <div class="flip-card-front">
-                            <div style="font-size:11px; font-weight:700; color:{active_theme['accent']}; text-transform:uppercase; letter-spacing:1px; margin-bottom:6px;">Flashcard #{i+1} • Tap/Hover to Flip ↻</div>
-                            <div style="font-size:15px; font-weight:700; line-height:1.4;">{c['front']}</div>
-                        </div>
-                        <div class="flip-card-back">
-                            <div style="font-size:11px; font-weight:700; color:#FDE047; margin-bottom:6px;">✔ Answer & Key Trick</div>
-                            <div style="font-size:13.5px; line-height:1.45;">{c['back']}</div>
-                        </div>
-                    </div>
-                </div>
-                """
+                cards_html += (
+                    f'<div class="flip-card">'
+                    f'<div class="flip-card-inner">'
+                    f'<div class="flip-card-front">'
+                    f'<div style="font-size:11px; font-weight:700; color:{active_theme["accent"]}; text-transform:uppercase; letter-spacing:1px; margin-bottom:6px;">Flashcard #{i+1} • Tap/Hover to Flip ↻</div>'
+                    f'<div style="font-size:15px; font-weight:700; line-height:1.4;">{c["front"]}</div>'
+                    f'</div>'
+                    f'<div class="flip-card-back">'
+                    f'<div style="font-size:11px; font-weight:700; color:#FDE047; margin-bottom:6px;">✔ Answer & Key Trick</div>'
+                    f'<div style="font-size:13.5px; line-height:1.45;">{c["back"]}</div>'
+                    f'</div>'
+                    f'</div>'
+                    f'</div>'
+                )
             cards_html += "</div>"
-            st.markdown(cards_html, unsafe_allow_html=True)
+            st.markdown(clean_html(cards_html), unsafe_allow_html=True)
 
         if st.session_state.cheatsheet_html:
-            st.markdown(f"""
-            <div class="ios-glass-card" style="margin-top:10px; border-left:5px solid {active_theme['accent']};">
+            st.markdown(clean_html(f"""
+            <div class="glass-panel-card" style="margin-top:10px; border-left:5px solid {active_theme['accent']};">
                 <div style="font-size:15px; font-weight:800; color:{active_theme['accent']}; margin-bottom:6px;">🧠 Instant Desi Mnemonics & Memory Hacks</div>
             </div>
-            """, unsafe_allow_html=True)
+            """), unsafe_allow_html=True)
             st.info(st.session_state.cheatsheet_html)
 
     # ================= SECTION 3: DPP (90-100 QUESTIONS MARATHON ENGINE) =================
     elif selected_nav == "🔥 DPP (90-100 Qs)":
-        st.markdown(f"""
-        <div class="ios-glass-card" style="margin-bottom:12px;">
+        st.markdown(clean_html(f"""
+        <div class="glass-panel-card" style="margin-bottom:12px;">
             <div style="font-size:18px; font-weight:800; color:#FFFFFF;">🔥 Daily Practice Problems (DPP Marathon) — {active_subj}</div>
             <div style="font-size:12.5px; color:#CBD5E1;">Compact paginated OMR view — 3 ya 5 questions per screen.</div>
         </div>
-        """, unsafe_allow_html=True)
+        """), unsafe_allow_html=True)
 
         c1, c2, c3 = st.columns([2, 1, 1])
         with c1:
@@ -1624,7 +1616,7 @@ else:
             for idx in range(start_idx, end_idx):
                 q_data = dpp_list[idx]
                 q_num = idx + 1
-                st.markdown(f"""
+                st.markdown(clean_html(f"""
                 <div class="question-card">
                     <div class="question-header">
                         <span class="q-number-tag">DPP Q.{q_num} • {q_data.get('year_tag', 'Core DPP')}</span>
@@ -1632,7 +1624,7 @@ else:
                     </div>
                     <div class="q-text">{q_data.get('question', '')}</div>
                 </div>
-                """, unsafe_allow_html=True)
+                """), unsafe_allow_html=True)
 
                 opts = q_data.get("options", [])
                 prev_choice = st.session_state.dpp_user_answers.get(idx, None)
@@ -1667,14 +1659,14 @@ else:
                 total_marks = (correct_cnt * 4) - (wrong_cnt * 1)
                 st.info(f"📊 **DPP Score:** {total_marks} / {total_dpp * 4}  |  ✔ Correct: {correct_cnt}  |  ✖ Wrong: {wrong_cnt}  |  ⚪ Left: {unattempted}")
 
-    # ================= SECTION 4: IN-APP PYQS VAULT =================
+    # ================= SECTION 4: IN-APP PYQS VAULT (BOOKLET CODE-BLOCK BUG FIXED!) =================
     elif selected_nav == "📚 PYQs Vault":
-        st.markdown(f"""
-        <div class="ios-glass-card" style="margin-bottom:12px;">
+        st.markdown(clean_html(f"""
+        <div class="glass-panel-card" style="margin-bottom:12px;">
             <div style="font-size:18px; font-weight:800; color:#FFFFFF;">📚 Official Past Question Papers (In-App OMR & Booklet) — {active_subj}</div>
             <div style="font-size:12.5px; color:#CBD5E1;">Bina kisi external website par gaye seedhe app mein official PYQ papers solve karein.</div>
         </div>
-        """, unsafe_allow_html=True)
+        """), unsafe_allow_html=True)
 
         pyqs_list = subject_details.get("pyqs_years", ["2024 Official Paper"])
         c1, c2, c3, c4 = st.columns([2, 0.9, 0.9, 1.2])
@@ -1737,27 +1729,29 @@ else:
                     st.rerun()
 
             if pyq_view_mode == "📄 Booklet Mode":
-                booklet_html = f'<div class="inapp-paper-booklet"><h4 style="margin:0 0 10px 0; color:#0F172A;">{chosen_year} — Official Booklet</h4>'
+                booklet_parts = [f'<div class="inapp-paper-booklet"><h4 style="margin:0 0 10px 0; color:#0F172A;">{chosen_year} — Official Booklet (Page {cur_p + 1}/{tot_pyq_pages})</h4>']
                 for idx in range(s_i, e_i):
                     q_data = q_list[idx]
-                    opts_html = "".join([f"<div style='margin:2px 0 2px 12px; font-size:13.5px;'>{o}</div>" for o in q_data.get("options", [])])
-                    booklet_html += f"""
-                    <div style="border-bottom:1px dashed #CBD5E1; padding:8px 0; color:#0F172A;">
-                        <div style="font-size:14.5px; font-weight:700;">Q.{idx + 1}: {q_data.get('question', '')}</div>
-                        {opts_html}
-                        <details style="margin-top:5px; background:#F1F5F9; padding:4px 10px; border-radius:6px; font-size:12.5px; cursor:pointer;">
-                            <summary style="font-weight:700; color:#0284C7;">✔ View Answer Key</summary>
-                            <div><b>Key:</b> {q_data.get('correct_option', '')} — {q_data.get('explanation', '')}</div>
-                        </details>
-                    </div>
-                    """
-                booklet_html += "</div>"
-                st.markdown(booklet_html, unsafe_allow_html=True)
+                    opts_html = "".join([f"<div style='margin:3px 0 3px 12px; font-size:13.5px; color:#1E293B;'>{o}</div>" for o in q_data.get("options", [])])
+                    item_html = (
+                        f'<div style="border-bottom:1px dashed #CBD5E1; padding:10px 0; color:#0F172A;">'
+                        f'<div style="font-size:14.5px; font-weight:700; color:#0F172A; margin-bottom:4px;">Q.{idx + 1}: {q_data.get("question", "")}</div>'
+                        f'{opts_html}'
+                        f'<details style="margin-top:6px; background:#F1F5F9; padding:6px 12px; border-radius:8px; font-size:13px; color:#0F172A; cursor:pointer;">'
+                        f'<summary style="font-weight:700; color:#0284C7;">✔ View Answer Key & Explanation</summary>'
+                        f'<div style="margin-top:4px;"><b>Official Key:</b> {q_data.get("correct_option", "")}</div>'
+                        f'<div><b>Explanation:</b> {q_data.get("explanation", "")}</div>'
+                        f'</details>'
+                        f'</div>'
+                    )
+                    booklet_parts.append(item_html)
+                booklet_parts.append("</div>")
+                st.markdown(clean_html("\n".join(booklet_parts)), unsafe_allow_html=True)
             else:
                 for idx in range(s_i, e_i):
                     q_data = q_list[idx]
                     q_num = idx + 1
-                    st.markdown(f"""
+                    st.markdown(clean_html(f"""
                     <div class="question-card">
                         <div class="question-header">
                             <span class="q-number-tag">Q.{q_num} • {q_data.get('year_tag', chosen_year)}</span>
@@ -1765,7 +1759,7 @@ else:
                         </div>
                         <div class="q-text">{q_data.get('question', '')}</div>
                     </div>
-                    """, unsafe_allow_html=True)
+                    """), unsafe_allow_html=True)
 
                     opts = q_data.get("options", [])
                     prev_ans = st.session_state.pyq_user_answers.get(idx, None)
@@ -1793,11 +1787,11 @@ else:
 
     # ================= SECTION 5: MOCK TEST =================
     elif selected_nav == "🎯 Mock Test":
-        st.markdown(f"""
-        <div class="ios-glass-card" style="margin-bottom:12px;">
+        st.markdown(clean_html(f"""
+        <div class="glass-panel-card" style="margin-bottom:12px;">
             <div style="font-size:18px; font-weight:800; color:#FFFFFF;">🎯 Rapid Mock Test — {active_subj}</div>
         </div>
-        """, unsafe_allow_html=True)
+        """), unsafe_allow_html=True)
 
         c1, c2, c3 = st.columns([2.2, 1, 1])
         with c1:
@@ -1841,12 +1835,12 @@ else:
             for idx in range(ms_i, me_i):
                 q_data = q_list[idx]
                 q_num = idx + 1
-                st.markdown(f"""
+                st.markdown(clean_html(f"""
                 <div class="question-card">
                     <div class="question-header"><span class="q-number-tag">Question {q_num}</span><span class="q-marks-tag">+4 / -1</span></div>
                     <div class="q-text">{q_data.get('question', '')}</div>
                 </div>
-                """, unsafe_allow_html=True)
+                """), unsafe_allow_html=True)
                 opts = q_data.get("options", [])
                 prev_m = st.session_state.exam_user_answers.get(idx, None)
                 m_idx = opts.index(prev_m) if prev_m in opts else None
@@ -1867,11 +1861,11 @@ else:
     # ================= SECTION 6: BARE ACTS & FORMULA LAB =================
     elif selected_nav == ref_tab_label:
         if "Law" in active_course:
-            st.markdown("""
-            <div class="ios-glass-card" style="margin-bottom:12px;">
+            st.markdown(clean_html("""
+            <div class="glass-panel-card" style="margin-bottom:12px;">
                 <div style="font-size:18px; font-weight:800; color:#FFFFFF;">⚖️ BNS 2023 vs IPC Section Mapper & Bare Act Reader</div>
             </div>
-            """, unsafe_allow_html=True)
+            """), unsafe_allow_html=True)
             with st.expander("⚔️ BNS/BNSS/BSA (2023) vs Old IPC/CrPC/IEA — Quick Chart", expanded=True):
                 st.markdown("""
                 * **Common Intention:** `Sec 3(5) BNS` ⬅️ *Sec 34 IPC*
@@ -1888,11 +1882,11 @@ else:
                 with st.spinner("Fetching statutory text..."):
                     st.info(execute_ai_query("You are an Indian Law Encyclopedia.", f"Explain concisely with landmark cases: {bare_query}", max_budget=1000))
         else:
-            st.markdown(f"""
-            <div class="ios-glass-card" style="margin-bottom:12px;">
+            st.markdown(clean_html(f"""
+            <div class="glass-panel-card" style="margin-bottom:12px;">
                 <div style="font-size:18px; font-weight:800; color:#FFFFFF;">🔬 High-Yield Formula Sheet — {active_subj}</div>
             </div>
-            """, unsafe_allow_html=True)
+            """), unsafe_allow_html=True)
             f_query = st.text_input("🔍 Type Chapter Name for Instant All-Formula Sheet:", value=active_subj)
             if st.button("⚡ Generate Chapter Formula Cheat-Sheet", use_container_width=True):
                 with st.spinner("Generating formulas..."):
@@ -1900,11 +1894,11 @@ else:
 
     # ================= SECTION 7: AI MENTOR =================
     elif selected_nav == "🤖 AI Mentor":
-        st.markdown(f"""
-        <div class="ios-glass-card" style="margin-bottom:12px;">
+        st.markdown(clean_html(f"""
+        <div class="glass-panel-card" style="margin-bottom:12px;">
             <div style="font-size:18px; font-weight:800; color:#FFFFFF;">🤖 1-on-1 AI Personal Mentor — {active_subj}</div>
         </div>
-        """, unsafe_allow_html=True)
+        """), unsafe_allow_html=True)
         q = st.text_input("💬 Ask Any Doubt, Numerical, Case Law or Career Question:")
         q_img = st.file_uploader("📷 Upload Question Photo (Optional):", type=["png", "jpg", "jpeg"])
         pil_q = Image.open(q_img) if q_img else None
@@ -1918,12 +1912,12 @@ else:
 
     # ================= SECTION 8: SYLLABUS =================
     elif selected_nav == "📖 Syllabus":
-        st.markdown(f"""
-        <div class="ios-glass-card" style="margin-bottom:12px;">
+        st.markdown(clean_html(f"""
+        <div class="glass-panel-card" style="margin-bottom:12px;">
             <div style="font-size:18px; font-weight:800; color:#FFFFFF;">📖 Official Syllabus — {active_course_data['full_title']}</div>
             <div style="font-size:13.5px; color:#E2E8F0; margin-top:8px;"><b>{active_subj}:</b> {subject_details.get('units', '')}</div>
         </div>
-        """, unsafe_allow_html=True)
+        """), unsafe_allow_html=True)
         for s_k, s_v in active_course_data["subjects"].items():
             with st.expander(f"📌 {s_k} — Units & Topics", expanded=(s_k == active_subj)):
                 st.write(s_v.get("units", ""))
@@ -1934,21 +1928,21 @@ else:
         with col_fb1:
             render_feedback_form_contents(context_key="main_tab")
         with col_fb2:
-            st.markdown(f"""
-            <div class="ios-glass-card">
+            st.markdown(clean_html(f"""
+            <div class="glass-panel-card">
                 <div style="font-size:15px; font-weight:800; color:{active_theme['accent']};">📬 Developer Info</div>
                 <div style="font-size:13.5px; color:#F8FAFC; margin-top:6px;"><b>Creator:</b> Harsh Raj Soni</div>
                 <div style="font-size:13px; color:#CBD5E1; margin-top:2px;"><b>Email:</b> <code>{ADMIN_EMAIL}</code></div>
             </div>
-            """, unsafe_allow_html=True)
+            """), unsafe_allow_html=True)
 
     # ================= SECTION 10: PYTHON CODE LAB =================
     elif selected_nav == "💻 Code Lab":
-        st.markdown("""
-        <div class="ios-glass-card" style="margin-bottom:12px;">
+        st.markdown(clean_html("""
+        <div class="glass-panel-card" style="margin-bottom:12px;">
             <div style="font-size:18px; font-weight:800; color:#FFFFFF;">💻 Interactive Python Code Lab</div>
         </div>
-        """, unsafe_allow_html=True)
+        """), unsafe_allow_html=True)
         tb1, tb2 = st.columns([1, 1])
         with tb1:
             if st.button("➕ Add Code Cell", use_container_width=True):
