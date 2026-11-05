@@ -19,14 +19,14 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# ================= PERSISTENT STORAGE (REMEMBER LAST STATE ACROSS SESSIONS) =================
+# ================= PERSISTENT STORAGE =================
 STORAGE_FILE = "user_memory_store.db"
 
 def load_user_memory():
     default_data = {
-        "last_course": "🎓 BCA (Computer Applications)",
-        "last_subject": "🐍 Python Programming",
-        "last_topic": "Python Architecture, Bytecode & Memory Management",
+        "last_course": "🩺 NEET (Medical Entrance)",
+        "last_subject": "🧬 Zoology & Human Physiology",
+        "last_topic": "Generation & Conduction of Nerve Impulse (Action Potential)",
         "study_history": {},
         "ai_memory": {}
     }
@@ -49,17 +49,17 @@ def save_user_memory():
     except Exception:
         pass
 
-# Initialize Session State from Storage
+# Initialize Session State
 saved_state = load_user_memory()
 
 if "system_booted" not in st.session_state:
     st.session_state.system_booted = False
 
 if "current_course" not in st.session_state:
-    st.session_state.current_course = saved_state.get("last_course", "🎓 BCA (Computer Applications)")
+    st.session_state.current_course = saved_state.get("last_course", "🩺 NEET (Medical Entrance)")
 
 if "current_subject" not in st.session_state:
-    st.session_state.current_subject = saved_state.get("last_subject", "🐍 Python Programming")
+    st.session_state.current_subject = saved_state.get("last_subject", "🧬 Zoology & Human Physiology")
 
 if "current_topic" not in st.session_state:
     st.session_state.current_topic = saved_state.get("last_topic", "")
@@ -76,6 +76,12 @@ if "generated_gallery_sheets" not in st.session_state:
 if "active_sheet_index" not in st.session_state:
     st.session_state.active_sheet_index = None
 
+if "active_exam_questions" not in st.session_state:
+    st.session_state.active_exam_questions = []
+
+if "exam_submitted" not in st.session_state:
+    st.session_state.exam_submitted = False
+
 if "notebook_cells" not in st.session_state:
     st.session_state.notebook_cells = [
         {
@@ -86,11 +92,10 @@ if "notebook_cells" not in st.session_state:
         }
     ]
 
-# ================= BACKGROUND ANTI-SLEEP HEARTBEAT =================
+# Anti-Sleep Keep Alive Heartbeat
 def run_anti_sleep_heartbeat():
     while True:
         try:
-            # Self-ping logic to prevent idle container freeze
             time.sleep(300)
         except Exception:
             pass
@@ -100,46 +105,54 @@ if "heartbeat_started" not in st.session_state:
     t = threading.Thread(target=run_anti_sleep_heartbeat, daemon=True)
     t.start()
 
+# ================= THEME PALETTES (EYE-FRIENDLY SOFT DARK GRADIENTS) =================
+THEME_PALETTES = {
+    "🎓 BCA (Computer Applications)": {
+        "grad_top": "#0B132B",
+        "grad_mid": "#080D1A",
+        "grad_base": "#020617",
+        "accent": "#38BDF8",
+        "accent_dark": "#0284C7",
+        "glow": "rgba(56, 189, 248, 0.25)",
+        "card_bg": "rgba(15, 23, 42, 0.8)",
+        "border": "#0284C7"
+    },
+    "🩺 NEET (Medical Entrance)": {
+        "grad_top": "#062016",
+        "grad_mid": "#04150E",
+        "grad_base": "#020B07",
+        "accent": "#34D399",
+        "accent_dark": "#059669",
+        "glow": "rgba(52, 211, 153, 0.22)",
+        "card_bg": "rgba(6, 32, 22, 0.8)",
+        "border": "#059669"
+    },
+    "⚙️ JEE (Main & Advanced)": {
+        "grad_top": "#1C1308",
+        "grad_mid": "#140D05",
+        "grad_base": "#0A0602",
+        "accent": "#FB923C",
+        "accent_dark": "#EA580C",
+        "glow": "rgba(251, 146, 60, 0.22)",
+        "card_bg": "rgba(28, 19, 8, 0.8)",
+        "border": "#EA580C"
+    },
+    "🏛️ UPSC / Civil Services (CSAT & GS)": {
+        "grad_top": "#1A0B2E",
+        "grad_mid": "#110720",
+        "grad_base": "#090311",
+        "accent": "#C084FC",
+        "accent_dark": "#9333EA",
+        "glow": "rgba(192, 132, 252, 0.22)",
+        "card_bg": "rgba(26, 11, 46, 0.8)",
+        "border": "#9333EA"
+    }
+}
+
+active_theme = THEME_PALETTES.get(st.session_state.current_course, THEME_PALETTES["🩺 NEET (Medical Entrance)"])
+
 # ================= MASTER ACADEMIC & COMPETITIVE DATABASE =================
 COURSE_DATABASE = {
-    "🎓 BCA (Computer Applications)": {
-        "icon": "🎓",
-        "subjects": {
-            "🐍 Python Programming": {
-                "units": "Unit 1: Bytecode & Internals | Unit 2: Loops & Logic | Unit 3: Functions & Scope | Unit 4: Data Structures | Unit 5: OOPs & Inheritance | Unit 6: File I/O",
-                "topics": [
-                    "Python Architecture, Bytecode & Memory Management",
-                    "Control Flow, Loops, For-Else Logic & Prime Verification",
-                    "Functions, Scopes, LEGB Resolution & Lambda Expressions",
-                    "Data Structures: Lists, Tuples, Dictionaries & Sets",
-                    "Object Oriented Programming: Encapsulation & Inheritance",
-                    "File Handling, Context Managers & Exception Hierarchy"
-                ]
-            },
-            "🖥️ Computer System Architecture": {
-                "units": "Unit 1: Binary Logic | Unit 2: Boolean Algebra & K-Maps | Unit 3: Combinational & Sequential Circuits | Unit 4: CPU Registers | Unit 5: Cache & Pipeline",
-                "topics": [
-                    "Full Adder Circuit, Logic Gates & Truth Table",
-                    "Half Adder & Full Adder Design using 2 HA and 1 OR Gate",
-                    "Number Systems, Complements & Binary Operations",
-                    "K-Map 4-Variable Minimization & Grouping Rules",
-                    "Flip-Flops, Master-Slave JK & Race-Around Condition",
-                    "Instruction Cycle Phases & Cache Memory Mapping"
-                ]
-            },
-            "📐 Mathematics & Numerical Methods": {
-                "units": "Unit 1: Matrices & Rank | Unit 2: Differential Calculus | Unit 3: Integral Calculus | Unit 4: Discrete Structures | Unit 5: Numerical Iterations",
-                "topics": [
-                    "Matrix Rank, Echelon Forms & Rouche-Capelli Consistency",
-                    "L'Hopital's Rule for Indeterminate Forms with Solved Limit",
-                    "Equivalence Relations Proof & POSET Hasse Diagrams",
-                    "Eigenvalues, Eigenvectors & Cayley-Hamilton Theorem",
-                    "Leibnitz Theorem for n-th Derivatives & Formula Matrix",
-                    "Newton-Raphson Method & Numerical Convergence"
-                ]
-            }
-        }
-    },
     "🩺 NEET (Medical Entrance)": {
         "icon": "🩺",
         "subjects": {
@@ -152,7 +165,8 @@ COURSE_DATABASE = {
                     "Mendelian Dihybrid Cross, Linkage & Recombination",
                     "DNA Replication, Transcription & Genetic Code",
                     "Spermatogenesis vs Oogenesis & Hormonal Feedback Cycles"
-                ]
+                ],
+                "pyqs_years": ["NEET 2024", "NEET 2023", "NEET 2022", "NEET 2021", "NEET 2020"]
             },
             "🌿 Botany & Plant Biology": {
                 "units": "Unit 1: Plant Kingdom & Anatomy | Unit 2: Photosynthesis | Unit 3: Respiration | Unit 4: Plant Growth Regulators",
@@ -162,7 +176,8 @@ COURSE_DATABASE = {
                     "Glycolysis, Krebs Cycle (TCA) & Chemiosmotic Hypothesis",
                     "Double Fertilization & Embryo Sac Development in Angiosperms",
                     "Auxin, Cytokinin, Gibberellin Action & Photoperiodism"
-                ]
+                ],
+                "pyqs_years": ["NEET 2024", "NEET 2023", "NEET 2022", "NEET 2021", "NEET 2020"]
             },
             "🧪 NEET Chemistry (Organic & Inorganic)": {
                 "units": "Unit 1: Chemical Bonding | Unit 2: Periodic Table | Unit 3: Reaction Mechanisms | Unit 4: Biomolecules",
@@ -172,7 +187,8 @@ COURSE_DATABASE = {
                     "Aldol Condensation, Cannizzaro Reaction & Mechanisms",
                     "Coordination Compounds, Werner Theory & Crystal Field Splitting (CFT)",
                     "Thermodynamics: Hess's Law, Gibbs Free Energy & Spontaneity"
-                ]
+                ],
+                "pyqs_years": ["NEET 2024", "NEET 2023", "NEET 2022", "NEET 2021", "NEET 2020"]
             },
             "⚛️ NEET Physics": {
                 "units": "Unit 1: Kinematics & Mechanics | Unit 2: Electrodynamics | Unit 3: Optics & Modern Physics",
@@ -181,7 +197,8 @@ COURSE_DATABASE = {
                     "Newton's Laws, Friction & Circular Motion Dynamics",
                     "Ray Optics: Lens Maker Formula, Prism & Total Internal Reflection",
                     "Photoelectric Effect, de Broglie Wavelength & Bohr Model"
-                ]
+                ],
+                "pyqs_years": ["NEET 2024", "NEET 2023", "NEET 2022", "NEET 2021", "NEET 2020"]
             }
         }
     },
@@ -196,7 +213,8 @@ COURSE_DATABASE = {
                     "Matrices, Determinants & System of Linear Equations (Cramer's Rule)",
                     "Complex Numbers: De Moivre Theorem, Geometry & Roots of Unity",
                     "Vectors & 3D Geometry: Shortest Distance Between Skew Lines"
-                ]
+                ],
+                "pyqs_years": ["JEE Main 2024 (Jan/Apr)", "JEE Main 2023", "JEE Adv 2023", "JEE Main 2022"]
             },
             "⚛️ JEE Physics": {
                 "units": "Unit 1: Rotational Dynamics | Unit 2: Electromagnetism | Unit 3: Thermodynamics & SHM | Unit 4: Wave Optics",
@@ -206,7 +224,8 @@ COURSE_DATABASE = {
                     "Ampere's Circuital Law, Biot-Savart & Magnetic Dipoles",
                     "Electromagnetic Induction, Faraday's Law & LC Oscillations",
                     "Wave Optics: Young's Double Slit Experiment (YDSE) & Phase Shift"
-                ]
+                ],
+                "pyqs_years": ["JEE Main 2024", "JEE Main 2023", "JEE Adv 2023", "JEE Main 2022"]
             },
             "🧪 JEE Chemistry (Physical & Inorganic)": {
                 "units": "Unit 1: Chemical Equilibrium & Kinetics | Unit 2: Electrochemistry | Unit 3: Coordination Chemistry",
@@ -215,7 +234,49 @@ COURSE_DATABASE = {
                     "Chemical Kinetics: Integrated Rate Laws & Arrhenius Equation",
                     "Ionic Equilibrium: Buffer Solutions, pH Calculation & Solubility Product",
                     "Metallurgy: Ellingham Diagram & Extraction Principles"
-                ]
+                ],
+                "pyqs_years": ["JEE Main 2024", "JEE Main 2023", "JEE Adv 2023", "JEE Main 2022"]
+            }
+        }
+    },
+    "🎓 BCA (Computer Applications)": {
+        "icon": "🎓",
+        "subjects": {
+            "🐍 Python Programming": {
+                "units": "Unit 1: Bytecode & Internals | Unit 2: Loops & Logic | Unit 3: Functions & Scope | Unit 4: Data Structures | Unit 5: OOPs & Inheritance | Unit 6: File I/O",
+                "topics": [
+                    "Python Architecture, Bytecode & Memory Management",
+                    "Control Flow, Loops, For-Else Logic & Prime Verification",
+                    "Functions, Scopes, LEGB Resolution & Lambda Expressions",
+                    "Data Structures: Lists, Tuples, Dictionaries & Sets",
+                    "Object Oriented Programming: Encapsulation & Inheritance",
+                    "File Handling, Context Managers & Exception Hierarchy"
+                ],
+                "pyqs_years": ["University Exam 2024", "University Exam 2023", "University Exam 2022"]
+            },
+            "🖥️ Computer System Architecture": {
+                "units": "Unit 1: Binary Logic | Unit 2: Boolean Algebra & K-Maps | Unit 3: Combinational & Sequential Circuits | Unit 4: CPU Registers | Unit 5: Cache & Pipeline",
+                "topics": [
+                    "Full Adder Circuit, Logic Gates & Truth Table",
+                    "Half Adder & Full Adder Design using 2 HA and 1 OR Gate",
+                    "Number Systems, Complements & Binary Operations",
+                    "K-Map 4-Variable Minimization & Grouping Rules",
+                    "Flip-Flops, Master-Slave JK & Race-Around Condition",
+                    "Instruction Cycle Phases & Cache Memory Mapping"
+                ],
+                "pyqs_years": ["University Exam 2024", "University Exam 2023", "University Exam 2022"]
+            },
+            "📐 Mathematics & Numerical Methods": {
+                "units": "Unit 1: Matrices & Rank | Unit 2: Differential Calculus | Unit 3: Integral Calculus | Unit 4: Discrete Structures | Unit 5: Numerical Iterations",
+                "topics": [
+                    "Matrix Rank, Echelon Forms & Rouche-Capelli Consistency",
+                    "L'Hopital's Rule for Indeterminate Forms with Solved Limit",
+                    "Equivalence Relations Proof & POSET Hasse Diagrams",
+                    "Eigenvalues, Eigenvectors & Cayley-Hamilton Theorem",
+                    "Leibnitz Theorem for n-th Derivatives & Formula Matrix",
+                    "Newton-Raphson Method & Numerical Convergence"
+                ],
+                "pyqs_years": ["University Exam 2024", "University Exam 2023", "University Exam 2022"]
             }
         }
     },
@@ -229,7 +290,8 @@ COURSE_DATABASE = {
                     "President vs Governor: Pardoning Powers & Discretionary Jurisdictions",
                     "Panchayati Raj (73rd & 74th Amendments) & Decentralization",
                     "Judicial Review, PIL & Collegium System Dynamics"
-                ]
+                ],
+                "pyqs_years": ["UPSC Prelims 2024", "UPSC Prelims 2023", "UPSC Prelims 2022", "UPSC Prelims 2021"]
             },
             "🌍 Indian Economy & Geography": {
                 "units": "Unit 1: Monetary & Fiscal Policy | Unit 2: Physical & Human Geography | Unit 3: Sustainable Development",
@@ -237,31 +299,33 @@ COURSE_DATABASE = {
                     "Inflation Targeting, Repo Rate & RBI Monetary Policy Tools",
                     "Fiscal Deficit, FRBM Act & Direct Tax Reforms (GST Architecture)",
                     "Monsoon Mechanism: Jet Streams, El Niño, La Niña & IOD"
-                ]
+                ],
+                "pyqs_years": ["UPSC Prelims 2024", "UPSC Prelims 2023", "UPSC Prelims 2022", "UPSC Prelims 2021"]
             }
         }
     }
 }
 
-# ================= EXECUTIVE STYLING & CLEAN NEAT REGISTER CSS =================
-CUSTOM_APP_CSS = """
+# ================= DYNAMIC EYE-FRIENDLY CSS =================
+DYNAMIC_THEME_CSS = f"""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Kalam:wght@400;700&family=Patrick+Hand&display=swap');
 
-    html, body, [class*="css"] {
+    html, body, [class*="css"] {{
         font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
-    }
-    code, pre {
+    }}
+    code, pre {{
         font-family: 'JetBrains Mono', monospace !important;
-    }
+    }}
 
-    .stApp {
-        background: radial-gradient(circle at 50% 0%, #0F172A 0%, #080D1A 60%, #020617 100%) !important;
+    .stApp {{
+        background: radial-gradient(circle at 50% 0%, {active_theme['grad_top']} 0%, {active_theme['grad_mid']} 60%, {active_theme['grad_base']} 100%) !important;
         color: #F8FAFC;
-    }
+        transition: background 0.5s ease-in-out;
+    }}
 
-    header[data-testid="stHeader"] {display: none !important;}
-    footer {display: none !important; visibility: hidden !important;}
+    header[data-testid="stHeader"] {{display: none !important;}}
+    footer {{display: none !important; visibility: hidden !important;}}
     .viewerBadge_container__1QSob, 
     .viewerBadge_link__1QSob,
     [data-testid="stStatusWidget"], 
@@ -269,21 +333,21 @@ CUSTOM_APP_CSS = """
     div[data-testid="stToolbar"],
     div[data-testid="stDecoration"],
     #MainMenu,
-    div[class*="viewerBadge"] {
+    div[class*="viewerBadge"] {{
         display: none !important;
         visibility: hidden !important;
         opacity: 0 !important;
         pointer-events: none !important;
-    }
+    }}
 
-    .block-container {
+    .block-container {{
         padding-top: 0.6rem !important;
         padding-bottom: 5rem !important;
         max-width: 1080px !important;
-    }
+    }}
 
-    .formal-top-banner {
-        background: rgba(30, 41, 59, 0.5);
+    .formal-top-banner {{
+        background: {active_theme['card_bg']};
         border: 1px solid rgba(255, 255, 255, 0.12);
         border-radius: 14px;
         padding: 12px 20px;
@@ -293,24 +357,25 @@ CUSTOM_APP_CSS = """
         justify-content: space-between;
         align-items: center;
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
-    }
-    .formal-author-pill {
+        transition: all 0.4s ease;
+    }}
+    .formal-author-pill {{
         display: inline-flex;
         align-items: center;
         gap: 6px;
-        background: rgba(37, 99, 235, 0.15);
-        border: 1px solid rgba(59, 130, 246, 0.5);
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid {active_theme['accent']};
         padding: 5px 14px;
         border-radius: 20px;
         font-size: 11.5px;
         font-weight: 700;
-        color: #60A5FA;
-        box-shadow: 0 0 16px rgba(37, 99, 235, 0.3);
-    }
+        color: {active_theme['accent']};
+        box-shadow: 0 0 16px {active_theme['glow']};
+    }}
 
-    .resume-state-card {
-        background: linear-gradient(90deg, rgba(37,99,235,0.15) 0%, rgba(30,41,59,0.3) 100%);
-        border: 1px dashed #3B82F6;
+    .resume-state-card {{
+        background: {active_theme['card_bg']};
+        border: 1px dashed {active_theme['accent']};
         border-radius: 10px;
         padding: 8px 16px;
         margin-bottom: 12px;
@@ -318,79 +383,92 @@ CUSTOM_APP_CSS = """
         align-items: center;
         justify-content: space-between;
         font-size: 12.5px;
-        color: #93C5FD;
-    }
+        color: {active_theme['accent']};
+    }}
 
-    div[data-testid="stExpander"] {
-        background: rgba(15, 23, 42, 0.85) !important;
-        border: 1.5px solid #3B82F6 !important;
+    /* Paper Question Card (OMR Style) */
+    .question-card {{
+        background: {active_theme['card_bg']};
+        border: 1.5px solid rgba(255, 255, 255, 0.1);
+        border-left: 4.5px solid {active_theme['accent']};
+        border-radius: 12px;
+        padding: 16px 20px;
+        margin-bottom: 16px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    }}
+    .question-header {{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+        border-bottom: 1px solid rgba(255,255,255,0.08);
+        padding-bottom: 6px;
+    }}
+    .q-number-tag {{
+        background: {active_theme['glow']};
+        border: 1px solid {active_theme['accent']};
+        color: {active_theme['accent']};
+        font-size: 12px;
+        font-weight: 700;
+        padding: 2px 10px;
+        border-radius: 14px;
+    }}
+    .q-marks-tag {{
+        font-size: 11px;
+        color: #94A3B8;
+        font-family: 'JetBrains Mono', monospace;
+    }}
+    .q-text {{
+        font-size: 15px;
+        font-weight: 600;
+        line-height: 1.55;
+        color: #F8FAFC;
+        margin-bottom: 12px;
+    }}
+
+    div[data-testid="stExpander"] {{
+        background: {active_theme['card_bg']} !important;
+        border: 1.5px solid {active_theme['border']} !important;
         border-radius: 12px !important;
-        box-shadow: 0 0 18px rgba(37, 99, 235, 0.3), 0 8px 24px rgba(0, 0, 0, 0.5) !important;
+        box-shadow: 0 0 18px {active_theme['glow']}, 0 8px 24px rgba(0, 0, 0, 0.5) !important;
         margin-bottom: 12px !important;
-    }
+    }}
 
-    div[data-testid="stRadio"] {
-        background: rgba(15, 23, 42, 0.8) !important;
+    div[data-testid="stRadio"] {{
+        background: {active_theme['card_bg']} !important;
         border: 1px solid rgba(255, 255, 255, 0.1) !important;
-        padding: 5px 8px !important;
-        border-radius: 35px !important;
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45) !important;
-        margin: 0 auto 14px auto !important;
-        width: 100% !important;
-    }
-    div[data-testid="stRadio"] > label {display: none !important;}
-    div[data-testid="stRadio"] > div {
-        display: flex !important;
-        flex-direction: row !important;
-        justify-content: space-between !important;
-        align-items: center !important;
-        flex-wrap: wrap !important;
-        gap: 4px !important;
-    }
-    div[data-testid="stRadio"] label {
-        background: transparent !important;
+        padding: 6px 12px !important;
         border-radius: 20px !important;
-        padding: 5px 12px !important;
-        font-size: 12px !important;
-        font-weight: 600 !important;
-        color: #94A3B8 !important;
-        margin: 0 !important;
-        transition: all 0.2s ease !important;
-    }
-    div[data-testid="stRadio"] label:hover {
-        background: rgba(255, 255, 255, 0.08) !important;
-        color: #FFFFFF !important;
-    }
-    div[data-testid="stRadio"] div[role="radiogroup"] > label > div:first-child {
-        display: none !important;
-    }
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3) !important;
+        margin-bottom: 8px !important;
+    }}
 
-    .stButton>button {
-        background: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%) !important;
+    .stButton>button {{
+        background: linear-gradient(135deg, {active_theme['accent_dark']} 0%, {active_theme['grad_top']} 100%) !important;
         color: #FFFFFF !important;
-        border: 1px solid rgba(255, 255, 255, 0.15) !important;
+        border: 1px solid {active_theme['accent']} !important;
         border-radius: 8px !important;
-        padding: 5px 14px !important;
+        padding: 6px 16px !important;
         font-weight: 600 !important;
-        font-size: 12.5px !important;
-        transition: all 0.2s ease !important;
-        box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35) !important;
-    }
-    .stButton>button:hover {
+        font-size: 13px !important;
+        transition: all 0.3s ease !important;
+        box-shadow: 0 4px 14px {active_theme['glow']} !important;
+    }}
+    .stButton>button:hover {{
         transform: translateY(-1px);
-        box-shadow: 0 6px 20px rgba(37, 99, 235, 0.5) !important;
-    }
+        box-shadow: 0 6px 20px {active_theme['glow']} !important;
+    }}
 
-    .register-outer-center {
+    .register-outer-center {{
         display: flex;
         justify-content: center;
         align-items: center;
         width: 100%;
         margin-top: 6px;
         margin-bottom: 12px;
-    }
+    }}
 
-    .real-notebook-sheet {
+    .real-notebook-sheet {{
         background-color: #fbfbf8 !important;
         background-image: 
             linear-gradient(90deg, transparent 36px, #ef4444 36px, #ef4444 37.5px, transparent 37.5px),
@@ -409,9 +487,9 @@ CUSTOM_APP_CSS = """
         line-height: 22px !important;
         position: relative !important;
         overflow: hidden !important;
-    }
+    }}
 
-    .real-notebook-sheet::before {
+    .real-notebook-sheet::before {{
         content: '' !important;
         position: absolute !important;
         top: 10px !important;
@@ -421,9 +499,9 @@ CUSTOM_APP_CSS = """
         background-image: radial-gradient(circle, #94a3b8 3px, transparent 4px) !important;
         background-size: 10px 22px !important;
         background-repeat: repeat-y !important;
-    }
+    }}
 
-    .nb-title-h1 {
+    .nb-title-h1 {{
         font-family: 'Kalam', cursive !important;
         font-size: 18px !important;
         font-weight: 700 !important;
@@ -435,24 +513,24 @@ CUSTOM_APP_CSS = """
         border-bottom: 2px dashed #ec4899 !important;
         margin-bottom: 3px !important;
         line-height: 23px !important;
-    }
+    }}
 
-    .nb-subhead {
+    .nb-subhead {{
         font-weight: 700 !important;
         color: #0369a1 !important;
         font-size: 14.5px !important;
         text-decoration: underline !important;
         margin-top: 4px !important;
         display: block !important;
-    }
+    }}
 
-    .table-container {
+    .table-container {{
         width: 100% !important;
         overflow-x: auto !important;
         margin: 4px 0 !important;
         box-sizing: border-box !important;
-    }
-    .nb-table {
+    }}
+    .nb-table {{
         border-collapse: collapse !important;
         font-family: 'Patrick Hand', cursive !important;
         font-size: 13.5px !important;
@@ -462,20 +540,20 @@ CUSTOM_APP_CSS = """
         width: 100% !important;
         max-width: 100% !important;
         box-sizing: border-box !important;
-    }
-    .nb-table th, .nb-table td {
+    }}
+    .nb-table th, .nb-table td {{
         border: 1px solid #1e3a8a !important;
         padding: 3px 5px !important;
         text-align: center !important;
         word-break: break-word !important;
-    }
-    .nb-table th {
+    }}
+    .nb-table th {{
         background: #e0f2fe !important;
         color: #0369a1 !important;
         font-weight: 700 !important;
-    }
+    }}
 
-    .nb-keypoints-box {
+    .nb-keypoints-box {{
         border: 1.5px dashed #16a34a !important;
         background: #f0fdf4 !important;
         border-radius: 8px !important;
@@ -484,10 +562,10 @@ CUSTOM_APP_CSS = """
         color: #14532d !important;
         font-size: 13px !important;
         line-height: 19px !important;
-    }
+    }}
 </style>
 """
-st.markdown(CUSTOM_APP_CSS, unsafe_allow_html=True)
+st.markdown(DYNAMIC_THEME_CSS, unsafe_allow_html=True)
 
 # ================= UNIVERSAL AI ENGINE =================
 groq_key = st.secrets.get("GROQ_API_KEY", None)
@@ -543,7 +621,7 @@ def execute_ai_query(system_role, user_prompt, max_budget=4096, image_input=None
                         {"role": "system", "content": system_role},
                         {"role": "user", "content": user_prompt}
                     ],
-                    temperature=0.25,
+                    temperature=0.2,
                     max_tokens=max_budget
                 )
                 return completion.choices[0].message.content.strip()
@@ -579,7 +657,6 @@ def fix_unclosed_html(html_str):
     close_divs = html_str.count("</div>")
     if open_divs > close_divs:
         html_str += "</div>" * (open_divs - close_divs)
-        
     if "<table" in html_str and "</table" not in html_str:
         html_str += "</table>"
     if "<p" in html_str and "</p" not in html_str:
@@ -587,9 +664,7 @@ def fix_unclosed_html(html_str):
     return html_str
 
 def generate_multi_sheets_html(topic, subject_name, course_name, notes_lang):
-    # Dynamic Token calculation based on topic depth
     token_budget = 4096 if len(topic) < 30 else 5500
-
     last_ai_ctx = st.session_state.ai_memory.get(course_name, {}).get("last_summary", "No previous context.")
 
     system_role = (
@@ -599,8 +674,8 @@ def generate_multi_sheets_html(topic, subject_name, course_name, notes_lang):
         "Output EXACTLY 3 TO 4 INDIVIDUAL COMPLETE LECTURE SHEETS separated strictly by the token '===SHEET_SPLIT==='. "
         "Every single sheet MUST be 100% complete with all 4 sections fully finished: "
         "1. Definition & Core Concept, "
-        "2. Truth Table / Formulation / Comparison Matrix (complete all rows), "
-        "3. Step-by-Step Working / Derivation / Logic Flow, "
+        "2. Truth Table / Formulation / Comparison Matrix, "
+        "3. Step-by-Step Working / Derivation, "
         "4. Key Exam Points / Formulas / Shortcuts. "
         "DO NOT USE CODE BLOCKS OR MARKDOWN TICKS. Start directly with <div class='register-outer-center'>."
     )
@@ -649,7 +724,6 @@ def generate_multi_sheets_html(topic, subject_name, course_name, notes_lang):
         fixed = fix_unclosed_html(s)
         sanitized_sheets.append(fixed)
         
-    # Update AI Memory for this course
     if course_name not in st.session_state.ai_memory:
         st.session_state.ai_memory[course_name] = {}
     st.session_state.ai_memory[course_name]["last_topic"] = topic
@@ -658,24 +732,65 @@ def generate_multi_sheets_html(topic, subject_name, course_name, notes_lang):
     
     return sanitized_sheets if sanitized_sheets else [clean_text]
 
+# ================= STRUCTURED EXAM / PYQ GENERATOR =================
+def generate_interactive_paper(exam_topic, course_name, subject_name, is_pyq=False, pyq_year=""):
+    context_type = f"Authentic Previous Year Exam Paper ({pyq_year})" if is_pyq else "Standard National Examination Test"
+    sys_prompt = (
+        "You are the Chief Examination Controller and Question Paper Setter for " + course_name + ". "
+        "Strictly output EXACTLY 5 high-yield multiple choice questions as a valid JSON array. "
+        "DO NOT output Markdown tables or HTML tables. Output ONLY raw JSON array. "
+        "JSON Schema for each object in the array:\n"
+        "{\n"
+        '  "q_no": 1,\n'
+        '  "year_tag": "NEET 2023" or "Expected Mock",\n'
+        '  "question": "Clear scientific question text here",\n'
+        '  "options": ["A. Option text", "B. Option text", "C. Option text", "D. Option text"],\n'
+        '  "correct_option": "A. Option text",\n'
+        '  "explanation": "Clear step-by-step logic and concept justification"\n'
+        "}"
+    )
+    user_prompt = f"Create 5 high-standard MCQs for '{exam_topic}' in {subject_name} under {course_name}. {context_type}."
+    
+    raw_json = execute_ai_query(sys_prompt, user_prompt, max_budget=3500)
+    raw_json = re.sub(r"^```json\s*", "", raw_json, flags=re.IGNORECASE)
+    raw_json = re.sub(r"^```\s*", "", raw_json)
+    raw_json = re.sub(r"\s*```$", "", raw_json).strip()
+
+    try:
+        data = json.loads(raw_json)
+        if isinstance(data, list) and len(data) > 0:
+            return data
+    except Exception:
+        pass
+
+    # Safe fallback if AI wraps json awkwardly
+    match = re.search(r'\[\s*\{.*\}\s*\]', raw_json, re.DOTALL)
+    if match:
+        try:
+            return json.loads(match.group(0))
+        except Exception:
+            pass
+
+    return []
+
 # ================= 0. INTRO SCREEN =================
 if not st.session_state.system_booted:
-    st.markdown("""
+    st.markdown(f"""
     <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:70vh; text-align:center;">
-        <div style="display:inline-flex; align-items:center; gap:8px; background:rgba(37,99,235,0.12); border:1px solid #3B82F6; padding:6px 20px; border-radius:30px; font-size:13px; font-weight:700; color:#60A5FA; margin-bottom:14px;">
+        <div style="display:inline-flex; align-items:center; gap:8px; background:rgba(255,255,255,0.06); border:1px solid {active_theme['accent']}; padding:6px 20px; border-radius:30px; font-size:13px; font-weight:700; color:{active_theme['accent']}; margin-bottom:14px; box-shadow:0 0 16px {active_theme['glow']};">
             🎓 UNIVERSAL ACADEMIC & ENTRANCE SUITE
         </div>
         <div style="font-size:32px; font-weight:800; color:#F8FAFC; letter-spacing:-0.5px; margin-bottom:6px;">
             Created & Designed by Harsh Raj Soni
         </div>
         <div style="font-size:14px; color:#94A3B8; margin-bottom:24px;">
-            Multi-Course Architecture: BCA • NEET • JEE • UPSC | MLK PG College, Balrampur
+            NEET • JEE • BCA • UPSC | MLK PG College, Balrampur
         </div>
-        <div style="background:#0F172A; border:1px solid rgba(255,255,255,0.1); border-left:4px solid #3B82F6; border-radius:10px; padding:16px 22px; max-width:560px; width:100%; text-align:left; font-size:13px; color:#CBD5E1; line-height:1.6; margin-bottom:24px;">
-            <div style="color:#60A5FA; font-weight:700; margin-bottom:4px;">Platform Capabilities:</div>
-            <div>• Persistent Session Memory (Remembers last course & study progress)</div>
-            <div>• Multi-Stream Dynamic Notes Engine with Ruled Paper Register</div>
-            <div>• Background Keep-Alive Anti-Sleep Engine Enabled</div>
+        <div style="background:{active_theme['card_bg']}; border:1px solid rgba(255,255,255,0.1); border-left:4px solid {active_theme['accent']}; border-radius:10px; padding:16px 22px; max-width:560px; width:100%; text-align:left; font-size:13px; color:#CBD5E1; line-height:1.6; margin-bottom:24px;">
+            <div style="color:{active_theme['accent']}; font-weight:700; margin-bottom:4px;">New Capabilities:</div>
+            <div>• 📚 Authentic Year-wise PYQ Papers with OMR Simulator</div>
+            <div>• Clean Question Cards with Radio/Checkbox Option Selectors</div>
+            <div>• Instant Auto-Evaluation with Marks & Explanation</div>
         </div>
     </div>
     """, unsafe_allow_html=True)
@@ -688,14 +803,14 @@ if not st.session_state.system_booted:
 
 else:
     # Top Executive Bar
-    st.markdown("""
+    st.markdown(f"""
     <div class="formal-top-banner">
         <div>
             <div style="font-size: 18px; font-weight: 700; color: #F8FAFC;">
                 Universal Academic & Competitive Portal
             </div>
             <div style="font-size: 12px; color: #94A3B8;">
-                Persistent Memory & Dynamic Syllabus Architecture
+                Dynamic Stream Atmosphere • Interactive OMR Test Engine
             </div>
         </div>
         <div class="formal-author-pill">
@@ -714,9 +829,9 @@ else:
             unsafe_allow_html=True
         )
 
-    # ================= 1. DYNAMIC COURSE SELECTOR TILE =================
+    # ================= COURSE SWITCHER =================
     curr_course = st.session_state.current_course
-    with st.expander("🎓 Active Course: " + curr_course + " (Tap to Switch Stream)", expanded=False):
+    with st.expander("🎓 Active Stream: " + curr_course + " (Tap to Switch)", expanded=False):
         c_list = list(COURSE_DATABASE.keys())
         cols = st.columns(len(c_list))
         for idx, crs in enumerate(c_list):
@@ -728,12 +843,14 @@ else:
                     st.session_state.current_topic = ""
                     st.session_state.generated_gallery_sheets = []
                     st.session_state.active_sheet_index = None
+                    st.session_state.active_exam_questions = []
+                    st.session_state.exam_submitted = False
                     save_user_memory()
                     st.rerun()
 
     active_course_data = COURSE_DATABASE[st.session_state.current_course]
 
-    # Subject Selector for the active course
+    # Subject Selector
     available_subjects = list(active_course_data["subjects"].keys())
     if st.session_state.current_subject not in available_subjects:
         st.session_state.current_subject = available_subjects[0]
@@ -748,6 +865,8 @@ else:
                     st.session_state.current_topic = ""
                     st.session_state.generated_gallery_sheets = []
                     st.session_state.active_sheet_index = None
+                    st.session_state.active_exam_questions = []
+                    st.session_state.exam_submitted = False
                     save_user_memory()
                     st.rerun()
 
@@ -755,11 +874,12 @@ else:
     active_subj = st.session_state.current_subject
     subject_details = active_course_data["subjects"][active_subj]
 
-    # Navigation Dock
+    # Navigation Dock (Added PYQs Option)
     nav_options = [
         "📝 Notes Gallery",
+        "🎯 Mock Exam",
+        "📚 PYQs Vault",
         "📖 Syllabus",
-        "🎯 Exam Simulator",
         "🔬 Formula & Lab",
         "🤖 AI Mentor"
     ]
@@ -773,7 +893,7 @@ else:
         index=0
     )
 
-    # ================= SECTION 1: NOTES GALLERY (DYNAMIC & CUSTOM TOPICS) =================
+    # ================= SECTION 1: NOTES GALLERY =================
     if selected_nav == "📝 Notes Gallery":
         st.markdown("#### 📖 Lecture Notes Register Gallery — " + active_subj)
         st.caption("Classmate ruled paper layout with tables, formulas, and key points in a mobile gallery grid.")
@@ -798,16 +918,13 @@ else:
                     final_topic, active_subj, active_course, notes_lang
                 )
 
-        # GALLERY & ZOOM VIEW
         if st.session_state.generated_gallery_sheets:
             sheets = st.session_state.generated_gallery_sheets
             total_sheets = len(sheets)
 
-            # FULL ZOOM SHEET VIEW
             if st.session_state.active_sheet_index is not None:
                 cur_i = st.session_state.active_sheet_index
                 st.markdown("##### 🔍 Viewing Sheet " + str(cur_i + 1) + " of " + str(total_sheets))
-
                 st.html(sheets[cur_i])
 
                 nav_c1, nav_c2, nav_c3 = st.columns([1.5, 2, 1.5])
@@ -823,27 +940,200 @@ else:
                     if st.button("Next Sheet ›", disabled=(cur_i == total_sheets - 1), use_container_width=True):
                         st.session_state.active_sheet_index = min(total_sheets - 1, cur_i + 1)
                         st.rerun()
-
-            # GALLERY GRID CARDS
             else:
                 st.markdown("##### 📸 Register Sheets Gallery (" + str(total_sheets) + " Sheets)")
                 st.caption("Kisi bhi sheet par tap karein full-size padhne ke liye:")
-
                 grid_cols = st.columns(3)
                 for idx, sheet_code in enumerate(sheets):
                     with grid_cols[idx % 3]:
                         if st.button("📄 Sheet " + str(idx + 1) + " (Tap to Open)", key="sheet_btn_" + str(idx), use_container_width=True):
                             st.session_state.active_sheet_index = idx
                             st.rerun()
-                        card_thumb = """
-                        <div style="border:1.5px solid #3B82F6; border-radius:8px; padding:10px; background:rgba(30,41,59,0.7); text-align:center; margin-bottom:12px;">
-                            <span style="font-size:13.5px; color:#60A5FA; font-weight:700;">Sheet #""" + str(idx + 1) + """</span><br>
+                        card_thumb = f"""
+                        <div style="border:1.5px solid {active_theme['accent']}; border-radius:8px; padding:10px; background:{active_theme['card_bg']}; text-align:center; margin-bottom:12px; box-shadow:0 0 10px {active_theme['glow']};">
+                            <span style="font-size:13.5px; color:{active_theme['accent']}; font-weight:700;">Sheet #{idx + 1}</span><br>
                             <span style="font-size:11px; color:#94A3B8;">Ruled Lecture Register</span>
                         </div>
                         """
                         st.markdown(card_thumb, unsafe_allow_html=True)
 
-    # ================= SECTION 2: SYLLABUS BREAKDOWN =================
+    # ================= SECTION 2: PROPER MOCK EXAM (INTERACTIVE OPTIONS) =================
+    elif selected_nav == "🎯 Mock Exam":
+        st.markdown(f"#### 🎯 Competitive Exam Paper — {active_course}")
+        st.caption("Clean Question Paper Layout with Interactive Option Selector & Instant OMR Evaluation.")
+
+        c1, c2 = st.columns([2.5, 1])
+        with c1:
+            exam_topic = st.text_input("Scope / Chapter for Test:", value=st.session_state.current_topic if st.session_state.current_topic else active_subj)
+        with c2:
+            paper_diff = st.selectbox("Exam Standard:", ["Entrance Standard (Moderate-High)", "Challenging (Top Rankers)"])
+
+        if st.button("Generate Question Paper", use_container_width=True):
+            with st.spinner("Generating clean MCQ examination paper..."):
+                st.session_state.active_exam_questions = generate_interactive_paper(
+                    exam_topic, active_course, active_subj, is_pyq=False
+                )
+                st.session_state.exam_submitted = False
+                st.rerun()
+
+        # Render Question Paper
+        if st.session_state.active_exam_questions:
+            q_list = st.session_state.active_exam_questions
+            st.markdown("---")
+            st.markdown(f"### 📋 SECTION-A : Multiple Choice Questions (+4, -1 Scheme)")
+
+            user_answers = {}
+
+            for idx, q_data in enumerate(q_list):
+                q_num = idx + 1
+                st.markdown(f"""
+                <div class="question-card">
+                    <div class="question-header">
+                        <span class="q-number-tag">Question {q_num}</span>
+                        <span class="q-marks-tag">Marks: +4 / -1</span>
+                    </div>
+                    <div class="q-text">{q_data.get('question', '')}</div>
+                </div>
+                """, unsafe_allow_html=True)
+
+                opts = q_data.get("options", [])
+                user_answers[idx] = st.radio(
+                    f"Select Answer for Q.{q_num}:",
+                    options=opts,
+                    key=f"mock_q_{idx}",
+                    index=None
+                )
+
+                if st.session_state.exam_submitted:
+                    correct = q_data.get("correct_option", "")
+                    selected = user_answers.get(idx)
+
+                    if selected == correct:
+                        st.success(f"✔ **Correct!** Answer: {correct}")
+                    else:
+                        st.error(f"✖ **Incorrect / Skipped.** Correct: {correct} (You chose: {selected if selected else 'None'})")
+
+                    with st.expander(f"💡 View Explanation for Q.{q_num}", expanded=True):
+                        st.write(q_data.get("explanation", "Standard conceptual derivation applies."))
+                
+                st.write("")
+
+            col_sub1, col_sub2 = st.columns([2, 1])
+            with col_sub1:
+                if st.button("📝 Submit Test & Check Scorecard", type="primary", use_container_width=True):
+                    st.session_state.exam_submitted = True
+                    st.rerun()
+
+            if st.session_state.exam_submitted:
+                total_q = len(q_list)
+                correct_cnt = sum(1 for idx, q in enumerate(q_list) if user_answers.get(idx) == q.get("correct_option"))
+                wrong_cnt = sum(1 for idx, q in enumerate(q_list) if user_answers.get(idx) and user_answers.get(idx) != q.get("correct_option"))
+                unattempted = total_q - (correct_cnt + wrong_cnt)
+                total_marks = (correct_cnt * 4) - (wrong_cnt * 1)
+                max_marks = total_q * 4
+
+                st.markdown(f"""
+                <div style="background:{active_theme['card_bg']}; border:2px solid {active_theme['accent']}; border-radius:12px; padding:18px 24px; text-align:center; margin-top:20px; box-shadow:0 0 20px {active_theme['glow']};">
+                    <h3 style="color:{active_theme['accent']}; margin-bottom:6px;">📊 Test Result & Performance Summary</h3>
+                    <div style="font-size:24px; font-weight:800; color:#F8FAFC; margin-bottom:12px;">Score: {total_marks} / {max_marks}</div>
+                    <div style="display:flex; justify-content:center; gap:20px; font-size:13px; color:#CBD5E1;">
+                        <span>✔ Correct: <b style="color:#34D399;">{correct_cnt}</b></span>
+                        <span>✖ Wrong: <b style="color:#EF4444;">{wrong_cnt}</b></span>
+                        <span>⚪ Unattempted: <b style="color:#94A3B8;">{unattempted}</b></span>
+                    </div>
+                </div>
+                """, unsafe_allow_html=True)
+
+    # ================= SECTION 3: AUTHENTIC PYQS VAULT =================
+    elif selected_nav == "📚 PYQs Vault":
+        st.markdown(f"#### 📚 Previous Years Questions (PYQs) — {active_course}")
+        st.caption("Real official exam questions sorted by past examination years.")
+
+        pyqs_list = subject_details.get("pyqs_years", ["Past 5 Years Comprehensive"])
+        
+        c1, c2 = st.columns([2, 1])
+        with c1:
+            chosen_year = st.selectbox("Select Exam Year / Series:", pyqs_list)
+            pyq_topic = st.text_input("Filter by Topic (Optional):", placeholder="e.g. Action Potential / Thermodynamics")
+        with c2:
+            st.info(f"Targeting: **{active_subj}**")
+
+        target_topic = pyq_topic.strip() if pyq_topic.strip() else active_subj
+
+        if st.button("Load Official PYQs Paper", use_container_width=True):
+            with st.spinner(f"Extracting official questions from {chosen_year}..."):
+                st.session_state.active_exam_questions = generate_interactive_paper(
+                    target_topic, active_course, active_subj, is_pyq=True, pyq_year=chosen_year
+                )
+                st.session_state.exam_submitted = False
+                st.rerun()
+
+        # Render PYQ Question Paper
+        if st.session_state.active_exam_questions:
+            q_list = st.session_state.active_exam_questions
+            st.markdown("---")
+            st.markdown(f"### 🏛️ {chosen_year} Official Question Paper — {active_subj}")
+
+            user_pyq_answers = {}
+
+            for idx, q_data in enumerate(q_list):
+                q_num = idx + 1
+                st.markdown(f"""
+                <div class="question-card">
+                    <div class="question-header">
+                        <span class="q-number-tag">Q.{q_num} • {q_data.get('year_tag', chosen_year)}</span>
+                        <span class="q-marks-tag">+4 for Correct | -1 for Wrong</span>
+                    </div>
+                    <div class="q-text">{q_data.get('question', '')}</div>
+                </div>
+                """, unsafe_allow_html=True)
+
+                opts = q_data.get("options", [])
+                user_pyq_answers[idx] = st.radio(
+                    f"Your Answer for PYQ #{q_num}:",
+                    options=opts,
+                    key=f"pyq_q_{idx}",
+                    index=None
+                )
+
+                if st.session_state.exam_submitted:
+                    correct = q_data.get("correct_option", "")
+                    selected = user_pyq_answers.get(idx)
+
+                    if selected == correct:
+                        st.success(f"✔ **Correct!** Answer: {correct}")
+                    else:
+                        st.error(f"✖ **Incorrect / Skipped.** Official Key: {correct} (You chose: {selected if selected else 'None'})")
+
+                    with st.expander(f"💡 View Official Solution & Concept Note #{q_num}", expanded=True):
+                        st.write(q_data.get("explanation", "Official solution applies standard syllabus rationale."))
+                
+                st.write("")
+
+            if st.button("📝 Submit PYQ Sheet & Evaluate", type="primary", use_container_width=True):
+                st.session_state.exam_submitted = True
+                st.rerun()
+
+            if st.session_state.exam_submitted:
+                total_q = len(q_list)
+                correct_cnt = sum(1 for idx, q in enumerate(q_list) if user_pyq_answers.get(idx) == q.get("correct_option"))
+                wrong_cnt = sum(1 for idx, q in enumerate(q_list) if user_pyq_answers.get(idx) and user_pyq_answers.get(idx) != q.get("correct_option"))
+                total_marks = (correct_cnt * 4) - (wrong_cnt * 1)
+                max_marks = total_q * 4
+
+                st.markdown(f"""
+                <div style="background:{active_theme['card_bg']}; border:2px solid {active_theme['accent']}; border-radius:12px; padding:18px 24px; text-align:center; margin-top:20px; box-shadow:0 0 20px {active_theme['glow']};">
+                    <h3 style="color:{active_theme['accent']}; margin-bottom:6px;">📊 PYQ Mock Assessment</h3>
+                    <div style="font-size:24px; font-weight:800; color:#F8FAFC; margin-bottom:12px;">Score: {total_marks} / {max_marks}</div>
+                    <div style="display:flex; justify-content:center; gap:20px; font-size:13px; color:#CBD5E1;">
+                        <span>✔ Correct: <b style="color:#34D399;">{correct_cnt}</b></span>
+                        <span>✖ Negative: <b style="color:#EF4444;">{wrong_cnt}</b></span>
+                        <span>🎯 Accuracy: <b>{int((correct_cnt/total_q)*100) if total_q else 0}%</b></span>
+                    </div>
+                </div>
+                """, unsafe_allow_html=True)
+
+    # ================= SECTION 4: SYLLABUS BREAKDOWN =================
     elif selected_nav == "📖 Syllabus":
         st.markdown("#### 📚 Curriculum Breakdown — " + active_course)
         st.info("Current Subject: **" + active_subj + "**")
@@ -854,46 +1144,9 @@ else:
                 st.markdown("**" + s_k + "**")
                 st.caption(s_v.get("units", ""))
 
-    # ================= SECTION 3: EXAM SIMULATOR =================
-    elif selected_nav == "🎯 Exam Simulator":
-        st.markdown("#### 🎯 Competitive Exam Simulator — " + active_course)
-        c1, c2 = st.columns([2, 1])
-        with c1:
-            exam_topic = st.text_input("Target Topic Scope:", placeholder="e.g. Thermodynamics / Full Subject Test")
-        with c2:
-            exam_lang = st.selectbox("Exam Language:", ["English", "Hinglish", "Hindi"])
-
-        if st.button("Generate Exam Paper", use_container_width=True):
-            sys_prompt = "You are a senior national test paper setter for " + active_course + ". Create a high-standard mock test with step marks."
-            top_val = exam_topic if exam_topic else active_subj
-            st.session_state.ex_res = execute_ai_query(
-                sys_prompt,
-                "Create a high-standard entrance mock test on '" + top_val + "' in " + exam_lang + "."
-            )
-
-        if "ex_res" in st.session_state:
-            st.markdown(st.session_state.ex_res)
-
-            user_sol = st.text_area("Your Solution / Working:", height=100)
-            uploaded_paper = st.file_uploader("Upload Solution Photo (Optional):", type=["png", "jpg", "jpeg"])
-            pil_p = Image.open(uploaded_paper) if uploaded_paper else None
-
-            if st.button("Evaluate Paper", use_container_width=True):
-                if not user_sol.strip() and not pil_p:
-                    st.warning("Please type solution or upload photo.")
-                else:
-                    with st.spinner("Grading answer sheet..."):
-                        scorecard = execute_ai_query(
-                            "You are a strict national examiner for " + active_course + ". Grade with marks breakdown and correct working.",
-                            user_sol,
-                            image_input=pil_p
-                        )
-                        st.info(scorecard)
-
-    # ================= SECTION 4: FORMULA & BLUEPRINTS =================
+    # ================= SECTION 5: FORMULA & BLUEPRINTS =================
     elif selected_nav == "🔬 Formula & Lab":
         st.markdown("#### 🔬 Formula & Concepts Compendium — " + active_subj)
-        
         with st.expander("⚡ Core Formulation & Important Matrix"):
             if "Math" in active_subj:
                 st.latex(r"\frac{d}{dx}\left(\frac{u}{v}\right) = \frac{v u' - u v'}{v^2}")
@@ -907,10 +1160,9 @@ else:
             else:
                 st.latex(r"Sum = A \oplus B \oplus C_{in}, \quad Carry = AB + C_{in}(A \oplus B)")
 
-    # ================= SECTION 5: AI MENTOR (PERSISTENT MEMORY) =================
+    # ================= SECTION 6: AI MENTOR =================
     elif selected_nav == "🤖 AI Mentor":
         st.markdown("#### 🤖 1-on-1 AI Faculty Mentor — " + active_course)
-        
         past_ctx = st.session_state.ai_memory.get(active_course, {}).get("last_summary", "Starting fresh discussion.")
         st.caption("AI Memory Context: *" + past_ctx + "*")
 
@@ -936,7 +1188,7 @@ else:
             else:
                 st.warning("Please type a question or upload image.")
 
-    # ================= SECTION 6: COLAB SANDBOX (PYTHON) =================
+    # ================= SECTION 7: COLAB SANDBOX (PYTHON) =================
     elif selected_nav == "💻 Sandbox" and "Python" in active_subj:
         st.markdown("#### 💻 Colab Notebook // Python Only")
 
