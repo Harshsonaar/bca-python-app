@@ -100,6 +100,9 @@ if "exam_user_answers" not in st.session_state:
 if "exam_submitted" not in st.session_state:
     st.session_state.exam_submitted = False
 
+if "mock_page" not in st.session_state:
+    st.session_state.mock_page = 0
+
 if "dpp_questions" not in st.session_state:
     st.session_state.dpp_questions = []
 
@@ -120,6 +123,9 @@ if "pyq_user_answers" not in st.session_state:
 
 if "pyq_submitted" not in st.session_state:
     st.session_state.pyq_submitted = False
+
+if "pyq_page" not in st.session_state:
+    st.session_state.pyq_page = 0
 
 if "notebook_cells" not in st.session_state:
     st.session_state.notebook_cells = [
@@ -681,7 +687,7 @@ COURSE_DATABASE = {
     }
 }
 
-# ================= DYNAMIC EYE-FRIENDLY & RULED REGISTER CSS =================
+# ================= DYNAMIC EYE-FRIENDLY & COMPACT REGISTER CSS =================
 DYNAMIC_THEME_CSS = f"""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Kalam:wght@400;700&family=Patrick+Hand&display=swap');
@@ -716,18 +722,18 @@ DYNAMIC_THEME_CSS = f"""
     }}
 
     .block-container {{
-        padding-top: 0.6rem !important;
-        padding-bottom: 5rem !important;
-        max-width: 1080px !important;
+        padding-top: 0.5rem !important;
+        padding-bottom: 2.5rem !important;
+        max-width: 1050px !important;
     }}
 
     .formal-top-banner {{
         background: {active_theme['card_bg']};
         border: 1px solid rgba(255, 255, 255, 0.12);
         border-radius: 14px;
-        padding: 12px 20px;
+        padding: 10px 18px;
         backdrop-filter: blur(20px);
-        margin-bottom: 10px;
+        margin-bottom: 8px;
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -739,7 +745,7 @@ DYNAMIC_THEME_CSS = f"""
         gap: 6px;
         background: rgba(255, 255, 255, 0.06);
         border: 1px solid {active_theme['accent']};
-        padding: 5px 14px;
+        padding: 4px 12px;
         border-radius: 20px;
         font-size: 11.5px;
         font-weight: 700;
@@ -751,12 +757,12 @@ DYNAMIC_THEME_CSS = f"""
         background: {active_theme['card_bg']};
         border: 1px dashed {active_theme['accent']};
         border-radius: 10px;
-        padding: 8px 16px;
-        margin-bottom: 12px;
+        padding: 6px 14px;
+        margin-bottom: 10px;
         display: flex;
         align-items: center;
         justify-content: space-between;
-        font-size: 12.5px;
+        font-size: 12px;
         color: {active_theme['accent']};
     }}
 
@@ -764,39 +770,39 @@ DYNAMIC_THEME_CSS = f"""
         background: {active_theme['card_bg']};
         border: 1.5px solid rgba(255, 255, 255, 0.1);
         border-left: 4.5px solid {active_theme['accent']};
-        border-radius: 12px;
-        padding: 14px 18px;
-        margin-bottom: 8px;
-        box-shadow: 0 4px 18px rgba(0,0,0,0.3);
+        border-radius: 10px;
+        padding: 10px 14px;
+        margin-bottom: 6px;
+        box-shadow: 0 4px 14px rgba(0,0,0,0.3);
     }}
     .question-header {{
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 8px;
+        margin-bottom: 6px;
         border-bottom: 1px solid rgba(255,255,255,0.08);
-        padding-bottom: 6px;
+        padding-bottom: 4px;
     }}
     .q-number-tag {{
         background: {active_theme['glow']};
         border: 1px solid {active_theme['accent']};
         color: {active_theme['accent']};
-        font-size: 12px;
+        font-size: 11.5px;
         font-weight: 700;
-        padding: 2px 10px;
-        border-radius: 14px;
+        padding: 1px 9px;
+        border-radius: 12px;
     }}
     .q-marks-tag {{
-        font-size: 11px;
+        font-size: 10.5px;
         color: #94A3B8;
         font-family: 'JetBrains Mono', monospace;
     }}
     .q-text {{
-        font-size: 15px;
+        font-size: 14.5px;
         font-weight: 600;
-        line-height: 1.55;
+        line-height: 1.45;
         color: #F8FAFC;
-        margin-bottom: 4px;
+        margin-bottom: 2px;
     }}
 
     .inapp-paper-booklet {{
@@ -804,38 +810,38 @@ DYNAMIC_THEME_CSS = f"""
         color: #1E293B;
         border: 2px solid {active_theme['accent']};
         border-radius: 12px;
-        padding: 24px 28px;
-        margin: 14px 0;
-        box-shadow: 0 12px 32px rgba(0,0,0,0.5);
+        padding: 18px 22px;
+        margin: 10px 0;
+        box-shadow: 0 10px 26px rgba(0,0,0,0.5);
         font-family: 'Plus Jakarta Sans', serif;
     }}
     .booklet-header {{
         text-align: center;
         border-bottom: 2px double #334155;
-        padding-bottom: 12px;
-        margin-bottom: 18px;
+        padding-bottom: 10px;
+        margin-bottom: 14px;
     }}
     .booklet-q-item {{
         border-bottom: 1px dashed #CBD5E1;
-        padding: 12px 0;
+        padding: 10px 0;
         color: #0F172A;
     }}
 
     div[data-testid="stExpander"] {{
         background: {active_theme['card_bg']} !important;
         border: 1.5px solid {active_theme['border']} !important;
-        border-radius: 12px !important;
-        box-shadow: 0 0 18px {active_theme['glow']}, 0 8px 24px rgba(0, 0, 0, 0.5) !important;
-        margin-bottom: 12px !important;
+        border-radius: 10px !important;
+        box-shadow: 0 0 14px {active_theme['glow']}, 0 6px 18px rgba(0, 0, 0, 0.4) !important;
+        margin-bottom: 8px !important;
     }}
 
     div[data-testid="stRadio"] {{
         background: {active_theme['card_bg']} !important;
         border: 1px solid rgba(255, 255, 255, 0.1) !important;
-        padding: 6px 12px !important;
-        border-radius: 14px !important;
-        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25) !important;
-        margin-bottom: 12px !important;
+        padding: 5px 10px !important;
+        border-radius: 12px !important;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25) !important;
+        margin-bottom: 8px !important;
     }}
 
     .stButton>button {{
@@ -843,15 +849,15 @@ DYNAMIC_THEME_CSS = f"""
         color: #FFFFFF !important;
         border: 1px solid {active_theme['accent']} !important;
         border-radius: 8px !important;
-        padding: 6px 16px !important;
+        padding: 5px 14px !important;
         font-weight: 600 !important;
-        font-size: 13px !important;
+        font-size: 12.5px !important;
         transition: all 0.3s ease !important;
-        box-shadow: 0 4px 14px {active_theme['glow']} !important;
+        box-shadow: 0 4px 12px {active_theme['glow']} !important;
     }}
     .stButton>button:hover {{
         transform: translateY(-1px);
-        box-shadow: 0 6px 20px {active_theme['glow']} !important;
+        box-shadow: 0 6px 18px {active_theme['glow']} !important;
     }}
 
     .register-outer-center {{
@@ -859,77 +865,79 @@ DYNAMIC_THEME_CSS = f"""
         justify-content: center;
         align-items: center;
         width: 100%;
-        margin-top: 6px;
-        margin-bottom: 12px;
+        margin-top: 4px;
+        margin-bottom: 8px;
     }}
 
+    /* Compact Single-Page Ruled Sheet (Fits cleanly on 1 screen) */
     .real-notebook-sheet {{
         background-color: #fbfbf8 !important;
         background-image: 
-            linear-gradient(90deg, transparent 36px, #ef4444 36px, #ef4444 37.5px, transparent 37.5px),
+            linear-gradient(90deg, transparent 34px, #ef4444 34px, #ef4444 35.5px, transparent 35.5px),
             linear-gradient(#e2e8f0 1px, transparent 1px) !important;
-        background-size: 100% 100%, 100% 22px !important;
+        background-size: 100% 100%, 100% 21px !important;
         border-radius: 8px !important;
-        padding: 14px 14px 16px 44px !important;
+        padding: 12px 14px 12px 42px !important;
         border: 1px solid #cbd5e1 !important;
-        box-shadow: 0 10px 28px rgba(0, 0, 0, 0.5) !important;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5) !important;
         width: 100% !important;
-        max-width: 480px !important;
+        max-width: 500px !important;
+        max-height: 460px !important;
+        overflow-y: auto !important;
         box-sizing: border-box !important;
         font-family: 'Patrick Hand', 'Kalam', cursive !important;
         color: #1e3a8a !important;
-        font-size: 14.5px !important;
-        line-height: 22px !important;
+        font-size: 14px !important;
+        line-height: 21px !important;
         position: relative !important;
-        overflow: hidden !important;
     }}
 
     .real-notebook-sheet::before {{
         content: '' !important;
         position: absolute !important;
-        top: 10px !important;
+        top: 8px !important;
         left: 8px !important;
-        width: 10px !important;
-        height: 96% !important;
-        background-image: radial-gradient(circle, #94a3b8 3px, transparent 4px) !important;
-        background-size: 10px 22px !important;
+        width: 9px !important;
+        height: 95% !important;
+        background-image: radial-gradient(circle, #94a3b8 2.5px, transparent 3.5px) !important;
+        background-size: 9px 21px !important;
         background-repeat: repeat-y !important;
     }}
 
     .nb-title-h1 {{
         font-family: 'Kalam', cursive !important;
-        font-size: 18px !important;
+        font-size: 16.5px !important;
         font-weight: 700 !important;
         color: #1e1b4b !important;
         background: #fdf2f8 !important;
-        padding: 1px 10px !important;
+        padding: 1px 8px !important;
         border-radius: 4px !important;
         display: inline-block !important;
         border-bottom: 2px dashed #ec4899 !important;
-        margin-bottom: 3px !important;
-        line-height: 23px !important;
+        margin-bottom: 2px !important;
+        line-height: 21px !important;
     }}
 
     .nb-subhead {{
         font-weight: 700 !important;
         color: #0369a1 !important;
-        font-size: 14.5px !important;
+        font-size: 14px !important;
         text-decoration: underline !important;
-        margin-top: 4px !important;
+        margin-top: 3px !important;
         display: block !important;
     }}
 
     .table-container {{
         width: 100% !important;
         overflow-x: auto !important;
-        margin: 4px 0 !important;
+        margin: 3px 0 !important;
         box-sizing: border-box !important;
     }}
     .nb-table {{
         border-collapse: collapse !important;
         font-family: 'Patrick Hand', cursive !important;
-        font-size: 13.5px !important;
-        line-height: 18px !important;
+        font-size: 13px !important;
+        line-height: 17px !important;
         background: #ffffff !important;
         border: 1.5px solid #1e3a8a !important;
         width: 100% !important;
@@ -938,7 +946,7 @@ DYNAMIC_THEME_CSS = f"""
     }}
     .nb-table th, .nb-table td {{
         border: 1px solid #1e3a8a !important;
-        padding: 3px 5px !important;
+        padding: 2px 4px !important;
         text-align: center !important;
         word-break: break-word !important;
     }}
@@ -951,12 +959,12 @@ DYNAMIC_THEME_CSS = f"""
     .nb-keypoints-box {{
         border: 1.5px dashed #16a34a !important;
         background: #f0fdf4 !important;
-        border-radius: 8px !important;
-        padding: 6px 10px !important;
-        margin-top: 6px !important;
+        border-radius: 6px !important;
+        padding: 4px 8px !important;
+        margin-top: 4px !important;
         color: #14532d !important;
-        font-size: 13px !important;
-        line-height: 19px !important;
+        font-size: 12.5px !important;
+        line-height: 18px !important;
     }}
 </style>
 """
@@ -1014,7 +1022,7 @@ def get_working_groq_models(client):
     try:
         live_list = [
             m.id for m in client.models.list().data
-            if not any(skip in m.id.lower() for skip in ["whisper", "tts", "guard", "vision", "embed", " playai"])
+            if not any(skip in m.id.lower() for skip in ["whisper", "tts", "guard", "vision", "embed", "playai"])
         ]
         if not live_list:
             return preferred
@@ -1026,8 +1034,8 @@ def get_working_groq_models(client):
     except Exception:
         return preferred
 
-def execute_ai_query(system_role, user_prompt, max_budget=3500, image_input=None):
-    safe_tokens = min(max_budget, 3800)
+def execute_ai_query(system_role, user_prompt, max_budget=2800, image_input=None):
+    safe_tokens = min(max_budget, 3200)
 
     if image_input and gemini_key:
         try:
@@ -1056,7 +1064,6 @@ def execute_ai_query(system_role, user_prompt, max_budget=3500, image_input=None
                 )
                 res_text = completion.choices[0].message.content.strip()
                 if res_text:
-                    # Strip <think>...</think> blocks if reasoning model was auto-selected
                     res_text = re.sub(r"<think>.*?</think>", "", res_text, flags=re.DOTALL).strip()
                     return res_text
             except Exception as e:
@@ -1097,69 +1104,69 @@ def fix_unclosed_html(html_str):
         html_str += "</p>"
     return html_str
 
+# ================= COMPACT SINGLE-PAGE REGISTER GENERATOR & AUTO-SPLITTER =================
 def generate_multi_sheets_html(topic, subject_name, course_name, notes_lang):
     last_ai_ctx = st.session_state.ai_memory.get(course_name, {}).get("last_summary", "No previous context.")
 
     law_instruction = ""
     if "Law" in course_name:
         law_instruction = (
-            "Since this is Indian Law, strictly cite exact Bare Act Sections, Articles, BNS/BNSS/BSA 2023 equivalents alongside IPC/CrPC/IEA, "
-            "and landmark Supreme Court case laws (with year) in the tables and key exam points. "
+            "Cite exact Bare Act Sections, Articles, BNS/BNSS/BSA 2023 equivalents alongside IPC/CrPC/IEA, "
+            "and landmark Supreme Court cases. "
         )
 
     system_role = (
-        "You are an esteemed professor and entrance mentor specializing in " + course_name + ". "
-        "Strictly maintain academic dignity. " + law_instruction +
-        "Student Context Memory: " + last_ai_ctx + ". "
-        "Output EXACTLY 3 TO 4 INDIVIDUAL COMPLETE LECTURE SHEETS separated strictly by the token '===SHEET_SPLIT==='. "
-        "Every single sheet MUST be 100% complete with all 4 sections fully finished: "
-        "1. Definition & Core Statutory Provision, "
-        "2. Bare Act Section / Formulation / Comparison Matrix, "
-        "3. Step-by-Step Legal Ingredients / Derivation / Case Law Application, "
-        "4. Key Exam Points / Landmark Judgments / Shortcuts. "
-        "DO NOT USE CODE BLOCKS OR MARKDOWN TICKS. Start directly with <div class='register-outer-center'>."
+        "You are an esteemed professor specializing in " + course_name + ". " + law_instruction +
+        "Student Context: " + last_ai_ctx + ". "
+        "Output EXACTLY 3 COMPACT LECTURE SHEETS separated strictly by '===SHEET_SPLIT==='. "
+        "CRITICAL PAGE LENGTH RULE: Keep each sheet SHORT & COMPACT (under 110 words per sheet, max 2 table rows, max 3 short bullet lines) "
+        "so each sheet fits on a single compact notebook page without long scrolling. "
+        "DO NOT USE CODE BLOCKS OR MARKDOWN TICKS. Start each sheet directly with <div class='register-outer-center'>."
     )
     user_prompt = (
-        "Create a complete 3 to 4-sheet lecture register for '" + topic + "' under " + course_name + " -> " + subject_name + " (" + notes_lang + ").\n"
-        "Ensure full tables and working steps are filled.\n\n"
-        "TEMPLATE FOR EACH SHEET (Separate sheets strictly by ===SHEET_SPLIT===):\n"
+        "Create 3 compact single-page lecture sheets for '" + topic + "' under " + course_name + " -> " + subject_name + " (" + notes_lang + ").\n"
+        "Separate each sheet strictly with ===SHEET_SPLIT===.\n\n"
+        "TEMPLATE FOR EACH SHEET:\n"
         "<div class=\"register-outer-center\">\n"
         "    <div class=\"real-notebook-sheet\">\n"
-        "        <div class=\"nb-title-h1\">" + topic + " [Part X]</div>\n"
-        "        <div style=\"font-size:10.5px; color:#6b7280; margin-bottom:3px;\">" + course_name + " • " + subject_name + "</div>\n\n"
-        "        <span class=\"nb-subhead\">1. Definition & Core Concept :</span>\n"
-        "        <p style=\"margin: 2px 0 4px 0;\">[2 concise explanation lines in " + notes_lang + "]</p>\n\n"
-        "        <span class=\"nb-subhead\">2. Statutory Sections / Table / Matrix :</span>\n"
+        "        <div class=\"nb-title-h1\">" + topic + " [Sheet X]</div>\n"
+        "        <div style=\"font-size:10px; color:#6b7280; margin-bottom:2px;\">" + course_name + " • " + subject_name + "</div>\n"
+        "        <span class=\"nb-subhead\">1. Core Concept :</span>\n"
+        "        <p style=\"margin: 1px 0 3px 0;\">[Max 2 short lines in " + notes_lang + "]</p>\n"
+        "        <span class=\"nb-subhead\">2. Key Section / Formula Matrix :</span>\n"
         "        <div class=\"table-container\">\n"
         "            <table class=\"nb-table\">\n"
-        "                <tr><th>Provision / Factor</th><th>Section / Parameter</th><th>Legal Effect / Output</th></tr>\n"
-        "                <tr><td>Provision 1</td><td>Sec / Art Alpha</td><td>Binding / Valid</td></tr>\n"
-        "                <tr><td>Provision 2</td><td>Sec / Art Beta</td><td>Exception</td></tr>\n"
+        "                <tr><th>Provision / Term</th><th>Section / Formula</th><th>Key Rule</th></tr>\n"
+        "                <tr><td>Item 1</td><td>Sec / Formula A</td><td>Short effect</td></tr>\n"
+        "                <tr><td>Item 2</td><td>Sec / Formula B</td><td>Short effect</td></tr>\n"
         "            </table>\n"
-        "        </div>\n\n"
-        "        <span class=\"nb-subhead\">3. Essential Ingredients / Step-by-Step Working :</span>\n"
-        "        <p style=\"margin: 2px 0 4px 0;\">\n"
-        "            • Step 1: Core statutory ingredient or working logic<br>\n"
-        "            • Step 2: Judicial interpretation / Formula execution path<br>\n"
-        "            • Step 3: Practical problem / Case law rule\n"
-        "        </p>\n\n"
-        "        <div class=\"nb-keypoints-box\">\n"
-        "            <b>✳ Key Exam Points & Landmark Cases :</b><br>\n"
-        "            • High priority exam rule / Landmark SC Judgment<br>\n"
-        "            • Key section / formula shortcut\n"
         "        </div>\n"
-        "        <div style=\"font-size:10px; color:#9ca3af; text-align:right; margin-top:4px;\">Harsh Raj Soni • Lex & Tech Suite</div>\n"
+        "        <span class=\"nb-subhead\">3. Quick Working / Ingredients :</span>\n"
+        "        <p style=\"margin: 1px 0 3px 0;\">\n"
+        "            • Point 1: Short crisp point<br>\n"
+        "            • Point 2: Short crisp point\n"
+        "        </p>\n"
+        "        <div class=\"nb-keypoints-box\">\n"
+        "            <b>✳ Exam Trick / Landmark Case :</b><br>\n"
+        "            • 1 high-yield exam takeaway\n"
+        "        </div>\n"
         "    </div>\n"
         "</div>"
     )
-    raw_res = execute_ai_query(system_role, user_prompt, max_budget=3800)
+    raw_res = execute_ai_query(system_role, user_prompt, max_budget=2200)
     if raw_res.startswith("API_ERROR:"):
         st.error(raw_res)
         return []
 
     clean_text = raw_res.replace("```html", "").replace("```HTML", "").replace("```", "").strip()
     clean_text = re.sub(r"^`+|`+$", "", clean_text)
+
     raw_sheets = [s.strip() for s in clean_text.split("===SHEET_SPLIT===") if s.strip()]
+
+    # Fallback Auto-Splitter if AI forgot ===SHEET_SPLIT=== and stacked multiple sheets together
+    if len(raw_sheets) == 1 and clean_text.count('class="register-outer-center"') > 1:
+        parts = re.split(r'(?=<div\s+class=["\']register-outer-center["\']\s*>)', clean_text)
+        raw_sheets = [p.strip() for p in parts if p.strip()]
 
     sanitized_sheets = []
     for s in raw_sheets:
@@ -1249,25 +1256,25 @@ def generate_batch_questions(topic, course_name, subject_name, count=15, batch_n
     sys_prompt = (
         f"You are the Chief Examination Controller for {course_name}. "
         f"Generate EXACTLY {count} multiple-choice questions using ONLY the strict block format below. "
-        "Do NOT use JSON, do NOT use Markdown tables. Follow this exact template for every question:\n\n"
+        "Keep questions concise and clear. Do NOT use JSON or Markdown tables:\n\n"
         "===Q_START===\n"
         f"TAG: {tag_label}\n"
-        "Q: [Write full question statement here]\n"
-        "A: [Option A text]\n"
-        "B: [Option B text]\n"
-        "C: [Option C text]\n"
-        "D: [Option D text]\n"
+        "Q: [Write concise question statement]\n"
+        "A: [Option A]\n"
+        "B: [Option B]\n"
+        "C: [Option C]\n"
+        "D: [Option D]\n"
         "ANS: [Only single letter A, B, C, or D]\n"
-        "EXP: [Concise 1-2 line solution/section/formula explanation]\n"
+        "EXP: [1-line explanation]\n"
         "===Q_END==="
     )
 
     user_prompt = (
         f"Output {count} distinct, high-yield MCQs for '{topic}' in {subject_name} ({course_name}).\n"
-        f"Special Instruction: {mode_desc}"
+        f"Instruction: {mode_desc}"
     )
 
-    raw_res = execute_ai_query(sys_prompt, user_prompt, max_budget=3800)
+    raw_res = execute_ai_query(sys_prompt, user_prompt, max_budget=3000)
     if raw_res.startswith("API_ERROR:"):
         st.error(raw_res)
         return []
@@ -1302,7 +1309,7 @@ def generate_90_100_dpp_marathon(topic, course_name, subject_name, target_count=
 # ================= 0. INTRO SCREEN =================
 if not st.session_state.system_booted:
     st.markdown(f"""
-    <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:70vh; text-align:center;">
+    <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:68vh; text-align:center;">
         <div style="display:inline-flex; align-items:center; gap:8px; background:rgba(255,255,255,0.06); border:1px solid {active_theme['accent']}; padding:6px 20px; border-radius:30px; font-size:13px; font-weight:700; color:{active_theme['accent']}; margin-bottom:14px; box-shadow:0 0 16px {active_theme['glow']};">
             ⚖️ HARSH'S LEX & TECH SUITE • UNIVERSAL PORTAL
         </div>
@@ -1315,8 +1322,8 @@ if not st.session_state.system_booted:
         <div style="background:{active_theme['card_bg']}; border:1px solid rgba(255,255,255,0.1); border-left:4px solid {active_theme['accent']}; border-radius:10px; padding:16px 22px; max-width:600px; width:100%; text-align:left; font-size:13px; color:#CBD5E1; line-height:1.6; margin-bottom:24px;">
             <div style="color:{active_theme['accent']}; font-weight:700; margin-bottom:4px;">Enterprise Features Active:</div>
             <div>• ⚖️ Complete Indian Law Stream (Constitution, BNS/BNSS/BSA 2023, IPC/CrPC, Contract, CPC, Torts, Family Law)</div>
-            <div>• 🔥 90–100 Questions DPP Marathon Generator (Auto-Model Discovery Engine)</div>
-            <div>• 📚 Direct In-App Official PYQ Paper Booklet + Interactive OMR</div>
+            <div>• 📄 Compact Single-Screen Pages (5 Qs/Page OMR & Single-Sheet Register View)</div>
+            <div>• 🔥 90–100 Questions DPP Marathon & Direct In-App PYQ Booklet</div>
             <div>• 📧 Background SMTP Auto-Email Dispatch to {ADMIN_EMAIL}</div>
         </div>
     </div>
@@ -1338,11 +1345,11 @@ else:
         st.markdown(f"""
         <div class="formal-top-banner">
             <div>
-                <div style="font-size: 18px; font-weight: 700; color: #F8FAFC;">
+                <div style="font-size: 17px; font-weight: 700; color: #F8FAFC;">
                     ⚖️ Harsh's Lex & Tech Suite — Academic & Competitive Portal
                 </div>
-                <div style="font-size: 12px; color: #94A3B8;">
-                    In-App PYQ Booklet • 90–100 Qs DPP Engine • Auto-SMTP Feedback
+                <div style="font-size: 11.5px; color: #94A3B8;">
+                    Compact Screen-Fit UI • In-App PYQs • 90–100 Qs DPP • Auto-SMTP
                 </div>
             </div>
             <div class="formal-author-pill">
@@ -1431,32 +1438,33 @@ else:
         index=0
     )
 
-    # ================= SECTION 1: NOTES GALLERY =================
+    # ================= SECTION 1: COMPACT NOTES GALLERY =================
     if selected_nav == "📝 Notes Gallery":
         st.subheader("📖 Lecture Notes Register Gallery — " + active_subj)
-        st.caption("Classmate ruled paper layout with Bare Act sections, tables, formulas, and key exam points.")
+        st.caption("Compact single-page ruled register sheets—har sheet ek screen par fit hogi.")
 
         c1, c2 = st.columns([2.5, 1])
         with c1:
             suggested = subject_details.get("topics", [])
             chosen_topic = st.selectbox("Curated Topic List:", suggested)
-            custom_topic = st.text_input("Or Type ANY Custom Topic / Section / Act:", placeholder="e.g. Section 103 BNS vs 302 IPC / Article 21 / Doctrine of Eclipse")
+            custom_topic = st.text_input("Or Type ANY Custom Topic / Section / Act:", placeholder="e.g. Section 103 BNS vs 302 IPC / Article 21")
         with c2:
             notes_lang = st.selectbox("Language:", ["Hinglish", "English", "Hindi"])
 
         final_topic = custom_topic.strip() if custom_topic.strip() else chosen_topic
 
-        if st.button("Generate Lecture Register Sheets", use_container_width=True):
+        if st.button("Generate Compact Register Sheets", use_container_width=True):
             st.session_state.current_topic = final_topic
-            st.session_state.active_sheet_index = None
+            st.session_state.active_sheet_index = 0
             save_user_memory()
 
-            with st.spinner("Writing complete lecture sheets for '" + final_topic + "' under " + active_course + "..."):
+            with st.spinner("Writing compact single-page lecture sheets for '" + final_topic + "'..."):
                 sheets_out = generate_multi_sheets_html(
                     final_topic, active_subj, active_course, notes_lang
                 )
                 if sheets_out:
                     st.session_state.generated_gallery_sheets = sheets_out
+                    st.session_state.active_sheet_index = 0
                     if not st.session_state.feedback_popup_shown:
                         st.session_state.trigger_feedback_modal = True
                     st.rerun()
@@ -1466,60 +1474,58 @@ else:
             total_sheets = len(sheets)
 
             if st.session_state.active_sheet_index is not None:
-                cur_i = st.session_state.active_sheet_index
-                st.markdown("<b>🔍 Viewing Sheet " + str(cur_i + 1) + " of " + str(total_sheets) + "</b>", unsafe_allow_html=True)
-                st.html(sheets[cur_i])
-
-                nav_c1, nav_c2, nav_c3 = st.columns([1.5, 2, 1.5])
+                cur_i = min(st.session_state.active_sheet_index, total_sheets - 1)
+                nav_c1, nav_c2, nav_c3 = st.columns([1.2, 2, 1.2])
                 with nav_c1:
-                    if st.button("‹ Previous Sheet", disabled=(cur_i == 0), use_container_width=True):
+                    if st.button("‹ Prev Sheet", disabled=(cur_i == 0), use_container_width=True):
                         st.session_state.active_sheet_index = max(0, cur_i - 1)
                         st.rerun()
                 with nav_c2:
-                    if st.button("📁 Close & Back to Gallery Grid", use_container_width=True):
+                    if st.button(f"📁 All {total_sheets} Sheets Grid (Viewing #{cur_i + 1})", use_container_width=True):
                         st.session_state.active_sheet_index = None
                         st.rerun()
                 with nav_c3:
                     if st.button("Next Sheet ›", disabled=(cur_i == total_sheets - 1), use_container_width=True):
                         st.session_state.active_sheet_index = min(total_sheets - 1, cur_i + 1)
                         st.rerun()
+
+                st.html(sheets[cur_i])
             else:
-                st.markdown("<b>📸 Register Sheets Gallery (" + str(total_sheets) + " Sheets)</b>", unsafe_allow_html=True)
-                st.caption("Kisi bhi sheet par tap karein full-size padhne ke liye:")
+                st.markdown("<b>📸 Register Sheets Gallery (" + str(total_sheets) + " Compact Pages)</b>", unsafe_allow_html=True)
                 grid_cols = st.columns(3)
                 for idx, sheet_code in enumerate(sheets):
                     with grid_cols[idx % 3]:
-                        if st.button("📄 Sheet " + str(idx + 1) + " (Tap to Open)", key="sheet_btn_" + str(idx), use_container_width=True):
+                        if st.button("📄 Open Sheet #" + str(idx + 1), key="sheet_btn_" + str(idx), use_container_width=True):
                             st.session_state.active_sheet_index = idx
                             st.rerun()
                         card_thumb = f"""
-                        <div style="border:1.5px solid {active_theme['accent']}; border-radius:8px; padding:10px; background:{active_theme['card_bg']}; text-align:center; margin-bottom:12px; box-shadow:0 0 10px {active_theme['glow']};">
-                            <span style="font-size:13.5px; color:{active_theme['accent']}; font-weight:700;">Sheet #{idx + 1}</span><br>
-                            <span style="font-size:11px; color:#94A3B8;">Ruled Lecture Register</span>
+                        <div style="border:1.5px solid {active_theme['accent']}; border-radius:8px; padding:8px; background:{active_theme['card_bg']}; text-align:center; margin-bottom:8px;">
+                            <span style="font-size:13px; color:{active_theme['accent']}; font-weight:700;">Page #{idx + 1}</span><br>
+                            <span style="font-size:11px; color:#94A3B8;">Single-Screen Ruled Note</span>
                         </div>
                         """
                         st.markdown(card_thumb, unsafe_allow_html=True)
 
-    # ================= SECTION 2: DPP (90-100 QUESTIONS MARATHON ENGINE) =================
+    # ================= SECTION 2: DPP (COMPACT PAGINATED VIEW) =================
     elif selected_nav == "🔥 DPP (90-100 Qs)":
         st.subheader(f"🔥 Daily Practice Problems (DPP Marathon) — {active_subj}")
-        st.caption("Full chapter practice sheet with 90–100 questions, OMR option tick, and paginated smooth view.")
+        st.caption("Compact paginated view—default 5 questions per page taaki page lamba na ho.")
 
         c1, c2, c3 = st.columns([2, 1, 1])
         with c1:
             dpp_topic_list = subject_details.get("topics", [])
             sel_dpp_topic = st.selectbox("Select Chapter / Act for DPP:", dpp_topic_list)
-            custom_dpp = st.text_input("Or Enter Custom Act / Chapter:", placeholder="e.g. Complete BNS 2023 Offences / Indian Contract Act Sec 1-75")
+            custom_dpp = st.text_input("Or Enter Custom Act / Chapter:", placeholder="e.g. Complete BNS 2023 Offences / Contract Act")
         with c2:
-            dpp_target_count = st.selectbox("DPP Sheet Size:", [90, 100, 45, 15], index=0)
+            dpp_target_count = st.selectbox("DPP Total Qs:", [90, 100, 45, 15], index=3)
         with c3:
-            page_size = st.selectbox("Questions Per Page:", [20, 25, 50, 100], index=1)
+            page_size = st.selectbox("Qs Per Page (Screen Size):", [1, 5, 10, 20], index=1)
 
         final_dpp_topic = custom_dpp.strip() if custom_dpp.strip() else sel_dpp_topic
 
         col_btn1, col_btn2 = st.columns([2, 1])
         with col_btn1:
-            if st.button(f"🚀 Generate Full {dpp_target_count}-Question DPP Sheet", use_container_width=True):
+            if st.button(f"🚀 Generate {dpp_target_count}-Question DPP Sheet", use_container_width=True):
                 st.session_state.current_topic = final_dpp_topic
                 save_user_memory()
                 qs = generate_90_100_dpp_marathon(
@@ -1533,8 +1539,8 @@ else:
                     st.rerun()
         with col_btn2:
             if st.session_state.dpp_questions:
-                if st.button("➕ Add 15 More Questions", use_container_width=True):
-                    with st.spinner("Appending 15 more questions to DPP..."):
+                if st.button("➕ Add 15 More Qs", use_container_width=True):
+                    with st.spinner("Appending 15 more questions..."):
                         extra = generate_batch_questions(
                             final_dpp_topic, active_course, active_subj, count=15,
                             batch_num=(len(st.session_state.dpp_questions) // 15) + 1
@@ -1554,13 +1560,14 @@ else:
             end_idx = min(start_idx + page_size, total_dpp)
 
             answered_count = len([v for v in st.session_state.dpp_user_answers.values() if v is not None])
-            st.markdown(f"**📋 Active DPP Sheet:** `{final_dpp_topic}` | **Total Questions:** `{total_dpp}` | **Attempted:** `{answered_count}/{total_dpp}` | **Page:** `{cur_page + 1}/{total_pages}`")
 
-            p_c1, p_c2, p_c3 = st.columns([1, 2, 1])
+            p_c1, p_c2, p_c3 = st.columns([1.2, 2.2, 1.2])
             with p_c1:
-                if st.button("⬅️ Previous Page", disabled=(cur_page == 0), key="dpp_prev_top", use_container_width=True):
+                if st.button("⬅️ Prev Page", disabled=(cur_page == 0), key="dpp_prev_top", use_container_width=True):
                     st.session_state.dpp_page = max(0, cur_page - 1)
                     st.rerun()
+            with p_c2:
+                st.markdown(f"<div style='text-align:center; padding-top:4px; font-size:13px;'><b>Page {cur_page + 1}/{total_pages}</b> (Qs {start_idx + 1}–{end_idx} of {total_dpp}) • Ticked: {answered_count}</div>", unsafe_allow_html=True)
             with p_c3:
                 if st.button("Next Page ➡️", disabled=(cur_page >= total_pages - 1), key="dpp_next_top", use_container_width=True):
                     st.session_state.dpp_page = min(total_pages - 1, cur_page + 1)
@@ -1594,70 +1601,47 @@ else:
                 if st.session_state.dpp_submitted:
                     correct = q_data.get("correct_option", "")
                     if chosen == correct:
-                        st.success(f"✔ **Correct!** ({correct})")
+                        st.success(f"✔ **Correct!** ({correct}) — {q_data.get('explanation', '')}")
                     else:
-                        st.error(f"✖ **Incorrect / Unattempted.** Official Key: {correct} | Your Tick: {chosen if chosen else 'None'}")
-                    with st.expander(f"💡 Solution for Q.{q_num}", expanded=False):
-                        st.write(q_data.get("explanation", "Refer to statutory section / standard derivation."))
+                        st.error(f"✖ **Key:** {correct} | **Exp:** {q_data.get('explanation', '')}")
 
-            b_c1, b_c2, b_c3 = st.columns([1, 2, 1])
-            with b_c1:
-                if st.button("⬅️ Prev Page", disabled=(cur_page == 0), key="dpp_prev_bot", use_container_width=True):
-                    st.session_state.dpp_page = max(0, cur_page - 1)
-                    st.rerun()
-            with b_c2:
-                if st.button("📝 Submit Entire DPP & Calculate Rank Score", type="primary", use_container_width=True):
-                    st.session_state.dpp_submitted = True
-                    if not st.session_state.feedback_popup_shown:
-                        st.session_state.trigger_feedback_modal = True
-                    st.rerun()
-            with b_c3:
-                if st.button("Next Page ➡️", disabled=(cur_page >= total_pages - 1), key="dpp_next_bot", use_container_width=True):
-                    st.session_state.dpp_page = min(total_pages - 1, cur_page + 1)
-                    st.rerun()
+            if st.button("📝 Submit DPP & View Scorecard", type="primary", use_container_width=True):
+                st.session_state.dpp_submitted = True
+                if not st.session_state.feedback_popup_shown:
+                    st.session_state.trigger_feedback_modal = True
+                st.rerun()
 
             if st.session_state.dpp_submitted:
                 correct_cnt = sum(1 for i, q in enumerate(dpp_list) if st.session_state.dpp_user_answers.get(i) == q.get("correct_option"))
                 wrong_cnt = sum(1 for i, q in enumerate(dpp_list) if st.session_state.dpp_user_answers.get(i) and st.session_state.dpp_user_answers.get(i) != q.get("correct_option"))
                 unattempted = total_dpp - (correct_cnt + wrong_cnt)
                 total_marks = (correct_cnt * 4) - (wrong_cnt * 1)
-                max_marks = total_dpp * 4
+                st.info(f"📊 **DPP Score:** {total_marks} / {total_dpp * 4}  |  ✔ Correct: {correct_cnt}  |  ✖ Wrong: {wrong_cnt}  |  ⚪ Left: {unattempted}")
 
-                st.markdown(f"""
-                <div style="background:{active_theme['card_bg']}; border:2px solid {active_theme['accent']}; border-radius:12px; padding:18px 24px; text-align:center; margin-top:20px; box-shadow:0 0 20px {active_theme['glow']};">
-                    <div style="font-size:20px; font-weight:700; color:{active_theme['accent']}; margin-bottom:6px;">📊 DPP Marathon Scorecard ({total_dpp} Questions)</div>
-                    <div style="font-size:24px; font-weight:800; color:#F8FAFC; margin-bottom:12px;">Score: {total_marks} / {max_marks}</div>
-                    <div style="display:flex; justify-content:center; gap:20px; font-size:13px; color:#CBD5E1;">
-                        <span>✔ Correct: <b style="color:#34D399;">{correct_cnt}</b></span>
-                        <span>✖ Wrong: <b style="color:#EF4444;">{wrong_cnt}</b></span>
-                        <span>⚪ Left: <b style="color:#94A3B8;">{unattempted}</b></span>
-                        <span>🎯 Accuracy: <b>{int((correct_cnt/total_dpp)*100) if total_dpp else 0}%</b></span>
-                    </div>
-                </div>
-                """, unsafe_allow_html=True)
-
-    # ================= SECTION 3: DIRECT IN-APP REAL PYQS VAULT =================
+    # ================= SECTION 3: COMPACT PAGINATED REAL PYQS VAULT =================
     elif selected_nav == "📚 Real PYQs Vault":
-        st.subheader(f"📚 Official Past Question Papers (100% In-App Booklet & OMR) — {active_course}")
-        st.caption("Open and solve real past examination question papers directly inside the app without opening any external website.")
+        st.subheader(f"📚 Official Past Question Papers (Compact Paginated View) — {active_course}")
+        st.caption("5 Questions per page—bina lambi scrolling ke app ke andar hi past papers solve karein.")
 
         pyqs_list = subject_details.get("pyqs_years", ["2024 Official Paper"])
-        c1, c2, c3 = st.columns([2, 1, 1])
+        c1, c2, c3, c4 = st.columns([2, 0.9, 0.9, 1.2])
         with c1:
             chosen_year = st.selectbox("Select Official Exam Paper:", pyqs_list)
-            pyq_topic = st.text_input("Specific Act / Chapter Filter (Leave blank for Full Paper):", placeholder="e.g. Fundamental Rights / BNS & IPC / Genetics / Calculus")
+            pyq_topic = st.text_input("Chapter Filter (Optional):", placeholder="Leave blank for Full Paper")
         with c2:
-            pyq_count = st.selectbox("Paper Length (Qs):", [15, 30, 45, 60], index=0)
+            pyq_count = st.selectbox("Total Qs:", [15, 30, 45], index=0)
         with c3:
-            pyq_view_mode = st.selectbox("In-App Display Mode:", ["📝 Interactive OMR Mode", "📄 Full Booklet Reader Mode"])
+            pyq_per_page = st.selectbox("Qs / Page:", [1, 5, 10], index=1)
+        with c4:
+            pyq_view_mode = st.selectbox("Mode:", ["📝 OMR Mode", "📄 Booklet Mode"])
 
         target_topic = pyq_topic.strip() if pyq_topic.strip() else f"Full {active_subj} Official Paper"
 
-        if st.button(f"📖 Open {chosen_year} Paper Directly Inside App ({pyq_count} Qs)", use_container_width=True):
+        if st.button(f"📖 Open {chosen_year} Paper Inside App ({pyq_count} Qs)", use_container_width=True):
             all_pyqs = []
             batch_sz = 15
             batches = (pyq_count + batch_sz - 1) // batch_sz
-            prog = st.progress(0, text=f"Loading official {chosen_year} paper directly into app...")
+            prog = st.progress(0, text=f"Loading official {chosen_year} paper...")
             for b in range(1, batches + 1):
                 need = min(batch_sz, pyq_count - len(all_pyqs))
                 if need <= 0:
@@ -1672,54 +1656,68 @@ else:
                         all_pyqs.append(q)
                 else:
                     break
-                prog.progress(min(b / batches, 1.0), text=f"Loaded {len(all_pyqs)} official questions...")
+                prog.progress(min(b / batches, 1.0))
             prog.empty()
             if all_pyqs:
                 st.session_state.pyq_questions = all_pyqs
                 st.session_state.pyq_user_answers = {}
                 st.session_state.pyq_submitted = False
+                st.session_state.pyq_page = 0
                 st.rerun()
 
         if st.session_state.pyq_questions:
             q_list = st.session_state.pyq_questions
+            total_q = len(q_list)
+            tot_pyq_pages = max(1, (total_q + pyq_per_page - 1) // pyq_per_page)
+            cur_p = min(st.session_state.pyq_page, tot_pyq_pages - 1)
+            s_i = cur_p * pyq_per_page
+            e_i = min(s_i + pyq_per_page, total_q)
 
-            if pyq_view_mode == "📄 Full Booklet Reader Mode":
+            nav1, nav2, nav3 = st.columns([1.2, 2.2, 1.2])
+            with nav1:
+                if st.button("⬅️ Prev Page", disabled=(cur_p == 0), key="pyq_p_prev", use_container_width=True):
+                    st.session_state.pyq_page = max(0, cur_p - 1)
+                    st.rerun()
+            with nav2:
+                st.markdown(f"<div style='text-align:center; padding-top:4px; font-size:13px;'><b>{chosen_year} — Page {cur_p + 1}/{tot_pyq_pages}</b> (Showing Q.{s_i + 1} to Q.{e_i})</div>", unsafe_allow_html=True)
+            with nav3:
+                if st.button("Next Page ➡️", disabled=(cur_p >= tot_pyq_pages - 1), key="pyq_p_next", use_container_width=True):
+                    st.session_state.pyq_page = min(tot_pyq_pages - 1, cur_p + 1)
+                    st.rerun()
+
+            if pyq_view_mode == "📄 Booklet Mode":
                 booklet_html = f"""
                 <div class="inapp-paper-booklet">
                     <div class="booklet-header">
-                        <div style="font-size:20px; font-weight:800; color:#0F172A;">{chosen_year} — OFFICIAL EXAMINATION BOOKLET</div>
-                        <div style="font-size:13px; color:#475569; margin-top:4px;">Stream: {active_course} | Subject: {active_subj} | Total Questions: {len(q_list)}</div>
-                        <div style="font-size:11.5px; color:#64748B; margin-top:2px;">Marking Scheme: +4 for Correct, -1 for Negative | In-App Direct Paper Reader</div>
+                        <div style="font-size:17px; font-weight:800; color:#0F172A;">{chosen_year} — BOOKLET (Page {cur_p + 1}/{tot_pyq_pages})</div>
                     </div>
                 """
-                for idx, q_data in enumerate(q_list):
-                    opts_html = "".join([f"<div style='margin:3px 0 3px 14px; font-size:14px;'>{o}</div>" for o in q_data.get("options", [])])
+                for idx in range(s_i, e_i):
+                    q_data = q_list[idx]
+                    opts_html = "".join([f"<div style='margin:2px 0 2px 12px; font-size:13.5px;'>{o}</div>" for o in q_data.get("options", [])])
                     booklet_html += f"""
                     <div class="booklet-q-item">
-                        <div style="font-size:15px; font-weight:700; color:#0F172A; margin-bottom:6px;">
-                            Q.{idx + 1} [{q_data.get('year_tag', chosen_year)}]: {q_data.get('question', '')}
+                        <div style="font-size:14.5px; font-weight:700; color:#0F172A; margin-bottom:4px;">
+                            Q.{idx + 1}: {q_data.get('question', '')}
                         </div>
                         {opts_html}
-                        <details style="margin-top:8px; background:#F1F5F9; padding:6px 12px; border-radius:6px; font-size:13px; color:#0F172A; cursor:pointer;">
-                            <summary style="font-weight:700; color:#0284C7;">✔ Tap to View Official Answer Key & Solution</summary>
-                            <div style="margin-top:4px;"><b>Correct Option:</b> {q_data.get('correct_option', '')}</div>
-                            <div><b>Explanation:</b> {q_data.get('explanation', '')}</div>
+                        <details style="margin-top:6px; background:#F1F5F9; padding:4px 10px; border-radius:6px; font-size:12.5px; color:#0F172A; cursor:pointer;">
+                            <summary style="font-weight:700; color:#0284C7;">✔ View Answer Key</summary>
+                            <div><b>Key:</b> {q_data.get('correct_option', '')} — {q_data.get('explanation', '')}</div>
                         </details>
                     </div>
                     """
                 booklet_html += "</div>"
                 st.markdown(booklet_html, unsafe_allow_html=True)
-
             else:
-                st.subheader(f"🏛️ {chosen_year} — In-App Interactive OMR Booklet ({len(q_list)} Questions)")
-
-                for idx, q_data in enumerate(q_list):
+                for idx in range(s_i, e_i):
+                    q_data = q_list[idx]
                     q_num = idx + 1
                     st.markdown(f"""
                     <div class="question-card">
                         <div class="question-header">
                             <span class="q-number-tag">Q.{q_num} • {q_data.get('year_tag', chosen_year)}</span>
-                            <span class="q-marks-tag">Official Marking: +4 / -1</span>
+                            <span class="q-marks-tag">+4 / -1</span>
                         </div>
                         <div class="q-text">{q_data.get('question', '')}</div>
                     </div>
@@ -1730,7 +1728,7 @@ else:
                     opt_i = opts.index(prev_ans) if prev_ans in opts else None
 
                     sel_ans = st.radio(
-                        f"Tick OMR Answer for PYQ #{q_num}:",
+                        f"Tick OMR for PYQ #{q_num}:",
                         options=opts,
                         index=opt_i,
                         key=f"pyq_radio_{idx}"
@@ -1740,12 +1738,9 @@ else:
                     if st.session_state.pyq_submitted:
                         correct = q_data.get("correct_option", "")
                         if sel_ans == correct:
-                            st.success(f"✔ **Correct!** Official Key: {correct}")
+                            st.success(f"✔ **Correct!** ({correct}) — {q_data.get('explanation', '')}")
                         else:
-                            st.error(f"✖ **Incorrect / Skipped.** Official Key: {correct} (You ticked: {sel_ans if sel_ans else 'None'})")
-
-                        with st.expander(f"💡 View Official Solution #{q_num}", expanded=True):
-                            st.write(q_data.get("explanation", "Standard statutory provision & case law rationale."))
+                            st.error(f"✖ **Official Key:** {correct} — {q_data.get('explanation', '')}")
 
                 if st.button("📝 Submit Official PYQ Paper & Check Score", type="primary", use_container_width=True):
                     st.session_state.pyq_submitted = True
@@ -1754,32 +1749,21 @@ else:
                     st.rerun()
 
                 if st.session_state.pyq_submitted:
-                    total_q = len(q_list)
                     correct_cnt = sum(1 for i, q in enumerate(q_list) if st.session_state.pyq_user_answers.get(i) == q.get("correct_option"))
                     wrong_cnt = sum(1 for i, q in enumerate(q_list) if st.session_state.pyq_user_answers.get(i) and st.session_state.pyq_user_answers.get(i) != q.get("correct_option"))
                     total_marks = (correct_cnt * 4) - (wrong_cnt * 1)
-                    max_marks = total_q * 4
+                    st.info(f"📊 **{chosen_year} Score:** {total_marks} / {total_q * 4}  |  ✔ Correct: {correct_cnt}  |  ✖ Negative: {wrong_cnt}")
 
-                    st.markdown(f"""
-                    <div style="background:{active_theme['card_bg']}; border:2px solid {active_theme['accent']}; border-radius:12px; padding:18px 24px; text-align:center; margin-top:20px; box-shadow:0 0 20px {active_theme['glow']};">
-                        <div style="font-size:20px; font-weight:700; color:{active_theme['accent']}; margin-bottom:6px;">📊 {chosen_year} In-App OMR Report</div>
-                        <div style="font-size:24px; font-weight:800; color:#F8FAFC; margin-bottom:12px;">Score: {total_marks} / {max_marks}</div>
-                        <div style="display:flex; justify-content:center; gap:20px; font-size:13px; color:#CBD5E1;">
-                            <span>✔ Correct: <b style="color:#34D399;">{correct_cnt}</b></span>
-                            <span>✖ Negative: <b style="color:#EF4444;">{wrong_cnt}</b></span>
-                            <span>🎯 Accuracy: <b>{int((correct_cnt/total_q)*100) if total_q else 0}%</b></span>
-                        </div>
-                    </div>
-                    """, unsafe_allow_html=True)
-
-    # ================= SECTION 4: QUICK MOCK EXAM =================
+    # ================= SECTION 4: COMPACT PAGINATED MOCK EXAM =================
     elif selected_nav == "🎯 Mock Exam":
-        st.subheader(f"🎯 Rapid Mock Test — {active_course}")
-        c1, c2 = st.columns([2.5, 1])
+        st.subheader(f"🎯 Rapid Mock Test (Compact View) — {active_course}")
+        c1, c2, c3 = st.columns([2.2, 1, 1])
         with c1:
-            exam_topic = st.text_input("Scope / Act / Chapter for Test:", value=st.session_state.current_topic if st.session_state.current_topic else active_subj)
+            exam_topic = st.text_input("Scope / Act / Chapter:", value=st.session_state.current_topic if st.session_state.current_topic else active_subj)
         with c2:
-            mock_q_cnt = st.selectbox("Questions:", [10, 15, 20], index=1)
+            mock_q_cnt = st.selectbox("Total Questions:", [10, 15, 20], index=0)
+        with c3:
+            mock_per_page = st.selectbox("Qs Per Page:", [1, 5, 10], index=1)
 
         if st.button("Generate Quick Mock Paper", use_container_width=True):
             with st.spinner("Generating clean MCQ examination paper..."):
@@ -1790,12 +1774,31 @@ else:
                     st.session_state.active_exam_questions = qs
                     st.session_state.exam_user_answers = {}
                     st.session_state.exam_submitted = False
+                    st.session_state.mock_page = 0
                     st.rerun()
 
         if st.session_state.active_exam_questions:
             q_list = st.session_state.active_exam_questions
+            tot_m = len(q_list)
+            m_pages = max(1, (tot_m + mock_per_page - 1) // mock_per_page)
+            cur_mp = min(st.session_state.mock_page, m_pages - 1)
+            ms_i = cur_mp * mock_per_page
+            me_i = min(ms_i + mock_per_page, tot_m)
 
-            for idx, q_data in enumerate(q_list):
+            mc1, mc2, mc3 = st.columns([1.2, 2.2, 1.2])
+            with mc1:
+                if st.button("⬅️ Prev", disabled=(cur_mp == 0), key="m_prev", use_container_width=True):
+                    st.session_state.mock_page = max(0, cur_mp - 1)
+                    st.rerun()
+            with mc2:
+                st.markdown(f"<div style='text-align:center; padding-top:4px; font-size:13px;'><b>Mock Page {cur_mp + 1}/{m_pages}</b> (Qs {ms_i + 1}–{me_i} of {tot_m})</div>", unsafe_allow_html=True)
+            with mc3:
+                if st.button("Next ➡️", disabled=(cur_mp >= m_pages - 1), key="m_next", use_container_width=True):
+                    st.session_state.mock_page = min(m_pages - 1, cur_mp + 1)
+                    st.rerun()
+
+            for idx in range(ms_i, me_i):
+                q_data = q_list[idx]
                 q_num = idx + 1
                 st.markdown(f"""
                 <div class="question-card">
@@ -1822,11 +1825,9 @@ else:
                 if st.session_state.exam_submitted:
                     correct = q_data.get("correct_option", "")
                     if sel_m == correct:
-                        st.success(f"✔ **Correct!** Answer: {correct}")
+                        st.success(f"✔ **Correct!** ({correct}) — {q_data.get('explanation', '')}")
                     else:
-                        st.error(f"✖ **Incorrect / Skipped.** Correct: {correct}")
-                    with st.expander(f"💡 Explanation for Q.{q_num}", expanded=True):
-                        st.write(q_data.get("explanation", ""))
+                        st.error(f"✖ **Correct Key:** {correct} — {q_data.get('explanation', '')}")
 
             if st.button("📝 Submit Mock Test & Check Score", type="primary", use_container_width=True):
                 st.session_state.exam_submitted = True
@@ -1835,12 +1836,10 @@ else:
                 st.rerun()
 
             if st.session_state.exam_submitted:
-                total_q = len(q_list)
                 correct_cnt = sum(1 for i, q in enumerate(q_list) if st.session_state.exam_user_answers.get(i) == q.get("correct_option"))
                 wrong_cnt = sum(1 for i, q in enumerate(q_list) if st.session_state.exam_user_answers.get(i) and st.session_state.exam_user_answers.get(i) != q.get("correct_option"))
                 total_marks = (correct_cnt * 4) - (wrong_cnt * 1)
-                max_marks = total_q * 4
-                st.info(f"🏆 **Mock Test Score:** {total_marks} / {max_marks}  |  ✔ Correct: {correct_cnt}  |  ✖ Wrong: {wrong_cnt}")
+                st.info(f"🏆 **Mock Test Score:** {total_marks} / {tot_m * 4}  |  ✔ Correct: {correct_cnt}  |  ✖ Wrong: {wrong_cnt}")
 
     # ================= SECTION 5: SYLLABUS & ACTS BREAKDOWN =================
     elif selected_nav == "📖 Syllabus & Acts":
@@ -1848,7 +1847,7 @@ else:
         st.info("Active Subject: **" + active_subj + "**")
         st.write(subject_details.get("units", "Comprehensive syllabus mapped to national standards."))
 
-        with st.expander("📌 View Complete Stream Breakdown (" + active_course + ")", expanded=True):
+        with st.expander("📌 View Complete Stream Breakdown (" + active_course + ")", expanded=False):
             for s_k, s_v in active_course_data["subjects"].items():
                 st.markdown(f"**{s_k}**")
                 st.caption(s_v.get("units", ""))
@@ -1857,7 +1856,7 @@ else:
     # ================= SECTION 6: BARE ACTS & MAXIMS / FORMULA LAB =================
     elif selected_nav == ref_tab_label:
         if "Law" in active_course:
-            st.subheader("⚖️ Indian Bare Acts, BNS-IPC Section Mapper & Legal Maxims (100% In-App)")
+            st.subheader("⚖️ Indian Bare Acts, BNS-IPC Section Mapper & Legal Maxims")
             with st.expander("⚔️ New Criminal Laws (2023) vs Old Laws — Master Section Comparison", expanded=True):
                 st.markdown("""
                 * **Common Intention:** `Section 3(5) BNS 2023` ⬅️ *Earlier Section 34 IPC 1860*
@@ -1891,8 +1890,8 @@ else:
             if st.button("Open Bare Act Provision Inside App", use_container_width=True):
                 if bare_query.strip():
                     with st.spinner("Loading Statutory Bare Act Text inside app..."):
-                        sys_p = "You are an Indian Legal Encyclopedia & Senior Advocate. Provide the exact Bare Act text, essential ingredients, punishment/remedy, BNS/IPC parallel (if criminal), and top 2 Supreme Court landmark judgments."
-                        st.info(execute_ai_query(sys_p, f"Explain Indian Law provision in detail: {bare_query}"))
+                        sys_p = "You are an Indian Legal Encyclopedia & Senior Advocate. Provide a concise, structured summary of the Bare Act text, essential ingredients, punishment/remedy, and top 2 Supreme Court landmark judgments."
+                        st.info(execute_ai_query(sys_p, f"Explain Indian Law provision concisely: {bare_query}", max_budget=1200))
         else:
             st.subheader("🔬 Formula & Concepts Compendium — " + active_subj)
             with st.expander("⚡ Core Formulation & Important Matrix", expanded=True):
@@ -1924,9 +1923,9 @@ else:
                     sys_prompt = (
                         "You are a master mentor for " + active_course + " (" + active_subj + "). "
                         "Remember previous progress: " + past_ctx + ". "
-                        "Explain step-by-step with statutory sections, case laws, or derivations."
+                        "Keep your explanation structured, crisp, and easy to read on a single screen."
                     )
-                    ans = execute_ai_query(sys_prompt, q, image_input=pil_q)
+                    ans = execute_ai_query(sys_prompt, q, max_budget=1500, image_input=pil_q)
                     st.write(ans)
                     
                     if active_course not in st.session_state.ai_memory:
@@ -1961,7 +1960,7 @@ else:
 
             if st.session_state.feedback_list:
                 st.markdown("<b>💬 Recent Student Reviews</b>", unsafe_allow_html=True)
-                for item in st.session_state.feedback_list[:5]:
+                for item in st.session_state.feedback_list[:4]:
                     st.markdown(f"""
                     <div style="background:rgba(255,255,255,0.04); border-left:3px solid {active_theme['accent']}; padding:8px 12px; border-radius:6px; margin-bottom:8px; font-size:12.5px;">
                         <div><b>{item.get('name')}</b> • <span style="color:{active_theme['accent']};">{item.get('rating')}</span> <span style="color:#64748B; font-size:11px;">({item.get('time')})</span></div>
@@ -1995,7 +1994,7 @@ else:
             st.markdown("**[ " + str(idx + 1) + " ]** In [ ]:")
             c_ed, c_act = st.columns([8.5, 1.5])
             with c_ed:
-                cell["code"] = st.text_area("Cell " + str(cell['id']), value=cell["code"], height=120, label_visibility="collapsed")
+                cell["code"] = st.text_area("Cell " + str(cell['id']), value=cell["code"], height=110, label_visibility="collapsed")
             with c_act:
                 run_btn = st.button("Run", key="run_" + str(cell['id']), use_container_width=True)
                 assist_btn = st.button("Assist", key="as_" + str(cell['id']), use_container_width=True)
@@ -2014,7 +2013,7 @@ else:
             if assist_btn:
                 with st.spinner("AI checking cell..."):
                     sys_prompt = "Optimize this python code cleanly and suggest best practices."
-                    cell["output"] = execute_ai_query(sys_prompt, "Analyze:\n" + cell['code'])
+                    cell["output"] = execute_ai_query(sys_prompt, "Analyze:\n" + cell['code'], max_budget=1200)
                     cell["error"] = ""
 
             if cell["output"]:
