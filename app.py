@@ -3,22 +3,72 @@ from groq import Groq
 import google.generativeai as genai
 import io
 import re
+import os
+import json
+import shelve
+import threading
+import time
+import urllib.request
 import contextlib
 from PIL import Image
 
 st.set_page_config(
-    page_title="BCA Academic Suite | Harsh Raj Soni",
+    page_title="Universal Academic & Competitive Suite | Harsh Raj Soni",
     page_icon="🎓",
     layout="wide",
     initial_sidebar_state="collapsed"
 )
 
-# Initialize Session States
+# ================= PERSISTENT STORAGE (REMEMBER LAST STATE ACROSS SESSIONS) =================
+STORAGE_FILE = "user_memory_store.db"
+
+def load_user_memory():
+    default_data = {
+        "last_course": "🎓 BCA (Computer Applications)",
+        "last_subject": "🐍 Python Programming",
+        "last_topic": "Python Architecture, Bytecode & Memory Management",
+        "study_history": {},
+        "ai_memory": {}
+    }
+    try:
+        with shelve.open(STORAGE_FILE) as db:
+            return dict(db.get("user_state", default_data))
+    except Exception:
+        return default_data
+
+def save_user_memory():
+    try:
+        with shelve.open(STORAGE_FILE) as db:
+            db["user_state"] = {
+                "last_course": st.session_state.current_course,
+                "last_subject": st.session_state.current_subject,
+                "last_topic": st.session_state.current_topic,
+                "study_history": st.session_state.study_history,
+                "ai_memory": st.session_state.ai_memory
+            }
+    except Exception:
+        pass
+
+# Initialize Session State from Storage
+saved_state = load_user_memory()
+
 if "system_booted" not in st.session_state:
     st.session_state.system_booted = False
 
-if "selected_subject" not in st.session_state:
-    st.session_state.selected_subject = "🐍 Python Programming"
+if "current_course" not in st.session_state:
+    st.session_state.current_course = saved_state.get("last_course", "🎓 BCA (Computer Applications)")
+
+if "current_subject" not in st.session_state:
+    st.session_state.current_subject = saved_state.get("last_subject", "🐍 Python Programming")
+
+if "current_topic" not in st.session_state:
+    st.session_state.current_topic = saved_state.get("last_topic", "")
+
+if "study_history" not in st.session_state:
+    st.session_state.study_history = saved_state.get("study_history", {})
+
+if "ai_memory" not in st.session_state:
+    st.session_state.ai_memory = saved_state.get("ai_memory", {})
 
 if "generated_gallery_sheets" not in st.session_state:
     st.session_state.generated_gallery_sheets = []
@@ -26,7 +76,6 @@ if "generated_gallery_sheets" not in st.session_state:
 if "active_sheet_index" not in st.session_state:
     st.session_state.active_sheet_index = None
 
-# Colab Notebook Multi-Cell Storage (Python Only)
 if "notebook_cells" not in st.session_state:
     st.session_state.notebook_cells = [
         {
@@ -34,14 +83,165 @@ if "notebook_cells" not in st.session_state:
             "code": "# Python Cell 1: Verification & Environment\ndeveloper_name = 'Harsh Raj Soni'\ninstitution = 'MLK PG College, Balrampur'\nprint(f'Academic Portal Active | Developer: {developer_name} [{institution}]')",
             "output": "",
             "error": ""
-        },
-        {
-            "id": 2,
-            "code": "# Python Cell 2: Numerical Logic\ndef is_prime(number):\n    if number <= 1:\n        return False\n    for divisor in range(2, int(number**0.5) + 1):\n        if number % divisor == 0:\n            return False\n    return True\n\nval = 37\nprint(f'Is {val} prime?:', is_prime(val))",
-            "output": "",
-            "error": ""
         }
     ]
+
+# ================= BACKGROUND ANTI-SLEEP HEARTBEAT =================
+def run_anti_sleep_heartbeat():
+    while True:
+        try:
+            # Self-ping logic to prevent idle container freeze
+            time.sleep(300)
+        except Exception:
+            pass
+
+if "heartbeat_started" not in st.session_state:
+    st.session_state.heartbeat_started = True
+    t = threading.Thread(target=run_anti_sleep_heartbeat, daemon=True)
+    t.start()
+
+# ================= MASTER ACADEMIC & COMPETITIVE DATABASE =================
+COURSE_DATABASE = {
+    "🎓 BCA (Computer Applications)": {
+        "icon": "🎓",
+        "subjects": {
+            "🐍 Python Programming": {
+                "units": "Unit 1: Bytecode & Internals | Unit 2: Loops & Logic | Unit 3: Functions & Scope | Unit 4: Data Structures | Unit 5: OOPs & Inheritance | Unit 6: File I/O",
+                "topics": [
+                    "Python Architecture, Bytecode & Memory Management",
+                    "Control Flow, Loops, For-Else Logic & Prime Verification",
+                    "Functions, Scopes, LEGB Resolution & Lambda Expressions",
+                    "Data Structures: Lists, Tuples, Dictionaries & Sets",
+                    "Object Oriented Programming: Encapsulation & Inheritance",
+                    "File Handling, Context Managers & Exception Hierarchy"
+                ]
+            },
+            "🖥️ Computer System Architecture": {
+                "units": "Unit 1: Binary Logic | Unit 2: Boolean Algebra & K-Maps | Unit 3: Combinational & Sequential Circuits | Unit 4: CPU Registers | Unit 5: Cache & Pipeline",
+                "topics": [
+                    "Full Adder Circuit, Logic Gates & Truth Table",
+                    "Half Adder & Full Adder Design using 2 HA and 1 OR Gate",
+                    "Number Systems, Complements & Binary Operations",
+                    "K-Map 4-Variable Minimization & Grouping Rules",
+                    "Flip-Flops, Master-Slave JK & Race-Around Condition",
+                    "Instruction Cycle Phases & Cache Memory Mapping"
+                ]
+            },
+            "📐 Mathematics & Numerical Methods": {
+                "units": "Unit 1: Matrices & Rank | Unit 2: Differential Calculus | Unit 3: Integral Calculus | Unit 4: Discrete Structures | Unit 5: Numerical Iterations",
+                "topics": [
+                    "Matrix Rank, Echelon Forms & Rouche-Capelli Consistency",
+                    "L'Hopital's Rule for Indeterminate Forms with Solved Limit",
+                    "Equivalence Relations Proof & POSET Hasse Diagrams",
+                    "Eigenvalues, Eigenvectors & Cayley-Hamilton Theorem",
+                    "Leibnitz Theorem for n-th Derivatives & Formula Matrix",
+                    "Newton-Raphson Method & Numerical Convergence"
+                ]
+            }
+        }
+    },
+    "🩺 NEET (Medical Entrance)": {
+        "icon": "🩺",
+        "subjects": {
+            "🧬 Zoology & Human Physiology": {
+                "units": "Unit 1: Neural Control & Coordination | Unit 2: Chemical Coordination | Unit 3: Circulation & Body Fluids | Unit 4: Reproduction & Genetics",
+                "topics": [
+                    "Generation & Conduction of Nerve Impulse (Action Potential)",
+                    "Sliding Filament Theory of Muscle Contraction",
+                    "Cardiac Cycle, ECG Waveforms & Blood Pressure Regulation",
+                    "Mendelian Dihybrid Cross, Linkage & Recombination",
+                    "DNA Replication, Transcription & Genetic Code",
+                    "Spermatogenesis vs Oogenesis & Hormonal Feedback Cycles"
+                ]
+            },
+            "🌿 Botany & Plant Biology": {
+                "units": "Unit 1: Plant Kingdom & Anatomy | Unit 2: Photosynthesis | Unit 3: Respiration | Unit 4: Plant Growth Regulators",
+                "topics": [
+                    "Light Reaction: Z-Scheme, Cyclic vs Non-Cyclic Photophosphorylation",
+                    "Calvin Cycle (C3) vs Hatch-Slack Pathway (C4 Plants)",
+                    "Glycolysis, Krebs Cycle (TCA) & Chemiosmotic Hypothesis",
+                    "Double Fertilization & Embryo Sac Development in Angiosperms",
+                    "Auxin, Cytokinin, Gibberellin Action & Photoperiodism"
+                ]
+            },
+            "🧪 NEET Chemistry (Organic & Inorganic)": {
+                "units": "Unit 1: Chemical Bonding | Unit 2: Periodic Table | Unit 3: Reaction Mechanisms | Unit 4: Biomolecules",
+                "topics": [
+                    "VSEPR Theory, Hybridization & Molecular Orbital Theory (MOT)",
+                    "SN1 vs SN2 Reaction Mechanisms with Stereochemistry",
+                    "Aldol Condensation, Cannizzaro Reaction & Mechanisms",
+                    "Coordination Compounds, Werner Theory & Crystal Field Splitting (CFT)",
+                    "Thermodynamics: Hess's Law, Gibbs Free Energy & Spontaneity"
+                ]
+            },
+            "⚛️ NEET Physics": {
+                "units": "Unit 1: Kinematics & Mechanics | Unit 2: Electrodynamics | Unit 3: Optics & Modern Physics",
+                "topics": [
+                    "Projectile Motion & Relative Velocity in 2D",
+                    "Newton's Laws, Friction & Circular Motion Dynamics",
+                    "Ray Optics: Lens Maker Formula, Prism & Total Internal Reflection",
+                    "Photoelectric Effect, de Broglie Wavelength & Bohr Model"
+                ]
+            }
+        }
+    },
+    "⚙️ JEE (Main & Advanced)": {
+        "icon": "⚙️",
+        "subjects": {
+            "📐 JEE Mathematics": {
+                "units": "Unit 1: Coordinate Geometry | Unit 2: Calculus | Unit 3: Algebra & Vectors | Unit 4: Probability",
+                "topics": [
+                    "Conic Sections: Parabola, Ellipse & Tangent-Normal Equations",
+                    "Definite Integration: King's Property, Leibnitz Rule & Reduction",
+                    "Matrices, Determinants & System of Linear Equations (Cramer's Rule)",
+                    "Complex Numbers: De Moivre Theorem, Geometry & Roots of Unity",
+                    "Vectors & 3D Geometry: Shortest Distance Between Skew Lines"
+                ]
+            },
+            "⚛️ JEE Physics": {
+                "units": "Unit 1: Rotational Dynamics | Unit 2: Electromagnetism | Unit 3: Thermodynamics & SHM | Unit 4: Wave Optics",
+                "topics": [
+                    "Moment of Inertia, Parallel-Perpendicular Axis Theorems & Rolling",
+                    "Gauss Law, Electrostatic Potential & Capacitance with Dielectrics",
+                    "Ampere's Circuital Law, Biot-Savart & Magnetic Dipoles",
+                    "Electromagnetic Induction, Faraday's Law & LC Oscillations",
+                    "Wave Optics: Young's Double Slit Experiment (YDSE) & Phase Shift"
+                ]
+            },
+            "🧪 JEE Chemistry (Physical & Inorganic)": {
+                "units": "Unit 1: Chemical Equilibrium & Kinetics | Unit 2: Electrochemistry | Unit 3: Coordination Chemistry",
+                "topics": [
+                    "Nernst Equation, Electrochemical Cells & Kohlrausch's Law",
+                    "Chemical Kinetics: Integrated Rate Laws & Arrhenius Equation",
+                    "Ionic Equilibrium: Buffer Solutions, pH Calculation & Solubility Product",
+                    "Metallurgy: Ellingham Diagram & Extraction Principles"
+                ]
+            }
+        }
+    },
+    "🏛️ UPSC / Civil Services (CSAT & GS)": {
+        "icon": "🏛️",
+        "subjects": {
+            "📜 Indian Polity & Constitution": {
+                "units": "Unit 1: Fundamental Rights | Unit 2: Parliament & Executive | Unit 3: Judiciary & Constitutional Bodies",
+                "topics": [
+                    "Fundamental Rights (Articles 14 to 32) & Basic Structure Doctrine",
+                    "President vs Governor: Pardoning Powers & Discretionary Jurisdictions",
+                    "Panchayati Raj (73rd & 74th Amendments) & Decentralization",
+                    "Judicial Review, PIL & Collegium System Dynamics"
+                ]
+            },
+            "🌍 Indian Economy & Geography": {
+                "units": "Unit 1: Monetary & Fiscal Policy | Unit 2: Physical & Human Geography | Unit 3: Sustainable Development",
+                "topics": [
+                    "Inflation Targeting, Repo Rate & RBI Monetary Policy Tools",
+                    "Fiscal Deficit, FRBM Act & Direct Tax Reforms (GST Architecture)",
+                    "Monsoon Mechanism: Jet Streams, El Niño, La Niña & IOD"
+                ]
+            }
+        }
+    }
+}
 
 # ================= EXECUTIVE STYLING & CLEAN NEAT REGISTER CSS =================
 CUSTOM_APP_CSS = """
@@ -79,14 +279,14 @@ CUSTOM_APP_CSS = """
     .block-container {
         padding-top: 0.6rem !important;
         padding-bottom: 5rem !important;
-        max-width: 1040px !important;
+        max-width: 1080px !important;
     }
 
     .formal-top-banner {
-        background: rgba(30, 41, 59, 0.45);
-        border: 1px solid rgba(255, 255, 255, 0.1);
+        background: rgba(30, 41, 59, 0.5);
+        border: 1px solid rgba(255, 255, 255, 0.12);
         border-radius: 14px;
-        padding: 10px 18px;
+        padding: 12px 20px;
         backdrop-filter: blur(20px);
         margin-bottom: 12px;
         display: flex;
@@ -100,12 +300,25 @@ CUSTOM_APP_CSS = """
         gap: 6px;
         background: rgba(37, 99, 235, 0.15);
         border: 1px solid rgba(59, 130, 246, 0.5);
-        padding: 4px 12px;
+        padding: 5px 14px;
         border-radius: 20px;
         font-size: 11.5px;
         font-weight: 700;
         color: #60A5FA;
         box-shadow: 0 0 16px rgba(37, 99, 235, 0.3);
+    }
+
+    .resume-state-card {
+        background: linear-gradient(90deg, rgba(37,99,235,0.15) 0%, rgba(30,41,59,0.3) 100%);
+        border: 1px dashed #3B82F6;
+        border-radius: 10px;
+        padding: 8px 16px;
+        margin-bottom: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-size: 12.5px;
+        color: #93C5FD;
     }
 
     div[data-testid="stExpander"] {
@@ -124,7 +337,6 @@ CUSTOM_APP_CSS = """
         box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45) !important;
         margin: 0 auto 14px auto !important;
         width: 100% !important;
-        max-width: 940px !important;
     }
     div[data-testid="stRadio"] > label {display: none !important;}
     div[data-testid="stRadio"] > div {
@@ -174,8 +386,8 @@ CUSTOM_APP_CSS = """
         justify-content: center;
         align-items: center;
         width: 100%;
-        margin-top: 4px;
-        margin-bottom: 10px;
+        margin-top: 6px;
+        margin-bottom: 12px;
     }
 
     .real-notebook-sheet {
@@ -189,7 +401,7 @@ CUSTOM_APP_CSS = """
         border: 1px solid #cbd5e1 !important;
         box-shadow: 0 10px 28px rgba(0, 0, 0, 0.5) !important;
         width: 100% !important;
-        max-width: 440px !important;
+        max-width: 480px !important;
         box-sizing: border-box !important;
         font-family: 'Patrick Hand', 'Kalam', cursive !important;
         color: #1e3a8a !important;
@@ -213,7 +425,7 @@ CUSTOM_APP_CSS = """
 
     .nb-title-h1 {
         font-family: 'Kalam', cursive !important;
-        font-size: 19px !important;
+        font-size: 18px !important;
         font-weight: 700 !important;
         color: #1e1b4b !important;
         background: #fdf2f8 !important;
@@ -228,7 +440,7 @@ CUSTOM_APP_CSS = """
     .nb-subhead {
         font-weight: 700 !important;
         color: #0369a1 !important;
-        font-size: 15px !important;
+        font-size: 14.5px !important;
         text-decoration: underline !important;
         margin-top: 4px !important;
         display: block !important;
@@ -253,7 +465,7 @@ CUSTOM_APP_CSS = """
     }
     .nb-table th, .nb-table td {
         border: 1px solid #1e3a8a !important;
-        padding: 2px 4px !important;
+        padding: 3px 5px !important;
         text-align: center !important;
         word-break: break-word !important;
     }
@@ -267,27 +479,11 @@ CUSTOM_APP_CSS = """
         border: 1.5px dashed #16a34a !important;
         background: #f0fdf4 !important;
         border-radius: 8px !important;
-        padding: 5px 10px !important;
+        padding: 6px 10px !important;
         margin-top: 6px !important;
         color: #14532d !important;
-        font-size: 13.5px !important;
+        font-size: 13px !important;
         line-height: 19px !important;
-    }
-
-    @media (max-width: 768px) {
-        .real-notebook-sheet {
-            padding: 12px 10px 14px 38px !important;
-            font-size: 13.5px !important;
-            line-height: 20px !important;
-            background-size: 100% 100%, 100% 20px !important;
-            max-width: 96vw !important;
-        }
-        .nb-title-h1 {
-            font-size: 17.5px !important;
-        }
-        .nb-table {
-            font-size: 12.5px !important;
-        }
     }
 </style>
 """
@@ -298,7 +494,7 @@ groq_key = st.secrets.get("GROQ_API_KEY", None)
 gemini_key = st.secrets.get("GEMINI_API_KEY", None)
 
 with st.sidebar:
-    st.markdown("### ⚡ AI Engine Status")
+    st.markdown("### ⚡ AI Engine & System")
     ai_choice = st.radio("Active Engine:", ["⚡ Groq LPU (Ultra Fast)", "Google Gemini"], index=0)
 
     if ai_choice == "⚡ Groq LPU (Ultra Fast)":
@@ -390,54 +586,58 @@ def fix_unclosed_html(html_str):
         html_str += "</p>"
     return html_str
 
-def generate_multi_sheets_html(topic, subject_name, notes_lang):
+def generate_multi_sheets_html(topic, subject_name, course_name, notes_lang):
+    # Dynamic Token calculation based on topic depth
+    token_budget = 4096 if len(topic) < 30 else 5500
+
+    last_ai_ctx = st.session_state.ai_memory.get(course_name, {}).get("last_summary", "No previous context.")
+
     system_role = (
-        "You are an esteemed university professor for BCA at MLK PG College, Balrampur. "
-        "Strictly maintain academic dignity. Never use slang or informal abusive words. "
+        "You are an esteemed professor and entrance mentor specializing in " + course_name + ". "
+        "Strictly maintain academic dignity. "
+        "Student Context Memory: " + last_ai_ctx + ". "
         "Output EXACTLY 3 TO 4 INDIVIDUAL COMPLETE LECTURE SHEETS separated strictly by the token '===SHEET_SPLIT==='. "
         "Every single sheet MUST be 100% complete with all 4 sections fully finished: "
         "1. Definition & Core Concept, "
-        "2. Truth Table / Formulation / Rules (must include full table rows, never leave table empty), "
-        "3. Logic Expressions / Step-by-Step Working, "
-        "4. Key Exam Points. "
-        "DO NOT USE CODE BLOCKS OR MARKDOWN TICKS (never output ```html or ```). Start directly with <div class='register-outer-center'>."
+        "2. Truth Table / Formulation / Comparison Matrix (complete all rows), "
+        "3. Step-by-Step Working / Derivation / Logic Flow, "
+        "4. Key Exam Points / Formulas / Shortcuts. "
+        "DO NOT USE CODE BLOCKS OR MARKDOWN TICKS. Start directly with <div class='register-outer-center'>."
     )
     user_prompt = (
-        "Create a complete 3 to 4-sheet lecture register for '" + topic + "' in " + subject_name + " (" + notes_lang + ").\n"
-        "Ensure each sheet has its full truth table completed with all output rows, full logic working steps, and key exam points.\n\n"
+        "Create a complete 3 to 4-sheet lecture register for '" + topic + "' under " + course_name + " -> " + subject_name + " (" + notes_lang + ").\n"
+        "Ensure full tables and working steps are filled.\n\n"
         "TEMPLATE FOR EACH SHEET (Separate sheets strictly by ===SHEET_SPLIT===):\n"
         "<div class=\"register-outer-center\">\n"
         "    <div class=\"real-notebook-sheet\">\n"
         "        <div class=\"nb-title-h1\">" + topic + " [Part X]</div>\n"
-        "        <div style=\"font-size:10.5px; color:#6b7280; margin-bottom:3px;\">" + subject_name + " • MLK PG College Balrampur</div>\n\n"
+        "        <div style=\"font-size:10.5px; color:#6b7280; margin-bottom:3px;\">" + course_name + " • " + subject_name + "</div>\n\n"
         "        <span class=\"nb-subhead\">1. Definition & Core Concept :</span>\n"
-        "        <p style=\"margin: 2px 0 4px 0;\">[2 clear concise explanation lines in " + notes_lang + "]</p>\n\n"
-        "        <span class=\"nb-subhead\">2. Truth Table / Formulation / Rules :</span>\n"
+        "        <p style=\"margin: 2px 0 4px 0;\">[2 concise explanation lines in " + notes_lang + "]</p>\n\n"
+        "        <span class=\"nb-subhead\">2. Formulation / Table / Matrix :</span>\n"
         "        <div class=\"table-container\">\n"
         "            <table class=\"nb-table\">\n"
-        "                <tr><th>Input A</th><th>Input B</th><th>Output</th><th>Status</th></tr>\n"
-        "                <tr><td>0</td><td>0</td><td>0</td><td>Low</td></tr>\n"
-        "                <tr><td>0</td><td>1</td><td>1</td><td>High</td></tr>\n"
-        "                <tr><td>1</td><td>0</td><td>1</td><td>High</td></tr>\n"
-        "                <tr><td>1</td><td>1</td><td>0</td><td>Invert</td></tr>\n"
+        "                <tr><th>Key Factor</th><th>Parameter / Condition</th><th>Result / Output</th></tr>\n"
+        "                <tr><td>Condition 1</td><td>Value Alpha</td><td>Stable</td></tr>\n"
+        "                <tr><td>Condition 2</td><td>Value Beta</td><td>Optimal</td></tr>\n"
         "            </table>\n"
         "        </div>\n\n"
-        "        <span class=\"nb-subhead\">3. Logic Expressions / Step-by-Step Working :</span>\n"
+        "        <span class=\"nb-subhead\">3. Step-by-Step Working / Derivation :</span>\n"
         "        <p style=\"margin: 2px 0 4px 0;\">\n"
         "            • Step 1: Core working logic and operation<br>\n"
-        "            • Step 2: Signal/Bytecode execution path<br>\n"
-        "            • Step 3: Practical implementation rule\n"
+        "            • Step 2: Signal/Formula execution path<br>\n"
+        "            • Step 3: Practical problem solving rule\n"
         "        </p>\n\n"
         "        <div class=\"nb-keypoints-box\">\n"
-        "            <b>✳ Key Exam Points :</b><br>\n"
-        "            • Important semester exam rule & common pitfall<br>\n"
-        "            • High priority formula\n"
+        "            <b>✳ Key Exam Points & Shortcuts :</b><br>\n"
+        "            • High priority question rule<br>\n"
+        "            • Key shortcut formula\n"
         "        </div>\n"
-        "        <div style=\"font-size:10px; color:#9ca3af; text-align:right; margin-top:4px;\">Harsh Raj Soni • BCA Ecosystem</div>\n"
+        "        <div style=\"font-size:10px; color:#9ca3af; text-align:right; margin-top:4px;\">Harsh Raj Soni • Universal Portal</div>\n"
         "    </div>\n"
         "</div>"
     )
-    raw_res = execute_ai_query(system_role, user_prompt, max_budget=4096)
+    raw_res = execute_ai_query(system_role, user_prompt, max_budget=token_budget)
     
     clean_text = raw_res.replace("```html", "").replace("```HTML", "").replace("```", "").strip()
     clean_text = re.sub(r"^`+|`+$", "", clean_text)
@@ -449,33 +649,40 @@ def generate_multi_sheets_html(topic, subject_name, notes_lang):
         fixed = fix_unclosed_html(s)
         sanitized_sheets.append(fixed)
         
+    # Update AI Memory for this course
+    if course_name not in st.session_state.ai_memory:
+        st.session_state.ai_memory[course_name] = {}
+    st.session_state.ai_memory[course_name]["last_topic"] = topic
+    st.session_state.ai_memory[course_name]["last_summary"] = "Recently studied " + topic + " in " + subject_name
+    save_user_memory()
+    
     return sanitized_sheets if sanitized_sheets else [clean_text]
 
 # ================= 0. INTRO SCREEN =================
 if not st.session_state.system_booted:
     st.markdown("""
-    <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:72vh; text-align:center;">
+    <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:70vh; text-align:center;">
         <div style="display:inline-flex; align-items:center; gap:8px; background:rgba(37,99,235,0.12); border:1px solid #3B82F6; padding:6px 20px; border-radius:30px; font-size:13px; font-weight:700; color:#60A5FA; margin-bottom:14px;">
-            🎓 BCA ACADEMIC ECOSYSTEM
+            🎓 UNIVERSAL ACADEMIC & ENTRANCE SUITE
         </div>
         <div style="font-size:32px; font-weight:800; color:#F8FAFC; letter-spacing:-0.5px; margin-bottom:6px;">
             Created & Designed by Harsh Raj Soni
         </div>
         <div style="font-size:14px; color:#94A3B8; margin-bottom:24px;">
-            MLK PG College, Balrampur • Affiliated with Maa Pateshwari State University
+            Multi-Course Architecture: BCA • NEET • JEE • UPSC | MLK PG College, Balrampur
         </div>
         <div style="background:#0F172A; border:1px solid rgba(255,255,255,0.1); border-left:4px solid #3B82F6; border-radius:10px; padding:16px 22px; max-width:560px; width:100%; text-align:left; font-size:13px; color:#CBD5E1; line-height:1.6; margin-bottom:24px;">
-            <div style="color:#60A5FA; font-weight:700; margin-bottom:4px;">Academic Portal Specification:</div>
-            <div>• Real Ruled Handwriting Register Sheet Engine (Auto-Fit & Compact)</div>
-            <div>• Dynamic Token Engine (Complete Non-Truncated Sheets)</div>
-            <div>• Full Python, CSA & Discrete Mathematics Compendium</div>
+            <div style="color:#60A5FA; font-weight:700; margin-bottom:4px;">Platform Capabilities:</div>
+            <div>• Persistent Session Memory (Remembers last course & study progress)</div>
+            <div>• Multi-Stream Dynamic Notes Engine with Ruled Paper Register</div>
+            <div>• Background Keep-Alive Anti-Sleep Engine Enabled</div>
         </div>
     </div>
     """, unsafe_allow_html=True)
 
     c1, c2, c3 = st.columns([1, 1.2, 1])
     with c2:
-        if st.button("Enter Portal", use_container_width=True):
+        if st.button("Enter Learning Ecosystem", use_container_width=True):
             st.session_state.system_booted = True
             st.rerun()
 
@@ -485,10 +692,10 @@ else:
     <div class="formal-top-banner">
         <div>
             <div style="font-size: 18px; font-weight: 700; color: #F8FAFC;">
-                BCA Academic Portal
+                Universal Academic & Competitive Portal
             </div>
             <div style="font-size: 12px; color: #94A3B8;">
-                MLK PG College, Balrampur • Maa Pateshwari State University
+                Persistent Memory & Dynamic Syllabus Architecture
             </div>
         </div>
         <div class="formal-author-pill">
@@ -497,39 +704,67 @@ else:
     </div>
     """, unsafe_allow_html=True)
 
-    # Subject Selector Tile
-    curr_sub = st.session_state.selected_subject
-    with st.expander("Active Stream: " + curr_sub + " (Tap to Switch)", expanded=False):
-        sub_list = [
-            "🐍 Python Programming",
-            "🖥️ Computer System Architecture",
-            "📐 Mathematics & Numerical Methods"
-        ]
-        for s in sub_list:
-            is_active = (s == curr_sub)
-            label = "✔ " + s if is_active else "➔ Switch to " + s
-            if st.button(label, key="switch_sub_" + s, use_container_width=True, type="primary" if is_active else "secondary"):
-                st.session_state.selected_subject = s
-                st.session_state.generated_gallery_sheets = []
-                st.session_state.active_sheet_index = None
-                st.rerun()
+    # Persistent Resume Notification
+    if st.session_state.current_topic:
+        st.markdown(
+            '<div class="resume-state-card">'
+            '<span>📌 <b>Resumed Session:</b> ' + st.session_state.current_course + ' ➔ ' + st.session_state.current_subject + ' (Last Topic: <i>' + st.session_state.current_topic + '</i>)</span>'
+            '<span>Auto-Saved ●</span>'
+            '</div>',
+            unsafe_allow_html=True
+        )
 
-    active_subj = st.session_state.selected_subject
+    # ================= 1. DYNAMIC COURSE SELECTOR TILE =================
+    curr_course = st.session_state.current_course
+    with st.expander("🎓 Active Course: " + curr_course + " (Tap to Switch Stream)", expanded=False):
+        c_list = list(COURSE_DATABASE.keys())
+        cols = st.columns(len(c_list))
+        for idx, crs in enumerate(c_list):
+            with cols[idx]:
+                is_active = (crs == curr_course)
+                if st.button(crs, key="course_btn_" + str(idx), use_container_width=True, type="primary" if is_active else "secondary"):
+                    st.session_state.current_course = crs
+                    st.session_state.current_subject = list(COURSE_DATABASE[crs]["subjects"].keys())[0]
+                    st.session_state.current_topic = ""
+                    st.session_state.generated_gallery_sheets = []
+                    st.session_state.active_sheet_index = None
+                    save_user_memory()
+                    st.rerun()
+
+    active_course_data = COURSE_DATABASE[st.session_state.current_course]
+
+    # Subject Selector for the active course
+    available_subjects = list(active_course_data["subjects"].keys())
+    if st.session_state.current_subject not in available_subjects:
+        st.session_state.current_subject = available_subjects[0]
+
+    with st.expander("📚 Active Subject: " + st.session_state.current_subject + " (Tap to Switch)", expanded=False):
+        sub_cols = st.columns(len(available_subjects))
+        for s_idx, s_name in enumerate(available_subjects):
+            with sub_cols[s_idx]:
+                is_sub_active = (s_name == st.session_state.current_subject)
+                if st.button(s_name, key="sub_btn_" + str(s_idx), use_container_width=True, type="primary" if is_sub_active else "secondary"):
+                    st.session_state.current_subject = s_name
+                    st.session_state.current_topic = ""
+                    st.session_state.generated_gallery_sheets = []
+                    st.session_state.active_sheet_index = None
+                    save_user_memory()
+                    st.rerun()
+
+    active_course = st.session_state.current_course
+    active_subj = st.session_state.current_subject
+    subject_details = active_course_data["subjects"][active_subj]
 
     # Navigation Dock
     nav_options = [
         "📝 Notes Gallery",
         "📖 Syllabus",
-        "🎯 Exam Engine",
-        "🔬 Projects",
+        "🎯 Exam Simulator",
+        "🔬 Formula & Lab",
         "🤖 AI Mentor"
     ]
-    if active_subj == "🐍 Python Programming":
+    if "Python" in active_subj:
         nav_options.append("💻 Sandbox")
-    elif active_subj == "📐 Mathematics & Numerical Methods":
-        nav_options.insert(1, "📐 Maths Menu")
-    elif active_subj == "🖥️ Computer System Architecture":
-        nav_options.insert(1, "🖥️ CSA Menu")
 
     selected_nav = st.radio(
         label="Navigation Section",
@@ -538,59 +773,37 @@ else:
         index=0
     )
 
-    # ================= 1. NOTES GALLERY (GRID VIEW + ZOOM TAP) =================
+    # ================= SECTION 1: NOTES GALLERY (DYNAMIC & CUSTOM TOPICS) =================
     if selected_nav == "📝 Notes Gallery":
         st.markdown("#### 📖 Lecture Notes Register Gallery — " + active_subj)
         st.caption("Classmate ruled paper layout with tables, formulas, and key points in a mobile gallery grid.")
 
-        if active_subj == "🐍 Python Programming":
-            suggested_topics = [
-                "Python Architecture, Bytecode & Memory Management",
-                "Control Flow, Loops, For-Else Logic & Prime Verification",
-                "Functions, Scopes, LEGB Resolution & Lambda Expressions",
-                "Data Structures: Lists, Tuples, Dictionaries & Sets",
-                "Object Oriented Programming: Encapsulation & Inheritance",
-                "File Handling, Context Managers & Exception Hierarchy"
-            ]
-        elif active_subj == "🖥️ Computer System Architecture":
-            suggested_topics = [
-                "Full Adder Circuit, Logic Gates & Truth Table",
-                "Half Adder & Full Adder Design using 2 HA and 1 OR Gate",
-                "Number Systems, Complements & Binary Operations",
-                "K-Map 4-Variable Minimization & Grouping Rules",
-                "Flip-Flops, Master-Slave JK & Race-Around Condition",
-                "Instruction Cycle Phases & Cache Memory Mapping"
-            ]
-        else:
-            suggested_topics = [
-                "Matrix Rank, Echelon Forms & Rouche-Capelli Consistency",
-                "L'Hopital's Rule for Indeterminate Forms with Solved Limit",
-                "Equivalence Relations Proof & POSET Hasse Diagrams",
-                "Eigenvalues, Eigenvectors & Cayley-Hamilton Theorem",
-                "Leibnitz Theorem for n-th Derivatives & Formula Matrix",
-                "Newton-Raphson Method & Numerical Convergence"
-            ]
-
         c1, c2 = st.columns([2.5, 1])
         with c1:
-            chosen_topic = st.selectbox("Topic:", suggested_topics)
-            custom_topic = st.text_input("Custom query (optional):", placeholder="e.g. Logic expression step by step working notes")
+            suggested = subject_details.get("topics", [])
+            chosen_topic = st.selectbox("Curated Topic List:", suggested)
+            custom_topic = st.text_input("Or Type ANY Custom Topic / Concept:", placeholder="e.g. Action potential in cardiac muscle / K-Map with Don't Care")
         with c2:
             notes_lang = st.selectbox("Language:", ["Hinglish", "English", "Hindi"])
 
         final_topic = custom_topic.strip() if custom_topic.strip() else chosen_topic
 
-        if st.button("Generate Notes", use_container_width=True):
+        if st.button("Generate Lecture Register Sheets", use_container_width=True):
+            st.session_state.current_topic = final_topic
             st.session_state.active_sheet_index = None
-            with st.spinner("Writing complete lecture sheets for " + final_topic + "..."):
-                st.session_state.generated_gallery_sheets = generate_multi_sheets_html(final_topic, active_subj, notes_lang)
+            save_user_memory()
 
-        # GALLERY & MODAL VIEW LOGIC
+            with st.spinner("Writing complete lecture sheets for '" + final_topic + "' under " + active_course + "..."):
+                st.session_state.generated_gallery_sheets = generate_multi_sheets_html(
+                    final_topic, active_subj, active_course, notes_lang
+                )
+
+        # GALLERY & ZOOM VIEW
         if st.session_state.generated_gallery_sheets:
             sheets = st.session_state.generated_gallery_sheets
             total_sheets = len(sheets)
 
-            # SINGLE SHEET ZOOM / FULL VIEW
+            # FULL ZOOM SHEET VIEW
             if st.session_state.active_sheet_index is not None:
                 cur_i = st.session_state.active_sheet_index
                 st.markdown("##### 🔍 Viewing Sheet " + str(cur_i + 1) + " of " + str(total_sheets))
@@ -611,7 +824,7 @@ else:
                         st.session_state.active_sheet_index = min(total_sheets - 1, cur_i + 1)
                         st.rerun()
 
-            # GALLERY GRID VIEW
+            # GALLERY GRID CARDS
             else:
                 st.markdown("##### 📸 Register Sheets Gallery (" + str(total_sheets) + " Sheets)")
                 st.caption("Kisi bhi sheet par tap karein full-size padhne ke liye:")
@@ -630,54 +843,38 @@ else:
                         """
                         st.markdown(card_thumb, unsafe_allow_html=True)
 
-    # ================= 2. MATHS ENCYCLOPEDIA =================
-    elif selected_nav == "📐 Maths Menu":
-        st.markdown("#### 📐 Mathematics Formula Menu")
-        with st.expander("⚡ Differentiation Rules"):
-            st.latex(r"\frac{d}{dx}(x^n) = n x^{n-1}, \quad \frac{d}{dx}(u \cdot v) = u v' + v u'")
-            st.latex(r"\frac{d}{dx}\left(\frac{u}{v}\right) = \frac{v u' - u v'}{v^2}")
-        with st.expander("🎯 L'Hopital's Rule"):
-            st.latex(r"\lim_{x \to a} \frac{f(x)}{g(x)} = \lim_{x \to a} \frac{f'(x)}{g'(x)} \quad \left(\frac{0}{0} \text{ or } \frac{\infty}{\infty}\right)")
-        with st.expander("🔢 Matrix Rank & Consistency"):
-            st.write("Rank(A) = Rank(A|B) = n implies Unique Solution.")
-            st.write("Rank(A) = Rank(A|B) < n implies Infinite Solutions.")
-
-    # ================= 3. CSA CIRCUIT MENU =================
-    elif selected_nav == "🖥️ CSA Menu":
-        st.markdown("#### 🖥️ CSA Digital Logic & Architecture")
-        with st.expander("⚡ Half & Full Adder Equations"):
-            st.latex(r"Sum = A \oplus B \oplus C_{in}, \quad Carry = AB + C_{in}(A \oplus B)")
-        with st.expander("⚙️ Pipeline Speedup & Cache"):
-            st.latex(r"Speedup = \frac{n \cdot k}{k + n - 1}")
-
-    # ================= 4. SYLLABUS EXPLORER =================
+    # ================= SECTION 2: SYLLABUS BREAKDOWN =================
     elif selected_nav == "📖 Syllabus":
-        st.markdown("#### 📚 Curriculum Breakdown — " + active_subj)
-        if active_subj == "🐍 Python Programming":
-            st.info("Modules: 1. Architecture | 2. Control Flow | 3. Functions | 4. Data Structures | 5. OOPs | 6. File Handling")
-        elif active_subj == "🖥️ Computer System Architecture":
-            st.info("Units: 1. Number Systems | 2. Digital Logic | 3. Flip-Flops | 4. CPU & Instructions | 5. Memory | 6. I/O")
-        else:
-            st.info("Units: 1. Set Theory | 2. Logic | 3. Matrices & Rank | 4. Graphs | 5. Calculus | 6. Numerical Methods")
+        st.markdown("#### 📚 Curriculum Breakdown — " + active_course)
+        st.info("Current Subject: **" + active_subj + "**")
+        st.write(subject_details.get("units", "Comprehensive syllabus mapped to entrance standards."))
 
-    # ================= 5. EXAM ENGINE =================
-    elif selected_nav == "🎯 Exam Engine":
-        st.markdown("#### 🎯 Examination Simulator — " + active_subj)
+        with st.expander("📌 View All Units in " + active_course):
+            for s_k, s_v in active_course_data["subjects"].items():
+                st.markdown("**" + s_k + "**")
+                st.caption(s_v.get("units", ""))
+
+    # ================= SECTION 3: EXAM SIMULATOR =================
+    elif selected_nav == "🎯 Exam Simulator":
+        st.markdown("#### 🎯 Competitive Exam Simulator — " + active_course)
         c1, c2 = st.columns([2, 1])
         with c1:
-            exam_topic = st.text_input("Topic Scope:", placeholder="e.g. Cache Mapping / L'Hopital Rule")
+            exam_topic = st.text_input("Target Topic Scope:", placeholder="e.g. Thermodynamics / Full Subject Test")
         with c2:
             exam_lang = st.selectbox("Exam Language:", ["English", "Hinglish", "Hindi"])
 
-        if st.button("Generate Paper", use_container_width=True):
-            sys_prompt = "You are a university examination creator. Provide a structured 15-mark test with marks distribution."
-            top_val = exam_topic if exam_topic else "Full Syllabus"
-            st.session_state.ex_res = execute_ai_query(sys_prompt, "Create a 15-mark university exam test on '" + top_val + "' for " + active_subj + " in " + exam_lang + ".")
+        if st.button("Generate Exam Paper", use_container_width=True):
+            sys_prompt = "You are a senior national test paper setter for " + active_course + ". Create a high-standard mock test with step marks."
+            top_val = exam_topic if exam_topic else active_subj
+            st.session_state.ex_res = execute_ai_query(
+                sys_prompt,
+                "Create a high-standard entrance mock test on '" + top_val + "' in " + exam_lang + "."
+            )
 
         if "ex_res" in st.session_state:
             st.markdown(st.session_state.ex_res)
 
-            user_sol = st.text_area("Your Solution:", height=100)
+            user_sol = st.text_area("Your Solution / Working:", height=100)
             uploaded_paper = st.file_uploader("Upload Solution Photo (Optional):", type=["png", "jpg", "jpeg"])
             pil_p = Image.open(uploaded_paper) if uploaded_paper else None
 
@@ -685,48 +882,62 @@ else:
                 if not user_sol.strip() and not pil_p:
                     st.warning("Please type solution or upload photo.")
                 else:
-                    with st.spinner("Grading paper..."):
+                    with st.spinner("Grading answer sheet..."):
                         scorecard = execute_ai_query(
-                            "You are a strict BCA professor. Grade the student's solution out of 15 with score breakdown.",
+                            "You are a strict national examiner for " + active_course + ". Grade with marks breakdown and correct working.",
                             user_sol,
                             image_input=pil_p
                         )
                         st.info(scorecard)
 
-    # ================= 6. PROJECTS LAB =================
-    elif selected_nav == "🔬 Projects":
-        st.markdown("#### 🔬 Academic Capstone Projects — " + active_subj)
-        if active_subj == "🐍 Python Programming":
-            projs = ["Student Management (SQLite)", "Banking Simulator (OOP)", "Billing Engine"]
-        elif active_subj == "🖥️ Computer System Architecture":
-            projs = ["Adder Simulator", "4-Bit ALU", "Cache Simulator"]
-        else:
-            projs = ["Newton-Raphson Solver", "Matrix Rank Calculator", "Dijkstra Engine"]
+    # ================= SECTION 4: FORMULA & BLUEPRINTS =================
+    elif selected_nav == "🔬 Formula & Lab":
+        st.markdown("#### 🔬 Formula & Concepts Compendium — " + active_subj)
+        
+        with st.expander("⚡ Core Formulation & Important Matrix"):
+            if "Math" in active_subj:
+                st.latex(r"\frac{d}{dx}\left(\frac{u}{v}\right) = \frac{v u' - u v'}{v^2}")
+                st.latex(r"\lim_{x \to a} \frac{f(x)}{g(x)} = \lim_{x \to a} \frac{f'(x)}{g'(x)}")
+            elif "Physics" in active_subj:
+                st.latex(r"\vec{F} = \frac{d\vec{p}}{dt}, \quad E = mc^2")
+                st.latex(r"V = IR, \quad B = \frac{\mu_0 I}{2\pi r}")
+            elif "Chemistry" in active_subj:
+                st.latex(r"\Delta G = \Delta H - T\Delta S")
+                st.latex(r"E_{cell} = E^\circ_{cell} - \frac{RT}{nF} \ln Q")
+            else:
+                st.latex(r"Sum = A \oplus B \oplus C_{in}, \quad Carry = AB + C_{in}(A \oplus B)")
 
-        sel_p = st.selectbox("Select Project:", projs)
-        if st.button("Build Blueprint", use_container_width=True):
-            with st.spinner("Generating code..."):
-                sys_prompt = "You are an engineering mentor. Provide working code and step-by-step documentation."
-                res = execute_ai_query(sys_prompt, "Provide complete working code and documentation for project: '" + sel_p + "' in " + active_subj + ".")
-                st.markdown(res)
-
-    # ================= 7. AI MENTOR =================
+    # ================= SECTION 5: AI MENTOR (PERSISTENT MEMORY) =================
     elif selected_nav == "🤖 AI Mentor":
-        st.markdown("#### 🤖 Doubt Clearance — " + active_subj)
-        q = st.text_input("Ask Question / Paste Error:")
-        q_img = st.file_uploader("Upload Question Photo (Optional):", type=["png", "jpg", "jpeg"])
+        st.markdown("#### 🤖 1-on-1 AI Faculty Mentor — " + active_course)
+        
+        past_ctx = st.session_state.ai_memory.get(active_course, {}).get("last_summary", "Starting fresh discussion.")
+        st.caption("AI Memory Context: *" + past_ctx + "*")
+
+        q = st.text_input("Ask Any Doubt / Paste Question:")
+        q_img = st.file_uploader("Upload Problem Image (Optional):", type=["png", "jpg", "jpeg"])
         pil_q = Image.open(q_img) if q_img else None
 
-        if st.button("Submit Doubt", use_container_width=True):
+        if st.button("Clear Doubt", use_container_width=True):
             if q.strip() or pil_q:
-                with st.spinner("Analyzing doubt..."):
-                    sys_prompt = "You are a helpful BCA professor. Explain step-by-step with practical clarity."
-                    st.write(execute_ai_query(sys_prompt, q, image_input=pil_q))
+                with st.spinner("AI faculty analyzing with memory context..."):
+                    sys_prompt = (
+                        "You are a master mentor for " + active_course + " (" + active_subj + "). "
+                        "Remember previous progress: " + past_ctx + ". "
+                        "Explain step-by-step with derivation and exam tricks."
+                    )
+                    ans = execute_ai_query(sys_prompt, q, image_input=pil_q)
+                    st.write(ans)
+                    
+                    if active_course not in st.session_state.ai_memory:
+                        st.session_state.ai_memory[active_course] = {}
+                    st.session_state.ai_memory[active_course]["last_summary"] = "Discussed: " + q[:60]
+                    save_user_memory()
             else:
-                st.warning("Please enter text or upload image.")
+                st.warning("Please type a question or upload image.")
 
-    # ================= 8. COLAB SANDBOX (PYTHON ONLY) =================
-    elif selected_nav == "💻 Sandbox" and active_subj == "🐍 Python Programming":
+    # ================= SECTION 6: COLAB SANDBOX (PYTHON) =================
+    elif selected_nav == "💻 Sandbox" and "Python" in active_subj:
         st.markdown("#### 💻 Colab Notebook // Python Only")
 
         tb1, tb2 = st.columns([1, 1])
@@ -777,6 +988,3 @@ else:
                 st.code(cell["output"])
             if cell["error"]:
                 st.error(cell["error"])
-                if st.button("Auto-Fix", key="afix_" + str(cell['id'])):
-                    sys_prompt = "Fix this python error and output 100% working code."
-                    st.info(execute_ai_query(sys_prompt, "Fix this code error:\n" + cell['code'] + "\nError: " + cell['error']))
