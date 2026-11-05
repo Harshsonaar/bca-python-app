@@ -4,12 +4,14 @@ import google.generativeai as genai
 import io
 import re
 import os
-import json
 import shelve
 import threading
 import time
 import urllib.parse
 import contextlib
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 from PIL import Image
 
 st.set_page_config(
@@ -19,16 +21,19 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# ================= PERSISTENT STORAGE =================
+ADMIN_EMAIL = "harshrajsoni92@gmail.com"
+
+# PERSISTENT STORAGE
 STORAGE_FILE = "user_memory_store.db"
 
 def load_user_memory():
     default_data = {
         "last_course": "⚖️ Law & Judiciary (LL.B / CLAT / PCS-J)",
         "last_subject": "🏛️ Constitutional Law of India",
-        "last_topic": "Fundamental Rights: Article 14 (Equality), Art 19 (Freedoms) & Art 21 (Life & Personal Liberty)",
+        "last_topic": "Fundamental Rights: Article 14 (Equality), Art 19 (Six Freedoms) & Art 21 (Life & Personal Liberty)",
         "study_history": {},
-        "ai_memory": {}
+        "ai_memory": {},
+        "feedback_list": []
     }
     try:
         with shelve.open(STORAGE_FILE) as db:
@@ -44,7 +49,8 @@ def save_user_memory():
                 "last_subject": st.session_state.current_subject,
                 "last_topic": st.session_state.current_topic,
                 "study_history": st.session_state.study_history,
-                "ai_memory": st.session_state.ai_memory
+                "ai_memory": st.session_state.ai_memory,
+                "feedback_list": st.session_state.feedback_list
             }
     except Exception:
         pass
@@ -70,6 +76,15 @@ if "study_history" not in st.session_state:
 if "ai_memory" not in st.session_state:
     st.session_state.ai_memory = saved_state.get("ai_memory", {})
 
+if "feedback_list" not in st.session_state:
+    st.session_state.feedback_list = saved_state.get("feedback_list", [])
+
+if "feedback_popup_shown" not in st.session_state:
+    st.session_state.feedback_popup_shown = False
+
+if "trigger_feedback_modal" not in st.session_state:
+    st.session_state.trigger_feedback_modal = False
+
 if "generated_gallery_sheets" not in st.session_state:
     st.session_state.generated_gallery_sheets = []
 
@@ -78,6 +93,9 @@ if "active_sheet_index" not in st.session_state:
 
 if "active_exam_questions" not in st.session_state:
     st.session_state.active_exam_questions = []
+
+if "exam_user_answers" not in st.session_state:
+    st.session_state.exam_user_answers = {}
 
 if "exam_submitted" not in st.session_state:
     st.session_state.exam_submitted = False
@@ -126,7 +144,7 @@ if "heartbeat_started" not in st.session_state:
     t = threading.Thread(target=run_anti_sleep_heartbeat, daemon=True)
     t.start()
 
-# ================= THEME PALETTES (EYE-FRIENDLY SOFT DARK GRADIENTS) =================
+# THEME PALETTES (EYE-FRIENDLY SOFT DARK GRADIENTS)
 THEME_PALETTES = {
     "⚖️ Law & Judiciary (LL.B / CLAT / PCS-J)": {
         "grad_top": "#1F0D16",
@@ -182,11 +200,157 @@ THEME_PALETTES = {
 
 active_theme = THEME_PALETTES.get(st.session_state.current_course, THEME_PALETTES["⚖️ Law & Judiciary (LL.B / CLAT / PCS-J)"])
 
-# ================= MASTER ACADEMIC & COMPETITIVE DATABASE =================
+# API KEYS & GMAIL APP PASSWORD CONFIG
+groq_key = st.secrets.get("GROQ_API_KEY", None)
+gemini_key = st.secrets.get("GEMINI_API_KEY", None)
+gmail_app_password = st.secrets.get("GMAIL_APP_PASSWORD", None)
+
+# AUTOMATIC BACKGROUND GMAIL SMTP SENDER
+def send_auto_smtp_email(sender_name, student_email, stream_name, rating_str, feedback_text, app_pwd):
+    if not app_pwd:
+        return False, "No App Password"
+    try:
+        clean_pwd = app_pwd.replace(" ", "").strip()
+        msg = MIMEMultipart("alternative")
+        msg["From"] = f"Academic Suite Portal <{ADMIN_EMAIL}>"
+        msg["To"] = ADMIN_EMAIL
+        if student_email and "@" in student_email:
+            msg["Reply-To"] = student_email
+        msg["Subject"] = f"⭐ New Portal Rating ({rating_str.split(' ')[0]}) from {sender_name}"
+
+        html_body = f"""
+        <div style="font-family: Arial, sans-serif; max-width: 580px; border: 2px solid #2563EB; border-radius: 12px; padding: 20px; background: #0F172A; color: #F8FAFC;">
+            <h2 style="color: #38BDF8; margin-top: 0;">🎓 Universal Academic Suite — New Student Feedback</h2>
+            <p style="font-size: 14px; color: #CBD5E1;">Hello <b>Harsh Raj Soni</b>, ek student ne aapke portal par naya review submit kiya hai:</p>
+            <table style="width: 100%; border-collapse: collapse; margin: 14px 0; font-size: 14px; color: #F8FAFC;">
+                <tr><td style="padding: 8px; border-bottom: 1px solid #334155;"><b>Student Name:</b></td><td style="padding: 8px; border-bottom: 1px solid #334155;">{sender_name}</td></tr>
+                <tr><td style="padding: 8px; border-bottom: 1px solid #334155;"><b>Student Email:</b></td><td style="padding: 8px; border-bottom: 1px solid #334155;">{student_email if student_email else 'Not provided'}</td></tr>
+                <tr><td style="padding: 8px; border-bottom: 1px solid #334155;"><b>Active Stream:</b></td><td style="padding: 8px; border-bottom: 1px solid #334155;">{stream_name}</td></tr>
+                <tr><td style="padding: 8px; border-bottom: 1px solid #334155;"><b>Star Rating:</b></td><td style="padding: 8px; border-bottom: 1px solid #334155; color: #FBBF24; font-weight: bold;">{rating_str}</td></tr>
+            </table>
+            <div style="background: #1E293B; border-left: 4px solid #38BDF8; padding: 12px 16px; border-radius: 6px; margin-top: 12px;">
+                <div style="font-size: 12px; color: #94A3B8; margin-bottom: 4px;"><b>Feedback / Message:</b></div>
+                <div style="font-size: 14.5px; color: #FFFFFF; line-height: 1.5;">{feedback_text}</div>
+            </div>
+            <p style="font-size: 11px; color: #64748B; text-align: right; margin-top: 16px;">Auto-dispatched via Python SMTP Engine • MLK PG College Ecosystem</p>
+        </div>
+        """
+        msg.attach(MIMEText(html_body, "html"))
+
+        with smtplib.SMTP_SSL("smtp.gmail.com", 465, timeout=12) as server:
+            server.login(ADMIN_EMAIL, clean_pwd)
+            server.sendmail(ADMIN_EMAIL, ADMIN_EMAIL, msg.as_string())
+        return True, "Delivered"
+    except Exception as e:
+        return False, str(e)
+
+# RATING & FEEDBACK POPUP DIALOG ENGINE
+def render_feedback_form_contents(context_key="modal"):
+    st.markdown(f"""
+    <div style="background:{active_theme['card_bg']}; border:1.5px solid {active_theme['accent']}; border-radius:12px; padding:14px 18px; margin-bottom:12px;">
+        <div style="font-size:16px; font-weight:700; color:{active_theme['accent']};">⭐ Rate & Share Your Feedback</div>
+        <div style="font-size:12px; color:#CBD5E1; margin-top:2px;">
+            Submit karte hi aapka feedback automatic Developer <b>Harsh Raj Soni</b> (<code>{ADMIN_EMAIL}</code>) ke Gmail inbox mein deliver ho jayega.
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    star_options = [
+        "⭐⭐⭐⭐⭐ (5/5 - Mind Blowing & Super Helpful!)",
+        "⭐⭐⭐⭐ (4/5 - Bohot Achha Hai)",
+        "⭐⭐⭐ (3/5 - Sahi Hai, Aur Improve Kar Sakte Hain)",
+        "⭐⭐ (2/5 - Thoda Issue Aa Raha Hai)",
+        "⭐ (1/5 - Needs Major Fix)"
+    ]
+    chosen_stars = st.radio("Select Rating:", star_options, index=0, key=f"fb_stars_{context_key}")
+
+    c_n, c_e = st.columns(2)
+    with c_n:
+        fb_name = st.text_input("Aapka Naam:", placeholder="e.g. Aman Verma", key=f"fb_name_{context_key}")
+    with c_e:
+        fb_user_email = st.text_input("Aapka Email (Optional):", placeholder="student@gmail.com", key=f"fb_uemail_{context_key}")
+
+    fb_stream = st.text_input("Course / Exam:", value=st.session_state.current_course, key=f"fb_crs_{context_key}")
+
+    fb_msg = st.text_area(
+        "Aapka Feedback / Suggestion / Feature Request:",
+        placeholder="App kaisa laga? Koi naya feature chahiye toh zaroor likhein...",
+        height=95,
+        key=f"fb_msg_{context_key}"
+    )
+
+    if st.button("🚀 Submit Rating & Auto-Send to Gmail", key=f"fb_sub_{context_key}", type="primary", use_container_width=True):
+        sender = fb_name.strip() if fb_name.strip() else "Anonymous Student"
+        u_mail = fb_user_email.strip()
+        comment = fb_msg.strip() if fb_msg.strip() else "Rated the portal."
+        rating_short = chosen_stars.split(" ")[0]
+
+        entry = {
+            "name": sender,
+            "email": u_mail,
+            "course": fb_stream,
+            "rating": rating_short,
+            "full_rating": chosen_stars,
+            "message": comment,
+            "time": time.strftime("%d %b %Y, %I:%M %p")
+        }
+        st.session_state.feedback_list.insert(0, entry)
+        st.session_state.feedback_popup_shown = True
+        st.session_state.trigger_feedback_modal = False
+        save_user_memory()
+
+        active_pwd = gmail_app_password if gmail_app_password else st.session_state.get("manual_gmail_pwd", "")
+
+        if active_pwd:
+            with st.spinner("Sending feedback automatically to harshrajsoni92@gmail.com..."):
+                sent_ok, err_msg = send_auto_smtp_email(
+                    sender, u_mail, fb_stream, chosen_stars, comment, active_pwd
+                )
+            if sent_ok:
+                st.balloons()
+                st.success(f"✅ Shukriya {sender}! Aapki rating aur feedback automatic `{ADMIN_EMAIL}` par bhej diya gaya hai!")
+                return
+
+        # Fallback 1-Click Link if App Password is not yet in Secrets
+        subject_line = f"Portal Rating {rating_short} from {sender} ({fb_stream})"
+        body_line = (
+            f"Hello Harsh Raj Soni,\n\n"
+            f"Student Name: {sender}\n"
+            f"Student Email: {u_mail}\n"
+            f"Stream: {fb_stream}\n"
+            f"Rating: {chosen_stars}\n\n"
+            f"Feedback Message:\n{comment}\n"
+        )
+        encoded_sub = urllib.parse.quote(subject_line)
+        encoded_body = urllib.parse.quote(body_line)
+        gmail_web_link = f"https://mail.google.com/mail/?view=cm&fs=1&to={ADMIN_EMAIL}&su={encoded_sub}&body={encoded_body}"
+
+        st.success("🎉 Rating portal par save ho gayi hai! Direct Gmail dispatch ke liye niche button par tap karein:")
+        st.markdown(f"""
+        <div style="margin-top:8px;">
+            <a href="{gmail_web_link}" target="_blank" style="background:#EA4335; color:#FFFFFF; padding:8px 16px; border-radius:8px; font-weight:700; text-decoration:none; font-size:13px; display:inline-block;">
+                📧 Send Instant Email to {ADMIN_EMAIL}
+            </a>
+        </div>
+        """, unsafe_allow_html=True)
+
+if hasattr(st, "dialog"):
+    @st.dialog("⭐ Rate & Feedback — Universal Academic Suite")
+    def open_feedback_popup_dialog():
+        render_feedback_form_contents(context_key="popup_dlg")
+elif hasattr(st, "experimental_dialog"):
+    @st.experimental_dialog("⭐ Rate & Feedback — Universal Academic Suite")
+    def open_feedback_popup_dialog():
+        render_feedback_form_contents(context_key="popup_dlg")
+else:
+    def open_feedback_popup_dialog():
+        with st.expander("⭐ Rate & Feedback Popup", expanded=True):
+            render_feedback_form_contents(context_key="popup_fallback")
+
+# MASTER ACADEMIC & COMPETITIVE DATABASE
 COURSE_DATABASE = {
     "⚖️ Law & Judiciary (LL.B / CLAT / PCS-J)": {
         "icon": "⚖️",
-        "official_archive_url": "https://www.indiacode.nic.in/",
         "subjects": {
             "🏛️ Constitutional Law of India": {
                 "units": (
@@ -308,7 +472,6 @@ COURSE_DATABASE = {
     },
     "🩺 NEET (Medical Entrance)": {
         "icon": "🩺",
-        "official_archive_url": "https://nta.ac.in/Downloads",
         "subjects": {
             "🧬 Zoology & Human Physiology": {
                 "units": "Unit 1: Neural Control & Coordination | Unit 2: Chemical Coordination | Unit 3: Circulation & Body Fluids | Unit 4: Reproduction & Genetics",
@@ -321,7 +484,7 @@ COURSE_DATABASE = {
                     "Spermatogenesis vs Oogenesis & Hormonal Feedback Cycles"
                 ],
                 "pyqs_years": [
-                    "NEET UG 2025 (Official Code Q/R/S/T)",
+                    "NEET UG 2025 (Official Paper Set Q/R/S/T)",
                     "NEET UG 2024 (Official Paper Set Q1-Q6)",
                     "NEET UG 2023 (Manipur & Main Official Paper)",
                     "NEET UG 2022 (Official NTA Paper)",
@@ -380,7 +543,6 @@ COURSE_DATABASE = {
     },
     "⚙️ JEE (Main & Advanced)": {
         "icon": "⚙️",
-        "official_archive_url": "https://jeemain.nta.nic.in/",
         "subjects": {
             "📐 JEE Mathematics": {
                 "units": "Unit 1: Coordinate Geometry | Unit 2: Calculus | Unit 3: Algebra & Vectors | Unit 4: Probability",
@@ -434,7 +596,6 @@ COURSE_DATABASE = {
     },
     "🎓 BCA (Computer Applications)": {
         "icon": "🎓",
-        "official_archive_url": "https://www.eshiksha.mp.gov.in/",
         "subjects": {
             "🐍 Python Programming": {
                 "units": "Unit 1: Bytecode & Internals | Unit 2: Loops & Logic | Unit 3: Functions & Scope | Unit 4: Data Structures | Unit 5: OOPs & Inheritance | Unit 6: File I/O",
@@ -489,7 +650,6 @@ COURSE_DATABASE = {
     },
     "🏛️ UPSC / Civil Services (CSAT & GS)": {
         "icon": "🏛️",
-        "official_archive_url": "https://upsc.gov.in/examinations/previous-question-papers",
         "subjects": {
             "📜 Indian Polity & Constitution": {
                 "units": "Unit 1: Fundamental Rights | Unit 2: Parliament & Executive | Unit 3: Judiciary & Constitutional Bodies",
@@ -523,7 +683,7 @@ COURSE_DATABASE = {
     }
 }
 
-# ================= DYNAMIC EYE-FRIENDLY CSS =================
+# DYNAMIC EYE-FRIENDLY CSS
 DYNAMIC_THEME_CSS = f"""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Kalam:wght@400;700&family=Patrick+Hand&display=swap');
@@ -569,7 +729,7 @@ DYNAMIC_THEME_CSS = f"""
         border-radius: 14px;
         padding: 12px 20px;
         backdrop-filter: blur(20px);
-        margin-bottom: 12px;
+        margin-bottom: 10px;
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -602,7 +762,6 @@ DYNAMIC_THEME_CSS = f"""
         color: {active_theme['accent']};
     }}
 
-    /* Paper Question Card (OMR Style) */
     .question-card {{
         background: {active_theme['card_bg']};
         border: 1.5px solid rgba(255, 255, 255, 0.1);
@@ -642,27 +801,26 @@ DYNAMIC_THEME_CSS = f"""
         margin-bottom: 4px;
     }}
 
-    .archive-link-box {{
-        background: rgba(255, 255, 255, 0.04);
-        border: 1px solid {active_theme['accent']};
-        border-radius: 10px;
-        padding: 10px 16px;
-        margin-bottom: 14px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        flex-wrap: wrap;
-        gap: 10px;
+    .inapp-paper-booklet {{
+        background: #FDFBF7;
+        color: #1E293B;
+        border: 2px solid {active_theme['accent']};
+        border-radius: 12px;
+        padding: 24px 28px;
+        margin: 14px 0;
+        box-shadow: 0 12px 32px rgba(0,0,0,0.5);
+        font-family: 'Plus Jakarta Sans', serif;
     }}
-    .archive-link-box a {{
-        color: {active_theme['accent']} !important;
-        font-weight: 700;
-        text-decoration: none;
-        border: 1px solid {active_theme['accent']};
-        padding: 4px 12px;
-        border-radius: 6px;
-        background: {active_theme['glow']};
-        font-size: 12.5px;
+    .booklet-header {{
+        text-align: center;
+        border-bottom: 2px double #334155;
+        padding-bottom: 12px;
+        margin-bottom: 18px;
+    }}
+    .booklet-q-item {{
+        border-bottom: 1px dashed #CBD5E1;
+        padding: 12px 0;
+        color: #0F172A;
     }}
 
     div[data-testid="stExpander"] {{
@@ -806,12 +964,9 @@ DYNAMIC_THEME_CSS = f"""
 """
 st.markdown(DYNAMIC_THEME_CSS, unsafe_allow_html=True)
 
-# ================= UNIVERSAL AI ENGINE =================
-groq_key = st.secrets.get("GROQ_API_KEY", None)
-gemini_key = st.secrets.get("GEMINI_API_KEY", None)
-
+# SIDEBAR & AI ENGINE CONFIG
 with st.sidebar:
-    st.markdown("### ⚡ AI Engine & System")
+    st.subheader("⚡ AI Engine & System")
     ai_choice = st.radio("Active Engine:", ["⚡ Groq LPU (Ultra Fast)", "Google Gemini"], index=0)
 
     if ai_choice == "⚡ Groq LPU (Ultra Fast)":
@@ -820,7 +975,7 @@ with st.sidebar:
         if groq_key:
             st.success("● Groq LPU Active")
         else:
-            st.info("console.groq.com se free key lein")
+            st.warning("⚠️ Sidebar mein Groq API Key daalein")
     else:
         if not gemini_key:
             gemini_key = st.text_input("Gemini API Key:", type="password")
@@ -828,11 +983,27 @@ with st.sidebar:
             genai.configure(api_key=gemini_key)
             st.success("● Gemini Multimodal Active")
 
-    st.markdown("---")
+    st.divider()
+    st.subheader("📧 Auto-Email SMTP Status")
+    if gmail_app_password:
+        st.success(f"● Auto-SMTP Connected ({ADMIN_EMAIL})")
+    else:
+        manual_pwd = st.text_input("Gmail App Password (16-digit):", type="password", placeholder="xxxx xxxx xxxx xxxx")
+        if manual_pwd:
+            st.session_state["manual_gmail_pwd"] = manual_pwd
+            st.success("● Auto-SMTP Active for Session")
+        else:
+            st.caption("Secrets mein `GMAIL_APP_PASSWORD` add karein automatic background email ke liye.")
+
+    if st.button("⭐ Rate & Give Feedback", key="sidebar_fb_btn", use_container_width=True):
+        open_feedback_popup_dialog()
+    st.caption(f"📧 Direct Contact: **{ADMIN_EMAIL}**")
     st.caption("⚡ Developed by **Harsh Raj Soni**")
     st.caption("🏛️ MLK PG College, Balrampur")
 
-def execute_ai_query(system_role, user_prompt, max_budget=4096, image_input=None):
+def execute_ai_query(system_role, user_prompt, max_budget=3500, image_input=None):
+    safe_tokens = min(max_budget, 3800)
+
     if image_input and gemini_key:
         try:
             genai.configure(api_key=gemini_key)
@@ -846,9 +1017,11 @@ def execute_ai_query(system_role, user_prompt, max_budget=4096, image_input=None
     if "Groq" in ai_choice and groq_key:
         client = Groq(api_key=groq_key)
         active_models = [
+            "llama-3.3-70b-versatile",
+            "llama-3.1-8b-instant",
             "openai/gpt-oss-120b",
             "openai/gpt-oss-20b",
-            "llama-3.1-8b-instant"
+            "gemma2-9b-it"
         ]
         
         last_err = ""
@@ -861,9 +1034,11 @@ def execute_ai_query(system_role, user_prompt, max_budget=4096, image_input=None
                         {"role": "user", "content": user_prompt}
                     ],
                     temperature=0.25,
-                    max_tokens=max_budget
+                    max_tokens=safe_tokens
                 )
-                return completion.choices[0].message.content.strip()
+                res_text = completion.choices[0].message.content.strip()
+                if res_text:
+                    return res_text
             except Exception as e:
                 last_err = str(e)
                 continue
@@ -877,7 +1052,7 @@ def execute_ai_query(system_role, user_prompt, max_budget=4096, image_input=None
                     return res.text.strip()
             except Exception:
                 pass
-        return "Engine Error: " + str(last_err)
+        return "API_ERROR: " + str(last_err)
 
     elif gemini_key:
         try:
@@ -887,9 +1062,9 @@ def execute_ai_query(system_role, user_prompt, max_budget=4096, image_input=None
             if response and response.text:
                 return response.text.strip()
         except Exception as e:
-            return "Gemini Error: " + str(e)
+            return "API_ERROR: " + str(e)
 
-    return "⚠️ Pehle Sidebar mein Groq ya Gemini ki API Key add karein."
+    return "API_ERROR: Pehle left sidebar khol kar apni Groq ya Gemini API Key enter karein."
 
 def fix_unclosed_html(html_str):
     open_divs = html_str.count("<div")
@@ -903,7 +1078,6 @@ def fix_unclosed_html(html_str):
     return html_str
 
 def generate_multi_sheets_html(topic, subject_name, course_name, notes_lang):
-    token_budget = 4500 if len(topic) < 30 else 6000
     last_ai_ctx = st.session_state.ai_memory.get(course_name, {}).get("last_summary", "No previous context.")
 
     law_instruction = ""
@@ -958,7 +1132,7 @@ def generate_multi_sheets_html(topic, subject_name, course_name, notes_lang):
         "    </div>\n"
         "</div>"
     )
-    raw_res = execute_ai_query(system_role, user_prompt, max_budget=token_budget)
+    raw_res = execute_ai_query(system_role, user_prompt, max_budget=3800)
     
     clean_text = raw_res.replace("```html", "").replace("```HTML", "").replace("```", "").strip()
     clean_text = re.sub(r"^`+|`+$", "", clean_text)
@@ -978,73 +1152,110 @@ def generate_multi_sheets_html(topic, subject_name, course_name, notes_lang):
     
     return sanitized_sheets if sanitized_sheets else [clean_text]
 
-# ================= JSON PARSER HELPER =================
-def parse_mcq_json(raw_json):
-    raw_json = re.sub(r"^```json\s*", "", raw_json, flags=re.IGNORECASE)
-    raw_json = re.sub(r"^```\s*", "", raw_json)
-    raw_json = re.sub(r"\s*```$", "", raw_json).strip()
-    try:
-        data = json.loads(raw_json)
-        if isinstance(data, list):
-            return data
-    except Exception:
-        pass
-    match = re.search(r'\[\s*\{.*\}\s*\]', raw_json, re.DOTALL)
-    if match:
-        try:
-            return json.loads(match.group(0))
-        except Exception:
-            pass
-    return []
+# BULLETPROOF BLOCK PARSER
+def parse_mcq_blocks(raw_text, default_tag="Official Set"):
+    if not raw_text or raw_text.startswith("API_ERROR:"):
+        return []
 
-# ================= STRUCTURED EXAM / REAL PYQ / 90-100 DPP GENERATOR =================
+    questions = []
+    blocks = raw_text.split("===Q_START===")
+    for blk in blocks:
+        blk = blk.split("===Q_END===")[0].strip()
+        if not blk or ("Q:" not in blk and "A:" not in blk):
+            continue
+
+        tag_m = re.search(r"TAG:\s*(.+)", blk)
+        q_m = re.search(r"Q:\s*(.+?)(?=\n\s*A:|\nA:)", blk, re.DOTALL)
+        a_m = re.search(r"(?:^|\n)\s*A:\s*(.+)", blk)
+        b_m = re.search(r"(?:^|\n)\s*B:\s*(.+)", blk)
+        c_m = re.search(r"(?:^|\n)\s*C:\s*(.+)", blk)
+        d_m = re.search(r"(?:^|\n)\s*D:\s*(.+)", blk)
+        ans_m = re.search(r"(?:^|\n)\s*ANS:\s*([A-Da-d])", blk)
+        exp_m = re.search(r"(?:^|\n)\s*EXP:\s*(.+)", blk, re.DOTALL)
+
+        if q_m and a_m and b_m and c_m and d_m:
+            q_txt = q_m.group(1).strip()
+            opt_a = "A. " + re.sub(r"^[A-Da-d][\.\)]\s*", "", a_m.group(1).strip())
+            opt_b = "B. " + re.sub(r"^[A-Da-d][\.\)]\s*", "", b_m.group(1).strip())
+            opt_c = "C. " + re.sub(r"^[A-Da-d][\.\)]\s*", "", c_m.group(1).strip())
+            opt_d = "D. " + re.sub(r"^[A-Da-d][\.\)]\s*", "", d_m.group(1).strip())
+            opts = [opt_a, opt_b, opt_c, opt_d]
+
+            ans_letter = ans_m.group(1).upper() if ans_m else "A"
+            ans_map = {"A": opt_a, "B": opt_b, "C": opt_c, "D": opt_d}
+            correct_opt = ans_map.get(ans_letter, opt_a)
+
+            exp_txt = exp_m.group(1).strip() if exp_m else "Standard statutory / conceptual rule applies."
+            tag_txt = tag_m.group(1).strip() if tag_m else default_tag
+
+            questions.append({
+                "q_no": len(questions) + 1,
+                "year_tag": tag_txt,
+                "question": q_txt,
+                "options": opts,
+                "correct_option": correct_opt,
+                "explanation": exp_txt
+            })
+
+    return questions
+
 def generate_batch_questions(topic, course_name, subject_name, count=15, batch_num=1, is_pyq=False, pyq_year=""):
     law_context = ""
     if "Law" in course_name:
-        law_context = "Include exact Indian Bare Act Section numbers (including BNS/BNSS/BSA 2023 & IPC/CrPC/IEA where applicable), Constitutional Articles, Legal Maxims, and Landmark Supreme Court judgments."
+        law_context = (
+            "Include exact Indian Bare Act Section numbers (including BNS/BNSS/BSA 2023 & IPC/CrPC/IEA where applicable), "
+            "Constitutional Articles, Legal Maxims, and Landmark Supreme Court judgments."
+        )
 
     if is_pyq:
+        tag_label = pyq_year
         mode_desc = (
             f"STRICTLY RECALL AND OUTPUT REAL VERBATIM QUESTIONS THAT APPEARED IN OFFICIAL {pyq_year} ({course_name}). "
-            f"Include exact year and exam name in 'year_tag'. {law_context}"
+            f"Put exact exam year & shift in TAG (e.g. '{pyq_year}'). {law_context}"
         )
     else:
+        tag_label = f"DPP Batch-{batch_num}"
         sub_focus = [
-            "Core Statutory Provisions, Bare Act Sections & Direct Principles",
-            "Fact-Situation Legal Reasoning & Case Law Application",
+            "Core Statutory Provisions, Bare Act Sections / Direct Formulas",
+            "Fact-Situation Legal Reasoning / Numerical Problem Solving",
             "Assertion-Reason & Statement-Based Analytical Questions",
-            "Landmark Supreme Court Judgments, Maxims & Exceptions",
-            "Advanced Judiciary / Rank-Decider Edge-Case Questions"
+            "Landmark Supreme Court Judgments / NCERT Standard Textbook Exceptions",
+            "Advanced Rank-Decider & Tricky Edge-Case Questions"
         ][(batch_num - 1) % 5]
         mode_desc = f"DPP Batch #{batch_num} focusing on: {sub_focus}. {law_context} Do not repeat previous questions."
 
     sys_prompt = (
-        f"You are the Chief Question Paper Setter for {course_name}. "
-        f"Output EXACTLY {count} multiple choice questions as a valid JSON array. "
-        "NEVER output markdown tables or HTML. Output ONLY raw JSON array. "
-        "Keep explanations crisp (1-2 lines citing exact section/case/formula) so all JSON objects fit cleanly. "
-        "JSON Schema:\n"
-        "[\n"
-        "  {\n"
-        '    "q_no": 1,\n'
-        '    "year_tag": "DPP Set" or "CLAT/PCS-J Official",\n'
-        '    "question": "Question text here",\n'
-        '    "options": ["A. Option 1", "B. Option 2", "C. Option 3", "D. Option 4"],\n'
-        '    "correct_option": "A. Option 1",\n'
-        '    "explanation": "Concise section/case/formula explanation"\n'
-        "  }\n"
-        "]"
+        f"You are the Chief Examination Controller for {course_name}. "
+        f"Generate EXACTLY {count} multiple-choice questions using ONLY the strict block format below. "
+        "Do NOT use JSON, do NOT use Markdown tables. Follow this exact template for every question:\n\n"
+        "===Q_START===\n"
+        f"TAG: {tag_label}\n"
+        "Q: [Write full question statement here]\n"
+        "A: [Option A text]\n"
+        "B: [Option B text]\n"
+        "C: [Option C text]\n"
+        "D: [Option D text]\n"
+        "ANS: [Only single letter A, B, C, or D]\n"
+        "EXP: [Concise 1-2 line solution/section/formula explanation]\n"
+        "===Q_END==="
     )
+
     user_prompt = (
-        f"Generate {count} distinct, high-yield MCQs for '{topic}' in {subject_name} ({course_name}). "
-        f"Instruction: {mode_desc}"
+        f"Output {count} distinct, high-yield MCQs for '{topic}' in {subject_name} ({course_name}).\n"
+        f"Special Instruction: {mode_desc}"
     )
-    raw_res = execute_ai_query(sys_prompt, user_prompt, max_budget=6000)
-    return parse_mcq_json(raw_res)
+
+    raw_res = execute_ai_query(sys_prompt, user_prompt, max_budget=3800)
+    if raw_res.startswith("API_ERROR:"):
+        st.error(raw_res)
+        return []
+
+    parsed = parse_mcq_blocks(raw_res, default_tag=tag_label)
+    return parsed
 
 def generate_90_100_dpp_marathon(topic, course_name, subject_name, target_count=90):
     all_questions = []
-    batch_size = 18
+    batch_size = 15
     total_batches = (target_count + batch_size - 1) // batch_size
 
     progress_bar = st.progress(0, text=f"Initializing {target_count}-Question DPP Engine...")
@@ -1058,16 +1269,16 @@ def generate_90_100_dpp_marathon(topic, course_name, subject_name, target_count=
         if batch_qs:
             for q in batch_qs:
                 q["q_no"] = len(all_questions) + 1
-                if "year_tag" not in q or not q["year_tag"]:
-                    q["year_tag"] = f"DPP Batch-{b}"
                 all_questions.append(q)
+        else:
+            break
         progress_bar.progress(min(b / total_batches, 1.0), text=f"Loaded {len(all_questions)} Questions...")
 
     progress_bar.empty()
     status_box.empty()
     return all_questions
 
-# ================= 0. INTRO SCREEN =================
+# INTRO SCREEN
 if not st.session_state.system_booted:
     st.markdown(f"""
     <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:70vh; text-align:center;">
@@ -1083,8 +1294,9 @@ if not st.session_state.system_booted:
         <div style="background:{active_theme['card_bg']}; border:1px solid rgba(255,255,255,0.1); border-left:4px solid {active_theme['accent']}; border-radius:10px; padding:16px 22px; max-width:600px; width:100%; text-align:left; font-size:13px; color:#CBD5E1; line-height:1.6; margin-bottom:24px;">
             <div style="color:{active_theme['accent']}; font-weight:700; margin-bottom:4px;">Enterprise Features Active:</div>
             <div>• ⚖️ Complete Indian Law Stream (Constitution, BNS/BNSS/BSA 2023, IPC/CrPC, Contract, CPC, Torts, Family Law)</div>
-            <div>• 🔥 90–100 Questions DPP Marathon Generator (All Streams)</div>
-            <div>• 📚 Real Official PYQ Papers + India Code & NTA Direct Archives</div>
+            <div>• 🔥 90–100 Questions DPP Marathon Generator (100% Reliable Block Parser)</div>
+            <div>• 📚 Direct In-App Official PYQ Paper Booklet + Interactive OMR</div>
+            <div>• 📧 Background SMTP Auto-Email Dispatch to {ADMIN_EMAIL}</div>
         </div>
     </div>
     """, unsafe_allow_html=True)
@@ -1096,24 +1308,32 @@ if not st.session_state.system_booted:
             st.rerun()
 
 else:
-    # Top Executive Bar
-    st.markdown(f"""
-    <div class="formal-top-banner">
-        <div>
-            <div style="font-size: 18px; font-weight: 700; color: #F8FAFC;">
-                Universal Academic, Law & Competitive Portal
-            </div>
-            <div style="font-size: 12px; color: #94A3B8;">
-                Indian Law Bare Acts • 90–100 Qs DPP Engine • Real Internet PYQ Vault
-            </div>
-        </div>
-        <div class="formal-author-pill">
-            Developer: Harsh Raj Soni
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
+    if st.session_state.trigger_feedback_modal and not st.session_state.feedback_popup_shown:
+        st.session_state.trigger_feedback_modal = False
+        open_feedback_popup_dialog()
 
-    # Persistent Resume Notification
+    top_c1, top_c2 = st.columns([3.8, 1.2])
+    with top_c1:
+        st.markdown(f"""
+        <div class="formal-top-banner">
+            <div>
+                <div style="font-size: 18px; font-weight: 700; color: #F8FAFC;">
+                    Universal Academic, Law & Competitive Portal
+                </div>
+                <div style="font-size: 12px; color: #94A3B8;">
+                    In-App PYQ Booklet • 90–100 Qs DPP Engine • Auto-SMTP Feedback
+                </div>
+            </div>
+            <div class="formal-author-pill">
+                Developer: Harsh Raj Soni
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+    with top_c2:
+        st.write("")
+        if st.button("⭐ Rate & Feedback", key="top_rate_btn", use_container_width=True):
+            open_feedback_popup_dialog()
+
     if st.session_state.current_topic:
         st.markdown(
             '<div class="resume-state-card">'
@@ -1123,7 +1343,7 @@ else:
             unsafe_allow_html=True
         )
 
-    # ================= COURSE SWITCHER =================
+    # COURSE SWITCHER
     curr_course = st.session_state.current_course
     with st.expander("🎓 Active Stream: " + curr_course + " (Tap to Switch)", expanded=False):
         c_list = list(COURSE_DATABASE.keys())
@@ -1145,7 +1365,6 @@ else:
 
     active_course_data = COURSE_DATABASE[st.session_state.current_course]
 
-    # Subject Selector
     available_subjects = list(active_course_data["subjects"].keys())
     if st.session_state.current_subject not in available_subjects:
         st.session_state.current_subject = available_subjects[0]
@@ -1170,7 +1389,6 @@ else:
     active_subj = st.session_state.current_subject
     subject_details = active_course_data["subjects"][active_subj]
 
-    # Navigation Dock
     ref_tab_label = "⚖️ Bare Acts & Maxims" if "Law" in active_course else "🔬 Formula & Lab"
     nav_options = [
         "📝 Notes Gallery",
@@ -1179,7 +1397,8 @@ else:
         "🎯 Mock Exam",
         "📖 Syllabus & Acts",
         ref_tab_label,
-        "🤖 AI Mentor"
+        "🤖 AI Mentor",
+        "⭐ Feedback & Ratings"
     ]
     if "Python" in active_subj:
         nav_options.append("💻 Sandbox")
@@ -1191,9 +1410,9 @@ else:
         index=0
     )
 
-    # ================= SECTION 1: NOTES GALLERY =================
+    # SECTION 1: NOTES GALLERY
     if selected_nav == "📝 Notes Gallery":
-        st.markdown("#### 📖 Lecture Notes Register Gallery — " + active_subj)
+        st.subheader("📖 Lecture Notes Register Gallery — " + active_subj)
         st.caption("Classmate ruled paper layout with Bare Act sections, tables, formulas, and key exam points.")
 
         c1, c2 = st.columns([2.5, 1])
@@ -1215,6 +1434,9 @@ else:
                 st.session_state.generated_gallery_sheets = generate_multi_sheets_html(
                     final_topic, active_subj, active_course, notes_lang
                 )
+                if not st.session_state.feedback_popup_shown:
+                    st.session_state.trigger_feedback_modal = True
+                st.rerun()
 
         if st.session_state.generated_gallery_sheets:
             sheets = st.session_state.generated_gallery_sheets
@@ -1222,7 +1444,7 @@ else:
 
             if st.session_state.active_sheet_index is not None:
                 cur_i = st.session_state.active_sheet_index
-                st.markdown("##### 🔍 Viewing Sheet " + str(cur_i + 1) + " of " + str(total_sheets))
+                st.markdown("<b>🔍 Viewing Sheet " + str(cur_i + 1) + " of " + str(total_sheets) + "</b>", unsafe_allow_html=True)
                 st.html(sheets[cur_i])
 
                 nav_c1, nav_c2, nav_c3 = st.columns([1.5, 2, 1.5])
@@ -1239,7 +1461,7 @@ else:
                         st.session_state.active_sheet_index = min(total_sheets - 1, cur_i + 1)
                         st.rerun()
             else:
-                st.markdown("##### 📸 Register Sheets Gallery (" + str(total_sheets) + " Sheets)")
+                st.markdown("<b>📸 Register Sheets Gallery (" + str(total_sheets) + " Sheets)</b>", unsafe_allow_html=True)
                 st.caption("Kisi bhi sheet par tap karein full-size padhne ke liye:")
                 grid_cols = st.columns(3)
                 for idx, sheet_code in enumerate(sheets):
@@ -1255,9 +1477,9 @@ else:
                         """
                         st.markdown(card_thumb, unsafe_allow_html=True)
 
-    # ================= SECTION 2: DPP (90-100 QUESTIONS MARATHON ENGINE) =================
+    # SECTION 2: DPP (90-100 QUESTIONS MARATHON ENGINE)
     elif selected_nav == "🔥 DPP (90-100 Qs)":
-        st.markdown(f"#### 🔥 Daily Practice Problems (DPP Marathon) — {active_subj}")
+        st.subheader(f"🔥 Daily Practice Problems (DPP Marathon) — {active_subj}")
         st.caption("Full chapter practice sheet with 90–100 questions, OMR option tick, and paginated smooth view.")
 
         c1, c2, c3 = st.columns([2, 1, 1])
@@ -1266,7 +1488,7 @@ else:
             sel_dpp_topic = st.selectbox("Select Chapter / Act for DPP:", dpp_topic_list)
             custom_dpp = st.text_input("Or Enter Custom Act / Chapter:", placeholder="e.g. Complete BNS 2023 Offences / Indian Contract Act Sec 1-75")
         with c2:
-            dpp_target_count = st.selectbox("DPP Sheet Size:", [90, 100, 50], index=0)
+            dpp_target_count = st.selectbox("DPP Sheet Size:", [90, 100, 45], index=0)
         with c3:
             page_size = st.selectbox("Questions Per Page:", [20, 25, 50, 100], index=1)
 
@@ -1277,20 +1499,22 @@ else:
             if st.button(f"🚀 Generate Full {dpp_target_count}-Question DPP Sheet", use_container_width=True):
                 st.session_state.current_topic = final_dpp_topic
                 save_user_memory()
-                st.session_state.dpp_questions = generate_90_100_dpp_marathon(
+                qs = generate_90_100_dpp_marathon(
                     final_dpp_topic, active_course, active_subj, target_count=dpp_target_count
                 )
-                st.session_state.dpp_user_answers = {}
-                st.session_state.dpp_submitted = False
-                st.session_state.dpp_page = 0
-                st.rerun()
+                if qs:
+                    st.session_state.dpp_questions = qs
+                    st.session_state.dpp_user_answers = {}
+                    st.session_state.dpp_submitted = False
+                    st.session_state.dpp_page = 0
+                    st.rerun()
         with col_btn2:
-            if st.session_state.dpp_questions and len(st.session_state.dpp_questions) < 100:
-                if st.button("➕ Append 20 More Questions", use_container_width=True):
-                    with st.spinner("Adding 20 more questions to current DPP..."):
+            if st.session_state.dpp_questions:
+                if st.button("➕ Add 15 More Questions", use_container_width=True):
+                    with st.spinner("Appending 15 more questions to DPP..."):
                         extra = generate_batch_questions(
-                            final_dpp_topic, active_course, active_subj, count=20,
-                            batch_num=(len(st.session_state.dpp_questions) // 18) + 1
+                            final_dpp_topic, active_course, active_subj, count=15,
+                            batch_num=(len(st.session_state.dpp_questions) // 15) + 1
                         )
                         for q in extra:
                             q["q_no"] = len(st.session_state.dpp_questions) + 1
@@ -1361,6 +1585,8 @@ else:
             with b_c2:
                 if st.button("📝 Submit Entire DPP & Calculate Rank Score", type="primary", use_container_width=True):
                     st.session_state.dpp_submitted = True
+                    if not st.session_state.feedback_popup_shown:
+                        st.session_state.trigger_feedback_modal = True
                     st.rerun()
             with b_c3:
                 if st.button("Next Page ➡️", disabled=(cur_page >= total_pages - 1), key="dpp_next_bot", use_container_width=True):
@@ -1376,7 +1602,7 @@ else:
 
                 st.markdown(f"""
                 <div style="background:{active_theme['card_bg']}; border:2px solid {active_theme['accent']}; border-radius:12px; padding:18px 24px; text-align:center; margin-top:20px; box-shadow:0 0 20px {active_theme['glow']};">
-                    <h3 style="color:{active_theme['accent']}; margin-bottom:6px;">📊 DPP Marathon Scorecard ({total_dpp} Questions)</h3>
+                    <div style="font-size:20px; font-weight:700; color:{active_theme['accent']}; margin-bottom:6px;">📊 DPP Marathon Scorecard ({total_dpp} Questions)</div>
                     <div style="font-size:24px; font-weight:800; color:#F8FAFC; margin-bottom:12px;">Score: {total_marks} / {max_marks}</div>
                     <div style="display:flex; justify-content:center; gap:20px; font-size:13px; color:#CBD5E1;">
                         <span>✔ Correct: <b style="color:#34D399;">{correct_cnt}</b></span>
@@ -1387,140 +1613,164 @@ else:
                 </div>
                 """, unsafe_allow_html=True)
 
-    # ================= SECTION 3: REAL INTERNET PYQS VAULT =================
+    # SECTION 3: DIRECT IN-APP REAL PYQS VAULT
     elif selected_nav == "📚 Real PYQs Vault":
-        st.markdown(f"#### 📚 Official Past Question Papers (Internet Archive + Interactive OMR) — {active_course}")
-        st.caption("Download real original PDF papers & Bare Acts from the internet or solve verbatim official past questions right here.")
+        st.subheader(f"📚 Official Past Question Papers (100% In-App Booklet & OMR) — {active_course}")
+        st.caption("Open and solve real past examination question papers directly inside the app without opening any external website.")
 
         pyqs_list = subject_details.get("pyqs_years", ["2024 Official Paper"])
-        c1, c2 = st.columns([2, 1])
+        c1, c2, c3 = st.columns([2, 1, 1])
         with c1:
             chosen_year = st.selectbox("Select Official Exam Paper:", pyqs_list)
-            pyq_topic = st.text_input("Specific Act / Chapter Filter (Leave blank for Full Paper):", placeholder="e.g. Fundamental Rights / BNS & IPC / Contract Act")
+            pyq_topic = st.text_input("Specific Act / Chapter Filter (Leave blank for Full Paper):", placeholder="e.g. Fundamental Rights / BNS & IPC / Genetics / Calculus")
         with c2:
-            pyq_count = st.selectbox("Questions to Load:", [20, 40, 60], index=0)
+            pyq_count = st.selectbox("Paper Length (Qs):", [15, 30, 45, 60], index=0)
+        with c3:
+            pyq_view_mode = st.selectbox("In-App Display Mode:", ["📝 Interactive OMR Mode", "📄 Full Booklet Reader Mode"])
 
-        encoded_query = urllib.parse.quote(f"{chosen_year} {active_subj} official question paper pdf download")
-        google_pdf_url = f"https://www.google.com/search?q={encoded_query}"
-        official_portal_url = active_course_data.get("official_archive_url", "https://www.indiacode.nic.in/")
+        target_topic = pyq_topic.strip() if pyq_topic.strip() else f"Full {active_subj} Official Paper"
 
-        archive_btn_label = "🏛️ India Code (Official Bare Acts)" if "Law" in active_course else "🏛️ Official Exam Archive"
-
-        st.markdown(f"""
-        <div class="archive-link-box">
-            <div>
-                <div style="font-size:13.5px; font-weight:700; color:#F8FAFC;">🌐 Direct Internet Official Question Paper PDFs ({chosen_year})</div>
-                <div style="font-size:11.5px; color:#94A3B8;">Open original scanned exam booklet PDFs and official Government portals:</div>
-            </div>
-            <div style="display:flex; gap:10px;">
-                <a href="{google_pdf_url}" target="_blank">📄 Download {chosen_year} PDF</a>
-                <a href="{official_portal_url}" target="_blank">{archive_btn_label}</a>
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
-
-        target_topic = pyq_topic.strip() if pyq_topic.strip() else f"Full {active_subj} Syllabus"
-
-        if st.button(f"📥 Load {pyq_count} Verbatim Questions from {chosen_year} (Interactive OMR)", use_container_width=True):
+        if st.button(f"📖 Open {chosen_year} Paper Directly Inside App ({pyq_count} Qs)", use_container_width=True):
             all_pyqs = []
-            batches = (pyq_count + 19) // 20
-            prog = st.progress(0, text=f"Fetching verbatim questions from {chosen_year}...")
+            batch_sz = 15
+            batches = (pyq_count + batch_sz - 1) // batch_sz
+            prog = st.progress(0, text=f"Loading official {chosen_year} paper directly into app...")
             for b in range(1, batches + 1):
+                need = min(batch_sz, pyq_count - len(all_pyqs))
+                if need <= 0:
+                    break
                 chunk = generate_batch_questions(
-                    target_topic, active_course, active_subj, count=min(20, pyq_count - len(all_pyqs)),
+                    target_topic, active_course, active_subj, count=need,
                     batch_num=b, is_pyq=True, pyq_year=chosen_year
                 )
-                for q in chunk:
-                    q["q_no"] = len(all_pyqs) + 1
-                    all_pyqs.append(q)
-                prog.progress(min(b / batches, 1.0))
+                if chunk:
+                    for q in chunk:
+                        q["q_no"] = len(all_pyqs) + 1
+                        all_pyqs.append(q)
+                else:
+                    break
+                prog.progress(min(b / batches, 1.0), text=f"Loaded {len(all_pyqs)} official questions...")
             prog.empty()
-            st.session_state.pyq_questions = all_pyqs
-            st.session_state.pyq_user_answers = {}
-            st.session_state.pyq_submitted = False
-            st.rerun()
+            if all_pyqs:
+                st.session_state.pyq_questions = all_pyqs
+                st.session_state.pyq_user_answers = {}
+                st.session_state.pyq_submitted = False
+                st.rerun()
 
         if st.session_state.pyq_questions:
             q_list = st.session_state.pyq_questions
-            st.markdown(f"### 🏛️ {chosen_year} — Interactive OMR Booklet ({len(q_list)} Questions)")
 
-            for idx, q_data in enumerate(q_list):
-                q_num = idx + 1
-                st.markdown(f"""
-                <div class="question-card">
-                    <div class="question-header">
-                        <span class="q-number-tag">Q.{q_num} • {q_data.get('year_tag', chosen_year)}</span>
-                        <span class="q-marks-tag">Official Marking: +4 / -1</span>
+            if pyq_view_mode == "📄 Full Booklet Reader Mode":
+                booklet_html = f"""
+                <div class="inapp-paper-booklet">
+                    <div class="booklet-header">
+                        <div style="font-size:20px; font-weight:800; color:#0F172A;">{chosen_year} — OFFICIAL EXAMINATION BOOKLET</div>
+                        <div style="font-size:13px; color:#475569; margin-top:4px;">Stream: {active_course} | Subject: {active_subj} | Total Questions: {len(q_list)}</div>
+                        <div style="font-size:11.5px; color:#64748B; margin-top:2px;">Marking Scheme: +4 for Correct, -1 for Negative | In-App Direct Paper Reader</div>
                     </div>
-                    <div class="q-text">{q_data.get('question', '')}</div>
-                </div>
-                """, unsafe_allow_html=True)
+                """
+                for idx, q_data in enumerate(q_list):
+                    opts_html = "".join([f"<div style='margin:3px 0 3px 14px; font-size:14px;'>{o}</div>" for o in q_data.get("options", [])])
+                    booklet_html += f"""
+                    <div class="booklet-q-item">
+                        <div style="font-size:15px; font-weight:700; color:#0F172A; margin-bottom:6px;">
+                            Q.{idx + 1} [{q_data.get('year_tag', chosen_year)}]: {q_data.get('question', '')}
+                        </div>
+                        {opts_html}
+                        <details style="margin-top:8px; background:#F1F5F9; padding:6px 12px; border-radius:6px; font-size:13px; color:#0F172A; cursor:pointer;">
+                            <summary style="font-weight:700; color:#0284C7;">✔ Tap to View Official Answer Key & Solution</summary>
+                            <div style="margin-top:4px;"><b>Correct Option:</b> {q_data.get('correct_option', '')}</div>
+                            <div><b>Explanation:</b> {q_data.get('explanation', '')}</div>
+                        </details>
+                    </div>
+                    """
+                booklet_html += "</div>"
+                st.markdown(booklet_html, unsafe_allow_html=True)
 
-                opts = q_data.get("options", [])
-                prev_ans = st.session_state.pyq_user_answers.get(idx, None)
-                opt_i = opts.index(prev_ans) if prev_ans in opts else None
+            else:
+                st.subheader(f"🏛️ {chosen_year} — In-App Interactive OMR Booklet ({len(q_list)} Questions)")
 
-                sel_ans = st.radio(
-                    f"Tick OMR Answer for PYQ #{q_num}:",
-                    options=opts,
-                    index=opt_i,
-                    key=f"pyq_radio_{idx}"
-                )
-                st.session_state.pyq_user_answers[idx] = sel_ans
+                for idx, q_data in enumerate(q_list):
+                    q_num = idx + 1
+                    st.markdown(f"""
+                    <div class="question-card">
+                        <div class="question-header">
+                            <span class="q-number-tag">Q.{q_num} • {q_data.get('year_tag', chosen_year)}</span>
+                            <span class="q-marks-tag">Official Marking: +4 / -1</span>
+                        </div>
+                        <div class="q-text">{q_data.get('question', '')}</div>
+                    </div>
+                    """, unsafe_allow_html=True)
+
+                    opts = q_data.get("options", [])
+                    prev_ans = st.session_state.pyq_user_answers.get(idx, None)
+                    opt_i = opts.index(prev_ans) if prev_ans in opts else None
+
+                    sel_ans = st.radio(
+                        f"Tick OMR Answer for PYQ #{q_num}:",
+                        options=opts,
+                        index=opt_i,
+                        key=f"pyq_radio_{idx}"
+                    )
+                    st.session_state.pyq_user_answers[idx] = sel_ans
+
+                    if st.session_state.pyq_submitted:
+                        correct = q_data.get("correct_option", "")
+                        if sel_ans == correct:
+                            st.success(f"✔ **Correct!** Official Key: {correct}")
+                        else:
+                            st.error(f"✖ **Incorrect / Skipped.** Official Key: {correct} (You ticked: {sel_ans if sel_ans else 'None'})")
+
+                        with st.expander(f"💡 View Official Solution #{q_num}", expanded=True):
+                            st.write(q_data.get("explanation", "Standard statutory provision & case law rationale."))
+
+                if st.button("📝 Submit Official PYQ Paper & Check Score", type="primary", use_container_width=True):
+                    st.session_state.pyq_submitted = True
+                    if not st.session_state.feedback_popup_shown:
+                        st.session_state.trigger_feedback_modal = True
+                    st.rerun()
 
                 if st.session_state.pyq_submitted:
-                    correct = q_data.get("correct_option", "")
-                    if sel_ans == correct:
-                        st.success(f"✔ **Correct!** Official Key: {correct}")
-                    else:
-                        st.error(f"✖ **Incorrect / Skipped.** Official Key: {correct} (You ticked: {sel_ans if sel_ans else 'None'})")
+                    total_q = len(q_list)
+                    correct_cnt = sum(1 for i, q in enumerate(q_list) if st.session_state.pyq_user_answers.get(i) == q.get("correct_option"))
+                    wrong_cnt = sum(1 for i, q in enumerate(q_list) if st.session_state.pyq_user_answers.get(i) and st.session_state.pyq_user_answers.get(i) != q.get("correct_option"))
+                    total_marks = (correct_cnt * 4) - (wrong_cnt * 1)
+                    max_marks = total_q * 4
 
-                    with st.expander(f"💡 View Official Solution #{q_num}", expanded=True):
-                        st.write(q_data.get("explanation", "Standard statutory provision & case law rationale."))
-
-            if st.button("📝 Submit Official PYQ Paper & Check Score", type="primary", use_container_width=True):
-                st.session_state.pyq_submitted = True
-                st.rerun()
-
-            if st.session_state.pyq_submitted:
-                total_q = len(q_list)
-                correct_cnt = sum(1 for i, q in enumerate(q_list) if st.session_state.pyq_user_answers.get(i) == q.get("correct_option"))
-                wrong_cnt = sum(1 for i, q in enumerate(q_list) if st.session_state.pyq_user_answers.get(i) and st.session_state.pyq_user_answers.get(i) != q.get("correct_option"))
-                total_marks = (correct_cnt * 4) - (wrong_cnt * 1)
-                max_marks = total_q * 4
-
-                st.markdown(f"""
-                <div style="background:{active_theme['card_bg']}; border:2px solid {active_theme['accent']}; border-radius:12px; padding:18px 24px; text-align:center; margin-top:20px; box-shadow:0 0 20px {active_theme['glow']};">
-                    <h3 style="color:{active_theme['accent']}; margin-bottom:6px;">📊 {chosen_year} Performance Report</h3>
-                    <div style="font-size:24px; font-weight:800; color:#F8FAFC; margin-bottom:12px;">Score: {total_marks} / {max_marks}</div>
-                    <div style="display:flex; justify-content:center; gap:20px; font-size:13px; color:#CBD5E1;">
-                        <span>✔ Correct: <b style="color:#34D399;">{correct_cnt}</b></span>
-                        <span>✖ Negative: <b style="color:#EF4444;">{wrong_cnt}</b></span>
-                        <span>🎯 Accuracy: <b>{int((correct_cnt/total_q)*100) if total_q else 0}%</b></span>
+                    st.markdown(f"""
+                    <div style="background:{active_theme['card_bg']}; border:2px solid {active_theme['accent']}; border-radius:12px; padding:18px 24px; text-align:center; margin-top:20px; box-shadow:0 0 20px {active_theme['glow']};">
+                        <div style="font-size:20px; font-weight:700; color:{active_theme['accent']}; margin-bottom:6px;">📊 {chosen_year} In-App OMR Report</div>
+                        <div style="font-size:24px; font-weight:800; color:#F8FAFC; margin-bottom:12px;">Score: {total_marks} / {max_marks}</div>
+                        <div style="display:flex; justify-content:center; gap:20px; font-size:13px; color:#CBD5E1;">
+                            <span>✔ Correct: <b style="color:#34D399;">{correct_cnt}</b></span>
+                            <span>✖ Negative: <b style="color:#EF4444;">{wrong_cnt}</b></span>
+                            <span>🎯 Accuracy: <b>{int((correct_cnt/total_q)*100) if total_q else 0}%</b></span>
+                        </div>
                     </div>
-                </div>
-                """, unsafe_allow_html=True)
+                    """, unsafe_allow_html=True)
 
-    # ================= SECTION 4: QUICK MOCK EXAM =================
+    # SECTION 4: QUICK MOCK EXAM
     elif selected_nav == "🎯 Mock Exam":
-        st.markdown(f"#### 🎯 Rapid Mock Test — {active_course}")
+        st.subheader(f"🎯 Rapid Mock Test — {active_course}")
         c1, c2 = st.columns([2.5, 1])
         with c1:
             exam_topic = st.text_input("Scope / Act / Chapter for Test:", value=st.session_state.current_topic if st.session_state.current_topic else active_subj)
         with c2:
-            mock_q_cnt = st.selectbox("Questions:", [10, 15, 25], index=1)
+            mock_q_cnt = st.selectbox("Questions:", [10, 15, 20], index=1)
 
         if st.button("Generate Quick Mock Paper", use_container_width=True):
             with st.spinner("Generating clean MCQ examination paper..."):
-                st.session_state.active_exam_questions = generate_batch_questions(
+                qs = generate_batch_questions(
                     exam_topic, active_course, active_subj, count=mock_q_cnt, batch_num=1, is_pyq=False
                 )
-                st.session_state.exam_submitted = False
-                st.rerun()
+                if qs:
+                    st.session_state.active_exam_questions = qs
+                    st.session_state.exam_user_answers = {}
+                    st.session_state.exam_submitted = False
+                    st.rerun()
 
         if st.session_state.active_exam_questions:
             q_list = st.session_state.active_exam_questions
-            user_answers = {}
 
             for idx, q_data in enumerate(q_list):
                 q_num = idx + 1
@@ -1535,30 +1785,43 @@ else:
                 """, unsafe_allow_html=True)
 
                 opts = q_data.get("options", [])
-                user_answers[idx] = st.radio(
+                prev_m = st.session_state.exam_user_answers.get(idx, None)
+                m_idx = opts.index(prev_m) if prev_m in opts else None
+
+                sel_m = st.radio(
                     f"Select Answer for Q.{q_num}:",
                     options=opts,
                     key=f"mock_q_{idx}",
-                    index=None
+                    index=m_idx
                 )
+                st.session_state.exam_user_answers[idx] = sel_m
 
                 if st.session_state.exam_submitted:
                     correct = q_data.get("correct_option", "")
-                    selected = user_answers.get(idx)
-                    if selected == correct:
+                    if sel_m == correct:
                         st.success(f"✔ **Correct!** Answer: {correct}")
                     else:
                         st.error(f"✖ **Incorrect / Skipped.** Correct: {correct}")
                     with st.expander(f"💡 Explanation for Q.{q_num}", expanded=True):
                         st.write(q_data.get("explanation", ""))
 
-            if st.button("📝 Submit Mock Test", type="primary", use_container_width=True):
+            if st.button("📝 Submit Mock Test & Check Score", type="primary", use_container_width=True):
                 st.session_state.exam_submitted = True
+                if not st.session_state.feedback_popup_shown:
+                    st.session_state.trigger_feedback_modal = True
                 st.rerun()
 
-    # ================= SECTION 5: SYLLABUS & ACTS BREAKDOWN =================
+            if st.session_state.exam_submitted:
+                total_q = len(q_list)
+                correct_cnt = sum(1 for i, q in enumerate(q_list) if st.session_state.exam_user_answers.get(i) == q.get("correct_option"))
+                wrong_cnt = sum(1 for i, q in enumerate(q_list) if st.session_state.exam_user_answers.get(i) and st.session_state.exam_user_answers.get(i) != q.get("correct_option"))
+                total_marks = (correct_cnt * 4) - (wrong_cnt * 1)
+                max_marks = total_q * 4
+                st.info(f"🏆 **Mock Test Score:** {total_marks} / {max_marks}  |  ✔ Correct: {correct_cnt}  |  ✖ Wrong: {wrong_cnt}")
+
+    # SECTION 5: SYLLABUS & ACTS BREAKDOWN
     elif selected_nav == "📖 Syllabus & Acts":
-        st.markdown("#### 📚 Complete Statutory & Curriculum Breakdown — " + active_course)
+        st.subheader("📚 Complete Statutory & Curriculum Breakdown — " + active_course)
         st.info("Active Subject: **" + active_subj + "**")
         st.write(subject_details.get("units", "Comprehensive syllabus mapped to national standards."))
 
@@ -1566,12 +1829,12 @@ else:
             for s_k, s_v in active_course_data["subjects"].items():
                 st.markdown(f"**{s_k}**")
                 st.caption(s_v.get("units", ""))
-                st.markdown("---")
+                st.divider()
 
-    # ================= SECTION 6: BARE ACTS & MAXIMS / FORMULA LAB =================
+    # SECTION 6: BARE ACTS & MAXIMS / FORMULA LAB
     elif selected_nav == ref_tab_label:
         if "Law" in active_course:
-            st.markdown("#### ⚖️ Indian Bare Acts, BNS-IPC Section Mapper & Legal Maxims")
+            st.subheader("⚖️ Indian Bare Acts, BNS-IPC Section Mapper & Legal Maxims (100% In-App)")
             with st.expander("⚔️ New Criminal Laws (2023) vs Old Laws — Master Section Comparison", expanded=True):
                 st.markdown("""
                 * **Common Intention:** `Section 3(5) BNS 2023` ⬅️ *Earlier Section 34 IPC 1860*
@@ -1600,15 +1863,15 @@ else:
                 * **Ignorantia Facti Excusat, Ignorantia Juris Non Excusat:** Ignorance of fact is an excuse, ignorance of law is no excuse (Sec 14 & 17 BNS / Sec 76 & 79 IPC).
                 """)
 
-            st.markdown("##### 🔍 Instant Bare Act Section / Article / Case Law Finder")
-            bare_query = st.text_input("Enter any Section, Article, or Act (e.g. 'Section 138 NI Act', 'Article 21', 'Section 103 BNS'):")
-            if st.button("Fetch Exact Bare Act Text & Landmark Cases", use_container_width=True):
+            st.markdown("<b>🔍 In-App Bare Act Section / Article / Case Law Reader</b>", unsafe_allow_html=True)
+            bare_query = st.text_input("Enter any Section, Article, or Act to read directly inside the app (e.g. 'Section 138 NI Act', 'Article 21', 'Section 103 BNS'):")
+            if st.button("Open Bare Act Provision Inside App", use_container_width=True):
                 if bare_query.strip():
-                    with st.spinner("Searching Indian Statutory Database..."):
+                    with st.spinner("Loading Statutory Bare Act Text inside app..."):
                         sys_p = "You are an Indian Legal Encyclopedia & Senior Advocate. Provide the exact Bare Act text, essential ingredients, punishment/remedy, BNS/IPC parallel (if criminal), and top 2 Supreme Court landmark judgments."
-                        st.info(execute_ai_query(sys_p, f"Explain Indian Law provision: {bare_query}"))
+                        st.info(execute_ai_query(sys_p, f"Explain Indian Law provision in detail: {bare_query}"))
         else:
-            st.markdown("#### 🔬 Formula & Concepts Compendium — " + active_subj)
+            st.subheader("🔬 Formula & Concepts Compendium — " + active_subj)
             with st.expander("⚡ Core Formulation & Important Matrix", expanded=True):
                 if "Math" in active_subj:
                     st.latex(r"\frac{d}{dx}\left(\frac{u}{v}\right) = \frac{v u' - u v'}{v^2}")
@@ -1622,9 +1885,9 @@ else:
                 else:
                     st.latex(r"Sum = A \oplus B \oplus C_{in}, \quad Carry = AB + C_{in}(A \oplus B)")
 
-    # ================= SECTION 7: AI MENTOR =================
+    # SECTION 7: AI MENTOR
     elif selected_nav == "🤖 AI Mentor":
-        st.markdown("#### 🤖 1-on-1 AI Faculty Mentor — " + active_course)
+        st.subheader("🤖 1-on-1 AI Faculty Mentor — " + active_course)
         past_ctx = st.session_state.ai_memory.get(active_course, {}).get("last_summary", "Starting fresh discussion.")
         st.caption("AI Memory Context: *" + past_ctx + "*")
 
@@ -1650,9 +1913,42 @@ else:
             else:
                 st.warning("Please type a question or upload image.")
 
-    # ================= SECTION 8: COLAB SANDBOX (PYTHON) =================
+    # SECTION 8: FEEDBACK & RATINGS WALL
+    elif selected_nav == "⭐ Feedback & Ratings":
+        st.subheader(f"⭐ Student Ratings & Auto-SMTP Feedback Hub — `{ADMIN_EMAIL}`")
+        st.caption("Submit karte hi feedback background SMTP ke zariye automatic Harsh Raj Soni ke Gmail par chala jayega.")
+
+        col_fb1, col_fb2 = st.columns([1.4, 1])
+        with col_fb1:
+            render_feedback_form_contents(context_key="main_tab")
+        with col_fb2:
+            st.markdown(f"""
+            <div style="background:{active_theme['card_bg']}; border:1px solid {active_theme['accent']}; border-radius:12px; padding:16px; margin-bottom:12px;">
+                <div style="font-size:14px; font-weight:700; color:{active_theme['accent']};">📬 Direct Developer Contact</div>
+                <div style="font-size:13px; color:#F8FAFC; margin-top:6px;"><b>Developer:</b> Harsh Raj Soni</div>
+                <div style="font-size:13px; color:#94A3B8; margin-top:2px;"><b>Official Gmail:</b> <code>{ADMIN_EMAIL}</code></div>
+                <div style="font-size:12px; color:#CBD5E1; margin-top:8px;">
+                    Background SMTP engine active hai—kisi bhi student ka review seedhe aapke Gmail inbox mein formatted HTML card ke roop mein aayega.
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+
+            if st.button("🔔 Open Rating Popup Modal", key="tab_open_modal_btn", use_container_width=True):
+                open_feedback_popup_dialog()
+
+            if st.session_state.feedback_list:
+                st.markdown("<b>💬 Recent Student Reviews</b>", unsafe_allow_html=True)
+                for item in st.session_state.feedback_list[:5]:
+                    st.markdown(f"""
+                    <div style="background:rgba(255,255,255,0.04); border-left:3px solid {active_theme['accent']}; padding:8px 12px; border-radius:6px; margin-bottom:8px; font-size:12.5px;">
+                        <div><b>{item.get('name')}</b> • <span style="color:{active_theme['accent']};">{item.get('rating')}</span> <span style="color:#64748B; font-size:11px;">({item.get('time')})</span></div>
+                        <div style="color:#CBD5E1; margin-top:3px;">{item.get('message')}</div>
+                    </div>
+                    """, unsafe_allow_html=True)
+
+    # SECTION 9: COLAB SANDBOX (PYTHON)
     elif selected_nav == "💻 Sandbox" and "Python" in active_subj:
-        st.markdown("#### 💻 Colab Notebook // Python Only")
+        st.subheader("💻 Colab Notebook // Python Only")
 
         tb1, tb2 = st.columns([1, 1])
         with tb1:
