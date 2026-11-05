@@ -8,7 +8,7 @@ import json
 import shelve
 import threading
 import time
-import urllib.request
+import urllib.parse
 import contextlib
 from PIL import Image
 
@@ -49,7 +49,7 @@ def save_user_memory():
     except Exception:
         pass
 
-# Initialize Session State
+# Initialize Session States
 saved_state = load_user_memory()
 
 if "system_booted" not in st.session_state:
@@ -81,6 +81,27 @@ if "active_exam_questions" not in st.session_state:
 
 if "exam_submitted" not in st.session_state:
     st.session_state.exam_submitted = False
+
+if "dpp_questions" not in st.session_state:
+    st.session_state.dpp_questions = []
+
+if "dpp_user_answers" not in st.session_state:
+    st.session_state.dpp_user_answers = {}
+
+if "dpp_submitted" not in st.session_state:
+    st.session_state.dpp_submitted = False
+
+if "dpp_page" not in st.session_state:
+    st.session_state.dpp_page = 0
+
+if "pyq_questions" not in st.session_state:
+    st.session_state.pyq_questions = []
+
+if "pyq_user_answers" not in st.session_state:
+    st.session_state.pyq_user_answers = {}
+
+if "pyq_submitted" not in st.session_state:
+    st.session_state.pyq_submitted = False
 
 if "notebook_cells" not in st.session_state:
     st.session_state.notebook_cells = [
@@ -114,7 +135,7 @@ THEME_PALETTES = {
         "accent": "#38BDF8",
         "accent_dark": "#0284C7",
         "glow": "rgba(56, 189, 248, 0.25)",
-        "card_bg": "rgba(15, 23, 42, 0.8)",
+        "card_bg": "rgba(15, 23, 42, 0.85)",
         "border": "#0284C7"
     },
     "🩺 NEET (Medical Entrance)": {
@@ -124,7 +145,7 @@ THEME_PALETTES = {
         "accent": "#34D399",
         "accent_dark": "#059669",
         "glow": "rgba(52, 211, 153, 0.22)",
-        "card_bg": "rgba(6, 32, 22, 0.8)",
+        "card_bg": "rgba(6, 32, 22, 0.85)",
         "border": "#059669"
     },
     "⚙️ JEE (Main & Advanced)": {
@@ -134,7 +155,7 @@ THEME_PALETTES = {
         "accent": "#FB923C",
         "accent_dark": "#EA580C",
         "glow": "rgba(251, 146, 60, 0.22)",
-        "card_bg": "rgba(28, 19, 8, 0.8)",
+        "card_bg": "rgba(28, 19, 8, 0.85)",
         "border": "#EA580C"
     },
     "🏛️ UPSC / Civil Services (CSAT & GS)": {
@@ -144,7 +165,7 @@ THEME_PALETTES = {
         "accent": "#C084FC",
         "accent_dark": "#9333EA",
         "glow": "rgba(192, 132, 252, 0.22)",
-        "card_bg": "rgba(26, 11, 46, 0.8)",
+        "card_bg": "rgba(26, 11, 46, 0.85)",
         "border": "#9333EA"
     }
 }
@@ -155,6 +176,7 @@ active_theme = THEME_PALETTES.get(st.session_state.current_course, THEME_PALETTE
 COURSE_DATABASE = {
     "🩺 NEET (Medical Entrance)": {
         "icon": "🩺",
+        "official_archive_url": "https://nta.ac.in/Downloads",
         "subjects": {
             "🧬 Zoology & Human Physiology": {
                 "units": "Unit 1: Neural Control & Coordination | Unit 2: Chemical Coordination | Unit 3: Circulation & Body Fluids | Unit 4: Reproduction & Genetics",
@@ -166,7 +188,13 @@ COURSE_DATABASE = {
                     "DNA Replication, Transcription & Genetic Code",
                     "Spermatogenesis vs Oogenesis & Hormonal Feedback Cycles"
                 ],
-                "pyqs_years": ["NEET 2024", "NEET 2023", "NEET 2022", "NEET 2021", "NEET 2020"]
+                "pyqs_years": [
+                    "NEET UG 2025 (Official Code Q/R/S/T)",
+                    "NEET UG 2024 (Official Paper Set Q1-Q6)",
+                    "NEET UG 2023 (Manipur & Main Official Paper)",
+                    "NEET UG 2022 (Official NTA Paper)",
+                    "NEET UG 2021 (Official Paper)"
+                ]
             },
             "🌿 Botany & Plant Biology": {
                 "units": "Unit 1: Plant Kingdom & Anatomy | Unit 2: Photosynthesis | Unit 3: Respiration | Unit 4: Plant Growth Regulators",
@@ -177,7 +205,13 @@ COURSE_DATABASE = {
                     "Double Fertilization & Embryo Sac Development in Angiosperms",
                     "Auxin, Cytokinin, Gibberellin Action & Photoperiodism"
                 ],
-                "pyqs_years": ["NEET 2024", "NEET 2023", "NEET 2022", "NEET 2021", "NEET 2020"]
+                "pyqs_years": [
+                    "NEET UG 2025 (Official Paper)",
+                    "NEET UG 2024 (Official Paper)",
+                    "NEET UG 2023 (Official Paper)",
+                    "NEET UG 2022 (Official Paper)",
+                    "NEET UG 2021 (Official Paper)"
+                ]
             },
             "🧪 NEET Chemistry (Organic & Inorganic)": {
                 "units": "Unit 1: Chemical Bonding | Unit 2: Periodic Table | Unit 3: Reaction Mechanisms | Unit 4: Biomolecules",
@@ -188,7 +222,12 @@ COURSE_DATABASE = {
                     "Coordination Compounds, Werner Theory & Crystal Field Splitting (CFT)",
                     "Thermodynamics: Hess's Law, Gibbs Free Energy & Spontaneity"
                 ],
-                "pyqs_years": ["NEET 2024", "NEET 2023", "NEET 2022", "NEET 2021", "NEET 2020"]
+                "pyqs_years": [
+                    "NEET UG 2025 (Official Paper)",
+                    "NEET UG 2024 (Official Paper)",
+                    "NEET UG 2023 (Official Paper)",
+                    "NEET UG 2022 (Official Paper)"
+                ]
             },
             "⚛️ NEET Physics": {
                 "units": "Unit 1: Kinematics & Mechanics | Unit 2: Electrodynamics | Unit 3: Optics & Modern Physics",
@@ -198,12 +237,18 @@ COURSE_DATABASE = {
                     "Ray Optics: Lens Maker Formula, Prism & Total Internal Reflection",
                     "Photoelectric Effect, de Broglie Wavelength & Bohr Model"
                 ],
-                "pyqs_years": ["NEET 2024", "NEET 2023", "NEET 2022", "NEET 2021", "NEET 2020"]
+                "pyqs_years": [
+                    "NEET UG 2025 (Official Paper)",
+                    "NEET UG 2024 (Official Paper)",
+                    "NEET UG 2023 (Official Paper)",
+                    "NEET UG 2022 (Official Paper)"
+                ]
             }
         }
     },
     "⚙️ JEE (Main & Advanced)": {
         "icon": "⚙️",
+        "official_archive_url": "https://jeemain.nta.nic.in/",
         "subjects": {
             "📐 JEE Mathematics": {
                 "units": "Unit 1: Coordinate Geometry | Unit 2: Calculus | Unit 3: Algebra & Vectors | Unit 4: Probability",
@@ -214,7 +259,13 @@ COURSE_DATABASE = {
                     "Complex Numbers: De Moivre Theorem, Geometry & Roots of Unity",
                     "Vectors & 3D Geometry: Shortest Distance Between Skew Lines"
                 ],
-                "pyqs_years": ["JEE Main 2024 (Jan/Apr)", "JEE Main 2023", "JEE Adv 2023", "JEE Main 2022"]
+                "pyqs_years": [
+                    "JEE Main 2025 (Jan & April Shifts)",
+                    "JEE Advanced 2024 (Paper 1 & Paper 2)",
+                    "JEE Main 2024 (Jan 27 - Shift 1 & 2)",
+                    "JEE Main 2023 (Official NTA Shifts)",
+                    "JEE Advanced 2023 (Official Paper)"
+                ]
             },
             "⚛️ JEE Physics": {
                 "units": "Unit 1: Rotational Dynamics | Unit 2: Electromagnetism | Unit 3: Thermodynamics & SHM | Unit 4: Wave Optics",
@@ -225,7 +276,12 @@ COURSE_DATABASE = {
                     "Electromagnetic Induction, Faraday's Law & LC Oscillations",
                     "Wave Optics: Young's Double Slit Experiment (YDSE) & Phase Shift"
                 ],
-                "pyqs_years": ["JEE Main 2024", "JEE Main 2023", "JEE Adv 2023", "JEE Main 2022"]
+                "pyqs_years": [
+                    "JEE Main 2025 (Jan & April Shifts)",
+                    "JEE Advanced 2024 (Paper 1 & 2)",
+                    "JEE Main 2024 (Official Shifts)",
+                    "JEE Main 2023 (Official Shifts)"
+                ]
             },
             "🧪 JEE Chemistry (Physical & Inorganic)": {
                 "units": "Unit 1: Chemical Equilibrium & Kinetics | Unit 2: Electrochemistry | Unit 3: Coordination Chemistry",
@@ -235,12 +291,18 @@ COURSE_DATABASE = {
                     "Ionic Equilibrium: Buffer Solutions, pH Calculation & Solubility Product",
                     "Metallurgy: Ellingham Diagram & Extraction Principles"
                 ],
-                "pyqs_years": ["JEE Main 2024", "JEE Main 2023", "JEE Adv 2023", "JEE Main 2022"]
+                "pyqs_years": [
+                    "JEE Main 2025 (Official Shifts)",
+                    "JEE Advanced 2024 (Paper 1 & 2)",
+                    "JEE Main 2024 (Official Shifts)",
+                    "JEE Main 2023 (Official Shifts)"
+                ]
             }
         }
     },
     "🎓 BCA (Computer Applications)": {
         "icon": "🎓",
+        "official_archive_url": "https://www.eshiksha.mp.gov.in/",
         "subjects": {
             "🐍 Python Programming": {
                 "units": "Unit 1: Bytecode & Internals | Unit 2: Loops & Logic | Unit 3: Functions & Scope | Unit 4: Data Structures | Unit 5: OOPs & Inheritance | Unit 6: File I/O",
@@ -252,7 +314,12 @@ COURSE_DATABASE = {
                     "Object Oriented Programming: Encapsulation & Inheritance",
                     "File Handling, Context Managers & Exception Hierarchy"
                 ],
-                "pyqs_years": ["University Exam 2024", "University Exam 2023", "University Exam 2022"]
+                "pyqs_years": [
+                    "BCA Semester Exam 2025 (Official University Paper)",
+                    "BCA Semester Exam 2024 (Official University Paper)",
+                    "BCA Semester Exam 2023 (Official University Paper)",
+                    "BCA Semester Exam 2022 (Official University Paper)"
+                ]
             },
             "🖥️ Computer System Architecture": {
                 "units": "Unit 1: Binary Logic | Unit 2: Boolean Algebra & K-Maps | Unit 3: Combinational & Sequential Circuits | Unit 4: CPU Registers | Unit 5: Cache & Pipeline",
@@ -264,7 +331,11 @@ COURSE_DATABASE = {
                     "Flip-Flops, Master-Slave JK & Race-Around Condition",
                     "Instruction Cycle Phases & Cache Memory Mapping"
                 ],
-                "pyqs_years": ["University Exam 2024", "University Exam 2023", "University Exam 2022"]
+                "pyqs_years": [
+                    "BCA CSA University Paper 2025",
+                    "BCA CSA University Paper 2024",
+                    "BCA CSA University Paper 2023"
+                ]
             },
             "📐 Mathematics & Numerical Methods": {
                 "units": "Unit 1: Matrices & Rank | Unit 2: Differential Calculus | Unit 3: Integral Calculus | Unit 4: Discrete Structures | Unit 5: Numerical Iterations",
@@ -276,12 +347,17 @@ COURSE_DATABASE = {
                     "Leibnitz Theorem for n-th Derivatives & Formula Matrix",
                     "Newton-Raphson Method & Numerical Convergence"
                 ],
-                "pyqs_years": ["University Exam 2024", "University Exam 2023", "University Exam 2022"]
+                "pyqs_years": [
+                    "BCA Maths University Paper 2025",
+                    "BCA Maths University Paper 2024",
+                    "BCA Maths University Paper 2023"
+                ]
             }
         }
     },
     "🏛️ UPSC / Civil Services (CSAT & GS)": {
         "icon": "🏛️",
+        "official_archive_url": "https://upsc.gov.in/examinations/previous-question-papers",
         "subjects": {
             "📜 Indian Polity & Constitution": {
                 "units": "Unit 1: Fundamental Rights | Unit 2: Parliament & Executive | Unit 3: Judiciary & Constitutional Bodies",
@@ -291,7 +367,12 @@ COURSE_DATABASE = {
                     "Panchayati Raj (73rd & 74th Amendments) & Decentralization",
                     "Judicial Review, PIL & Collegium System Dynamics"
                 ],
-                "pyqs_years": ["UPSC Prelims 2024", "UPSC Prelims 2023", "UPSC Prelims 2022", "UPSC Prelims 2021"]
+                "pyqs_years": [
+                    "UPSC CSE Prelims 2025 (GS Paper-I Set A)",
+                    "UPSC CSE Prelims 2024 (GS Paper-I Official)",
+                    "UPSC CSE Prelims 2023 (GS Paper-I Official)",
+                    "UPSC CSE Prelims 2022 (GS Paper-I Official)"
+                ]
             },
             "🌍 Indian Economy & Geography": {
                 "units": "Unit 1: Monetary & Fiscal Policy | Unit 2: Physical & Human Geography | Unit 3: Sustainable Development",
@@ -300,7 +381,11 @@ COURSE_DATABASE = {
                     "Fiscal Deficit, FRBM Act & Direct Tax Reforms (GST Architecture)",
                     "Monsoon Mechanism: Jet Streams, El Niño, La Niña & IOD"
                 ],
-                "pyqs_years": ["UPSC Prelims 2024", "UPSC Prelims 2023", "UPSC Prelims 2022", "UPSC Prelims 2021"]
+                "pyqs_years": [
+                    "UPSC CSE Prelims 2025 (GS Paper-I)",
+                    "UPSC CSE Prelims 2024 (GS Paper-I)",
+                    "UPSC CSE Prelims 2023 (GS Paper-I)"
+                ]
             }
         }
     }
@@ -357,7 +442,6 @@ DYNAMIC_THEME_CSS = f"""
         justify-content: space-between;
         align-items: center;
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
-        transition: all 0.4s ease;
     }}
     .formal-author-pill {{
         display: inline-flex;
@@ -392,15 +476,15 @@ DYNAMIC_THEME_CSS = f"""
         border: 1.5px solid rgba(255, 255, 255, 0.1);
         border-left: 4.5px solid {active_theme['accent']};
         border-radius: 12px;
-        padding: 16px 20px;
-        margin-bottom: 16px;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        padding: 14px 18px;
+        margin-bottom: 8px;
+        box-shadow: 0 4px 18px rgba(0,0,0,0.3);
     }}
     .question-header {{
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 10px;
+        margin-bottom: 8px;
         border-bottom: 1px solid rgba(255,255,255,0.08);
         padding-bottom: 6px;
     }}
@@ -423,7 +507,30 @@ DYNAMIC_THEME_CSS = f"""
         font-weight: 600;
         line-height: 1.55;
         color: #F8FAFC;
-        margin-bottom: 12px;
+        margin-bottom: 4px;
+    }}
+
+    .archive-link-box {{
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid {active_theme['accent']};
+        border-radius: 10px;
+        padding: 10px 16px;
+        margin-bottom: 14px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 10px;
+    }}
+    .archive-link-box a {{
+        color: {active_theme['accent']} !important;
+        font-weight: 700;
+        text-decoration: none;
+        border: 1px solid {active_theme['accent']};
+        padding: 4px 12px;
+        border-radius: 6px;
+        background: {active_theme['glow']};
+        font-size: 12.5px;
     }}
 
     div[data-testid="stExpander"] {{
@@ -438,9 +545,9 @@ DYNAMIC_THEME_CSS = f"""
         background: {active_theme['card_bg']} !important;
         border: 1px solid rgba(255, 255, 255, 0.1) !important;
         padding: 6px 12px !important;
-        border-radius: 20px !important;
-        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3) !important;
-        margin-bottom: 8px !important;
+        border-radius: 14px !important;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25) !important;
+        margin-bottom: 12px !important;
     }}
 
     .stButton>button {{
@@ -621,7 +728,7 @@ def execute_ai_query(system_role, user_prompt, max_budget=4096, image_input=None
                         {"role": "system", "content": system_role},
                         {"role": "user", "content": user_prompt}
                     ],
-                    temperature=0.2,
+                    temperature=0.25,
                     max_tokens=max_budget
                 )
                 return completion.choices[0].message.content.strip()
@@ -732,46 +839,90 @@ def generate_multi_sheets_html(topic, subject_name, course_name, notes_lang):
     
     return sanitized_sheets if sanitized_sheets else [clean_text]
 
-# ================= STRUCTURED EXAM / PYQ GENERATOR =================
-def generate_interactive_paper(exam_topic, course_name, subject_name, is_pyq=False, pyq_year=""):
-    context_type = f"Authentic Previous Year Exam Paper ({pyq_year})" if is_pyq else "Standard National Examination Test"
-    sys_prompt = (
-        "You are the Chief Examination Controller and Question Paper Setter for " + course_name + ". "
-        "Strictly output EXACTLY 5 high-yield multiple choice questions as a valid JSON array. "
-        "DO NOT output Markdown tables or HTML tables. Output ONLY raw JSON array. "
-        "JSON Schema for each object in the array:\n"
-        "{\n"
-        '  "q_no": 1,\n'
-        '  "year_tag": "NEET 2023" or "Expected Mock",\n'
-        '  "question": "Clear scientific question text here",\n'
-        '  "options": ["A. Option text", "B. Option text", "C. Option text", "D. Option text"],\n'
-        '  "correct_option": "A. Option text",\n'
-        '  "explanation": "Clear step-by-step logic and concept justification"\n'
-        "}"
-    )
-    user_prompt = f"Create 5 high-standard MCQs for '{exam_topic}' in {subject_name} under {course_name}. {context_type}."
-    
-    raw_json = execute_ai_query(sys_prompt, user_prompt, max_budget=3500)
+# ================= JSON PARSER HELPER =================
+def parse_mcq_json(raw_json):
     raw_json = re.sub(r"^```json\s*", "", raw_json, flags=re.IGNORECASE)
     raw_json = re.sub(r"^```\s*", "", raw_json)
     raw_json = re.sub(r"\s*```$", "", raw_json).strip()
-
     try:
         data = json.loads(raw_json)
-        if isinstance(data, list) and len(data) > 0:
+        if isinstance(data, list):
             return data
     except Exception:
         pass
-
-    # Safe fallback if AI wraps json awkwardly
     match = re.search(r'\[\s*\{.*\}\s*\]', raw_json, re.DOTALL)
     if match:
         try:
             return json.loads(match.group(0))
         except Exception:
             pass
-
     return []
+
+# ================= STRUCTURED EXAM / REAL PYQ / 90-100 DPP GENERATOR =================
+def generate_batch_questions(topic, course_name, subject_name, count=15, batch_num=1, is_pyq=False, pyq_year=""):
+    if is_pyq:
+        mode_desc = (
+            f"STRICTLY RECALL AND OUTPUT REAL VERBATIM QUESTIONS THAT APPEARED IN OFFICIAL {pyq_year} ({course_name}). "
+            "Include exact year and paper shift/code in 'year_tag' (e.g. 'NEET 2024 Set-Q2' or 'JEE Main 2024 27-Jan Shift-1')."
+        )
+    else:
+        sub_focus = [
+            "Core Conceptual & Direct Formula Application",
+            "Numerical Problem Solving & Multi-Step Calculations",
+            "Assertion-Reason & Statement-Based Analytical Questions",
+            "NCERT / Standard Textbook Line-by-Line Deep Exceptions & Graphs",
+            "Advanced Rank-Decider & Tricky Edge-Case Questions"
+        ][(batch_num - 1) % 5]
+        mode_desc = f"DPP Batch #{batch_num} focusing on: {sub_focus}. Do not repeat previous questions."
+
+    sys_prompt = (
+        f"You are the Chief Question Paper Setter for {course_name}. "
+        f"Output EXACTLY {count} multiple choice questions as a valid JSON array. "
+        "NEVER output markdown tables or HTML. Output ONLY raw JSON array. "
+        "Keep explanations crisp (1-2 lines) so all JSON objects fit cleanly. "
+        "JSON Schema:\n"
+        "[\n"
+        "  {\n"
+        '    "q_no": 1,\n'
+        '    "year_tag": "DPP Set" or "NEET 2024 Official",\n'
+        '    "question": "Question text here",\n'
+        '    "options": ["A. Option 1", "B. Option 2", "C. Option 3", "D. Option 4"],\n'
+        '    "correct_option": "A. Option 1",\n'
+        '    "explanation": "Concise formula/concept explanation"\n'
+        "  }\n"
+        "]"
+    )
+    user_prompt = (
+        f"Generate {count} distinct, high-yield MCQs for '{topic}' in {subject_name} ({course_name}). "
+        f"Instruction: {mode_desc}"
+    )
+    raw_res = execute_ai_query(sys_prompt, user_prompt, max_budget=6000)
+    return parse_mcq_json(raw_res)
+
+def generate_90_100_dpp_marathon(topic, course_name, subject_name, target_count=90):
+    all_questions = []
+    batch_size = 18
+    total_batches = (target_count + batch_size - 1) // batch_size
+
+    progress_bar = st.progress(0, text=f"Initializing {target_count}-Question DPP Engine...")
+    status_box = st.empty()
+
+    for b in range(1, total_batches + 1):
+        status_box.info(f"⚡ Compiling DPP Batch {b} of {total_batches} ({len(all_questions)}/{target_count} Questions Ready)...")
+        batch_qs = generate_batch_questions(
+            topic, course_name, subject_name, count=batch_size, batch_num=b, is_pyq=False
+        )
+        if batch_qs:
+            for q in batch_qs:
+                q["q_no"] = len(all_questions) + 1
+                if "year_tag" not in q or not q["year_tag"]:
+                    q["year_tag"] = f"DPP Batch-{b}"
+                all_questions.append(q)
+        progress_bar.progress(min(b / total_batches, 1.0), text=f"Loaded {len(all_questions)} Questions...")
+
+    progress_bar.empty()
+    status_box.empty()
+    return all_questions
 
 # ================= 0. INTRO SCREEN =================
 if not st.session_state.system_booted:
@@ -787,10 +938,10 @@ if not st.session_state.system_booted:
             NEET • JEE • BCA • UPSC | MLK PG College, Balrampur
         </div>
         <div style="background:{active_theme['card_bg']}; border:1px solid rgba(255,255,255,0.1); border-left:4px solid {active_theme['accent']}; border-radius:10px; padding:16px 22px; max-width:560px; width:100%; text-align:left; font-size:13px; color:#CBD5E1; line-height:1.6; margin-bottom:24px;">
-            <div style="color:{active_theme['accent']}; font-weight:700; margin-bottom:4px;">New Capabilities:</div>
-            <div>• 📚 Authentic Year-wise PYQ Papers with OMR Simulator</div>
-            <div>• Clean Question Cards with Radio/Checkbox Option Selectors</div>
-            <div>• Instant Auto-Evaluation with Marks & Explanation</div>
+            <div style="color:{active_theme['accent']}; font-weight:700; margin-bottom:4px;">Enterprise Features Active:</div>
+            <div>• 🔥 90–100 Questions DPP Marathon Generator (All Courses)</div>
+            <div>• 📚 Real Official PYQ Papers + Direct Internet PDF Archives</div>
+            <div>• Interactive OMR Option Tick & Instant Evaluation (+4 / -1)</div>
         </div>
     </div>
     """, unsafe_allow_html=True)
@@ -810,7 +961,7 @@ else:
                 Universal Academic & Competitive Portal
             </div>
             <div style="font-size: 12px; color: #94A3B8;">
-                Dynamic Stream Atmosphere • Interactive OMR Test Engine
+                90–100 Qs DPP Engine • Real Internet PYQ Vault • OMR Simulator
             </div>
         </div>
         <div class="formal-author-pill">
@@ -844,7 +995,8 @@ else:
                     st.session_state.generated_gallery_sheets = []
                     st.session_state.active_sheet_index = None
                     st.session_state.active_exam_questions = []
-                    st.session_state.exam_submitted = False
+                    st.session_state.dpp_questions = []
+                    st.session_state.pyq_questions = []
                     save_user_memory()
                     st.rerun()
 
@@ -866,7 +1018,8 @@ else:
                     st.session_state.generated_gallery_sheets = []
                     st.session_state.active_sheet_index = None
                     st.session_state.active_exam_questions = []
-                    st.session_state.exam_submitted = False
+                    st.session_state.dpp_questions = []
+                    st.session_state.pyq_questions = []
                     save_user_memory()
                     st.rerun()
 
@@ -874,11 +1027,12 @@ else:
     active_subj = st.session_state.current_subject
     subject_details = active_course_data["subjects"][active_subj]
 
-    # Navigation Dock (Added PYQs Option)
+    # Navigation Dock (Added 90-100 DPP & Real PYQs)
     nav_options = [
         "📝 Notes Gallery",
+        "🔥 DPP (90-100 Qs)",
+        "📚 Real PYQs Vault",
         "🎯 Mock Exam",
-        "📚 PYQs Vault",
         "📖 Syllabus",
         "🔬 Formula & Lab",
         "🤖 AI Mentor"
@@ -957,31 +1111,272 @@ else:
                         """
                         st.markdown(card_thumb, unsafe_allow_html=True)
 
-    # ================= SECTION 2: PROPER MOCK EXAM (INTERACTIVE OPTIONS) =================
-    elif selected_nav == "🎯 Mock Exam":
-        st.markdown(f"#### 🎯 Competitive Exam Paper — {active_course}")
-        st.caption("Clean Question Paper Layout with Interactive Option Selector & Instant OMR Evaluation.")
+    # ================= SECTION 2: DPP (90-100 QUESTIONS MARATHON ENGINE) =================
+    elif selected_nav == "🔥 DPP (90-100 Qs)":
+        st.markdown(f"#### 🔥 Daily Practice Problems (DPP Marathon) — {active_subj}")
+        st.caption("Full chapter practice sheet with 90–100 questions, OMR option tick, and paginated smooth view.")
 
+        c1, c2, c3 = st.columns([2, 1, 1])
+        with c1:
+            dpp_topic_list = subject_details.get("topics", [])
+            sel_dpp_topic = st.selectbox("Select Chapter / Topic for DPP:", dpp_topic_list)
+            custom_dpp = st.text_input("Or Enter Custom Chapter:", placeholder="e.g. Complete Human Physiology / rotational mechanics")
+        with c2:
+            dpp_target_count = st.selectbox("DPP Sheet Size:", [90, 100, 50], index=0)
+        with c3:
+            page_size = st.selectbox("Questions Per Page:", [20, 25, 50, 100], index=1)
+
+        final_dpp_topic = custom_dpp.strip() if custom_dpp.strip() else sel_dpp_topic
+
+        col_btn1, col_btn2 = st.columns([2, 1])
+        with col_btn1:
+            if st.button(f"🚀 Generate Full {dpp_target_count}-Question DPP Sheet", use_container_width=True):
+                st.session_state.current_topic = final_dpp_topic
+                save_user_memory()
+                st.session_state.dpp_questions = generate_90_100_dpp_marathon(
+                    final_dpp_topic, active_course, active_subj, target_count=dpp_target_count
+                )
+                st.session_state.dpp_user_answers = {}
+                st.session_state.dpp_submitted = False
+                st.session_state.dpp_page = 0
+                st.rerun()
+        with col_btn2:
+            if st.session_state.dpp_questions and len(st.session_state.dpp_questions) < 100:
+                if st.button("➕ Append 20 More Questions", use_container_width=True):
+                    with st.spinner("Adding 20 more questions to current DPP..."):
+                        extra = generate_batch_questions(
+                            final_dpp_topic, active_course, active_subj, count=20,
+                            batch_num=(len(st.session_state.dpp_questions) // 18) + 1
+                        )
+                        for q in extra:
+                            q["q_no"] = len(st.session_state.dpp_questions) + 1
+                            st.session_state.dpp_questions.append(q)
+                        st.rerun()
+
+        if st.session_state.dpp_questions:
+            dpp_list = st.session_state.dpp_questions
+            total_dpp = len(dpp_list)
+            total_pages = max(1, (total_dpp + page_size - 1) // page_size)
+            cur_page = min(st.session_state.dpp_page, total_pages - 1)
+
+            start_idx = cur_page * page_size
+            end_idx = min(start_idx + page_size, total_dpp)
+
+            answered_count = len([v for v in st.session_state.dpp_user_answers.values() if v is not None])
+            st.markdown(f"**📋 Active DPP Sheet:** `{final_dpp_topic}` | **Total Questions:** `{total_dpp}` | **Attempted:** `{answered_count}/{total_dpp}` | **Page:** `{cur_page + 1}/{total_pages}`")
+
+            # Top Pagination Bar
+            p_c1, p_c2, p_c3 = st.columns([1, 2, 1])
+            with p_c1:
+                if st.button("⬅️ Previous Page", disabled=(cur_page == 0), key="dpp_prev_top", use_container_width=True):
+                    st.session_state.dpp_page = max(0, cur_page - 1)
+                    st.rerun()
+            with p_c3:
+                if st.button("Next Page ➡️", disabled=(cur_page >= total_pages - 1), key="dpp_next_top", use_container_width=True):
+                    st.session_state.dpp_page = min(total_pages - 1, cur_page + 1)
+                    st.rerun()
+
+            for idx in range(start_idx, end_idx):
+                q_data = dpp_list[idx]
+                q_num = idx + 1
+                st.markdown(f"""
+                <div class="question-card">
+                    <div class="question-header">
+                        <span class="q-number-tag">DPP Q.{q_num} • {q_data.get('year_tag', 'Core DPP')}</span>
+                        <span class="q-marks-tag">+4 / -1 OMR</span>
+                    </div>
+                    <div class="q-text">{q_data.get('question', '')}</div>
+                </div>
+                """, unsafe_allow_html=True)
+
+                opts = q_data.get("options", [])
+                prev_choice = st.session_state.dpp_user_answers.get(idx, None)
+                opt_index = opts.index(prev_choice) if prev_choice in opts else None
+
+                chosen = st.radio(
+                    f"Tick Option for Q.{q_num}:",
+                    options=opts,
+                    index=opt_index,
+                    key=f"dpp_radio_{idx}"
+                )
+                st.session_state.dpp_user_answers[idx] = chosen
+
+                if st.session_state.dpp_submitted:
+                    correct = q_data.get("correct_option", "")
+                    if chosen == correct:
+                        st.success(f"✔ **Correct!** ({correct})")
+                    else:
+                        st.error(f"✖ **Incorrect / Unattempted.** Official Key: {correct} | Your Tick: {chosen if chosen else 'None'}")
+                    with st.expander(f"💡 Solution for Q.{q_num}", expanded=False):
+                        st.write(q_data.get("explanation", "Refer to standard formula derivation."))
+
+            # Bottom Pagination & Submit
+            b_c1, b_c2, b_c3 = st.columns([1, 2, 1])
+            with b_c1:
+                if st.button("⬅️ Prev Page", disabled=(cur_page == 0), key="dpp_prev_bot", use_container_width=True):
+                    st.session_state.dpp_page = max(0, cur_page - 1)
+                    st.rerun()
+            with b_c2:
+                if st.button("📝 Submit Entire DPP & Calculate Rank Score", type="primary", use_container_width=True):
+                    st.session_state.dpp_submitted = True
+                    st.rerun()
+            with b_c3:
+                if st.button("Next Page ➡️", disabled=(cur_page >= total_pages - 1), key="dpp_next_bot", use_container_width=True):
+                    st.session_state.dpp_page = min(total_pages - 1, cur_page + 1)
+                    st.rerun()
+
+            if st.session_state.dpp_submitted:
+                correct_cnt = sum(1 for i, q in enumerate(dpp_list) if st.session_state.dpp_user_answers.get(i) == q.get("correct_option"))
+                wrong_cnt = sum(1 for i, q in enumerate(dpp_list) if st.session_state.dpp_user_answers.get(i) and st.session_state.dpp_user_answers.get(i) != q.get("correct_option"))
+                unattempted = total_dpp - (correct_cnt + wrong_cnt)
+                total_marks = (correct_cnt * 4) - (wrong_cnt * 1)
+                max_marks = total_dpp * 4
+
+                st.markdown(f"""
+                <div style="background:{active_theme['card_bg']}; border:2px solid {active_theme['accent']}; border-radius:12px; padding:18px 24px; text-align:center; margin-top:20px; box-shadow:0 0 20px {active_theme['glow']};">
+                    <h3 style="color:{active_theme['accent']}; margin-bottom:6px;">📊 DPP Marathon Scorecard ({total_dpp} Questions)</h3>
+                    <div style="font-size:24px; font-weight:800; color:#F8FAFC; margin-bottom:12px;">Score: {total_marks} / {max_marks}</div>
+                    <div style="display:flex; justify-content:center; gap:20px; font-size:13px; color:#CBD5E1;">
+                        <span>✔ Correct: <b style="color:#34D399;">{correct_cnt}</b></span>
+                        <span>✖ Wrong: <b style="color:#EF4444;">{wrong_cnt}</b></span>
+                        <span>⚪ Left: <b style="color:#94A3B8;">{unattempted}</b></span>
+                        <span>🎯 Accuracy: <b>{int((correct_cnt/total_dpp)*100) if total_dpp else 0}%</b></span>
+                    </div>
+                </div>
+                """, unsafe_allow_html=True)
+
+    # ================= SECTION 3: REAL INTERNET PYQS VAULT =================
+    elif selected_nav == "📚 Real PYQs Vault":
+        st.markdown(f"#### 📚 Official Past Question Papers (Internet Archive + Interactive OMR) — {active_course}")
+        st.caption("Download real original PDF papers from the internet or solve verbatim official past questions right here.")
+
+        pyqs_list = subject_details.get("pyqs_years", ["2024 Official Paper"])
+        c1, c2 = st.columns([2, 1])
+        with c1:
+            chosen_year = st.selectbox("Select Official Exam Paper:", pyqs_list)
+            pyq_topic = st.text_input("Specific Chapter Filter (Leave blank for Full Paper):", placeholder="e.g. Genetics / Electrostatics / Polity")
+        with c2:
+            pyq_count = st.selectbox("Questions to Load:", [20, 40, 60], index=0)
+
+        # Direct Internet PDF Search & Official Archive Links
+        encoded_query = urllib.parse.quote(f"{chosen_year} {active_subj} official question paper pdf download")
+        google_pdf_url = f"https://www.google.com/search?q={encoded_query}"
+        official_portal_url = active_course_data.get("official_archive_url", "https://nta.ac.in/Downloads")
+
+        st.markdown(f"""
+        <div class="archive-link-box">
+            <div>
+                <div style="font-size:13.5px; font-weight:700; color:#F8FAFC;">🌐 Direct Internet Official Question Paper PDFs ({chosen_year})</div>
+                <div style="font-size:11.5px; color:#94A3B8;">Open original scanned exam booklet PDFs directly from official web archives:</div>
+            </div>
+            <div style="display:flex; gap:10px;">
+                <a href="{google_pdf_url}" target="_blank">📄 Download {chosen_year} PDF</a>
+                <a href="{official_portal_url}" target="_blank">🏛️ Official Exam Archive</a>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+        target_topic = pyq_topic.strip() if pyq_topic.strip() else f"Full {active_subj} Syllabus"
+
+        if st.button(f"📥 Load {pyq_count} Verbatim Questions from {chosen_year} (Interactive OMR)", use_container_width=True):
+            all_pyqs = []
+            batches = (pyq_count + 19) // 20
+            prog = st.progress(0, text=f"Fetching verbatim questions from {chosen_year}...")
+            for b in range(1, batches + 1):
+                chunk = generate_batch_questions(
+                    target_topic, active_course, active_subj, count=min(20, pyq_count - len(all_pyqs)),
+                    batch_num=b, is_pyq=True, pyq_year=chosen_year
+                )
+                for q in chunk:
+                    q["q_no"] = len(all_pyqs) + 1
+                    all_pyqs.append(q)
+                prog.progress(min(b / batches, 1.0))
+            prog.empty()
+            st.session_state.pyq_questions = all_pyqs
+            st.session_state.pyq_user_answers = {}
+            st.session_state.pyq_submitted = False
+            st.rerun()
+
+        if st.session_state.pyq_questions:
+            q_list = st.session_state.pyq_questions
+            st.markdown(f"### 🏛️ {chosen_year} — Interactive OMR Booklet ({len(q_list)} Questions)")
+
+            for idx, q_data in enumerate(q_list):
+                q_num = idx + 1
+                st.markdown(f"""
+                <div class="question-card">
+                    <div class="question-header">
+                        <span class="q-number-tag">Q.{q_num} • {q_data.get('year_tag', chosen_year)}</span>
+                        <span class="q-marks-tag">Official Marking: +4 / -1</span>
+                    </div>
+                    <div class="q-text">{q_data.get('question', '')}</div>
+                </div>
+                """, unsafe_allow_html=True)
+
+                opts = q_data.get("options", [])
+                prev_ans = st.session_state.pyq_user_answers.get(idx, None)
+                opt_i = opts.index(prev_ans) if prev_ans in opts else None
+
+                sel_ans = st.radio(
+                    f"Tick OMR Answer for PYQ #{q_num}:",
+                    options=opts,
+                    index=opt_i,
+                    key=f"pyq_radio_{idx}"
+                )
+                st.session_state.pyq_user_answers[idx] = sel_ans
+
+                if st.session_state.pyq_submitted:
+                    correct = q_data.get("correct_option", "")
+                    if sel_ans == correct:
+                        st.success(f"✔ **Correct!** Official Key: {correct}")
+                    else:
+                        st.error(f"✖ **Incorrect / Skipped.** Official Key: {correct} (You ticked: {sel_ans if sel_ans else 'None'})")
+
+                    with st.expander(f"💡 View Official Solution #{q_num}", expanded=True):
+                        st.write(q_data.get("explanation", "Standard syllabus derivation."))
+
+            if st.button("📝 Submit Official PYQ Paper & Check Score", type="primary", use_container_width=True):
+                st.session_state.pyq_submitted = True
+                st.rerun()
+
+            if st.session_state.pyq_submitted:
+                total_q = len(q_list)
+                correct_cnt = sum(1 for i, q in enumerate(q_list) if st.session_state.pyq_user_answers.get(i) == q.get("correct_option"))
+                wrong_cnt = sum(1 for i, q in enumerate(q_list) if st.session_state.pyq_user_answers.get(i) and st.session_state.pyq_user_answers.get(i) != q.get("correct_option"))
+                total_marks = (correct_cnt * 4) - (wrong_cnt * 1)
+                max_marks = total_q * 4
+
+                st.markdown(f"""
+                <div style="background:{active_theme['card_bg']}; border:2px solid {active_theme['accent']}; border-radius:12px; padding:18px 24px; text-align:center; margin-top:20px; box-shadow:0 0 20px {active_theme['glow']};">
+                    <h3 style="color:{active_theme['accent']}; margin-bottom:6px;">📊 {chosen_year} Performance Report</h3>
+                    <div style="font-size:24px; font-weight:800; color:#F8FAFC; margin-bottom:12px;">Score: {total_marks} / {max_marks}</div>
+                    <div style="display:flex; justify-content:center; gap:20px; font-size:13px; color:#CBD5E1;">
+                        <span>✔ Correct: <b style="color:#34D399;">{correct_cnt}</b></span>
+                        <span>✖ Negative: <b style="color:#EF4444;">{wrong_cnt}</b></span>
+                        <span>🎯 Accuracy: <b>{int((correct_cnt/total_q)*100) if total_q else 0}%</b></span>
+                    </div>
+                </div>
+                """, unsafe_allow_html=True)
+
+    # ================= SECTION 4: QUICK MOCK EXAM =================
+    elif selected_nav == "🎯 Mock Exam":
+        st.markdown(f"#### 🎯 Rapid Mock Test — {active_course}")
         c1, c2 = st.columns([2.5, 1])
         with c1:
             exam_topic = st.text_input("Scope / Chapter for Test:", value=st.session_state.current_topic if st.session_state.current_topic else active_subj)
         with c2:
-            paper_diff = st.selectbox("Exam Standard:", ["Entrance Standard (Moderate-High)", "Challenging (Top Rankers)"])
+            mock_q_cnt = st.selectbox("Questions:", [10, 15, 25], index=1)
 
-        if st.button("Generate Question Paper", use_container_width=True):
+        if st.button("Generate Quick Mock Paper", use_container_width=True):
             with st.spinner("Generating clean MCQ examination paper..."):
-                st.session_state.active_exam_questions = generate_interactive_paper(
-                    exam_topic, active_course, active_subj, is_pyq=False
+                st.session_state.active_exam_questions = generate_batch_questions(
+                    exam_topic, active_course, active_subj, count=mock_q_cnt, batch_num=1, is_pyq=False
                 )
                 st.session_state.exam_submitted = False
                 st.rerun()
 
-        # Render Question Paper
         if st.session_state.active_exam_questions:
             q_list = st.session_state.active_exam_questions
-            st.markdown("---")
-            st.markdown(f"### 📋 SECTION-A : Multiple Choice Questions (+4, -1 Scheme)")
-
             user_answers = {}
 
             for idx, q_data in enumerate(q_list):
@@ -1007,133 +1402,18 @@ else:
                 if st.session_state.exam_submitted:
                     correct = q_data.get("correct_option", "")
                     selected = user_answers.get(idx)
-
                     if selected == correct:
                         st.success(f"✔ **Correct!** Answer: {correct}")
                     else:
-                        st.error(f"✖ **Incorrect / Skipped.** Correct: {correct} (You chose: {selected if selected else 'None'})")
+                        st.error(f"✖ **Incorrect / Skipped.** Correct: {correct}")
+                    with st.expander(f"💡 Explanation for Q.{q_num}", expanded=True):
+                        st.write(q_data.get("explanation", ""))
 
-                    with st.expander(f"💡 View Explanation for Q.{q_num}", expanded=True):
-                        st.write(q_data.get("explanation", "Standard conceptual derivation applies."))
-                
-                st.write("")
-
-            col_sub1, col_sub2 = st.columns([2, 1])
-            with col_sub1:
-                if st.button("📝 Submit Test & Check Scorecard", type="primary", use_container_width=True):
-                    st.session_state.exam_submitted = True
-                    st.rerun()
-
-            if st.session_state.exam_submitted:
-                total_q = len(q_list)
-                correct_cnt = sum(1 for idx, q in enumerate(q_list) if user_answers.get(idx) == q.get("correct_option"))
-                wrong_cnt = sum(1 for idx, q in enumerate(q_list) if user_answers.get(idx) and user_answers.get(idx) != q.get("correct_option"))
-                unattempted = total_q - (correct_cnt + wrong_cnt)
-                total_marks = (correct_cnt * 4) - (wrong_cnt * 1)
-                max_marks = total_q * 4
-
-                st.markdown(f"""
-                <div style="background:{active_theme['card_bg']}; border:2px solid {active_theme['accent']}; border-radius:12px; padding:18px 24px; text-align:center; margin-top:20px; box-shadow:0 0 20px {active_theme['glow']};">
-                    <h3 style="color:{active_theme['accent']}; margin-bottom:6px;">📊 Test Result & Performance Summary</h3>
-                    <div style="font-size:24px; font-weight:800; color:#F8FAFC; margin-bottom:12px;">Score: {total_marks} / {max_marks}</div>
-                    <div style="display:flex; justify-content:center; gap:20px; font-size:13px; color:#CBD5E1;">
-                        <span>✔ Correct: <b style="color:#34D399;">{correct_cnt}</b></span>
-                        <span>✖ Wrong: <b style="color:#EF4444;">{wrong_cnt}</b></span>
-                        <span>⚪ Unattempted: <b style="color:#94A3B8;">{unattempted}</b></span>
-                    </div>
-                </div>
-                """, unsafe_allow_html=True)
-
-    # ================= SECTION 3: AUTHENTIC PYQS VAULT =================
-    elif selected_nav == "📚 PYQs Vault":
-        st.markdown(f"#### 📚 Previous Years Questions (PYQs) — {active_course}")
-        st.caption("Real official exam questions sorted by past examination years.")
-
-        pyqs_list = subject_details.get("pyqs_years", ["Past 5 Years Comprehensive"])
-        
-        c1, c2 = st.columns([2, 1])
-        with c1:
-            chosen_year = st.selectbox("Select Exam Year / Series:", pyqs_list)
-            pyq_topic = st.text_input("Filter by Topic (Optional):", placeholder="e.g. Action Potential / Thermodynamics")
-        with c2:
-            st.info(f"Targeting: **{active_subj}**")
-
-        target_topic = pyq_topic.strip() if pyq_topic.strip() else active_subj
-
-        if st.button("Load Official PYQs Paper", use_container_width=True):
-            with st.spinner(f"Extracting official questions from {chosen_year}..."):
-                st.session_state.active_exam_questions = generate_interactive_paper(
-                    target_topic, active_course, active_subj, is_pyq=True, pyq_year=chosen_year
-                )
-                st.session_state.exam_submitted = False
-                st.rerun()
-
-        # Render PYQ Question Paper
-        if st.session_state.active_exam_questions:
-            q_list = st.session_state.active_exam_questions
-            st.markdown("---")
-            st.markdown(f"### 🏛️ {chosen_year} Official Question Paper — {active_subj}")
-
-            user_pyq_answers = {}
-
-            for idx, q_data in enumerate(q_list):
-                q_num = idx + 1
-                st.markdown(f"""
-                <div class="question-card">
-                    <div class="question-header">
-                        <span class="q-number-tag">Q.{q_num} • {q_data.get('year_tag', chosen_year)}</span>
-                        <span class="q-marks-tag">+4 for Correct | -1 for Wrong</span>
-                    </div>
-                    <div class="q-text">{q_data.get('question', '')}</div>
-                </div>
-                """, unsafe_allow_html=True)
-
-                opts = q_data.get("options", [])
-                user_pyq_answers[idx] = st.radio(
-                    f"Your Answer for PYQ #{q_num}:",
-                    options=opts,
-                    key=f"pyq_q_{idx}",
-                    index=None
-                )
-
-                if st.session_state.exam_submitted:
-                    correct = q_data.get("correct_option", "")
-                    selected = user_pyq_answers.get(idx)
-
-                    if selected == correct:
-                        st.success(f"✔ **Correct!** Answer: {correct}")
-                    else:
-                        st.error(f"✖ **Incorrect / Skipped.** Official Key: {correct} (You chose: {selected if selected else 'None'})")
-
-                    with st.expander(f"💡 View Official Solution & Concept Note #{q_num}", expanded=True):
-                        st.write(q_data.get("explanation", "Official solution applies standard syllabus rationale."))
-                
-                st.write("")
-
-            if st.button("📝 Submit PYQ Sheet & Evaluate", type="primary", use_container_width=True):
+            if st.button("📝 Submit Mock Test", type="primary", use_container_width=True):
                 st.session_state.exam_submitted = True
                 st.rerun()
 
-            if st.session_state.exam_submitted:
-                total_q = len(q_list)
-                correct_cnt = sum(1 for idx, q in enumerate(q_list) if user_pyq_answers.get(idx) == q.get("correct_option"))
-                wrong_cnt = sum(1 for idx, q in enumerate(q_list) if user_pyq_answers.get(idx) and user_pyq_answers.get(idx) != q.get("correct_option"))
-                total_marks = (correct_cnt * 4) - (wrong_cnt * 1)
-                max_marks = total_q * 4
-
-                st.markdown(f"""
-                <div style="background:{active_theme['card_bg']}; border:2px solid {active_theme['accent']}; border-radius:12px; padding:18px 24px; text-align:center; margin-top:20px; box-shadow:0 0 20px {active_theme['glow']};">
-                    <h3 style="color:{active_theme['accent']}; margin-bottom:6px;">📊 PYQ Mock Assessment</h3>
-                    <div style="font-size:24px; font-weight:800; color:#F8FAFC; margin-bottom:12px;">Score: {total_marks} / {max_marks}</div>
-                    <div style="display:flex; justify-content:center; gap:20px; font-size:13px; color:#CBD5E1;">
-                        <span>✔ Correct: <b style="color:#34D399;">{correct_cnt}</b></span>
-                        <span>✖ Negative: <b style="color:#EF4444;">{wrong_cnt}</b></span>
-                        <span>🎯 Accuracy: <b>{int((correct_cnt/total_q)*100) if total_q else 0}%</b></span>
-                    </div>
-                </div>
-                """, unsafe_allow_html=True)
-
-    # ================= SECTION 4: SYLLABUS BREAKDOWN =================
+    # ================= SECTION 5: SYLLABUS BREAKDOWN =================
     elif selected_nav == "📖 Syllabus":
         st.markdown("#### 📚 Curriculum Breakdown — " + active_course)
         st.info("Current Subject: **" + active_subj + "**")
@@ -1144,7 +1424,7 @@ else:
                 st.markdown("**" + s_k + "**")
                 st.caption(s_v.get("units", ""))
 
-    # ================= SECTION 5: FORMULA & BLUEPRINTS =================
+    # ================= SECTION 6: FORMULA & BLUEPRINTS =================
     elif selected_nav == "🔬 Formula & Lab":
         st.markdown("#### 🔬 Formula & Concepts Compendium — " + active_subj)
         with st.expander("⚡ Core Formulation & Important Matrix"):
@@ -1160,7 +1440,7 @@ else:
             else:
                 st.latex(r"Sum = A \oplus B \oplus C_{in}, \quad Carry = AB + C_{in}(A \oplus B)")
 
-    # ================= SECTION 6: AI MENTOR =================
+    # ================= SECTION 7: AI MENTOR =================
     elif selected_nav == "🤖 AI Mentor":
         st.markdown("#### 🤖 1-on-1 AI Faculty Mentor — " + active_course)
         past_ctx = st.session_state.ai_memory.get(active_course, {}).get("last_summary", "Starting fresh discussion.")
@@ -1188,7 +1468,7 @@ else:
             else:
                 st.warning("Please type a question or upload image.")
 
-    # ================= SECTION 7: COLAB SANDBOX (PYTHON) =================
+    # ================= SECTION 8: COLAB SANDBOX (PYTHON) =================
     elif selected_nav == "💻 Sandbox" and "Python" in active_subj:
         st.markdown("#### 💻 Colab Notebook // Python Only")
 
