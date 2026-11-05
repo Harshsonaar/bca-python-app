@@ -687,7 +687,7 @@ COURSE_DATABASE = {
     }
 }
 
-# ================= DYNAMIC EYE-FRIENDLY & COMPACT REGISTER CSS =================
+# ================= DYNAMIC EYE-FRIENDLY & NO-INNER-SCROLL REGISTER CSS =================
 DYNAMIC_THEME_CSS = f"""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Kalam:wght@400;700&family=Patrick+Hand&display=swap');
@@ -869,7 +869,7 @@ DYNAMIC_THEME_CSS = f"""
         margin-bottom: 8px;
     }}
 
-    /* Compact Single-Page Ruled Sheet (Fits cleanly on 1 screen) */
+    /* Natural Single-Page Ruled Sheet (NO internal scrollbar!) */
     .real-notebook-sheet {{
         background-color: #fbfbf8 !important;
         background-image: 
@@ -877,13 +877,13 @@ DYNAMIC_THEME_CSS = f"""
             linear-gradient(#e2e8f0 1px, transparent 1px) !important;
         background-size: 100% 100%, 100% 21px !important;
         border-radius: 8px !important;
-        padding: 12px 14px 12px 42px !important;
+        padding: 12px 14px 14px 42px !important;
         border: 1px solid #cbd5e1 !important;
         box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5) !important;
         width: 100% !important;
-        max-width: 500px !important;
-        max-height: 460px !important;
-        overflow-y: auto !important;
+        max-width: 480px !important;
+        height: auto !important;
+        overflow: hidden !important;
         box-sizing: border-box !important;
         font-family: 'Patrick Hand', 'Kalam', cursive !important;
         color: #1e3a8a !important;
@@ -1104,7 +1104,7 @@ def fix_unclosed_html(html_str):
         html_str += "</p>"
     return html_str
 
-# ================= COMPACT SINGLE-PAGE REGISTER GENERATOR & AUTO-SPLITTER =================
+# ================= CRISP NATURAL-SIZED REGISTER GENERATOR (NO INNER SCROLL) =================
 def generate_multi_sheets_html(topic, subject_name, course_name, notes_lang):
     last_ai_ctx = st.session_state.ai_memory.get(course_name, {}).get("last_summary", "No previous context.")
 
@@ -1118,13 +1118,13 @@ def generate_multi_sheets_html(topic, subject_name, course_name, notes_lang):
     system_role = (
         "You are an esteemed professor specializing in " + course_name + ". " + law_instruction +
         "Student Context: " + last_ai_ctx + ". "
-        "Output EXACTLY 3 COMPACT LECTURE SHEETS separated strictly by '===SHEET_SPLIT==='. "
-        "CRITICAL PAGE LENGTH RULE: Keep each sheet SHORT & COMPACT (under 110 words per sheet, max 2 table rows, max 3 short bullet lines) "
-        "so each sheet fits on a single compact notebook page without long scrolling. "
+        "Output EXACTLY 3 INDIVIDUAL CRISP LECTURE SHEETS separated strictly by '===SHEET_SPLIT==='. "
+        "CRITICAL RULE: Keep each sheet under 85 words total (1-sentence definition, 2-row table, 2 short 1-line bullets, 1 exam point) "
+        "so each sheet naturally fits on screen with zero scrolling. Never combine multiple sheets into one div. "
         "DO NOT USE CODE BLOCKS OR MARKDOWN TICKS. Start each sheet directly with <div class='register-outer-center'>."
     )
     user_prompt = (
-        "Create 3 compact single-page lecture sheets for '" + topic + "' under " + course_name + " -> " + subject_name + " (" + notes_lang + ").\n"
+        "Create 3 crisp single-card lecture sheets for '" + topic + "' under " + course_name + " -> " + subject_name + " (" + notes_lang + ").\n"
         "Separate each sheet strictly with ===SHEET_SPLIT===.\n\n"
         "TEMPLATE FOR EACH SHEET:\n"
         "<div class=\"register-outer-center\">\n"
@@ -1132,7 +1132,7 @@ def generate_multi_sheets_html(topic, subject_name, course_name, notes_lang):
         "        <div class=\"nb-title-h1\">" + topic + " [Sheet X]</div>\n"
         "        <div style=\"font-size:10px; color:#6b7280; margin-bottom:2px;\">" + course_name + " • " + subject_name + "</div>\n"
         "        <span class=\"nb-subhead\">1. Core Concept :</span>\n"
-        "        <p style=\"margin: 1px 0 3px 0;\">[Max 2 short lines in " + notes_lang + "]</p>\n"
+        "        <p style=\"margin: 1px 0 3px 0;\">[1 crisp sentence in " + notes_lang + "]</p>\n"
         "        <span class=\"nb-subhead\">2. Key Section / Formula Matrix :</span>\n"
         "        <div class=\"table-container\">\n"
         "            <table class=\"nb-table\">\n"
@@ -1153,7 +1153,7 @@ def generate_multi_sheets_html(topic, subject_name, course_name, notes_lang):
         "    </div>\n"
         "</div>"
     )
-    raw_res = execute_ai_query(system_role, user_prompt, max_budget=2200)
+    raw_res = execute_ai_query(system_role, user_prompt, max_budget=1800)
     if raw_res.startswith("API_ERROR:"):
         st.error(raw_res)
         return []
@@ -1163,10 +1163,14 @@ def generate_multi_sheets_html(topic, subject_name, course_name, notes_lang):
 
     raw_sheets = [s.strip() for s in clean_text.split("===SHEET_SPLIT===") if s.strip()]
 
-    # Fallback Auto-Splitter if AI forgot ===SHEET_SPLIT=== and stacked multiple sheets together
-    if len(raw_sheets) == 1 and clean_text.count('class="register-outer-center"') > 1:
-        parts = re.split(r'(?=<div\s+class=["\']register-outer-center["\']\s*>)', clean_text)
-        raw_sheets = [p.strip() for p in parts if p.strip()]
+    # Smart Auto-Splitter if AI forgot ===SHEET_SPLIT===
+    if len(raw_sheets) == 1:
+        if clean_text.count('class="register-outer-center"') > 1:
+            parts = re.split(r'(?=<div\s+class=["\']register-outer-center["\']\s*>)', clean_text)
+            raw_sheets = [p.strip() for p in parts if p.strip()]
+        elif clean_text.count('class="real-notebook-sheet"') > 1:
+            parts = re.split(r'(?=<div\s+class=["\']real-notebook-sheet["\']\s*>)', clean_text)
+            raw_sheets = [f'<div class="register-outer-center">{p.strip()}</div>' for p in parts if p.strip() and "real-notebook-sheet" in p]
 
     sanitized_sheets = []
     for s in raw_sheets:
@@ -1322,7 +1326,7 @@ if not st.session_state.system_booted:
         <div style="background:{active_theme['card_bg']}; border:1px solid rgba(255,255,255,0.1); border-left:4px solid {active_theme['accent']}; border-radius:10px; padding:16px 22px; max-width:600px; width:100%; text-align:left; font-size:13px; color:#CBD5E1; line-height:1.6; margin-bottom:24px;">
             <div style="color:{active_theme['accent']}; font-weight:700; margin-bottom:4px;">Enterprise Features Active:</div>
             <div>• ⚖️ Complete Indian Law Stream (Constitution, BNS/BNSS/BSA 2023, IPC/CrPC, Contract, CPC, Torts, Family Law)</div>
-            <div>• 📄 Compact Single-Screen Pages (5 Qs/Page OMR & Single-Sheet Register View)</div>
+            <div>• 📄 Natural-Size Ruled Sheets (Zero Inner Scrollbar & Clean Gallery)</div>
             <div>• 🔥 90–100 Questions DPP Marathon & Direct In-App PYQ Booklet</div>
             <div>• 📧 Background SMTP Auto-Email Dispatch to {ADMIN_EMAIL}</div>
         </div>
@@ -1349,7 +1353,7 @@ else:
                     ⚖️ Harsh's Lex & Tech Suite — Academic & Competitive Portal
                 </div>
                 <div style="font-size: 11.5px; color: #94A3B8;">
-                    Compact Screen-Fit UI • In-App PYQs • 90–100 Qs DPP • Auto-SMTP
+                    Zero Inner-Scroll Sheets • In-App PYQs • 90–100 Qs DPP • Auto-SMTP
                 </div>
             </div>
             <div class="formal-author-pill">
@@ -1438,10 +1442,10 @@ else:
         index=0
     )
 
-    # ================= SECTION 1: COMPACT NOTES GALLERY =================
+    # ================= SECTION 1: NATURAL-SIZE NOTES GALLERY (NO INNER SCROLL) =================
     if selected_nav == "📝 Notes Gallery":
         st.subheader("📖 Lecture Notes Register Gallery — " + active_subj)
-        st.caption("Compact single-page ruled register sheets—har sheet ek screen par fit hogi.")
+        st.caption("Natural register page size—na page ke andar scroll hoga, na lamba khichega.")
 
         c1, c2 = st.columns([2.5, 1])
         with c1:
@@ -1453,12 +1457,12 @@ else:
 
         final_topic = custom_topic.strip() if custom_topic.strip() else chosen_topic
 
-        if st.button("Generate Compact Register Sheets", use_container_width=True):
+        if st.button("Generate Lecture Register Sheets", use_container_width=True):
             st.session_state.current_topic = final_topic
             st.session_state.active_sheet_index = 0
             save_user_memory()
 
-            with st.spinner("Writing compact single-page lecture sheets for '" + final_topic + "'..."):
+            with st.spinner("Writing crisp lecture sheets for '" + final_topic + "'..."):
                 sheets_out = generate_multi_sheets_html(
                     final_topic, active_subj, active_course, notes_lang
                 )
@@ -1491,7 +1495,7 @@ else:
 
                 st.html(sheets[cur_i])
             else:
-                st.markdown("<b>📸 Register Sheets Gallery (" + str(total_sheets) + " Compact Pages)</b>", unsafe_allow_html=True)
+                st.markdown("<b>📸 Register Sheets Gallery (" + str(total_sheets) + " Pages)</b>", unsafe_allow_html=True)
                 grid_cols = st.columns(3)
                 for idx, sheet_code in enumerate(sheets):
                     with grid_cols[idx % 3]:
@@ -1501,7 +1505,7 @@ else:
                         card_thumb = f"""
                         <div style="border:1.5px solid {active_theme['accent']}; border-radius:8px; padding:8px; background:{active_theme['card_bg']}; text-align:center; margin-bottom:8px;">
                             <span style="font-size:13px; color:{active_theme['accent']}; font-weight:700;">Page #{idx + 1}</span><br>
-                            <span style="font-size:11px; color:#94A3B8;">Single-Screen Ruled Note</span>
+                            <span style="font-size:11px; color:#94A3B8;">Ruled Register Sheet</span>
                         </div>
                         """
                         st.markdown(card_thumb, unsafe_allow_html=True)
@@ -1509,7 +1513,7 @@ else:
     # ================= SECTION 2: DPP (COMPACT PAGINATED VIEW) =================
     elif selected_nav == "🔥 DPP (90-100 Qs)":
         st.subheader(f"🔥 Daily Practice Problems (DPP Marathon) — {active_subj}")
-        st.caption("Compact paginated view—default 5 questions per page taaki page lamba na ho.")
+        st.caption("Paginated view—ek page par 3 ya 5 questions select karein.")
 
         c1, c2, c3 = st.columns([2, 1, 1])
         with c1:
@@ -1519,7 +1523,7 @@ else:
         with c2:
             dpp_target_count = st.selectbox("DPP Total Qs:", [90, 100, 45, 15], index=3)
         with c3:
-            page_size = st.selectbox("Qs Per Page (Screen Size):", [1, 5, 10, 20], index=1)
+            page_size = st.selectbox("Qs Per Page:", [3, 5, 10, 20], index=0)
 
         final_dpp_topic = custom_dpp.strip() if custom_dpp.strip() else sel_dpp_topic
 
@@ -1620,8 +1624,8 @@ else:
 
     # ================= SECTION 3: COMPACT PAGINATED REAL PYQS VAULT =================
     elif selected_nav == "📚 Real PYQs Vault":
-        st.subheader(f"📚 Official Past Question Papers (Compact Paginated View) — {active_course}")
-        st.caption("5 Questions per page—bina lambi scrolling ke app ke andar hi past papers solve karein.")
+        st.subheader(f"📚 Official Past Question Papers — {active_course}")
+        st.caption("In-App Past Papers—Next/Prev page buttons se bina lambi scrolling ke solve karein.")
 
         pyqs_list = subject_details.get("pyqs_years", ["2024 Official Paper"])
         c1, c2, c3, c4 = st.columns([2, 0.9, 0.9, 1.2])
@@ -1631,7 +1635,7 @@ else:
         with c2:
             pyq_count = st.selectbox("Total Qs:", [15, 30, 45], index=0)
         with c3:
-            pyq_per_page = st.selectbox("Qs / Page:", [1, 5, 10], index=1)
+            pyq_per_page = st.selectbox("Qs / Page:", [3, 5, 10], index=0)
         with c4:
             pyq_view_mode = st.selectbox("Mode:", ["📝 OMR Mode", "📄 Booklet Mode"])
 
@@ -1756,14 +1760,14 @@ else:
 
     # ================= SECTION 4: COMPACT PAGINATED MOCK EXAM =================
     elif selected_nav == "🎯 Mock Exam":
-        st.subheader(f"🎯 Rapid Mock Test (Compact View) — {active_course}")
+        st.subheader(f"🎯 Rapid Mock Test — {active_course}")
         c1, c2, c3 = st.columns([2.2, 1, 1])
         with c1:
             exam_topic = st.text_input("Scope / Act / Chapter:", value=st.session_state.current_topic if st.session_state.current_topic else active_subj)
         with c2:
             mock_q_cnt = st.selectbox("Total Questions:", [10, 15, 20], index=0)
         with c3:
-            mock_per_page = st.selectbox("Qs Per Page:", [1, 5, 10], index=1)
+            mock_per_page = st.selectbox("Qs Per Page:", [3, 5, 10], index=0)
 
         if st.button("Generate Quick Mock Paper", use_container_width=True):
             with st.spinner("Generating clean MCQ examination paper..."):
