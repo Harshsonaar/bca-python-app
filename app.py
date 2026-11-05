@@ -167,25 +167,40 @@ else:
         with st.expander("⭐ Rate & Feedback Popup", expanded=True):
             render_feedback_form_contents(context_key="popup_fallback")
 
-# COURSE DATABASE WITH FULL SUBJECTS & TOPICS
+# FULL COMPREHENSIVE COURSE & LAW DATABASE
 COURSE_DATABASE = {
     "⚖️ Law & Judiciary (LL.B / CLAT / PCS-J)": {
         "icon": "⚖️",
         "subjects": {
             "🏛️ Constitutional Law of India": {
                 "units": "Part I-IV, Fundamental Rights, Directive Principles, Judiciary & Amendments",
-                "topics": ["Preamble & Basic Structure (Kesavananda Bharati)", "Fundamental Rights: Art 14, 19, 21", "Writs (Art 32 & 226)", "Supreme Court & High Courts Collegium"],
-                "pyqs_years": ["CLAT 2025", "UP PCS-J 2024", "AIBE XIX"]
+                "topics": [
+                    "Preamble, Basic Structure Doctrine (Kesavananda Bharati) & Article 368 Amendment Power",
+                    "Fundamental Rights: Article 14 (Equality), Art 19 (Six Freedoms) & Art 21 (Life & Personal Liberty)",
+                    "Constitutional Remedies: Article 32 vs Article 226 & 5 Prerogative Writs",
+                    "Right to Freedom of Religion (Articles 25–28) & Cultural/Educational Rights",
+                    "Union & State Judiciary: Supreme Court, High Courts & Collegium System"
+                ],
+                "pyqs_years": ["CLAT UG & PG 2025", "UP PCS-J 2024", "AIBE XIX Official", "DU LL.B 2024"]
             },
             "⚔️ Criminal Law (BNS, BNSS, BSA 2023 & IPC)": {
                 "units": "BNS 2023, BNSS 2023, BSA 2023 vs IPC/CrPC/IEA",
-                "topics": ["BNS Sec 3(5) Common Intention vs IPC 34", "Culpable Homicide vs Murder (BNS 100-103)", "BNSS Zero FIR & Arrest (Sec 173 & 187)"],
-                "pyqs_years": ["PCS-J Criminal Law 2025", "AIBE Criminal Law"]
+                "topics": [
+                    "BNS 2023 vs IPC 1860: General Exceptions & Right of Private Defence",
+                    "Offences Affecting Human Body: Culpable Homicide vs Murder (BNS 100-103)",
+                    "Offences Against Women & Organised Crime (Sec 63-99 & 111 BNS)",
+                    "BNSS 2023 (CrPC): Zero FIR, e-FIR, Arrest & Police Custody Remand"
+                ],
+                "pyqs_years": ["Judiciary PCS-J Criminal Law 2025/2024", "AIBE Criminal Law Paper", "CLAT PG Jurisprudence"]
             },
             "📜 Contract & Property Law": {
                 "units": "Indian Contract Act 1872, Specific Relief Act & TPA",
-                "topics": ["Offer, Acceptance & Consideration (ICA Sec 2)", "Doctrine of Frustration (ICA Sec 56)", "Transfer of Property: Lis Pendens & Mortgages"],
-                "pyqs_years": ["PCS-J Civil Law 2024", "CLAT Legal Aptitude"]
+                "topics": [
+                    "Offer, Acceptance & Consideration (ICA Sec 2)",
+                    "Doctrine of Frustration (ICA Sec 56)",
+                    "Transfer of Property: Lis Pendens & Mortgages (TPA Sec 52 & 58)"
+                ],
+                "pyqs_years": ["PCS-J Civil Law Paper-I 2024", "CLAT Legal Aptitude"]
             }
         }
     },
@@ -194,13 +209,22 @@ COURSE_DATABASE = {
         "subjects": {
             "🧬 Zoology & Human Physiology": {
                 "units": "Neural Control, Chemical Coordination, Circulation & Genetics",
-                "topics": ["Nerve Impulse & Action Potential", "Muscle Contraction Sliding Filament Theory", "Cardiac Cycle & ECG"],
-                "pyqs_years": ["NEET 2025", "NEET 2024", "NEET 2023"]
+                "topics": [
+                    "Generation & Conduction of Nerve Impulse (Action Potential)",
+                    "Sliding Filament Theory of Muscle Contraction",
+                    "Cardiac Cycle, ECG Waveforms & Blood Pressure Regulation",
+                    "Mendelian Dihybrid Cross, Linkage & Recombination"
+                ],
+                "pyqs_years": ["NEET UG 2025", "NEET UG 2024", "NEET UG 2023", "NEET UG 2022"]
             },
             "🌿 Botany & Plant Biology": {
                 "units": "Photosynthesis, Respiration & Plant Growth",
-                "topics": ["Light Reaction & Calvin Cycle", "Glycolysis & Krebs Cycle", "Auxin & Cytokinin Action"],
-                "pyqs_years": ["NEET 2025", "NEET 2024"]
+                "topics": [
+                    "Light Reaction & Calvin Cycle (C3 vs C4 Pathways)",
+                    "Glycolysis & Krebs Cycle (TCA Cycle)",
+                    "Auxin, Cytokinin Action & Photoperiodism"
+                ],
+                "pyqs_years": ["NEET UG 2025", "NEET UG 2024", "NEET UG 2023"]
             }
         }
     },
@@ -209,7 +233,20 @@ COURSE_DATABASE = {
         "subjects": {
             "📐 JEE Mathematics": {
                 "units": "Calculus, Coordinate Geometry & Algebra",
-                "topics": ["Parabola & Ellipse Tangents", "Definite Integration Properties", "Matrices & Cramer Rule"],
+                "topics": [
+                    "Conic Sections: Parabola, Ellipse & Tangent-Normal Equations",
+                    "Definite Integration: King's Property, Leibnitz Rule & Reduction",
+                    "Matrices, Determinants & System of Linear Equations"
+                ],
+                "pyqs_years": ["JEE Main 2025", "JEE Advanced 2024", "JEE Main 2024"]
+            },
+            "⚛️ JEE Physics": {
+                "units": "Rotational Dynamics, Electromagnetism & Optics",
+                "topics": [
+                    "Moment of Inertia & Parallel-Perpendicular Axis Theorems",
+                    "Gauss Law, Electrostatic Potential & Capacitance",
+                    "Wave Optics: Young's Double Slit Experiment (YDSE)"
+                ],
                 "pyqs_years": ["JEE Main 2025", "JEE Advanced 2024"]
             }
         }
@@ -219,8 +256,22 @@ COURSE_DATABASE = {
         "subjects": {
             "🐍 Python Programming": {
                 "units": "Bytecode, Control Flow, Functions & OOPs",
-                "topics": ["Python Architecture & Bytecode", "For-Else Loops & Prime Verification", "File I/O & Exception Handling"],
-                "pyqs_years": ["BCA 2025", "BCA 2024"]
+                "topics": [
+                    "Python Architecture, Bytecode & Memory Management",
+                    "Control Flow, Loops, For-Else Logic & Prime Verification",
+                    "Data Structures: Lists, Tuples, Dictionaries & Sets",
+                    "File Handling, Context Managers & Exception Hierarchy"
+                ],
+                "pyqs_years": ["BCA Semester Exam 2025", "BCA Semester Exam 2024"]
+            },
+            "🖥️ Computer System Architecture": {
+                "units": "Binary Logic, Boolean Algebra, K-Maps & Circuits",
+                "topics": [
+                    "Full Adder Circuit, Logic Gates & Truth Table",
+                    "K-Map 4-Variable Minimization & Grouping Rules",
+                    "Flip-Flops, Master-Slave JK & Cache Mapping"
+                ],
+                "pyqs_years": ["BCA CSA Paper 2025", "BCA CSA Paper 2024"]
             }
         }
     },
@@ -229,14 +280,18 @@ COURSE_DATABASE = {
         "subjects": {
             "📜 Indian Polity & Constitution": {
                 "units": "Fundamental Rights, Parliament, Judiciary & Panchayati Raj",
-                "topics": ["Fundamental Rights (Art 14-32)", "President vs Governor Powers", "Judicial Review & PIL"],
-                "pyqs_years": ["UPSC Prelims 2025", "UPSC Prelims 2024"]
+                "topics": [
+                    "Fundamental Rights (Articles 14 to 32) & Basic Structure",
+                    "President vs Governor: Pardoning Powers & Discretion",
+                    "Judicial Review, PIL & Collegium System Dynamics"
+                ],
+                "pyqs_years": ["UPSC CSE Prelims 2025", "UPSC CSE Prelims 2024", "UPSC CSE Prelims 2023"]
             }
         }
     }
 }
 
-# DYNAMIC CSS
+# DYNAMIC CSS STYLING
 DYNAMIC_THEME_CSS = f"""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Kalam:wght@400;700&family=Patrick+Hand&display=swap');
@@ -290,12 +345,12 @@ with st.sidebar:
     st.caption("Developer: **Harsh Raj Soni**")
     st.caption("MLK PG College, Balrampur")
 
-def execute_ai_query(system_role, user_prompt, max_budget=2000):
+def execute_ai_query(system_role, user_prompt, max_budget=2500):
     if "Groq" in ai_choice and groq_key:
         client = Groq(api_key=groq_key)
         try:
             completion = client.chat.completions.create(
-                model="llama-3.3-70b-versatile",
+                model="llama-3.1-8b-instant",
                 messages=[{"role": "system", "content": system_role}, {"role": "user", "content": user_prompt}],
                 temperature=0.2, max_tokens=max_budget
             )
@@ -352,7 +407,7 @@ def parse_mcq_blocks(raw_text):
             })
     return questions
 
-def generate_fast_questions(topic, course_name, subject_name, count=10, is_pyq=False, pyq_year=""):
+def generate_fast_questions(topic, course_name, subject_name, count=15, is_pyq=False, pyq_year=""):
     tag_lbl = pyq_year if is_pyq else "Mock Set"
     sys_prompt = (
         f"You are Examiner for {course_name}. Output EXACTLY {count} MCQs using ONLY this block format:\n"
@@ -367,7 +422,7 @@ def generate_fast_questions(topic, course_name, subject_name, count=10, is_pyq=F
         "EXP: [Explanation]\n"
         "===Q_END==="
     )
-    raw = execute_ai_query(sys_prompt, f"Generate {count} questions for '{topic}' in {subject_name}.", max_budget=2000)
+    raw = execute_ai_query(sys_prompt, f"Generate {count} questions for '{topic}' in {subject_name}.", max_budget=2500)
     return parse_mcq_blocks(raw)
 
 # INTRO SCREEN
